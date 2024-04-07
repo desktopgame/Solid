@@ -1,0 +1,42 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake",
+            "type": "shell",
+            "command": "cmake -S src -B build -G 'Unix Makefiles'",
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "Make",
+            "type": "shell",
+            "command": "make -C build",
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "All",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "CMake",
+                "Make"
+            ],
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "command": "start Solid.exe",
+            "options": {
+                "cwd": ".\\build\\Solid"
+            }
+        }
+    ]
+}
