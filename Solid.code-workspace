@@ -8,5 +8,12 @@
 			"path": "src/Solid"
 		},
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"list": "cpp",
+			"vector": "cpp",
+			"xstring": "cpp",
+			"xutility": "cpp"
+		}
+	}
 }
