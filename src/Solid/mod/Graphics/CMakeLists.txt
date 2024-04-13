@@ -7,7 +7,6 @@ project(
 #
 # Build Options
 #
-set(SOURCES "lib/main.cpp")
 add_library(
     Lib-Graphics
     STATIC
