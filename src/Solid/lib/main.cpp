@@ -1,3 +1,4 @@
+#include <Graphics/Device.hpp>
 #include <Windows.h>
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -156,6 +157,9 @@ int main(int argc, char* argv[])
     if (FAILED(device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)))) {
         throw std::runtime_error("failed CreateFence()");
     }
+
+    Solid::Graphics::Device dev;
+    dev.hello();
 
     MSG msg = {};
     commandQueue->Signal(fence.Get(), ++fenceVal);
