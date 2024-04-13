@@ -1,0 +1,47 @@
+#pragma once
+#include <memory>
+#include <mutex>
+#include <thread>
+
+namespace Lib::Graphics {
+class Window;
+class Device;
+/**
+ * @brief Engine class.
+ */
+class Engine {
+public:
+    ~Engine();
+    /**
+     * @brief Get the Engine object
+     * @return Instance
+     */
+    static std::shared_ptr<Engine> getInstance();
+
+    /**
+     * @brief throw exception if instance not exist.
+     */
+    static void require();
+
+    /**
+     * @brief startup Engine.
+     * @param argc
+     * @param argv
+     */
+    std::shared_ptr<Engine> startup(int argc, char* argv[]);
+
+    /**
+     * @brief shutdown Engine.
+     */
+    void shutdown();
+
+private:
+    static std::mutex s_mutex;
+    static std::shared_ptr<Engine> s_instance;
+    Engine();
+
+    bool m_started;
+    std::shared_ptr<Window> m_window;
+    std::shared_ptr<Device> m_device;
+};
+}

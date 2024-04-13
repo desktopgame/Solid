@@ -12,6 +12,8 @@ add_library(
     Lib-Graphics
     STATIC
     ./lib/Graphics/Device.cpp
+    ./lib/Graphics/Engine.cpp
+    ./lib/Graphics/Window.cpp
 )
 common_target_compile_params(Lib-Graphics)
 common_target_link_params(Lib-Graphics)

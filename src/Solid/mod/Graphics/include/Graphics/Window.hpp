@@ -1,20 +1,20 @@
 #pragma once
 #include <Graphics/Engine.hpp>
+#include <Graphics/Window.hpp>
 #include <any>
 #include <memory>
 
 namespace Lib::Graphics {
-class Window;
-class Device {
+class Window {
 public:
-    ~Device();
+    ~Window();
+    std::any getHandle() const;
 
 private:
-    Device();
-    static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
+    Window();
+    std::any m_hwnd;
 
-    class Impl;
-    std::shared_ptr<Impl> m_impl;
+    static std::shared_ptr<Window> create(int32_t width, int32_t height);
 
     friend std::shared_ptr<Engine> Engine::startup(int argc, char* argv[]);
 };
