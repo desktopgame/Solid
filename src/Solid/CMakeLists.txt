@@ -23,6 +23,6 @@ target_include_directories(
 )
 target_link_libraries(
     Solid
-    PRIVATE
+    INTERFACE
     Solid-Graphics
 )
