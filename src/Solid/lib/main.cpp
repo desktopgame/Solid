@@ -216,7 +216,10 @@ int main(int argc, char* argv[])
             if (SUCCEEDED(infoQueue->GetMessage(i, nullptr, &messageSize))) {
                 D3D12_MESSAGE* message = (D3D12_MESSAGE*)::malloc(messageSize);
                 if (SUCCEEDED(infoQueue->GetMessage(i, message, &messageSize))) {
-                    std::cout << message->pDescription << std::endl;
+                    bool isInfo = message->Severity != D3D12_MESSAGE_SEVERITY_INFO && message->Severity != D3D12_MESSAGE_SEVERITY_MESSAGE;
+                    if (!isInfo) {
+                        std::cout << message->pDescription << std::endl;
+                    }
                 }
                 ::free(message);
             }
