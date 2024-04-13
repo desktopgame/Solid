@@ -1,7 +1,14 @@
 #include <Windows.h>
+#include <d3d12.h>
+#include <dxgi1_6.h>
 #include <iostream>
 #include <main.hpp>
+#include <optional>
+#include <stdexcept>
+#include <string>
 #include <tchar.h>
+#include <vector>
+#include <wrl/client.h>
 
 LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -37,6 +44,49 @@ int main(int argc, char* argv[])
         w.hInstance,
         nullptr);
     ShowWindow(hwnd, SW_SHOW);
+
+    using Microsoft::WRL::ComPtr;
+    // Debug Layer
+    ComPtr<ID3D12Debug> debugController = nullptr;
+    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+        debugController->EnableDebugLayer();
+    }
+    // Factory
+    ComPtr<IDXGIFactory6> dxgiFactory = nullptr;
+    UINT flags = DXGI_CREATE_FACTORY_DEBUG;
+    if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&dxgiFactory)))) {
+        throw std::runtime_error("failed CreateDXGIFactory2()");
+    }
+    // Adapter
+    std::vector<ComPtr<IDXGIAdapter>> adapters;
+    ComPtr<IDXGIAdapter> mainAdapter = nullptr;
+    for (uint32_t i = 0; dxgiFactory->EnumAdapters(i, &mainAdapter) != DXGI_ERROR_NOT_FOUND; i++) {
+        adapters.emplace_back(mainAdapter);
+    }
+    if (adapters.empty()) {
+        throw std::runtime_error("failed EnumAdapters()");
+    }
+    // first adapter is primary adapter.
+    // see: https://learn.microsoft.com/ja-jp/windows/win32/api/dxgi/nf-dxgi-idxgifactory-enumadapters
+    mainAdapter = adapters.at(0);
+    adapters.clear();
+    // Feature level
+    std::optional<D3D_FEATURE_LEVEL> useLevel;
+    D3D_FEATURE_LEVEL levels[] = {
+        D3D_FEATURE_LEVEL_12_1,
+        D3D_FEATURE_LEVEL_12_0,
+    };
+    ComPtr<ID3D12Device> device = nullptr;
+    for (D3D_FEATURE_LEVEL level : levels) {
+        HRESULT deviceStatus = D3D12CreateDevice(mainAdapter.Get(), level, IID_PPV_ARGS(&device));
+        if (SUCCEEDED(deviceStatus)) {
+            useLevel = level;
+            break;
+        }
+    }
+    if (!useLevel) {
+        throw std::runtime_error("failed D3D12CreateDevice()");
+    }
 
     MSG msg = {};
     while (true) {
