@@ -45,8 +45,21 @@ void Engine::shutdown()
     if (!m_started) {
         return;
     }
+    m_window->destroy();
+    m_device->destroy();
     s_instance = nullptr;
 }
+
+std::shared_ptr<Window> Engine::getWindow() const
+{
+    return m_window;
+}
+
+std::shared_ptr<Device> Engine::getDevice() const
+{
+    return m_device;
+}
+
 // private
 Engine::Engine()
     : m_started(false)

@@ -15,8 +15,16 @@ class Device::Impl {
 public:
     explicit Impl() = default;
     HWND hwnd;
+    ComPtr<IDXGIFactory6> dxgiFactory;
     ComPtr<ID3D12Device> device;
     ComPtr<ID3D12InfoQueue> infoQueue;
+    ComPtr<ID3D12CommandAllocator> commandAllocator;
+    ComPtr<ID3D12GraphicsCommandList> commandList;
+    ComPtr<ID3D12CommandQueue> commandQueue;
+    ComPtr<IDXGISwapChain4> swapchain;
+    ComPtr<ID3D12DescriptorHeap> rtvHeaps;
+    std::vector<ComPtr<ID3D12Resource>> renderTargetViews;
+    ComPtr<ID3D12Fence> fence;
 
 private:
 };
@@ -24,6 +32,7 @@ private:
 Device::~Device()
 {
 }
+
 void Device::flushLogEntries()
 {
     // Show messages
@@ -44,9 +53,61 @@ void Device::flushLogEntries()
     }
     infoQueue->ClearStoredMessages();
 }
+
+void Device::render()
+{
+    // Main loop
+    m_impl->commandAllocator->Reset();
+    uint32_t backBufferIndex
+        = m_impl->swapchain->GetCurrentBackBufferIndex();
+    // Barrier
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_impl->renderTargetViews.at(backBufferIndex).Get();
+    barrier.Transition.Subresource = 0;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_impl->commandList->ResourceBarrier(1, &barrier);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_impl->rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+    rtvHandle.ptr += backBufferIndex * m_impl->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_impl->commandList->OMSetRenderTargets(1, &rtvHandle, true, nullptr);
+
+    float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    m_impl->commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+    m_impl->commandList->Close();
+
+    ID3D12CommandList* cmdLists[] = { m_impl->commandList.Get() };
+    m_impl->commandQueue->ExecuteCommandLists(1, cmdLists);
+
+    m_impl->commandAllocator->Reset();
+    m_impl->commandList->Reset(m_impl->commandAllocator.Get(), nullptr);
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    m_impl->commandList->ResourceBarrier(1, &barrier);
+    m_impl->swapchain->Present(1, 0);
+}
+void Device::notify()
+{
+    m_impl->commandQueue->Signal(m_impl->fence.Get(), ++m_fenceVal);
+}
+
+void Device::waitEvents()
+{
+    if (m_impl->fence->GetCompletedValue() != m_fenceVal) {
+        HANDLE evt = CreateEvent(nullptr, false, false, nullptr);
+        m_impl->fence->SetEventOnCompletion(m_fenceVal, evt);
+        WaitForSingleObject(evt, INFINITE);
+        CloseHandle(evt);
+    }
+}
 // private
 Device::Device()
-    : m_impl(std::make_shared<Impl>())
+    : m_fenceVal()
+    , m_impl(std::make_shared<Impl>())
 {
 }
 
@@ -66,6 +127,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&dxgiFactory)))) {
         throw std::runtime_error("failed CreateDXGIFactory2()");
     }
+    device->m_impl->dxgiFactory = dxgiFactory;
     // Adapter
     std::vector<ComPtr<IDXGIAdapter>> adapters;
     ComPtr<IDXGIAdapter> mainAdapter = nullptr;
@@ -108,11 +170,13 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     if (FAILED(nativeDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator)))) {
         throw std::runtime_error("failed CreateCommandAllocator()");
     }
+    device->m_impl->commandAllocator = commandAllocator;
     // CommandList
     ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
     if (FAILED(nativeDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)))) {
         throw std::runtime_error("failed CreateCommandList()");
     }
+    device->m_impl->commandList = commandList;
     // CommandQueue
     ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
     D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
@@ -123,6 +187,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     if (FAILED(nativeDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue)))) {
         throw std::runtime_error("failed CreateCommandQueue()");
     }
+    device->m_impl->commandQueue = commandQueue;
     // Swapchain
     ComPtr<IDXGISwapChain4> swapchain = nullptr;
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
@@ -141,6 +206,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     if (FAILED(dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), device->m_impl->hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)swapchain.ReleaseAndGetAddressOf()))) {
         throw std::runtime_error("failed CreateSwapChainForHwnd()");
     }
+    device->m_impl->swapchain = swapchain;
     // DescriptorHeap
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
     heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -151,6 +217,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     if (FAILED(nativeDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
+    device->m_impl->rtvHeaps = rtvHeaps;
     // RenderTargetView
     std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
     D3D12_CPU_DESCRIPTOR_HANDLE handle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
@@ -161,13 +228,18 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
         nativeDevice->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
         handle.ptr += nativeDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
+    device->m_impl->renderTargetViews = renderTargetViews;
     // Fence
     ComPtr<ID3D12Fence> fence = nullptr;
-    uint64_t fenceVal = 0;
-    if (FAILED(nativeDevice->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)))) {
+    if (FAILED(nativeDevice->CreateFence(device->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)))) {
         throw std::runtime_error("failed CreateFence()");
     }
-
+    device->m_impl->fence = fence;
     return device;
+}
+
+void Device::destroy()
+{
+    m_impl = nullptr;
 }
 }

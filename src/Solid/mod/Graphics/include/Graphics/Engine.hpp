@@ -35,6 +35,18 @@ public:
      */
     void shutdown();
 
+    /**
+     * @brief Get the Window object
+     * @return std::shared_ptr<Window>
+     */
+    std::shared_ptr<Window> getWindow() const;
+
+    /**
+     * @brief Get the Device object
+     * @return std::shared_ptr<Window>
+     */
+    std::shared_ptr<Device> getDevice() const;
+
 private:
     static std::mutex s_mutex;
     static std::shared_ptr<Engine> s_instance;
