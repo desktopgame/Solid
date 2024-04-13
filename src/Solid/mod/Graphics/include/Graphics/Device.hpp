@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Solid::Graphics {
+namespace Lib::Graphics {
 class Device {
 public:
     explicit Device() = default;

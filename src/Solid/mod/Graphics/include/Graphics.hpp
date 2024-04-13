@@ -1,5 +1,5 @@
 #pragma once
 
-namespace Solid::Graphics {
+namespace Lib::Graphics {
 class Device;
 }

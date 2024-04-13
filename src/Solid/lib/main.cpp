@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
         throw std::runtime_error("failed CreateFence()");
     }
 
-    Solid::Graphics::Device dev;
+    Lib::Graphics::Device dev;
     dev.hello();
 
     MSG msg = {};

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 project(
-    Solid-Graphics
+    Lib-Graphics
     VERSION 0.0.1
     LANGUAGES CXX
 )
@@ -9,19 +9,19 @@ project(
 #
 set(SOURCES "lib/main.cpp")
 add_library(
-    Solid-Graphics
+    Lib-Graphics
     STATIC
     ./lib/Graphics/Device.cpp
 )
-common_target_compile_params(Solid-Graphics)
-common_target_link_params(Solid-Graphics)
+common_target_compile_params(Lib-Graphics)
+common_target_link_params(Lib-Graphics)
 target_include_directories(
-    Solid-Graphics
+    Lib-Graphics
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 target_link_libraries(
-    Solid-Graphics
+    Lib-Graphics
     PRIVATE
     "d3d12.lib"
     "dxgi.lib"
