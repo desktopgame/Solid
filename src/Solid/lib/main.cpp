@@ -150,8 +150,15 @@ int main(int argc, char* argv[])
         device->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
         handle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
+    // Fence
+    ComPtr<ID3D12Fence> fence = nullptr;
+    uint64_t fenceVal = 0;
+    if (FAILED(device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)))) {
+        throw std::runtime_error("failed CreateFence()");
+    }
 
     MSG msg = {};
+    commandQueue->Signal(fence.Get(), ++fenceVal);
     while (true) {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -164,6 +171,16 @@ int main(int argc, char* argv[])
         commandAllocator->Reset();
         uint32_t backBufferIndex
             = swapchain->GetCurrentBackBufferIndex();
+        // Barrier
+        D3D12_RESOURCE_BARRIER barrier = {};
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Transition.pResource = renderTargetViews.at(backBufferIndex).Get();
+        barrier.Transition.Subresource = 0;
+        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        commandList->ResourceBarrier(1, &barrier);
+
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
         rtvHandle.ptr += backBufferIndex * device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         commandList->OMSetRenderTargets(1, &rtvHandle, true, nullptr);
@@ -178,7 +195,19 @@ int main(int argc, char* argv[])
 
         commandAllocator->Reset();
         commandList->Reset(commandAllocator.Get(), nullptr);
+
+        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+        commandList->ResourceBarrier(1, &barrier);
         swapchain->Present(1, 0);
+
+        // Wait events
+        if (fence->GetCompletedValue() != fenceVal) {
+            HANDLE evt = CreateEvent(nullptr, false, false, nullptr);
+            fence->SetEventOnCompletion(fenceVal, evt);
+            WaitForSingleObject(evt, INFINITE);
+            CloseHandle(evt);
+        }
 
         // Show messages
         uint64_t messageCount = infoQueue->GetNumStoredMessages();
