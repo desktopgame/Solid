@@ -41,6 +41,15 @@ function(common_target_compile_params target)
     )
     target_compile_features(${target} PRIVATE cxx_std_17)
 endfunction()
+
+function(common_target_link_params target)
+    target_link_options(
+        ${target}
+        PRIVATE
+        $<$<CONFIG:Debug>: ${STD_DEBUG_LINK}>
+        $<$<CONFIG:Release>: ${STD_RELEASE_LINK}>
+    )
+endfunction()
 #
 # Sub directories
 #

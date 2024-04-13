@@ -24,12 +24,7 @@ add_executable(
     ${SOURCES}
 )
 common_target_compile_params(Solid)
-target_link_options(
-    Solid
-    PRIVATE
-    $<$<CONFIG:Debug>: ${STD_DEBUG_LINK}>
-    $<$<CONFIG:Release>: ${STD_RELEASE_LINK}>
-)
+common_target_link_params(Solid)
 target_include_directories(
     Solid
     PRIVATE
