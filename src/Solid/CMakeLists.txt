@@ -4,17 +4,7 @@ project(
     VERSION 0.0.1
     LANGUAGES CXX
 )
-#
-# Library Settings
-#
-set(Solid-Include
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-)
-set(Solid-Library
-    "d3d12.lib"
-    "dxgi.lib"
-    "d3dcompiler.lib"
-)
+add_subdirectory(./mod)
 #
 # Build Options
 #
@@ -28,10 +18,11 @@ common_target_link_params(Solid)
 target_include_directories(
     Solid
     PRIVATE
-    ${Solid-Include}
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mod/Graphics/include"
 )
 target_link_libraries(
     Solid
     PRIVATE
-    ${Solid-Library}
+    Solid-Graphics
 )

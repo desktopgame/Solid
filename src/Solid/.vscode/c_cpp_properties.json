@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "include"
+                "include",
+                "mod/Graphics/include"
             ],
             "defines": [
                 "_DEBUG",
