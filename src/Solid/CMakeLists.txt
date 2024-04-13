@@ -23,25 +23,13 @@ add_executable(
     Solid
     ${SOURCES}
 )
-target_compile_definitions(
-    Solid
-    PRIVATE
-    $<$<CONFIG:Debug>:${STD_DEBUG_DEFINE}>
-    $<$<CONFIG:Release>:${STD_RELEASE_DEFINE}>
-)
-target_compile_options(
-    Solid
-    PRIVATE
-    $<$<CONFIG:Debug>:${STD_DEBUG_COMPILE}>
-    $<$<CONFIG:Release>:${STD_RELEASE_COMPILE}>
-)
+common_target_compile_params(Solid)
 target_link_options(
     Solid
     PRIVATE
     $<$<CONFIG:Debug>: ${STD_DEBUG_LINK}>
     $<$<CONFIG:Release>: ${STD_RELEASE_LINK}>
 )
-target_compile_features(Solid PRIVATE cxx_std_17)
 target_include_directories(
     Solid
     PRIVATE

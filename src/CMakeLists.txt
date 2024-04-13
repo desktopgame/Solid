@@ -24,6 +24,24 @@ set(STD_DEBUG_LINK
 )
 set(STD_RELEASE_LINK "")
 #
+# Function
+#
+function(common_target_compile_params target)
+    target_compile_definitions(
+        ${target}
+        PRIVATE
+        $<$<CONFIG:Debug>:${STD_DEBUG_DEFINE}>
+        $<$<CONFIG:Release>:${STD_RELEASE_DEFINE}>
+    )
+    target_compile_options(
+        ${target}
+        PRIVATE
+        $<$<CONFIG:Debug>:${STD_DEBUG_COMPILE}>
+        $<$<CONFIG:Release>:${STD_RELEASE_COMPILE}>
+    )
+    target_compile_features(${target} PRIVATE cxx_std_17)
+endfunction()
+#
 # Sub directories
 #
 add_subdirectory(./Solid)
