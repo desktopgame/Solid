@@ -87,6 +87,11 @@ int main(int argc, char* argv[])
     if (!useLevel) {
         throw std::runtime_error("failed D3D12CreateDevice()");
     }
+    // InfoQueue
+    ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
+    if (FAILED(device->QueryInterface(__uuidof(ID3D12InfoQueue), &infoQueue))) {
+        throw std::runtime_error("failed ID3D12InfoQueue()");
+    }
     // CommandAllocator
     ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
     if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator)))) {
@@ -108,7 +113,7 @@ int main(int argc, char* argv[])
         throw std::runtime_error("failed CreateCommandQueue()");
     }
     // Swapchain
-    ComPtr<IDXGISwapChain1> swapchain = nullptr;
+    ComPtr<IDXGISwapChain4> swapchain = nullptr;
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
     swapchainDesc.Width = 800;
     swapchainDesc.Height = 600;
@@ -122,8 +127,28 @@ int main(int argc, char* argv[])
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
     swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapchain))) {
+    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)swapchain.ReleaseAndGetAddressOf()))) {
         throw std::runtime_error("failed CreateSwapChainForHwnd()");
+    }
+    // DescriptorHeap
+    D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    heapDesc.NodeMask = 0;
+    heapDesc.NumDescriptors = 2;
+    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    ComPtr<ID3D12DescriptorHeap> rtvHeaps = nullptr;
+    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    // RenderTargetView
+    std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+    for (uint32_t i = 0; i < swapchainDesc.BufferCount; i++) {
+        if (FAILED(swapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
+            throw std::runtime_error("failed GetBuffer()");
+        }
+        device->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
+        handle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
 
     MSG msg = {};
@@ -135,6 +160,39 @@ int main(int argc, char* argv[])
         if (msg.message == WM_QUIT) {
             break;
         }
+        // Main loop
+        commandAllocator->Reset();
+        uint32_t backBufferIndex
+            = swapchain->GetCurrentBackBufferIndex();
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+        rtvHandle.ptr += backBufferIndex * device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        commandList->OMSetRenderTargets(1, &rtvHandle, true, nullptr);
+
+        float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+        commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+        commandList->Close();
+
+        ID3D12CommandList* cmdLists[] = { commandList.Get() };
+        commandQueue->ExecuteCommandLists(1, cmdLists);
+
+        commandAllocator->Reset();
+        commandList->Reset(commandAllocator.Get(), nullptr);
+        swapchain->Present(1, 0);
+
+        // Show messages
+        uint64_t messageCount = infoQueue->GetNumStoredMessages();
+        for (uint64_t i = 0; i < messageCount; i++) {
+            size_t messageSize = 0;
+            if (SUCCEEDED(infoQueue->GetMessage(i, nullptr, &messageSize))) {
+                D3D12_MESSAGE* message = (D3D12_MESSAGE*)::malloc(messageSize);
+                if (SUCCEEDED(infoQueue->GetMessage(i, message, &messageSize))) {
+                    std::cout << message->pDescription << std::endl;
+                }
+                ::free(message);
+            }
+        }
+        infoQueue->ClearStoredMessages();
     }
     UnregisterClass(w.lpszClassName, w.hInstance);
     return 0;
