@@ -87,6 +87,44 @@ int main(int argc, char* argv[])
     if (!useLevel) {
         throw std::runtime_error("failed D3D12CreateDevice()");
     }
+    // CommandAllocator
+    ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+    if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator)))) {
+        throw std::runtime_error("failed CreateCommandAllocator()");
+    }
+    // CommandList
+    ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+    if (FAILED(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)))) {
+        throw std::runtime_error("failed CreateCommandList()");
+    }
+    // CommandQueue
+    ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+    D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
+    commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    commandQueueDesc.NodeMask = 0;
+    commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+    commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    if (FAILED(device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue)))) {
+        throw std::runtime_error("failed CreateCommandQueue()");
+    }
+    // Swapchain
+    ComPtr<IDXGISwapChain1> swapchain = nullptr;
+    DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
+    swapchainDesc.Width = 800;
+    swapchainDesc.Height = 600;
+    swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapchainDesc.Stereo = false;
+    swapchainDesc.SampleDesc.Count = 1;
+    swapchainDesc.SampleDesc.Quality = 0;
+    swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;
+    swapchainDesc.BufferCount = 2;
+    swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
+    swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+    swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapchain))) {
+        throw std::runtime_error("failed CreateSwapChainForHwnd()");
+    }
 
     MSG msg = {};
     while (true) {
