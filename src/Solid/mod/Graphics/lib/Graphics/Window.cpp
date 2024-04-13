@@ -12,7 +12,7 @@ static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
-
+// public
 Window::~Window()
 {
 }

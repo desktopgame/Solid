@@ -6,6 +6,7 @@
 namespace Lib::Graphics {
 std::mutex Engine::s_mutex;
 std::shared_ptr<Engine> Engine::s_instance = nullptr;
+// public
 Engine::~Engine()
 {
     shutdown();

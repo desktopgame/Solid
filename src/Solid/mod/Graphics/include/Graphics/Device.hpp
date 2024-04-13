@@ -9,6 +9,8 @@ class Device {
 public:
     ~Device();
 
+    void flushLogEntries();
+
 private:
     Device();
     static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);

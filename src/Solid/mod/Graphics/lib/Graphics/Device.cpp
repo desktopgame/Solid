@@ -10,18 +10,40 @@
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
-Device::~Device()
-{
-}
 // Impl
 class Device::Impl {
 public:
     explicit Impl() = default;
     HWND hwnd;
     ComPtr<ID3D12Device> device;
+    ComPtr<ID3D12InfoQueue> infoQueue;
 
 private:
 };
+// public
+Device::~Device()
+{
+}
+void Device::flushLogEntries()
+{
+    // Show messages
+    ComPtr<ID3D12InfoQueue> infoQueue = m_impl->infoQueue;
+    uint64_t messageCount = infoQueue->GetNumStoredMessages();
+    for (uint64_t i = 0; i < messageCount; i++) {
+        size_t messageSize = 0;
+        if (SUCCEEDED(infoQueue->GetMessage(i, nullptr, &messageSize))) {
+            D3D12_MESSAGE* message = (D3D12_MESSAGE*)::malloc(messageSize);
+            if (SUCCEEDED(infoQueue->GetMessage(i, message, &messageSize))) {
+                bool isInfo = message->Severity != D3D12_MESSAGE_SEVERITY_INFO && message->Severity != D3D12_MESSAGE_SEVERITY_MESSAGE;
+                if (!isInfo) {
+                    std::cout << message->pDescription << std::endl;
+                }
+            }
+            ::free(message);
+        }
+    }
+    infoQueue->ClearStoredMessages();
+}
 // private
 Device::Device()
     : m_impl(std::make_shared<Impl>())
@@ -32,6 +54,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
 {
     std::any hwnd = window->getHandle();
     auto device = std::shared_ptr<Device>(new Device());
+    device->m_impl->hwnd = std::any_cast<HWND>(device);
     // Debug Layer
     ComPtr<ID3D12Debug> debugController = nullptr;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
@@ -73,13 +96,13 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     if (!useLevel) {
         throw std::runtime_error("failed D3D12CreateDevice()");
     }
-    device->m_impl->hwnd = std::any_cast<HWND>(device);
     device->m_impl->device = nativeDevice;
     // InfoQueue
     ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
     if (FAILED(nativeDevice->QueryInterface(__uuidof(ID3D12InfoQueue), &infoQueue))) {
         throw std::runtime_error("failed ID3D12InfoQueue()");
     }
+    device->m_impl->infoQueue = infoQueue;
     // CommandAllocator
     ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
     if (FAILED(nativeDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator)))) {
