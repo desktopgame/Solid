@@ -53,4 +53,5 @@ endfunction()
 #
 # Sub directories
 #
+set(CMAKE_OPTIMIZE_DEPENDENCIES ON)
 add_subdirectory(./Solid)
