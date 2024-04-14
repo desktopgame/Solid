@@ -115,7 +115,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
 {
     std::any hwnd = window->getHandle();
     auto device = std::shared_ptr<Device>(new Device());
-    device->m_impl->hwnd = std::any_cast<HWND>(device);
+    device->m_impl->hwnd = std::any_cast<HWND>(hwnd);
     // Debug Layer
     ComPtr<ID3D12Debug> debugController = nullptr;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
