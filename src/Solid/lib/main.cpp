@@ -8,14 +8,11 @@ int main(int argc, char* argv[])
     auto device = engine->getDevice();
     auto window = engine->getWindow();
     window->show();
-    device->notify();
     while (true) {
         if (window->translateMessage()) {
             break;
         }
         device->render();
-        // Wait events
-        device->waitEvents();
         // Show messages
         device->flushLogEntries();
     }

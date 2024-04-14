@@ -82,6 +82,15 @@ void Device::render()
     ID3D12CommandList* cmdLists[] = { m_impl->commandList.Get() };
     m_impl->commandQueue->ExecuteCommandLists(1, cmdLists);
 
+    // Wait events
+    m_impl->commandQueue->Signal(m_impl->fence.Get(), ++m_fenceVal);
+    if (m_impl->fence->GetCompletedValue() != m_fenceVal) {
+        HANDLE evt = CreateEvent(nullptr, false, false, nullptr);
+        m_impl->fence->SetEventOnCompletion(m_fenceVal, evt);
+        WaitForSingleObject(evt, INFINITE);
+        CloseHandle(evt);
+    }
+
     m_impl->commandAllocator->Reset();
     m_impl->commandList->Reset(m_impl->commandAllocator.Get(), nullptr);
 
@@ -90,20 +99,7 @@ void Device::render()
     m_impl->commandList->ResourceBarrier(1, &barrier);
     m_impl->swapchain->Present(1, 0);
 }
-void Device::notify()
-{
-    m_impl->commandQueue->Signal(m_impl->fence.Get(), ++m_fenceVal);
-}
 
-void Device::waitEvents()
-{
-    if (m_impl->fence->GetCompletedValue() != m_fenceVal) {
-        HANDLE evt = CreateEvent(nullptr, false, false, nullptr);
-        m_impl->fence->SetEventOnCompletion(m_fenceVal, evt);
-        WaitForSingleObject(evt, INFINITE);
-        CloseHandle(evt);
-    }
-}
 // private
 Device::Device()
     : m_fenceVal()

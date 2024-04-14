@@ -12,9 +12,6 @@ public:
     void flushLogEntries();
     void render();
 
-    void notify();
-    void waitEvents();
-
 private:
     Device();
     static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
