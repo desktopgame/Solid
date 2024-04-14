@@ -21,8 +21,8 @@ target_include_directories(
     Solid
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/mod/Math/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/mod/Graphics/include"
+    "${MODS}/Math/include"
+    "${MODS}/Graphics/include"
 )
 target_link_libraries(
     Solid
