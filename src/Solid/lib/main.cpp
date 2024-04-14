@@ -1,6 +1,4 @@
-#include <Graphics/Device.hpp>
-#include <Graphics/Engine.hpp>
-#include <Graphics/Window.hpp>
+#include <Graphics.hpp>
 
 int main(int argc, char* argv[])
 {

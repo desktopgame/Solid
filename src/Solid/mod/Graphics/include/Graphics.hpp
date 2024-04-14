@@ -1,5 +1,5 @@
 #pragma once
-
-namespace Lib::Graphics {
-class Device;
-}
+#include <Graphics/Device.hpp>
+#include <Graphics/Engine.hpp>
+#include <Graphics/Surface.hpp>
+#include <Graphics/Window.hpp>
