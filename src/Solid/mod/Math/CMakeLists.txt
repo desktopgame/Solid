@@ -19,3 +19,6 @@ target_include_directories(
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
+
+enable_testing()
+mod_test(Math)
