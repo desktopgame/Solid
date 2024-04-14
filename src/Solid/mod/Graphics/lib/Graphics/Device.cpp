@@ -20,8 +20,6 @@ public:
     ComPtr<IDXGIFactory6> dxgiFactory;
     ComPtr<ID3D12Device> device;
     ComPtr<ID3D12InfoQueue> infoQueue;
-    ComPtr<ID3D12CommandAllocator> commandAllocator;
-    ComPtr<ID3D12GraphicsCommandList> commandList;
 
 private:
 };
