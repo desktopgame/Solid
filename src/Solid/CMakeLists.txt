@@ -14,7 +14,7 @@ set(MODS "${CMAKE_CURRENT_SOURCE_DIR}/mod")
 function(mod_test target)
     add_subdirectory("${MODS}/${target}/test")
     add_test("${target}-Test" "${CMAKE_CURRENT_BINARY_DIR}/test/Lib-${target}-Test.exe")
-    add_custom_target("${target}-Test" COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test/Lib-${target}-Test.exe")
+    add_custom_target("${target}-Test" COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test/Lib-${target}-Test.exe")
 endfunction()
 #
 # Submodules
