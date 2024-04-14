@@ -11,6 +11,10 @@
 			"path": "src/Solid/mod/Graphics",
 			"name": "Graphics"
 		},
+		{
+			"path": "src/Solid/mod/Math",
+			"name": "Math"
+		},
 	],
 	"settings": {
 		"files.associations": {
