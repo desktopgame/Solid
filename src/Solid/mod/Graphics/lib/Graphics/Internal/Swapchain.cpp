@@ -126,7 +126,7 @@ std::shared_ptr<Swapchain> Swapchain::create(
     if (FAILED(dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)nativeSwapchain.ReleaseAndGetAddressOf()))) {
         throw std::runtime_error("failed CreateSwapChainForHwnd()");
     }
-    // surface->m_impl->swapchain = nativeSwapchain;
+    swapchain->m_impl->swapchain = nativeSwapchain;
     // DescriptorHeap
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
     heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
