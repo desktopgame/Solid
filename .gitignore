@@ -67,6 +67,10 @@ _deps
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Ninja
+.ninja_deps
+.ninja_log
+build.ninja
 
 # tests
 tests/SpriteDraw/SpriteDraw
