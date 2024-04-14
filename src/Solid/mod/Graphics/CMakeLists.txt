@@ -22,6 +22,7 @@ target_include_directories(
     Lib-Graphics
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${MODS}/Math/include"
 )
 target_link_libraries(
     Lib-Graphics
@@ -29,4 +30,5 @@ target_link_libraries(
     "d3d12.lib"
     "dxgi.lib"
     "d3dcompiler.lib"
+    Lib-Math
 )

@@ -4,7 +4,9 @@ project(
     VERSION 0.0.1
     LANGUAGES CXX
 )
-add_subdirectory(./mod)
+add_subdirectory(./mod/Math)
+add_subdirectory(./mod/Graphics)
+set(MODS "${CMAKE_CURRENT_SOURCE_DIR}/mod")
 #
 # Build Options
 #
@@ -19,10 +21,12 @@ target_include_directories(
     Solid
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mod/Math/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/mod/Graphics/include"
 )
 target_link_libraries(
     Solid
     PRIVATE
     Lib-Graphics
+    Lib-Math
 )
