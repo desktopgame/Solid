@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "include"
+                "include",
+                "../Math/include"
             ],
             "defines": [
                 "_DEBUG",
