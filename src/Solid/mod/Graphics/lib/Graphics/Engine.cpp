@@ -52,11 +52,13 @@ void Engine::shutdown()
 
 std::shared_ptr<Window> Engine::getWindow() const
 {
+    require();
     return m_window;
 }
 
 std::shared_ptr<Device> Engine::getDevice() const
 {
+    require();
     return m_device;
 }
 
