@@ -3,8 +3,12 @@
 #include <any>
 #include <memory>
 
+namespace Lib::Graphics::Internal {
+class Swapchain;
+}
 namespace Lib::Graphics {
 class Window;
+class Surface;
 class Device {
 public:
     ~Device();
@@ -12,12 +16,16 @@ public:
     void flushLogEntries();
     void render();
 
+    std::any getHandle() const;
+
 private:
     Device();
     static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
     void destroy();
 
-    uint64_t m_fenceVal;
+    std::any m_handle;
+    std::shared_ptr<Internal::Swapchain> m_swapchain;
+    std::shared_ptr<Surface> m_surface;
 
     class Impl;
     std::shared_ptr<Impl> m_impl;

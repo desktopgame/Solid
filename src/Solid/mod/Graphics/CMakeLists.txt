@@ -13,6 +13,8 @@ add_library(
     ./lib/Graphics/Device.cpp
     ./lib/Graphics/Engine.cpp
     ./lib/Graphics/Window.cpp
+    ./lib/Graphics/Surface.cpp
+    ./lib/Graphics/Internal/Swapchain.cpp
 )
 common_target_compile_params(Lib-Graphics)
 common_target_link_params(Lib-Graphics)
