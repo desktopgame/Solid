@@ -30,6 +30,7 @@ Device::~Device()
 
 void Device::flushLogEntries()
 {
+#if _DEBUG
     // Show messages
     ComPtr<ID3D12InfoQueue> infoQueue = m_impl->infoQueue;
     uint64_t messageCount = infoQueue->GetNumStoredMessages();
@@ -47,6 +48,7 @@ void Device::flushLogEntries()
         }
     }
     infoQueue->ClearStoredMessages();
+#endif
 }
 
 void Device::render()
@@ -74,10 +76,12 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     auto device = std::shared_ptr<Device>(new Device());
     device->m_impl->hwnd = std::any_cast<HWND>(hwnd);
     // Debug Layer
+#if _DEBUG
     ComPtr<ID3D12Debug> debugController = nullptr;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
         debugController->EnableDebugLayer();
     }
+#endif
     // Factory
     ComPtr<IDXGIFactory6> dxgiFactory = nullptr;
     UINT flags = DXGI_CREATE_FACTORY_DEBUG;
@@ -118,11 +122,13 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     device->m_impl->device = nativeDevice;
     device->m_handle = nativeDevice;
     // InfoQueue
+#if _DEBUG
     ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
     if (FAILED(nativeDevice->QueryInterface(__uuidof(ID3D12InfoQueue), &infoQueue))) {
         throw std::runtime_error("failed ID3D12InfoQueue()");
     }
     device->m_impl->infoQueue = infoQueue;
+#endif
     // Swapchain
     device->m_swapchain = Internal::Swapchain::create(window, device->m_impl->dxgiFactory, nativeDevice);
     // Surface
