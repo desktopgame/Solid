@@ -10,6 +10,7 @@ public:
     static float sin(float v);
     static float cos(float v);
     static float tan(float v);
+    static float equals(float a, float b);
 
 private:
     Mathf() = delete;

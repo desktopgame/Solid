@@ -1,5 +1,6 @@
 #include <Math/Mathf.hpp>
 #include <cmath>
+#include <limits>
 
 namespace Lib::Math {
 
@@ -36,5 +37,10 @@ float Mathf::cos(float v)
 float Mathf::tan(float v)
 {
     return ::tanf(v);
+}
+float Mathf::equals(float a, float b)
+{
+    float diff = std::abs(a - b);
+    return diff <= std::numeric_limits<float>::epsilon();
 }
 }
