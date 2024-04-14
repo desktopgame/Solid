@@ -29,17 +29,17 @@ Surface::~Surface()
 
 void Surface::render()
 {
-    // Main loop
     m_impl->commandAllocator->Reset();
 
-    m_swapchain->begin(m_impl->commandList);
-
+    m_swapchain->target(m_impl->commandList);
     m_impl->commandList->Close();
-
-    m_swapchain->end(m_impl->commandList);
+    m_swapchain->execute(m_impl->commandList);
 
     m_impl->commandAllocator->Reset();
     m_impl->commandList->Reset(m_impl->commandAllocator.Get(), nullptr);
+
+    m_swapchain->present(m_impl->commandList);
+    m_swapchain->waitSync();
 }
 // private
 Surface::Surface()

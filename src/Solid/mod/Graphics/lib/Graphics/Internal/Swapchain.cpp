@@ -26,7 +26,7 @@ Swapchain::~Swapchain()
 {
 }
 
-void Swapchain::begin(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void Swapchain::target(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     uint32_t backBufferIndex
         = m_impl->swapchain->GetCurrentBackBufferIndex();
@@ -50,11 +50,14 @@ void Swapchain::begin(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 }
 
-void Swapchain::end(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void Swapchain::execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     ID3D12CommandList* cmdLists[] = { commandList.Get() };
     m_impl->commandQueue->ExecuteCommandLists(1, cmdLists);
+}
 
+void Swapchain::present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+{
     uint32_t backBufferIndex
         = m_impl->swapchain->GetCurrentBackBufferIndex();
     // Barrier
@@ -67,7 +70,10 @@ void Swapchain::end(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& com
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
     commandList->ResourceBarrier(1, &barrier);
     m_impl->swapchain->Present(1, 0);
+}
 
+void Swapchain::waitSync()
+{
     // Wait events
     m_impl->commandQueue->Signal(m_impl->fence.Get(), ++m_fenceVal);
     if (m_impl->fence->GetCompletedValue() != m_fenceVal) {

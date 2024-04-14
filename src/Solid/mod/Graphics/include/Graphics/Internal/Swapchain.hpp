@@ -16,8 +16,10 @@ class Swapchain {
 public:
     ~Swapchain();
 
-    void begin(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    void end(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void target(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void waitSync();
 
 private:
     Swapchain();
