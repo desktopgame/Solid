@@ -78,7 +78,9 @@
 			"xmemory": "cpp",
 			"xtr1common": "cpp",
 			"algorithm": "cpp",
-			"any": "cpp"
+			"any": "cpp",
+			"array": "cpp",
+			"sstream": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,
