@@ -38,6 +38,10 @@ float Mathf::tan(float v)
 {
     return ::tanf(v);
 }
+float Mathf::sqrt(float v)
+{
+    return ::sqrtf(v);
+}
 float Mathf::equals(float a, float b)
 {
     float diff = std::abs(a - b);

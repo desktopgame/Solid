@@ -88,9 +88,19 @@ public:
                 T diff = av - bv;
                 sum += diff * diff;
             }
-            return static_cast<T>(Math::sqrt(sum));
+            return static_cast<T>(Mathf::sqrt(sum));
         }
     };
+
+    T& at(int index)
+    {
+        return components.at(index);
+    }
+
+    T at(int index) const
+    {
+        return components.at(index);
+    }
 
     T& x()
     {
@@ -276,6 +286,54 @@ public:
         return v;
     }
 
+    VectorT<T, N>& operator+=(const VectorT<T, N>& a)
+    {
+        for (int i = 0; i < N; i++) {
+            components[i] = components[i] + a[i];
+        }
+        return *this;
+    }
+
+    VectorT<T, N>& operator-=(const VectorT<T, N>& a)
+    {
+        for (int i = 0; i < N; i++) {
+            components[i] = components[i] - a[i];
+        }
+        return *this;
+    }
+
+    VectorT<T, N>& operator*=(const VectorT<T, N>& a)
+    {
+        for (int i = 0; i < N; i++) {
+            components[i] = components[i] * a[i];
+        }
+        return *this;
+    }
+
+    VectorT<T, N>& operator/=(const VectorT<T, N>& a)
+    {
+        for (int i = 0; i < N; i++) {
+            components[i] = components[i] / a[i];
+        }
+        return *this;
+    }
+
+    VectorT<T, N>& operator*=(const T scale)
+    {
+        for (int i = 0; i < N; i++) {
+            components[i] = components[i] * scale;
+        }
+        return *this;
+    }
+
+    VectorT<T, N>& operator/=(const T scale)
+    {
+        for (int i = 0; i < N; i++) {
+            components[i] = components[i] / scale;
+        }
+        return *this;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const VectorT<T, N>& a)
     {
         os << a.str();
@@ -349,7 +407,7 @@ template <typename T, int N>
 bool operator==(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     for (int i = 0; i < N; i++) {
-        if (!Math::equals(a.components[i], b.components[i])) {
+        if (!Mathf::equals(a.components[i], b.components[i])) {
             return false;
         }
     }
