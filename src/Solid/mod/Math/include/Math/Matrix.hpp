@@ -290,15 +290,13 @@ struct MatrixT {
     static MatrixT<T> perspective(T fovy, T aspectRatio, T zNear, T zFar)
     {
         MatrixT<T> ret;
-        T tanHalfFovy = static_cast<T>(std::tan(fovy / static_cast<T>(2)));
+        T tanHalfFovy = static_cast<T>(Mathf::tan(fovy / static_cast<T>(2)));
         T one = static_cast<T>(1);
-#if MATH_MATRIX_HAND == MATH_MATRIX_RH
         ret.at(0, 0) = one / (aspectRatio * tanHalfFovy);
         ret.at(1, 1) = one / (tanHalfFovy);
-        ret.at(2, 2) = -(zFar + zNear) / (zFar - zNear);
+        ret.at(2, 2) = (zFar + zNear) / (zFar - zNear);
         ret.at(2, 3) = -(one);
         ret.at(3, 2) = -(static_cast<T>(2) * zFar * zNear) / (zFar - zNear);
-#endif
         return ret;
     }
 
