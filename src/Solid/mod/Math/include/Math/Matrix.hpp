@@ -271,18 +271,19 @@ struct MatrixT {
         return ret;
     }
 
-    static MatrixT<T> ortho(T left, T top, T right, T bottom, T zNear, T zFar)
+    static MatrixT<T> ortho(T width, T height, T zNear, T zFar)
     {
         MatrixT<T> ret;
         T two = static_cast<T>(2);
-#if MATH_MATRIX_HAND == MATH_MATRIX_RH
-        ret.at(0, 0) = two / (right - left);
-        ret.at(1, 1) = two / (top - bottom);
-        ret.at(2, 2) = -two / (zFar - zNear);
-        ret.at(3, 0) = -(right + left) / (right - left);
-        ret.at(3, 1) = -(top + bottom) / (top - bottom);
-        ret.at(3, 2) = -(zFar + zNear) / (zFar - zNear);
-#endif
+        T one = static_cast<T>(1);
+        // x, y -> 0~2 -> -1~+1
+        // z -> 0~2 -> -1~+1
+        ret.at(0, 0) = two / width;
+        ret.at(1, 1) = two / height;
+        ret.at(2, 2) = two / (zFar - zNear);
+        ret.at(0, 3) = -one;
+        ret.at(1, 3) = -one;
+        ret.at(2, 3) = -(zFar + zNear) / (zFar - zNear);
         return ret;
     }
 
