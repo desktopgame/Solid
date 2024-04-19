@@ -10,22 +10,22 @@
 namespace Lib::Math {
 template <typename T>
 struct MatrixT {
-    inline static constexpr int RowNum = 4;
-    inline static constexpr int ColumnNum = 4;
+    inline static constexpr int32_t RowNum = 4;
+    inline static constexpr int32_t ColumnNum = 4;
 
     explicit MatrixT()
         : components()
     {
-        for (int i = 0; i < RowNum; i++) {
+        for (int32_t i = 0; i < RowNum; i++) {
             components[(i * ColumnNum) + i] = 1;
         }
     }
 
     explicit MatrixT(const std::array<VectorT<T, ColumnNum>, RowNum>& table)
     {
-        for (int i = 0; i < RowNum; i++) {
+        for (int32_t i = 0; i < RowNum; i++) {
             const VectorT<T, ColumnNum>& line = table.at(i);
-            for (int j = 0; j < ColumnNum; j++) {
+            for (int32_t j = 0; j < ColumnNum; j++) {
                 this->at(i, j) = line.components.at(j);
             }
         }
@@ -33,7 +33,7 @@ struct MatrixT {
 
     // mutable
 
-    std::array<std::reference_wrapper<T>, ColumnNum> row(int index)
+    std::array<std::reference_wrapper<T>, ColumnNum> row(int32_t index)
     {
         T& e0 = components[(index * ColumnNum) + 0];
         T& e1 = components[(index * ColumnNum) + 1];
@@ -49,7 +49,7 @@ struct MatrixT {
         return a;
     }
 
-    std::array<std::reference_wrapper<T>, RowNum> column(int index)
+    std::array<std::reference_wrapper<T>, RowNum> column(int32_t index)
     {
         T& e0 = components[index];
         T& e1 = components[(1 * ColumnNum) + index + 0];
@@ -65,14 +65,14 @@ struct MatrixT {
         return a;
     }
 
-    T& at(int row, int col)
+    T& at(int32_t row, int32_t col)
     {
         return components[(row * ColumnNum) + col];
     }
 
     // immutable
 
-    std::array<std::reference_wrapper<const T>, ColumnNum> row(int index) const
+    std::array<std::reference_wrapper<const T>, ColumnNum> row(int32_t index) const
     {
         const T& e0 = components[(index * ColumnNum) + 0];
         const T& e1 = components[(index * ColumnNum) + 1];
@@ -88,7 +88,7 @@ struct MatrixT {
         return a;
     }
 
-    std::array<std::reference_wrapper<const T>, RowNum> column(int index) const
+    std::array<std::reference_wrapper<const T>, RowNum> column(int32_t index) const
     {
         const T& e0 = components[index];
         const T& e1 = components[(1 * ColumnNum) + index + 0];
@@ -104,7 +104,7 @@ struct MatrixT {
         return a;
     }
 
-    T at(int row, int col) const
+    T at(int32_t row, int32_t col) const
     {
         return components[(row * ColumnNum) + col];
     }
@@ -113,11 +113,11 @@ struct MatrixT {
 
     const std::array<std::reference_wrapper<const T>, ColumnNum> operator[](std::size_t i) const
     {
-        return row(static_cast<int>(i));
+        return row(static_cast<int32_t>(i));
     }
     std::array<std::reference_wrapper<T>, ColumnNum> operator[](std::size_t i)
     {
-        return row(static_cast<int>(i));
+        return row(static_cast<int32_t>(i));
     }
 
     // utility
@@ -125,12 +125,12 @@ struct MatrixT {
     static MatrixT<T> multiply(const MatrixT<T>& a, const MatrixT<T>& b)
     {
         MatrixT<T> m;
-        for (int i = 0; i < RowNum; i++) {
-            for (int j = 0; j < ColumnNum; j++) {
+        for (int32_t i = 0; i < RowNum; i++) {
+            for (int32_t j = 0; j < ColumnNum; j++) {
                 std::array<std::reference_wrapper<const T>, ColumnNum> row = a.row(i);
                 std::array<std::reference_wrapper<const T>, RowNum> col = b.column(j);
                 T sum = static_cast<T>(0);
-                for (int k = 0; k < RowNum; k++) {
+                for (int32_t k = 0; k < RowNum; k++) {
                     sum += row[k] * col[k];
                 }
                 m.at(i, j) = sum;
@@ -341,17 +341,17 @@ struct MatrixT {
     {
         std::stringstream ss;
         ss << std::endl;
-        for (int i = 0; i < RowNum; i++) {
-            int start = i * ColumnNum;
-            int end = start + ColumnNum;
+        for (int32_t i = 0; i < RowNum; i++) {
+            int32_t start = i * ColumnNum;
+            int32_t end = start + ColumnNum;
             ss << "[";
-            for (int n = start; n < end; n++) {
+            for (int32_t n = start; n < end; n++) {
                 if (n == start) {
                     ss << " ";
                 }
                 char block[16] = { 0 };
                 float num = static_cast<float>(components[n]);
-                ::sprintf(block, "%.2f", num);
+                ::sprint32_tf(block, "%.2f", num);
                 ss << block;
                 if (n != end - 1) {
                     ss << ", ";
@@ -385,7 +385,7 @@ struct MatrixT {
 template <typename T>
 bool operator==(const MatrixT<T>& a, const MatrixT<T>& b)
 {
-    for (int i = 0; i < MatrixT<T>::RowNum * MatrixT<T>::ColumnNum; i++) {
+    for (int32_t i = 0; i < MatrixT<T>::RowNum * MatrixT<T>::ColumnNum; i++) {
         if (!Mathf::equals(a.components[i], b.components[i])) {
             return false;
         }

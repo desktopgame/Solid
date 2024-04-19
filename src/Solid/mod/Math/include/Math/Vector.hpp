@@ -7,7 +7,7 @@
 #include <string>
 
 namespace Lib::Math {
-template <typename T, int N>
+template <typename T, int32_t N>
 struct VectorT {
 public:
     explicit VectorT()
@@ -35,14 +35,14 @@ public:
 
     // DotHelper
 
-    template <int NumV>
+    template <int32_t NumV>
     struct DotHelper {
         using Type = T;
 
         static Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             Type sum = static_cast<Type>(0);
-            for (int i = 0; i < N; i++) {
+            for (int32_t i = 0; i < N; i++) {
                 sum += (a[i] * b[i]);
             }
             return sum;
@@ -51,7 +51,7 @@ public:
 
     // CrossHelper
 
-    template <int NumV>
+    template <int32_t NumV>
     struct CrossHelper {
         using Type = void*&;
 
@@ -63,7 +63,7 @@ public:
 
     template <>
     struct CrossHelper<3> {
-        static inline constexpr int NumV = 3;
+        static inline constexpr int32_t NumV = 3;
         using Type = VectorT<T, NumV>;
 
         static Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
@@ -77,12 +77,12 @@ public:
 
     // DistanceHelper
 
-    template <int NumV>
+    template <int32_t NumV>
     struct DistanceHelper {
         static T compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             T sum = static_cast<T>(0);
-            for (int i = 0; i < N; i++) {
+            for (int32_t i = 0; i < N; i++) {
                 T av = a.components.at(i);
                 T bv = b.components.at(i);
                 T diff = av - bv;
@@ -92,12 +92,12 @@ public:
         }
     };
 
-    T& at(int index)
+    T& at(int32_t index)
     {
         return components.at(index);
     }
 
-    T at(int index) const
+    T at(int32_t index) const
     {
         return components.at(index);
     }
@@ -205,7 +205,7 @@ public:
     {
         std::stringstream ss;
         ss << '(';
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             ss << components.at(i);
             if (i != N - 1) {
                 ss << ',';
@@ -233,7 +233,7 @@ public:
     T length() const
     {
         T p = static_cast<T>(0);
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             p += static_cast<T>(std::pow(components[i], 2));
         }
         return static_cast<T>(std::sqrt(p));
@@ -242,7 +242,7 @@ public:
     void normalize()
     {
         T len = length();
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] / len;
         }
     }
@@ -268,11 +268,11 @@ public:
         return DistanceHelper<N>::compute(a, b);
     }
 
-    operator VectorT<int, N>() const
+    operator VectorT<int32_t, N>() const
     {
-        VectorT<int, N> v;
-        for (int i = 0; i < N; i++) {
-            v.components[i] = static_cast<int>(components[i]);
+        VectorT<int32_t, N> v;
+        for (int32_t i = 0; i < N; i++) {
+            v.components[i] = static_cast<int32_t>(components[i]);
         }
         return v;
     }
@@ -280,7 +280,7 @@ public:
     operator VectorT<float, N>() const
     {
         VectorT<float, N> v;
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             v.components[i] = static_cast<float>(components[i]);
         }
         return v;
@@ -288,7 +288,7 @@ public:
 
     VectorT<T, N>& operator+=(const VectorT<T, N>& a)
     {
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] + a[i];
         }
         return *this;
@@ -296,7 +296,7 @@ public:
 
     VectorT<T, N>& operator-=(const VectorT<T, N>& a)
     {
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] - a[i];
         }
         return *this;
@@ -304,7 +304,7 @@ public:
 
     VectorT<T, N>& operator*=(const VectorT<T, N>& a)
     {
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] * a[i];
         }
         return *this;
@@ -312,7 +312,7 @@ public:
 
     VectorT<T, N>& operator/=(const VectorT<T, N>& a)
     {
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] / a[i];
         }
         return *this;
@@ -320,7 +320,7 @@ public:
 
     VectorT<T, N>& operator*=(const T scale)
     {
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] * scale;
         }
         return *this;
@@ -328,7 +328,7 @@ public:
 
     VectorT<T, N>& operator/=(const T scale)
     {
-        for (int i = 0; i < N; i++) {
+        for (int32_t i = 0; i < N; i++) {
             components[i] = components[i] / scale;
         }
         return *this;
@@ -343,70 +343,70 @@ public:
     std::array<T, N> components;
 };
 
-template <typename T, int N>
+template <typename T, int32_t N>
 VectorT<T, N> operator+(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         ret[i] = a[i] + b[i];
     }
     return ret;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 VectorT<T, N> operator-(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         ret[i] = a[i] - b[i];
     }
     return ret;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 VectorT<T, N> operator*(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         ret[i] = a[i] * b[i];
     }
     return ret;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 VectorT<T, N> operator/(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         ret[i] = a[i] / b[i];
     }
     return ret;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 VectorT<T, N> operator*(const VectorT<T, N>& a, T scale)
 {
     VectorT<T, N> ret;
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         ret[i] = a[i] * scale;
     }
     return ret;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 VectorT<T, N> operator/(const VectorT<T, N>& a, T scale)
 {
     VectorT<T, N> ret;
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         ret[i] = a[i] / scale;
     }
     return ret;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 bool operator==(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
-    for (int i = 0; i < N; i++) {
+    for (int32_t i = 0; i < N; i++) {
         if (!Mathf::equals(a.components[i], b.components[i])) {
             return false;
         }
@@ -414,7 +414,7 @@ bool operator==(const VectorT<T, N>& a, const VectorT<T, N>& b)
     return true;
 }
 
-template <typename T, int N>
+template <typename T, int32_t N>
 bool operator!=(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     return !(a == b);
@@ -453,8 +453,8 @@ VectorT<T, 4> makeVector4(T x, T y, T z, T w)
 using Vector2 = VectorT<float, 2>;
 using Vector3 = VectorT<float, 3>;
 using Vector4 = VectorT<float, 4>;
-using IntVector2 = VectorT<int, 2>;
-using IntVector3 = VectorT<int, 3>;
-using IntVector4 = VectorT<int, 4>;
+using IntVector2 = VectorT<int32_t, 2>;
+using IntVector3 = VectorT<int32_t, 3>;
+using IntVector4 = VectorT<int32_t, 4>;
 using Color = Vector4;
 }
