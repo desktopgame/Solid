@@ -306,20 +306,18 @@ struct MatrixT {
         VectorT<T, 3> s = VectorT<T, 3>::normalized(VectorT<T, 3>::cross(f, up));
         VectorT<T, 3> u = VectorT<T, 3>::cross(s, f);
         MatrixT<T> ret;
-#if MATH_MATRIX_HAND == MATH_MATRIX_RH
         ret.at(0, 0) = s.x();
         ret.at(1, 0) = s.y();
         ret.at(2, 0) = s.z();
         ret.at(0, 1) = u.x();
         ret.at(1, 1) = u.y();
         ret.at(2, 1) = u.z();
-        ret.at(0, 2) = -f.x();
-        ret.at(1, 2) = -f.y();
-        ret.at(2, 2) = -f.z();
-        ret.at(3, 0) = -VectorT<T, 3>::dot(s, eye);
-        ret.at(3, 1) = -VectorT<T, 3>::dot(u, eye);
-        ret.at(3, 2) = VectorT<T, 3>::dot(f, eye);
-#endif
+        ret.at(0, 2) = f.x();
+        ret.at(1, 2) = f.y();
+        ret.at(2, 2) = f.z();
+        ret.at(0, 3) = -VectorT<T, 3>::dot(s, eye);
+        ret.at(1, 3) = -VectorT<T, 3>::dot(u, eye);
+        ret.at(2, 3) = -VectorT<T, 3>::dot(f, eye);
         return ret;
     }
 
