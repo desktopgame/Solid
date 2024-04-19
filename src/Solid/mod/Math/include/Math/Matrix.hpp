@@ -7,15 +7,6 @@
 #include <stdexcept>
 #include <string>
 
-#define MATH_MATRIX_LH (0)
-#define MATH_MATRIX_RH (1)
-
-#if MATH_MATRIX_MODE == MATH_MATRIX_COLUMN_MAJOR
-#define MATH_MATRIX_HAND MATH_MATRIX_RH
-#else
-#define MATH_MATRIX_HAND MATH_MATRIX_LH
-#endif
-
 namespace Lib::Math {
 template <typename T>
 struct MatrixT {
