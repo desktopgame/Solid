@@ -21,7 +21,8 @@ find_library(
     NAMES
     DirectXTex
     PATHS
-    ${VCPKG_PACKAGES_DIR}/directxtex_x64-windows
+    $<$<CONFIG:Debug>: ${VCPKG_PACKAGES_DIR}/directxtex_x64-windows/debug>
+    $<$<CONFIG:Release>: ${VCPKG_PACKAGES_DIR}/directxtex_x64-windows>
     PATH_SUFFIXES
     lib
 )
@@ -34,6 +35,7 @@ add_library(
     ./lib/Graphics/Surface.cpp
     ./lib/Graphics/Shader.cpp
     ./lib/Graphics/Buffer.cpp
+    ./lib/Graphics/Texture.cpp
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/RenderParameter.cpp
     ./lib/Graphics/Internal/Swapchain.cpp

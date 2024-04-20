@@ -7,7 +7,12 @@ project(
 #
 # Common Variables
 #
-set(STD_DEBUG_DEFINE STD_DEBUG _DEBUG _LIBCPP_HAS_NO_ASAN) # https://stackoverflow.com/questions/38723374/why-does-xcode-define-libcpp-has-no-asan-when-creating-an-address-sanitized-bui
+set(STD_DEBUG_DEFINE
+    STD_DEBUG _DEBUG
+    _LIBCPP_HAS_NO_ASAN # https://stackoverflow.com/questions/38723374/why-does-xcode-define-libcpp-has-no-asan-when-creating-an-address-sanitized-bui
+    $<$<CONFIG:Debug>: _ITERATOR_DEBUG_LEVEL=2>
+    $<$<CONFIG:Release>: _ITERATOR_DEBUG_LEVEL=0>
+)
 set(STD_RELEASE_DEFINE STD_NDEBUG)
 set(STD_DEBUG_COMPILE
     -O0
