@@ -28,7 +28,7 @@ Swapchain::~Swapchain()
 {
 }
 
-void Swapchain::target(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     uint32_t backBufferIndex
         = m_impl->swapchain->GetCurrentBackBufferIndex();

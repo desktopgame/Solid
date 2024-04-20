@@ -11,7 +11,6 @@
 #include <vector>
 #include <wrl/client.h>
 
-
 namespace Lib::Graphics {
 
 using Microsoft::WRL::ComPtr;
@@ -40,7 +39,7 @@ void Surface::begin()
 {
     m_impl->commandAllocator->Reset();
 
-    m_swapchain->target(m_impl->commandList);
+    m_swapchain->clear(m_impl->commandList);
 
     // viewport
     D3D12_VIEWPORT viewport = {};
