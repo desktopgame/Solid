@@ -5,14 +5,15 @@
 			"name": "Root"
 		},
 		{
-			"path": "src/Solid"
+			"path": "src/App",
+			"name": "App"
 		},
 		{
-			"path": "src/Solid/mod/Graphics",
+			"path": "src/App/mod/Graphics",
 			"name": "Graphics"
 		},
 		{
-			"path": "src/Solid/mod/Math",
+			"path": "src/App/mod/Math",
 			"name": "Math"
 		},
 	],

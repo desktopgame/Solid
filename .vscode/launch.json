@@ -8,7 +8,7 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "${workspaceFolder}/build/Solid/Solid.exe",
+            "program": "${workspaceFolder}/build/App/App.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "terminal": "external",

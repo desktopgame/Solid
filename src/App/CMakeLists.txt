@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 project(
-    Solid
+    App
     VERSION 0.0.1
     LANGUAGES CXX
 )
@@ -28,20 +28,20 @@ add_subdirectory(./mod/Graphics)
 #
 set(SOURCES "lib/main.cpp")
 add_executable(
-    Solid
+    App
     ${SOURCES}
 )
-common_target_compile_params(Solid)
-common_target_link_params(Solid)
+common_target_compile_params(App)
+common_target_link_params(App)
 target_include_directories(
-    Solid
+    App
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${MODS}/Math/include"
     "${MODS}/Graphics/include"
 )
 target_link_libraries(
-    Solid
+    App
     PRIVATE
     Lib-Graphics
     Lib-Math
