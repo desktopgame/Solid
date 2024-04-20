@@ -36,6 +36,7 @@ add_library(
     ./lib/Graphics/Shader.cpp
     ./lib/Graphics/Buffer.cpp
     ./lib/Graphics/Texture.cpp
+    ./lib/Graphics/VertexData2D.cpp
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/RenderParameter.cpp
     ./lib/Graphics/Internal/Swapchain.cpp

@@ -1,6 +1,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Window.hpp>
+#include <Windows.h>
 #include <stdexcept>
 
 namespace Lib::Graphics {
@@ -34,6 +35,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
     if (m_started) {
         return nullptr;
     }
+    CoInitializeEx(0, COINIT_MULTITHREADED);
     m_started = true;
     m_window = Window::create(800, 600);
     m_device = Device::create(m_window);

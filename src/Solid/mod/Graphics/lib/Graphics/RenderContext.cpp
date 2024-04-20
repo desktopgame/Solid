@@ -3,7 +3,6 @@
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/RenderParameter.hpp>
 
-
 namespace Lib::Graphics {
 // public
 std::shared_ptr<RenderContext> RenderContext::create()
@@ -19,6 +18,14 @@ RenderContext::~RenderContext()
 void RenderContext::updateVertex(const Math::Vector2* data, int32_t len)
 {
     m_vertexBuffer->allocate(sizeof(Math::Vector2) * len);
+    m_vertexBuffer->update(data);
+    m_vertexComponent = 2;
+    m_vertexLength = len;
+}
+
+void RenderContext::updateVertex(const VertexData2D* data, int32_t len)
+{
+    m_vertexBuffer->allocate(sizeof(VertexData2D) * len);
     m_vertexBuffer->update(data);
     m_vertexComponent = 2;
     m_vertexLength = len;

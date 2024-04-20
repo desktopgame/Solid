@@ -3,12 +3,14 @@
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Internal/Swapchain.hpp>
 #include <Graphics/Surface.hpp>
+#include <Graphics/VertexData2D.hpp>
 #include <Math/Vector.hpp>
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <stdexcept>
 #include <vector>
 #include <wrl/client.h>
+
 
 namespace Lib::Graphics {
 
@@ -89,7 +91,7 @@ void Surface::draw(
     uint32_t stride = 0;
     if (vertexComponent == 2) {
         if (isUsingTexCoord) {
-            // stride = sizeof(VertexData2D);
+            stride = sizeof(VertexData2D);
         } else {
             stride = sizeof(Math::Vector2);
         }

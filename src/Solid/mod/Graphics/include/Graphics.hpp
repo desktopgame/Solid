@@ -7,4 +7,6 @@
 #include <Graphics/RenderParameter.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
+#include <Graphics/Texture.hpp>
+#include <Graphics/VertexData2D.hpp>
 #include <Graphics/Window.hpp>

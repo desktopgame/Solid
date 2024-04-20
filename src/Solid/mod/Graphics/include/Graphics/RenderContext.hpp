@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/VertexData2D.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
 #include <wrl/client.h>
@@ -13,6 +14,7 @@ public:
     ~RenderContext();
 
     void updateVertex(const Math::Vector2* data, int32_t len);
+    void updateVertex(const VertexData2D* data, int32_t len);
     void updateVertex(const Math::Vector3* data, int32_t len);
     void updateIndex(uint32_t* data, int32_t len);
 

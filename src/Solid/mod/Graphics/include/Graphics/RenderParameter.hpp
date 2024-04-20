@@ -4,6 +4,7 @@
 #include <memory>
 
 namespace Lib::Graphics {
+class Texture;
 class RenderParameter {
 public:
     RenderParameter();
@@ -11,6 +12,8 @@ public:
     void setTransform(const Math::Matrix& transform);
     Math::Matrix getTransform() const;
 
+    void setTexture(const std::shared_ptr<Texture>& texture);
+    std::shared_ptr<Texture> getTexture() const;
     bool useTexture() const;
 
     void setColor(const Math::Vector4& color);
@@ -19,6 +22,8 @@ public:
 
 private:
     Math::Matrix m_transform;
+
+    std::shared_ptr<Texture> m_texture;
 
     Math::Vector4 m_color;
     bool m_useColor;

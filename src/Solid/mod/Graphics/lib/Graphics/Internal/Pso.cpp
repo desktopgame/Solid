@@ -2,6 +2,7 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Shader.hpp>
+#include <Graphics/Texture.hpp>
 #include <Math/Matrix.hpp>
 #include <d3d12.h>
 
@@ -297,18 +298,17 @@ std::shared_ptr<Pso> Pso::create(
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Texture2D.MipLevels = 1;
-        /*
-        auto texBuff = std::static_pointer_cast<DxTexture>(m_shaderParameter->getTexture())->getResource();
+
+        auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(pso->m_renderParameter->getTexture()->getHandle());
         device->CreateShaderResourceView(texBuff.Get(), &srvDesc, basicHeapHandle);
 
-        if (m_shaderParameter->useColor()) {
+        if (pso->m_renderParameter->useColor()) {
             basicHeapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
             D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-            cbvColorDesc.BufferLocation = m_colorBuff->GetGPUVirtualAddress();
-            cbvColorDesc.SizeInBytes = m_colorBuff->GetDesc().Width;
+            cbvColorDesc.BufferLocation = pso->m_impl->colorBuff->GetGPUVirtualAddress();
+            cbvColorDesc.SizeInBytes = pso->m_impl->colorBuff->GetDesc().Width;
             device->CreateConstantBufferView(&cbvColorDesc, basicHeapHandle);
         }
-        */
     } else if (pso->m_renderParameter->useColor()) {
         basicHeapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
@@ -317,7 +317,6 @@ std::shared_ptr<Pso> Pso::create(
         device->CreateConstantBufferView(&cbvColorDesc, basicHeapHandle);
     }
 #pragma clang diagnostic pop
-    // m_texture = m_shaderParameter->getTexture();
     return pso;
 }
 Pso::~Pso()
