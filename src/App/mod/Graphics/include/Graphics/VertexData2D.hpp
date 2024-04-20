@@ -8,5 +8,6 @@ struct VertexData2D {
 
     explicit VertexData2D() = default;
     explicit VertexData2D(const Math::Vector2& position, const Math::Vector2& texCoord);
+    explicit VertexData2D(float x, float y, float u, float v);
 };
 }

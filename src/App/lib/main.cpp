@@ -46,10 +46,10 @@ int main(int argc, char* argv[])
     const float bottom = -0.5;
     auto vb = Lib::Graphics::Buffer::create();
     const std::vector<Lib::Graphics::VertexData2D> verts(
-        { Lib::Graphics::VertexData2D(Lib::Math::Vector2({ left, bottom }), Lib::Math::Vector2({ 0.0f, 1.0f })),
-            Lib::Graphics::VertexData2D(Lib::Math::Vector2({ left, top }), Lib::Math::Vector2({ 0.0f, 0.0f })),
-            Lib::Graphics::VertexData2D(Lib::Math::Vector2({ right, bottom }), Lib::Math::Vector2({ 1.0f, 1.0f })),
-            Lib::Graphics::VertexData2D(Lib::Math::Vector2({ right, top }), Lib::Math::Vector2({ 1.0f, 0.0f })) });
+        { Lib::Graphics::VertexData2D(left, bottom, 0.0f, 1.0f),
+            Lib::Graphics::VertexData2D(left, top, 0.0f, 0.0f),
+            Lib::Graphics::VertexData2D(right, bottom, 1.0f, 1.0f),
+            Lib::Graphics::VertexData2D(right, top, 1.0f, 0.0f) });
     vb->allocate(sizeof(Lib::Graphics::VertexData2D) * verts.size());
     vb->update(verts.data());
 
