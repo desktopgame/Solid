@@ -1,0 +1,3 @@
+[submodule "src/Solid/mod/vcpkg"]
+	path = src/Solid/mod/vcpkg
+	url = https://github.com/microsoft/vcpkg
