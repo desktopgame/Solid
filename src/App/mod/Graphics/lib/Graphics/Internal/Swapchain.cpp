@@ -20,6 +20,8 @@ public:
     ComPtr<ID3D12DescriptorHeap> rtvHeaps;
     std::vector<ComPtr<ID3D12Resource>> renderTargetViews;
     ComPtr<ID3D12Fence> fence;
+    ComPtr<ID3D12Resource> depthBuffer;
+    ComPtr<ID3D12DescriptorHeap> depthStencilViewHeap;
 };
 // public
 Swapchain::~Swapchain()
@@ -44,10 +46,29 @@ void Swapchain::target(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_impl->rtvHeaps->GetCPUDescriptorHandleForHeapStart();
     rtvHandle.ptr += backBufferIndex * nativeDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    commandList->OMSetRenderTargets(1, &rtvHandle, true, nullptr);
+    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_impl->depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+    commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
     float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
     commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+    commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+    // viewport
+    D3D12_VIEWPORT viewport = {};
+    viewport.Width = 800;
+    viewport.Height = 600;
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.MaxDepth = 1.0f;
+    viewport.MinDepth = 0.0f;
+    commandList->RSSetViewports(1, &viewport);
+    // scissor
+    D3D12_RECT scissorRect = {};
+    scissorRect.top = 0;
+    scissorRect.left = 0;
+    scissorRect.right = scissorRect.left + 800;
+    scissorRect.bottom = scissorRect.top + 600;
+    commandList->RSSetScissorRects(1, &scissorRect);
 }
 
 void Swapchain::execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
@@ -149,6 +170,43 @@ std::shared_ptr<Swapchain> Swapchain::create(
         handle.ptr += nativeDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
     swapchain->m_impl->renderTargetViews = renderTargetViews;
+    // DepthBuffer
+    D3D12_RESOURCE_DESC depthResDesc = {};
+    depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    depthResDesc.Width = 800;
+    depthResDesc.Height = 600;
+    depthResDesc.DepthOrArraySize = 1;
+    depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthResDesc.SampleDesc.Count = 1;
+    depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+    D3D12_HEAP_PROPERTIES depthHeapProps = {};
+    depthHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+    depthHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    depthHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    D3D12_CLEAR_VALUE depthClearValue = {};
+    depthClearValue.DepthStencil.Depth = 1.0f;
+    depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+    ComPtr<ID3D12Resource> depthBuffer = nullptr;
+    if (FAILED(nativeDevice->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&depthBuffer)))) {
+        throw std::runtime_error("failed CreateCommittedResource()");
+    }
+    depthBuffer->SetName(L"DepthBuffer");
+    swapchain->m_impl->depthBuffer = depthBuffer;
+    // DepthStencilViewHeap
+    D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+    dsvHeapDesc.NumDescriptors = 1;
+    dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+    ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
+    if (FAILED(nativeDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    swapchain->m_impl->depthStencilViewHeap = dsvHeap;
+    // DepthBufferView
+    D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+    dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+    device->CreateDepthStencilView(depthBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
     // Fence
     ComPtr<ID3D12Fence> fence = nullptr;
     if (FAILED(nativeDevice->CreateFence(swapchain->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)))) {
