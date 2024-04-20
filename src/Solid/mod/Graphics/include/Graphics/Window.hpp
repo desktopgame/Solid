@@ -17,7 +17,6 @@ public:
 
 private:
     Window();
-    std::any m_hwnd;
 
     class Impl;
     std::shared_ptr<Impl> m_impl;

@@ -24,7 +24,6 @@ private:
     static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
     void destroy();
 
-    std::any m_handle;
     std::shared_ptr<Internal::Swapchain> m_swapchain;
     std::shared_ptr<Surface> m_surface;
 

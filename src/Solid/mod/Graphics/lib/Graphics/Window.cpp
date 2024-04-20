@@ -17,6 +17,7 @@ class Window::Impl {
 public:
     explicit Impl() = default;
     WNDCLASSEX w;
+    HWND hwnd;
 
 private:
 };
@@ -27,7 +28,7 @@ Window::~Window()
 
 void Window::show()
 {
-    ShowWindow(std::any_cast<HWND>(m_hwnd), SW_SHOW);
+    ShowWindow(m_impl->hwnd, SW_SHOW);
 }
 
 bool Window::translateMessage() const
@@ -45,17 +46,16 @@ bool Window::translateMessage() const
 
 void Window::hide()
 {
-    ShowWindow(std::any_cast<HWND>(m_hwnd), SW_HIDE);
+    ShowWindow(std::any_cast<HWND>(m_impl->hwnd), SW_HIDE);
 }
 
 std::any Window::getHandle() const
 {
-    return m_hwnd;
+    return m_impl->hwnd;
 }
 // private
 Window::Window()
-    : m_hwnd()
-    , m_impl(std::make_shared<Impl>())
+    : m_impl(std::make_shared<Impl>())
 {
 }
 
@@ -86,17 +86,17 @@ std::shared_ptr<Window> Window::create(int32_t width, int32_t height)
         nullptr,
         w.hInstance,
         nullptr);
-    window->m_hwnd = hwnd;
+    window->m_impl->hwnd = hwnd;
     return window;
 }
 
 void Window::destroy()
 {
-    if (m_hwnd.has_value()) {
+    if (m_impl->hwnd != nullptr) {
         WNDCLASSEX w = m_impl->w;
         UnregisterClass(w.lpszClassName, w.hInstance);
-        DestroyWindow(std::any_cast<HWND>(m_hwnd));
-        m_hwnd.reset();
+        DestroyWindow(m_impl->hwnd);
+        m_impl->hwnd = nullptr;
     }
 }
 }

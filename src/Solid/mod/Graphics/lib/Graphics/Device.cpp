@@ -58,7 +58,7 @@ void Device::render()
 
 std::any Device::getHandle() const
 {
-    return m_handle;
+    return m_impl->device;
 }
 
 std::shared_ptr<Surface> Device::getSurface() const
@@ -67,8 +67,7 @@ std::shared_ptr<Surface> Device::getSurface() const
 }
 // private
 Device::Device()
-    : m_handle()
-    , m_swapchain()
+    : m_swapchain()
     , m_surface()
     , m_impl(std::make_shared<Impl>())
 {
@@ -124,7 +123,6 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
         throw std::runtime_error("failed D3D12CreateDevice()");
     }
     device->m_impl->device = nativeDevice;
-    device->m_handle = nativeDevice;
     // InfoQueue
 #if _DEBUG
     ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
