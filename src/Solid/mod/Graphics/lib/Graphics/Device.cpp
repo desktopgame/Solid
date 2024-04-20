@@ -61,6 +61,10 @@ std::any Device::getHandle() const
     return m_handle;
 }
 
+std::shared_ptr<Surface> Device::getSurface() const
+{
+    return m_surface;
+}
 // private
 Device::Device()
     : m_handle()

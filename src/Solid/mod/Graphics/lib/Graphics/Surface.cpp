@@ -1,6 +1,9 @@
+#include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
+#include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Internal/Swapchain.hpp>
 #include <Graphics/Surface.hpp>
+#include <Math/Vector.hpp>
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <stdexcept>
@@ -29,9 +32,35 @@ Surface::~Surface()
 
 void Surface::render()
 {
+}
+
+void Surface::begin()
+{
     m_impl->commandAllocator->Reset();
 
     m_swapchain->target(m_impl->commandList);
+
+    // viewport
+    D3D12_VIEWPORT viewport = {};
+    viewport.Width = 800;
+    viewport.Height = 600;
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.MaxDepth = 1.0f;
+    viewport.MinDepth = -1.0f;
+    m_impl->commandList->RSSetViewports(1, &viewport);
+    // scissor
+    D3D12_RECT scissorRect = {};
+    scissorRect.top = 0;
+    scissorRect.left = 0;
+    scissorRect.right = scissorRect.left + 800;
+    scissorRect.bottom = scissorRect.top + 600;
+    m_impl->commandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void Surface::end()
+{
+
     m_impl->commandList->Close();
     m_swapchain->execute(m_impl->commandList);
 
@@ -40,6 +69,50 @@ void Surface::render()
 
     m_swapchain->present(m_impl->commandList);
     m_swapchain->waitSync();
+}
+
+void Surface::draw(
+    const std::shared_ptr<Shader>& shader,
+    const std::shared_ptr<RenderParameter>& renderParameter,
+    PrimitiveType primitveType,
+    int32_t vertexComponent,
+    bool isUsingTexCoord,
+    const std::shared_ptr<Buffer>& vertexBuffer,
+    const std::shared_ptr<Buffer>& indexBuffer,
+    int32_t indexLength)
+{
+    if (!m_pso) {
+        // TODO: rent from pool.
+        m_pso = Internal::Pso::create(shader, renderParameter, primitveType, vertexComponent, isUsingTexCoord);
+    }
+    m_pso->command(m_impl->commandList);
+    uint32_t stride = 0;
+    if (vertexComponent == 2) {
+        if (isUsingTexCoord) {
+            // stride = sizeof(VertexData2D);
+        } else {
+            stride = sizeof(Math::Vector2);
+        }
+    } else if (vertexComponent == 3) {
+        if (isUsingTexCoord) {
+            // stride = sizeof(VertexData3D);
+        } else {
+            stride = sizeof(Math::Vector3);
+        }
+    }
+    D3D12_VERTEX_BUFFER_VIEW vbView = {};
+    vbView.BufferLocation = vertexBuffer->getVirtualAddress();
+    vbView.SizeInBytes = vertexBuffer->getSize();
+    vbView.StrideInBytes = static_cast<UINT>(stride);
+    m_impl->commandList->IASetVertexBuffers(0, 1, &vbView);
+
+    D3D12_INDEX_BUFFER_VIEW ibView = {};
+    ibView.BufferLocation = indexBuffer->getVirtualAddress();
+    ibView.Format = DXGI_FORMAT_R32_UINT;
+    ibView.SizeInBytes = indexBuffer->getSize();
+    m_impl->commandList->IASetIndexBuffer(&ibView);
+
+    m_impl->commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
 }
 // private
 Surface::Surface()

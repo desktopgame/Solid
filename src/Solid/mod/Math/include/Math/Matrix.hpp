@@ -266,15 +266,15 @@ struct MatrixT {
     {
         MatrixT<T> ret;
         T two = static_cast<T>(2);
-        T one = static_cast<T>(1);
+        // T one = static_cast<T>(1);
         // x, y -> 0~2 -> -1~+1
         // z -> 0~2 -> -1~+1
-        ret.at(0, 0) = two / width;
-        ret.at(1, 1) = two / height;
+        ret.at(0, 0) = two / (width);
+        ret.at(1, 1) = two / (height);
         ret.at(2, 2) = two / (zFar - zNear);
-        ret.at(0, 3) = -one;
-        ret.at(1, 3) = -one;
-        ret.at(2, 3) = -(zFar + zNear) / (zFar - zNear);
+        ret.at(0, 3) = 0;
+        ret.at(1, 3) = 0;
+        ret.at(2, 3) = zNear / (zFar - zNear);
         return ret;
     }
 
@@ -294,8 +294,8 @@ struct MatrixT {
     static MatrixT<T> lookAt(const VectorT<T, 3>& eye, const VectorT<T, 3>& at, const VectorT<T, 3>& up)
     {
         VectorT<T, 3> f = VectorT<T, 3>::normalized(at - eye);
-        VectorT<T, 3> s = VectorT<T, 3>::normalized(VectorT<T, 3>::cross(f, up));
-        VectorT<T, 3> u = VectorT<T, 3>::cross(s, f);
+        VectorT<T, 3> s = VectorT<T, 3>::normalized(VectorT<T, 3>::cross(up, f));
+        VectorT<T, 3> u = VectorT<T, 3>::cross(f, s);
         MatrixT<T> ret;
         ret.at(0, 0) = s.x();
         ret.at(1, 0) = s.y();
@@ -400,7 +400,7 @@ bool operator!=(const MatrixT<T>& a, const MatrixT<T>& b)
 }
 
 template <typename T>
-MatrixT<T> operator*(const MatrixT<T>& b, const MatrixT<T>& a)
+MatrixT<T> operator*(const MatrixT<T>& a, const MatrixT<T>& b)
 {
     return MatrixT<T>::multiply(a, b);
 }

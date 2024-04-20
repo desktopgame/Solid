@@ -17,6 +17,7 @@ public:
     void render();
 
     std::any getHandle() const;
+    std::shared_ptr<Surface> getSurface() const;
 
 private:
     Device();

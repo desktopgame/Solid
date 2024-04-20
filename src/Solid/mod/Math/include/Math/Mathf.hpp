@@ -1,4 +1,6 @@
 #pragma once
+#undef min
+#undef max
 
 namespace Lib::Math {
 class Mathf {

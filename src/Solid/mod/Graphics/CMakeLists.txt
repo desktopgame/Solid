@@ -14,7 +14,12 @@ add_library(
     ./lib/Graphics/Engine.cpp
     ./lib/Graphics/Window.cpp
     ./lib/Graphics/Surface.cpp
+    ./lib/Graphics/Shader.cpp
+    ./lib/Graphics/Buffer.cpp
+    ./lib/Graphics/RenderContext.cpp
+    ./lib/Graphics/RenderParameter.cpp
     ./lib/Graphics/Internal/Swapchain.cpp
+    ./lib/Graphics/Internal/Pso.cpp
 )
 common_target_compile_params(Lib-Graphics)
 common_target_link_params(Lib-Graphics)
