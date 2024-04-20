@@ -19,6 +19,8 @@ endfunction()
 #
 # Submodules
 #
+set(VCPKG_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mod/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(VCPKG_PACKAGES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mod/vcpkg/packages)
 add_subdirectory(./mod/Math)
 add_subdirectory(./mod/Graphics)
 #
