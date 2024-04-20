@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "include",
-                "../Math/include"
+                "../Math/include",
+                "../vcpkg/packages/directxtex_x64-windows/include"
             ],
             "defines": [
                 "_DEBUG",
