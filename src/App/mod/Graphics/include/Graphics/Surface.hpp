@@ -25,7 +25,7 @@ public:
     void draw(
         const std::shared_ptr<Shader>& shader,
         const std::shared_ptr<RenderParameter>& renderParameter,
-        PrimitiveType primitveType,
+        PrimitiveType primitiveType,
         int32_t vertexComponent,
         bool isUsingTexCoord,
         const std::shared_ptr<Buffer>& vertexBuffer,

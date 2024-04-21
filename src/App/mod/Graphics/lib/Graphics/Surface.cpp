@@ -58,7 +58,7 @@ void Surface::end()
 void Surface::draw(
     const std::shared_ptr<Shader>& shader,
     const std::shared_ptr<RenderParameter>& renderParameter,
-    PrimitiveType primitveType,
+    PrimitiveType primitiveType,
     int32_t vertexComponent,
     bool isUsingTexCoord,
     const std::shared_ptr<Buffer>& vertexBuffer,
@@ -67,7 +67,7 @@ void Surface::draw(
 {
     if (!m_pso) {
         // TODO: rent from pool.
-        m_pso = Internal::Pso::create(shader, renderParameter, primitveType, vertexComponent, isUsingTexCoord);
+        m_pso = Internal::Pso::create(shader, renderParameter, primitiveType, vertexComponent, isUsingTexCoord);
     }
     m_pso->update();
     m_pso->command(m_impl->commandList);
