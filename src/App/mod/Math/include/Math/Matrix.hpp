@@ -266,14 +266,15 @@ struct MatrixT {
     {
         MatrixT<T> ret;
         T two = static_cast<T>(2);
+        T zero = static_cast<T>(0);
         // T one = static_cast<T>(1);
         // x, y -> 0~2 -> -1~+1
         // z -> 0~2 -> -1~+1
         ret.at(0, 0) = two / (width);
         ret.at(1, 1) = two / (height);
         ret.at(2, 2) = two / (zFar - zNear);
-        ret.at(0, 3) = 0;
-        ret.at(1, 3) = 0;
+        ret.at(0, 3) = zero;
+        ret.at(1, 3) = zero;
         ret.at(2, 3) = zNear / (zFar - zNear);
         return ret;
     }
@@ -283,9 +284,10 @@ struct MatrixT {
         // see: https://learn.microsoft.com/ja-jp/windows/win32/direct3d9/d3dxmatrixperspectivefovlh
         MatrixT<T> ret;
         T one = static_cast<T>(1);
+        T zero = static_cast<T>(0);
         T yScale = one / std::tan(fovy / static_cast<T>(2));
         T xScale = yScale / aspectRatio;
-        std::fill(ret.components.begin(), ret.components.end(), 0);
+        std::fill(ret.components.begin(), ret.components.end(), zero);
         ret.at(0, 0) = xScale;
         ret.at(1, 1) = yScale;
         ret.at(2, 2) = zFar / (zFar - zNear);
