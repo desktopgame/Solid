@@ -77,19 +77,21 @@ void Swapchain::execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
     ID3D12CommandList* cmdLists[] = { commandList.Get() };
     m_impl->commandQueue->ExecuteCommandLists(1, cmdLists);
 }
-    void Swapchain::swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) {
 
-        uint32_t backBufferIndex
-                = m_impl->swapchain->GetCurrentBackBufferIndex();
-        // Barrier
-        D3D12_RESOURCE_BARRIER barrier = {};
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_impl->renderTargetViews.at(backBufferIndex).Get();
-        barrier.Transition.Subresource = 0;
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-        commandList->ResourceBarrier(1, &barrier);
+void Swapchain::swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+{
+
+    uint32_t backBufferIndex
+        = m_impl->swapchain->GetCurrentBackBufferIndex();
+    // Barrier
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_impl->renderTargetViews.at(backBufferIndex).Get();
+    barrier.Transition.Subresource = 0;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    commandList->ResourceBarrier(1, &barrier);
 }
 
 void Swapchain::present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
