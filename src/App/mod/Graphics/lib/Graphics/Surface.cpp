@@ -39,21 +39,23 @@ void Surface::render()
 
 void Surface::begin()
 {
-    m_impl->commandAllocator->Reset();
+    // m_impl->commandAllocator->Reset();
     m_swapchain->clear(m_impl->commandList);
 }
 
 void Surface::end()
 {
 
+    m_swapchain->swap(m_impl->commandList);
     m_impl->commandList->Close();
     m_swapchain->execute(m_impl->commandList);
+
+    m_swapchain->present(m_impl->commandList);
+    m_swapchain->waitSync();
 
     m_impl->commandAllocator->Reset();
     m_impl->commandList->Reset(m_impl->commandAllocator.Get(), nullptr);
 
-    m_swapchain->present(m_impl->commandList);
-    m_swapchain->waitSync();
 }
 
 void Surface::draw(
