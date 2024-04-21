@@ -72,6 +72,7 @@ void Surface::draw(
         // TODO: rent from pool.
         m_pso = Internal::Pso::create(shader, renderParameter, primitveType, vertexComponent, isUsingTexCoord);
     }
+    m_pso->update();
     m_pso->command(m_impl->commandList);
     uint32_t stride = 0;
     if (vertexComponent == 2) {

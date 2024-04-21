@@ -72,11 +72,19 @@ int main(int argc, char* argv[])
     std::cout << pt << " " << pt2 << std::endl;
 
     window->show();
+    float deg = 45.0f;
     while (true) {
         if (window->translateMessage()) {
             break;
         }
         surface->begin();
+        deg += 1.0f;
+        if (deg >= 360.0f) {
+            deg -= 360.0f;
+        }
+        rotate = Lib::Math::Matrix::rotateY(Lib::Math::Mathf::Deg2Rad * deg);
+        param->setTransform(rotate * view * pers);
+
         surface->draw(shader, param, Lib::Graphics::PrimitiveType::Triangles, 3, true, vb, ib, 6);
         surface->end();
         // Show messages
