@@ -91,7 +91,8 @@
 			"filesystem": "cpp",
 			"fstream": "cpp",
 			"iomanip": "cpp",
-			"xtree": "cpp"
+			"xtree": "cpp",
+			"numeric": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,

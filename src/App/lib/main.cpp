@@ -12,25 +12,28 @@ int main(int argc, char* argv[])
     auto shader = Lib::Graphics::Shader::compile(R"(
         struct Output {
             float4 svpos : SV_POSITION;
-            float4 color : COLOR;
+            float2 uv : TEXCOORD;
         };
         cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
 
-        Output vsMain(float3 pos : POSITION) {
+        Output vsMain(float3 pos : POSITION, float2 uv : TEXCOORD) {
             Output output;
             output.svpos = mul(mat, float4(pos, 1));
-            output.color = color;
+            output.uv = uv;
             return output;
         })",
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
-            float4 color : COLOR;
+            float2 uv : TEXCOORD;
         };
 
+        Texture2D<float4> tex : register(t0);
+        SamplerState smp : register(s0);
+
         float4 psMain(Output input) : SV_TARGET {
-            return input.color;
+            float4 col = float4(tex.Sample(smp, input.uv));
+            return col;
         })",
         "psMain");
     const float left = -0.5;
@@ -38,12 +41,12 @@ int main(int argc, char* argv[])
     const float top = 0.5;
     const float bottom = -0.5;
     auto vb = Lib::Graphics::Buffer::create();
-    const std::vector<Lib::Math::Vector3> verts(
-        { Lib::Math::Vector3({ left, bottom, 0.0f }),
-            Lib::Math::Vector3({ left, top, 0.0f }),
-            Lib::Math::Vector3({ right, bottom, 0.0f }),
-            Lib::Math::Vector3({ right, top, 0.0f }) });
-    vb->allocate(sizeof(Lib::Math::Vector3) * verts.size());
+    const std::vector<Lib::Graphics::VertexData3D> verts(
+        { Lib::Graphics::VertexData3D(Lib::Math::Vector3({ left, bottom, 0 }), Lib::Math::Vector2({ 0.0f, 1.0f })),
+            Lib::Graphics::VertexData3D(Lib::Math::Vector3({ left, top, 0 }), Lib::Math::Vector2({ 0.0f, 0.0f })),
+            Lib::Graphics::VertexData3D(Lib::Math::Vector3({ right, bottom, 0 }), Lib::Math::Vector2({ 1.0f, 1.0f })),
+            Lib::Graphics::VertexData3D(Lib::Math::Vector3({ right, top, 0 }), Lib::Math::Vector2({ 1.0f, 0.0f })) });
+    vb->allocate(sizeof(Lib::Graphics::VertexData3D) * verts.size());
     vb->update(verts.data());
 
     auto ib = Lib::Graphics::Buffer::create();
@@ -52,20 +55,20 @@ int main(int argc, char* argv[])
     ib->update(index.data());
 
     auto param = std::make_shared<Lib::Graphics::RenderParameter>();
-    auto rotate = Lib::Math::Matrix::rotateY(Lib::Math::Mathf::Deg2Rad * 35.0f);
-    auto pers = Lib::Math::Matrix::perspective(30.0f, Lib::Graphics::Screen::getAspectRatio(), -1, 10);
+    auto rotate = Lib::Math::Matrix::rotateY(Lib::Math::Mathf::Deg2Rad * 45.0f);
+    auto pers = Lib::Math::Matrix::perspective(90.0f, Lib::Graphics::Screen::getAspectRatio(), 1, 10);
     auto view = Lib::Math::Matrix::lookAt(
-        Lib::Math::Vector3({ 0, 0, -1 }),
+        Lib::Math::Vector3({ 0, 0, -5 }),
         Lib::Math::Vector3({ 0, 0, 1 }),
         Lib::Math::Vector3({ 0, 1, 0 }));
     // auto translate = Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 0, 5 }));
     // auto scale = Lib::Math::Matrix::scale(Lib::Math::Vector3({ 10, 10, 1 }));
     param->setTransform(rotate * view * pers);
-    param->setColor(Lib::Math::Vector4({ 1, 0, 1, 1 }));
-    // param->setTexture(texture);
+    // param->setColor(Lib::Math::Vector4({ 1, 0, 1, 1 }));
+    param->setTexture(texture);
 
     Lib::Math::Vector3 pt = Lib::Math::makeVector3(0, 0, 0);
-    Lib::Math::Vector3 pt2 = Lib::Math::Matrix::multiply(pers, pt);
+    Lib::Math::Vector3 pt2 = Lib::Math::Matrix::multiply(view * pers, pt);
     std::cout << pt << " " << pt2 << std::endl;
 
     window->show();
@@ -74,7 +77,7 @@ int main(int argc, char* argv[])
             break;
         }
         surface->begin();
-        surface->draw(shader, param, Lib::Graphics::PrimitiveType::Triangles, 3, false, vb, ib, 6);
+        surface->draw(shader, param, Lib::Graphics::PrimitiveType::Triangles, 3, true, vb, ib, 6);
         surface->end();
         // Show messages
         device->flushLogEntries();

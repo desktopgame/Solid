@@ -280,14 +280,17 @@ struct MatrixT {
 
     static MatrixT<T> perspective(T fovy, T aspectRatio, T zNear, T zFar)
     {
+        // see: https://learn.microsoft.com/ja-jp/windows/win32/direct3d9/d3dxmatrixperspectivefovlh
         MatrixT<T> ret;
-        T tanHalfFovy = static_cast<T>(Mathf::tan(fovy / static_cast<T>(2)));
         T one = static_cast<T>(1);
-        ret.at(0, 0) = one / (aspectRatio * tanHalfFovy);
-        ret.at(1, 1) = one / (tanHalfFovy);
+        T yScale = one / std::tan(fovy / static_cast<T>(2));
+        T xScale = yScale / aspectRatio;
+        std::fill(ret.components.begin(), ret.components.end(), 0);
+        ret.at(0, 0) = xScale;
+        ret.at(1, 1) = yScale;
         ret.at(2, 2) = zFar / (zFar - zNear);
         ret.at(2, 3) = (one);
-        ret.at(3, 2) = -(zFar * zNear) / (zFar - zNear);
+        ret.at(3, 2) = -zNear * zFar / (zFar - zNear);
         return ret;
     }
 
@@ -306,9 +309,9 @@ struct MatrixT {
         ret.at(0, 2) = f.x();
         ret.at(1, 2) = f.y();
         ret.at(2, 2) = f.z();
-        ret.at(0, 3) = -VectorT<T, 3>::dot(s, eye);
-        ret.at(1, 3) = -VectorT<T, 3>::dot(u, eye);
-        ret.at(2, 3) = -VectorT<T, 3>::dot(f, eye);
+        ret.at(3, 0) = -VectorT<T, 3>::dot(s, eye);
+        ret.at(3, 1) = -VectorT<T, 3>::dot(u, eye);
+        ret.at(3, 2) = -VectorT<T, 3>::dot(f, eye);
         return ret;
     }
 

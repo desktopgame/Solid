@@ -37,6 +37,13 @@ void RenderContext::updateVertex(const Math::Vector3* data, int32_t len)
     m_vertexComponent = 3;
     m_vertexLength = len;
 }
+void RenderContext::updateVertex(const VertexData3D* data, int32_t len)
+{
+    m_vertexBuffer->allocate(sizeof(VertexData3D) * len);
+    m_vertexBuffer->update(data);
+    m_vertexComponent = 3;
+    m_vertexLength = len;
+}
 void RenderContext::updateIndex(uint32_t* data, int32_t len)
 {
     m_indexBuffer->allocate(sizeof(uint32_t) * len);

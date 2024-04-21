@@ -5,6 +5,7 @@
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/VertexData2D.hpp>
+#include <Graphics/VertexData3D.hpp>
 #include <Math/Vector.hpp>
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -79,7 +80,7 @@ void Surface::draw(
         }
     } else if (vertexComponent == 3) {
         if (isUsingTexCoord) {
-            // stride = sizeof(VertexData3D);
+            stride = sizeof(VertexData3D);
         } else {
             stride = sizeof(Math::Vector3);
         }
