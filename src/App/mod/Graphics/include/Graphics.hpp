@@ -5,6 +5,7 @@
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/RenderParameter.hpp>
+#include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Texture.hpp>

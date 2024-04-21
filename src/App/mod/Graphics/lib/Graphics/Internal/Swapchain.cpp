@@ -1,6 +1,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Internal/Swapchain.hpp>
+#include <Graphics/Screen.hpp>
 #include <Graphics/Window.hpp>
 #include <Windows.h>
 #include <any>
@@ -55,8 +56,8 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
 
     // viewport
     D3D12_VIEWPORT viewport = {};
-    viewport.Width = 800;
-    viewport.Height = 600;
+    viewport.Width = Screen::getWidth();
+    viewport.Height = Screen::getHeight();
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
     viewport.MaxDepth = 1.0f;
@@ -66,8 +67,8 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     D3D12_RECT scissorRect = {};
     scissorRect.top = 0;
     scissorRect.left = 0;
-    scissorRect.right = scissorRect.left + 800;
-    scissorRect.bottom = scissorRect.top + 600;
+    scissorRect.right = scissorRect.left + Screen::getWidth();
+    scissorRect.bottom = scissorRect.top + Screen::getHeight();
     commandList->RSSetScissorRects(1, &scissorRect);
 }
 
@@ -132,8 +133,8 @@ std::shared_ptr<Swapchain> Swapchain::create(
     // Swapchain
     ComPtr<IDXGISwapChain4> nativeSwapchain = nullptr;
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
-    swapchainDesc.Width = 800;
-    swapchainDesc.Height = 600;
+    swapchainDesc.Width = Screen::getWidth();
+    swapchainDesc.Height = Screen::getHeight();
     swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapchainDesc.Stereo = false;
     swapchainDesc.SampleDesc.Count = 1;
@@ -173,8 +174,8 @@ std::shared_ptr<Swapchain> Swapchain::create(
     // DepthBuffer
     D3D12_RESOURCE_DESC depthResDesc = {};
     depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    depthResDesc.Width = 800;
-    depthResDesc.Height = 600;
+    depthResDesc.Width = Screen::getWidth();
+    depthResDesc.Height = Screen::getHeight();
     depthResDesc.DepthOrArraySize = 1;
     depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;
     depthResDesc.SampleDesc.Count = 1;

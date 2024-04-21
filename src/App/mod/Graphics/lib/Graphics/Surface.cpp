@@ -2,6 +2,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Internal/Swapchain.hpp>
+#include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/VertexData2D.hpp>
 #include <Math/Vector.hpp>
@@ -38,25 +39,7 @@ void Surface::render()
 void Surface::begin()
 {
     m_impl->commandAllocator->Reset();
-
     m_swapchain->clear(m_impl->commandList);
-
-    // viewport
-    D3D12_VIEWPORT viewport = {};
-    viewport.Width = 800;
-    viewport.Height = 600;
-    viewport.TopLeftX = 0;
-    viewport.TopLeftY = 0;
-    viewport.MaxDepth = 1.0f;
-    viewport.MinDepth = -1.0f;
-    m_impl->commandList->RSSetViewports(1, &viewport);
-    // scissor
-    D3D12_RECT scissorRect = {};
-    scissorRect.top = 0;
-    scissorRect.left = 0;
-    scissorRect.right = scissorRect.left + 800;
-    scissorRect.bottom = scissorRect.top + 600;
-    m_impl->commandList->RSSetScissorRects(1, &scissorRect);
 }
 
 void Surface::end()

@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
     auto param = std::make_shared<Lib::Graphics::RenderParameter>();
     auto rotate = Lib::Math::Matrix::rotateY(Lib::Math::Mathf::Deg2Rad * 35.0f);
-    auto pers = Lib::Math::Matrix::perspective(30.0f, 800.0f / 600.0f, -1, 10);
+    auto pers = Lib::Math::Matrix::perspective(30.0f, Lib::Graphics::Screen::getAspectRatio(), -1, 10);
     auto view = Lib::Math::Matrix::lookAt(
         Lib::Math::Vector3({ 0, 0, -1 }),
         Lib::Math::Vector3({ 0, 0, 1 }),

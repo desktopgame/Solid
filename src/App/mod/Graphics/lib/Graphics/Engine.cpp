@@ -1,5 +1,6 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/Screen.hpp>
 #include <Graphics/Window.hpp>
 #include <Windows.h>
 #include <stdexcept>
@@ -37,7 +38,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
     }
     CoInitializeEx(0, COINIT_MULTITHREADED);
     m_started = true;
-    m_window = Window::create(800, 600);
+    m_window = Window::create(Screen::getWidth(), Screen::getHeight());
     m_device = Device::create(m_window);
     return s_instance;
 }
