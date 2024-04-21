@@ -72,9 +72,7 @@ _deps
 .ninja_log
 build.ninja
 
-# tests
-tests/SpriteDraw/SpriteDraw
-tests/ModelDraw/ModelDraw
-tests/LowLevel/LowLevel
-tests/Tetris/Tetris
-tests/SpaceShooter/SpaceShooter
+# CLion
+cmake-build-debug
+cmake-build-release
+.idea
