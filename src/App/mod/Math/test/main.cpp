@@ -69,16 +69,16 @@ int main(int argc, char* argv[])
     }
 
     {
-        Vector2 point2D({ 400, 300 });
+        Vector2 point2D({ 0, 0 });
         Matrix ortho = Matrix::ortho(800, 600, -1, 1);
         assert(Matrix::multiply(ortho, point2D) == Vector2({ 0, 0 }));
 
-        point2D.x() = 800;
-        point2D.y() = 600;
+        point2D.x() = 400;
+        point2D.y() = 300;
         assert(Matrix::multiply(ortho, point2D) == Vector2({ 1, 1 }));
 
-        point2D.x() = 0;
-        point2D.y() = 0;
+        point2D.x() = -400;
+        point2D.y() = -300;
         assert(Matrix::multiply(ortho, point2D) == Vector2({ -1, -1 }));
     }
     return 0;
