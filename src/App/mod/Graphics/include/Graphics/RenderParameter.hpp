@@ -24,6 +24,7 @@ private:
     Math::Matrix m_transform;
 
     std::shared_ptr<Texture> m_texture;
+    bool m_useTexture;
 
     Math::Vector4 m_color;
     bool m_useColor;

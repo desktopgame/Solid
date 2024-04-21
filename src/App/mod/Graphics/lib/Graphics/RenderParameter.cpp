@@ -4,6 +4,7 @@ namespace Lib::Graphics {
 RenderParameter::RenderParameter()
     : m_transform()
     , m_texture()
+    , m_useTexture()
     , m_color()
     , m_useColor()
 {
@@ -18,12 +19,13 @@ Math::Matrix RenderParameter::getTransform() const
     return m_transform;
 }
 
-void RenderParameter::setTexture(const std::shared_ptr<Texture>& texture) { m_texture = texture; }
-std::shared_ptr<Texture> RenderParameter::getTexture() const { return m_texture; }
-bool RenderParameter::useTexture() const
+void RenderParameter::setTexture(const std::shared_ptr<Texture>& texture)
 {
-    return m_texture != nullptr;
+    m_texture = texture;
+    m_useTexture = true;
 }
+std::shared_ptr<Texture> RenderParameter::getTexture() const { return m_texture; }
+bool RenderParameter::useTexture() const { return m_useTexture; }
 
 void RenderParameter::setColor(const Math::Vector4& color)
 {
