@@ -351,7 +351,7 @@ struct MatrixT {
                 }
                 char block[16] = { 0 };
                 float num = static_cast<float>(components[n]);
-                ::sprint32_tf(block, "%.2f", num);
+                ::sprintf(block, "%.2f", num);
                 ss << block;
                 if (n != end - 1) {
                     ss << ", ";
