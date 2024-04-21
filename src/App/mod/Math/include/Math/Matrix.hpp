@@ -160,9 +160,9 @@ struct MatrixT {
     static MatrixT<T> translate(VectorT<T, 3> v)
     {
         MatrixT<T> m;
-        m.at(0, 3) = v.x();
-        m.at(1, 3) = v.y();
-        m.at(2, 3) = v.z();
+        m.at(3, 0) = v.x();
+        m.at(3, 1) = v.y();
+        m.at(3, 2) = v.z();
         return m;
     }
 
@@ -272,10 +272,10 @@ struct MatrixT {
         // z -> 0~2 -> -1~+1
         ret.at(0, 0) = two / (width);
         ret.at(1, 1) = two / (height);
-        ret.at(2, 2) = two / (zFar - zNear);
-        ret.at(0, 3) = zero;
-        ret.at(1, 3) = zero;
-        ret.at(2, 3) = zNear / (zFar - zNear);
+        ret.at(2, 2) = static_cast<T>(1) / (zFar - zNear);
+        ret.at(3, 0) = zero;
+        ret.at(3, 1) = zero;
+        ret.at(3, 2) = -zNear / (zFar - zNear);
         return ret;
     }
 
