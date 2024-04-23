@@ -25,10 +25,10 @@ void Constant::update()
         descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         descHeapDesc.NodeMask = 0;
         descHeapDesc.NumDescriptors = 1;
-        if (useTexture()) {
+        if (m_interface.useTexture()) {
             descHeapDesc.NumDescriptors++;
         }
-        if (useColor()) {
+        if (m_interface.useColor()) {
             descHeapDesc.NumDescriptors++;
         }
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -37,17 +37,17 @@ void Constant::update()
         }
         // define constants
         defineConstant((sizeof(Math::Matrix) + 0xff) & ~0xff);
-        if (useColor()) {
+        if (m_interface.useColor()) {
             defineConstant((sizeof(Math::Vector4) + 0xff) & ~0xff);
         }
         // define view
         defineConstantView(CbMatrixIndex, 0);
-        if (useTexture()) {
+        if (m_interface.useTexture()) {
             defineTextureView(m_texture, 1);
-            if (useColor()) {
+            if (m_interface.useColor()) {
                 defineConstantView(CbColorIndex, 2);
             }
-        } else if (useColor()) {
+        } else if (m_interface.useColor()) {
             defineConstantView(CbColorIndex, 1);
         }
     }
@@ -64,7 +64,7 @@ void Constant::update()
             }
         }
         // color
-        if (useColor()) {
+        if (m_interface.useColor()) {
             void* mapColor = nullptr;
             if (FAILED(m_resources.at(CbColorIndex)->Map(0, nullptr, (void**)&mapColor))) {
                 throw std::runtime_error("failed Map()");
@@ -94,7 +94,6 @@ void Constant::setTexture(const std::shared_ptr<Texture>& texture)
     m_texture = texture;
 }
 std::shared_ptr<Texture> Constant::getTexture() const { return m_texture; }
-bool Constant::useTexture() const { return m_interface == RenderInterface::UseTexture || m_interface == RenderInterface::UseTextureAndColor; }
 
 void Constant::setColor(const Math::Vector4& color)
 {
@@ -102,7 +101,7 @@ void Constant::setColor(const Math::Vector4& color)
     m_color = color;
 }
 Math::Vector4 Constant::getColor() const { return m_color; }
-bool Constant::useColor() const { return m_interface == RenderInterface::UseColor || m_interface == RenderInterface::UseTextureAndColor; }
+
 RenderInterface Constant::getInterface() const { return m_interface; }
 
 ComPtr<ID3D12DescriptorHeap> Constant::getDescriptorHeap() const { return m_descriptorHeap; }

@@ -19,11 +19,10 @@ Math::Matrix RenderParameter::getTransform() const { return m_constant->getTrans
 
 void RenderParameter::setTexture(const std::shared_ptr<Texture>& texture) { m_constant->setTexture(texture); }
 std::shared_ptr<Texture> RenderParameter::getTexture() const { return m_constant->getTexture(); }
-bool RenderParameter::useTexture() const { return m_constant->useTexture(); }
 
 void RenderParameter::setColor(const Math::Vector4& color) { m_constant->setColor(color); }
 Math::Vector4 RenderParameter::getColor() const { return m_constant->getColor(); }
-bool RenderParameter::useColor() const { return m_constant->useColor(); }
+
 RenderInterface RenderParameter::getInterface() const { return m_constant->getInterface(); }
 // private
 RenderParameter::RenderParameter()

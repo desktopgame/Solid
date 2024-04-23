@@ -27,11 +27,9 @@ public:
 
     void setTexture(const std::shared_ptr<Texture>& texture);
     std::shared_ptr<Texture> getTexture() const;
-    bool useTexture() const;
 
     void setColor(const Math::Vector4& color);
     Math::Vector4 getColor() const;
-    bool useColor() const;
 
     RenderInterface getInterface() const;
 

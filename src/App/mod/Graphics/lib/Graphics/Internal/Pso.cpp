@@ -130,21 +130,21 @@ std::shared_ptr<Pso> Pso::create(
     descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
     descTableRange.at(0).BaseShaderRegister = 0;
     descTableRange.at(0).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    if (renderInterface == RenderInterface::UseTexture || renderInterface == RenderInterface::UseTextureAndColor) {
+    if (renderInterface.useTexture()) {
         descTableRange.push_back({});
         descTableRange.at(1).NumDescriptors = 1;
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
         descTableRange.at(1).BaseShaderRegister = 0;
         descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-        if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
+        if (renderInterface.useColor()) {
             descTableRange.push_back({});
             descTableRange.at(2).NumDescriptors = 1;
             descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
             descTableRange.at(2).BaseShaderRegister = 1;
             descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
-    } else if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
+    } else if (renderInterface.useColor()) {
         descTableRange.push_back({});
         descTableRange.at(1).NumDescriptors = 1;
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -158,21 +158,21 @@ std::shared_ptr<Pso> Pso::create(
     rootParam.at(0).DescriptorTable.pDescriptorRanges = &descTableRange.at(0);
     rootParam.at(0).DescriptorTable.NumDescriptorRanges = 1;
 
-    if (renderInterface == RenderInterface::UseTexture || renderInterface == RenderInterface::UseTextureAndColor) {
+    if (renderInterface.useTexture()) {
         rootParam.push_back({});
         rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
         rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
         rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
 
-        if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
+        if (renderInterface.useColor()) {
             rootParam.push_back({});
             rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
             rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
             rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
             rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
         }
-    } else if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
+    } else if (renderInterface.useColor()) {
         rootParam.push_back({});
         rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
@@ -225,14 +225,14 @@ void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdLi
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
-    if (m_renderInterface == RenderInterface::UseTexture || m_renderInterface == RenderInterface::UseTextureAndColor) {
+    if (m_renderInterface.useTexture()) {
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
-        if (m_renderInterface == RenderInterface::UseColor || m_renderInterface == RenderInterface::UseTextureAndColor) {
+        if (m_renderInterface.useColor()) {
             heapHandle.ptr += incrementSize;
             cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
         }
-    } else if (m_renderInterface == RenderInterface::UseColor || m_renderInterface == RenderInterface::UseTextureAndColor) {
+    } else if (m_renderInterface.useColor()) {
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
     }
