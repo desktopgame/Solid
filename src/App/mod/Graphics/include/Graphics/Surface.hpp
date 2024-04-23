@@ -16,6 +16,7 @@ class Window;
 class Buffer;
 class Shader;
 class RenderParameter;
+class RenderContext;
 class Surface {
 public:
     ~Surface();
@@ -32,6 +33,11 @@ public:
         const std::shared_ptr<Buffer>& vertexBuffer,
         const std::shared_ptr<Buffer>& indexBuffer,
         int32_t indexLength);
+
+    void draw(
+        const std::shared_ptr<Shader>& shader,
+        const std::shared_ptr<RenderParameter>& renderParameter,
+        const std::shared_ptr<RenderContext>& context);
 
 private:
     Surface();

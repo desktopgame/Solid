@@ -3,6 +3,7 @@
 #include <Graphics/Internal/Constant.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Internal/Swapchain.hpp>
+#include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/VertexData2D.hpp>
@@ -128,6 +129,20 @@ void Surface::draw(
     m_impl->commandList->IASetIndexBuffer(&ibView);
 
     m_impl->commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
+}
+
+void Surface::draw(
+    const std::shared_ptr<Shader>& shader,
+    const std::shared_ptr<RenderParameter>& renderParameter,
+    const std::shared_ptr<RenderContext>& context)
+{
+    draw(shader, renderParameter,
+        context->getPrimitiveType(),
+        context->getVertexComponent(),
+        context->isUsingTexCoord(),
+        context->getVertexBuffer(),
+        context->getIndexBuffer(),
+        context->getIndexLength());
 }
 // private
 Surface::Surface()

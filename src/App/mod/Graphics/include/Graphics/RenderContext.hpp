@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/PrimitiveType.hpp>
 #include <Graphics/VertexData2D.hpp>
 #include <Graphics/VertexData3D.hpp>
 #include <Math/Vector.hpp>
@@ -8,9 +9,11 @@
 namespace Lib::Graphics {
 class RenderParameter;
 class Buffer;
+class Surface;
+class Shader;
 class RenderContext {
 public:
-    static std::shared_ptr<RenderContext> create();
+    static std::shared_ptr<RenderContext> create(PrimitiveType primitiveType);
 
     ~RenderContext();
 
@@ -18,21 +21,19 @@ public:
     void updateVertex(const VertexData2D* data, int32_t len);
     void updateVertex(const Math::Vector3* data, int32_t len);
     void updateVertex(const VertexData3D* data, int32_t len);
-    void updateIndex(uint32_t* data, int32_t len);
+    void updateIndex(const uint32_t* data, int32_t len);
 
+    PrimitiveType getPrimitiveType() const;
     int32_t getVertexComponent() const;
-
-    uint64_t getVertexVirtualAddress() const;
-    int32_t getVertexLength() const;
-    uint64_t getIndexVirtualAddress() const;
     int32_t getIndexLength() const;
-
     bool isUsingTexCoord() const;
+    const std::shared_ptr<Buffer>& getVertexBuffer() const;
+    const std::shared_ptr<Buffer>& getIndexBuffer() const;
 
 private:
-    RenderContext();
+    RenderContext(PrimitiveType primitiveType);
 
-    std::shared_ptr<RenderParameter> m_parameter;
+    PrimitiveType m_primitiveType;
     int32_t m_vertexComponent;
     int32_t m_vertexLength;
     int32_t m_indexLength;

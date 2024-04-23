@@ -2,12 +2,13 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/RenderParameter.hpp>
+#include <Graphics/Surface.hpp>
 
 namespace Lib::Graphics {
 // public
-std::shared_ptr<RenderContext> RenderContext::create()
+std::shared_ptr<RenderContext> RenderContext::create(PrimitiveType primitiveType)
 {
-    auto renderContext = std::shared_ptr<RenderContext>(new RenderContext());
+    auto renderContext = std::shared_ptr<RenderContext>(new RenderContext(primitiveType));
     return renderContext;
 }
 
@@ -21,6 +22,7 @@ void RenderContext::updateVertex(const Math::Vector2* data, int32_t len)
     m_vertexBuffer->update(data);
     m_vertexComponent = 2;
     m_vertexLength = len;
+    m_isUsingTexCoord = false;
 }
 
 void RenderContext::updateVertex(const VertexData2D* data, int32_t len)
@@ -29,6 +31,7 @@ void RenderContext::updateVertex(const VertexData2D* data, int32_t len)
     m_vertexBuffer->update(data);
     m_vertexComponent = 2;
     m_vertexLength = len;
+    m_isUsingTexCoord = true;
 }
 void RenderContext::updateVertex(const Math::Vector3* data, int32_t len)
 {
@@ -36,6 +39,7 @@ void RenderContext::updateVertex(const Math::Vector3* data, int32_t len)
     m_vertexBuffer->update(data);
     m_vertexComponent = 3;
     m_vertexLength = len;
+    m_isUsingTexCoord = false;
 }
 void RenderContext::updateVertex(const VertexData3D* data, int32_t len)
 {
@@ -43,43 +47,25 @@ void RenderContext::updateVertex(const VertexData3D* data, int32_t len)
     m_vertexBuffer->update(data);
     m_vertexComponent = 3;
     m_vertexLength = len;
+    m_isUsingTexCoord = true;
 }
-void RenderContext::updateIndex(uint32_t* data, int32_t len)
+void RenderContext::updateIndex(const uint32_t* data, int32_t len)
 {
     m_indexBuffer->allocate(sizeof(uint32_t) * len);
     m_indexBuffer->update(data);
     m_indexLength = len;
 }
 
-int32_t RenderContext::getVertexComponent() const
-{
-    return m_vertexComponent;
-}
+PrimitiveType RenderContext::getPrimitiveType() const { return m_primitiveType; }
+int32_t RenderContext::getVertexComponent() const { return m_vertexComponent; }
+int32_t RenderContext::getIndexLength() const { return m_indexLength; }
+bool RenderContext::isUsingTexCoord() const { return m_isUsingTexCoord; }
+const std::shared_ptr<Buffer>& RenderContext::getVertexBuffer() const { return m_vertexBuffer; }
+const std::shared_ptr<Buffer>& RenderContext::getIndexBuffer() const { return m_indexBuffer; }
 
-uint64_t RenderContext::getVertexVirtualAddress() const
-{
-    return m_vertexBuffer->getVirtualAddress();
-}
-int32_t RenderContext::getVertexLength() const
-{
-    return m_vertexLength;
-}
-uint64_t RenderContext::getIndexVirtualAddress() const
-{
-    return m_indexBuffer->getVirtualAddress();
-}
-int32_t RenderContext::getIndexLength() const
-{
-    return m_indexLength;
-}
-
-bool RenderContext::isUsingTexCoord() const
-{
-    return m_isUsingTexCoord;
-}
 // private
-RenderContext::RenderContext()
-    : m_parameter(RenderParameter::create(RenderInterface::None))
+RenderContext::RenderContext(PrimitiveType primitiveType)
+    : m_primitiveType(primitiveType)
     , m_vertexComponent(0)
     , m_vertexLength(0)
     , m_indexLength(0)

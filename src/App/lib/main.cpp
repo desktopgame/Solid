@@ -68,45 +68,42 @@ int main(int argc, char* argv[])
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    auto vb = Lib::Graphics::Buffer::create();
+    const std::vector<uint32_t> index { 0, 1, 2, 2, 1, 3 };
+    auto rc1 = Lib::Graphics::RenderContext::create(Lib::Graphics::PrimitiveType::Triangles);
     const std::vector<Lib::Graphics::VertexData2D> verts(
         { Lib::Graphics::VertexData2D(Lib::Math::Vector2({ left, bottom }), Lib::Math::Vector2({ 0.0f, 1.0f })),
             Lib::Graphics::VertexData2D(Lib::Math::Vector2({ left, top }), Lib::Math::Vector2({ 0.0f, 0.0f })),
             Lib::Graphics::VertexData2D(Lib::Math::Vector2({ right, bottom }), Lib::Math::Vector2({ 1.0f, 1.0f })),
             Lib::Graphics::VertexData2D(Lib::Math::Vector2({ right, top }), Lib::Math::Vector2({ 1.0f, 0.0f })) });
-    vb->allocate(sizeof(Lib::Graphics::VertexData2D) * verts.size());
-    vb->update(verts.data());
+    rc1->updateVertex(verts.data(), static_cast<int32_t>(verts.size()));
+    rc1->updateIndex(index.data(), static_cast<int32_t>(index.size()));
 
-    auto vb2 = Lib::Graphics::Buffer::create();
+    auto rc2 = Lib::Graphics::RenderContext::create(Lib::Graphics::PrimitiveType::Triangles);
     const std::vector<Lib::Math::Vector2> verts2(
         { (Lib::Math::Vector2({ left, bottom })),
             (Lib::Math::Vector2({ left, top })),
             (Lib::Math::Vector2({ right, bottom })),
             (Lib::Math::Vector2({ right, top })) });
-    vb2->allocate(sizeof(Lib::Math::Vector2) * verts2.size());
-    vb2->update(verts2.data());
+    rc2->updateVertex(verts2.data(), static_cast<int32_t>(verts.size()));
+    rc2->updateIndex(index.data(), static_cast<int32_t>(index.size()));
 
-    auto ib = Lib::Graphics::Buffer::create();
-    const std::vector<uint32_t> index { 0, 1, 2, 2, 1, 3 };
-    ib->allocate(sizeof(uint32_t) * index.size());
-    ib->update(index.data());
-
-    auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::TextureAndColor);
-    auto param2 = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
-    auto t = Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 2, 0 }));
-    auto r = Lib::Math::Matrix ::rotateZ(Lib::Math::Mathf::Deg2Rad * 45.0f);
+    auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 2, 0 }));
+    auto modelR = Lib::Math::Matrix ::rotateZ(Lib::Math::Mathf::Deg2Rad * 45.0f);
+    auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ 100, 100, 1 }));
     auto ortho = Lib::Math::Matrix::ortho(800, 600, -1, 1);
     auto view = Lib::Math::Matrix::lookAt(
         Lib::Math::Vector3({ 0, 0, -1 }),
         Lib::Math::Vector3({ 0, 0, 1 }),
         Lib::Math::Vector3({ 0, 1, 0 }));
-    auto scale = Lib::Math::Matrix::scale(Lib::Math::Vector3({ 100, 100, 1 }));
-    param->setTransform((scale * r * t) * view * ortho);
+
+    auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::TextureAndColor);
+    param->setTransform((modelS * modelR * modelT) * view * ortho);
     param->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
     param->setTexture(texture);
-    param2->setTransform((scale * r * (Lib::Math::Matrix::translate(Lib::Math::Vector3({ -100, 0, 0 })))) * view * ortho);
+
+    auto param2 = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
+    param2->setTransform((modelS * modelR * (Lib::Math::Matrix::translate(Lib::Math::Vector3({ -100, 0, 0 })))) * view * ortho);
     param2->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
-    // param2->setTexture(texture);
 
     window->show();
     while (true) {
@@ -114,8 +111,8 @@ int main(int argc, char* argv[])
             break;
         }
         surface->begin();
-        surface->draw(shader, param, Lib::Graphics::PrimitiveType::Triangles, 2, true, vb, ib, 6);
-        surface->draw(shader2, param2, Lib::Graphics::PrimitiveType::Triangles, 2, false, vb2, ib, 6);
+        surface->draw(shader, param, rc1);
+        surface->draw(shader2, param2, rc2);
         surface->end();
         // Show messages
         device->flushLogEntries();
