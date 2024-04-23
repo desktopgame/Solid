@@ -225,7 +225,13 @@ void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdLi
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
+    if (m_renderInterface != constant->getInterface()) {
+        throw std::runtime_error("missmatch interfaces.");
+    }
     if (m_renderInterface.useTexture()) {
+        if (!constant->getTexture()) {
+            throw std::runtime_error("texture missing.");
+        }
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
         if (m_renderInterface.useColor()) {
