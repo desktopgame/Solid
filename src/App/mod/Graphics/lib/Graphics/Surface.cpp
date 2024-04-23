@@ -17,6 +17,18 @@
 namespace Lib::Graphics {
 
 using Microsoft::WRL::ComPtr;
+// PsoHash
+class Surface::PsoHash {
+public:
+    explicit PsoHash() = default;
+    std::shared_ptr<Shader> shader;
+    RenderInterface renderInterface;
+    PrimitiveType primitiveType;
+    int32_t vertexComponent;
+    bool isUsingTexCoord;
+
+    std::shared_ptr<Internal::Pso> pso;
+};
 // Impl
 class Surface::Impl {
 public:
@@ -66,14 +78,29 @@ void Surface::draw(
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
 {
-    if (!m_pso) {
-        // TODO: rent from pool.
-        m_pso = Internal::Pso::create(shader, renderParameter->getInterface(), primitiveType, vertexComponent, isUsingTexCoord);
+    std::shared_ptr<Internal::Pso> pso = nullptr;
+    for (auto& hash : m_psoTable) {
+        if (hash->shader == shader && hash->renderInterface == renderParameter->getInterface() && hash->primitiveType == primitiveType && hash->vertexComponent == vertexComponent && hash->isUsingTexCoord == isUsingTexCoord) {
+            pso = hash->pso;
+            break;
+        }
+    }
+    if (!pso) {
+        pso = Internal::Pso::create(shader, renderParameter->getInterface(), primitiveType, vertexComponent, isUsingTexCoord);
+
+        auto hash = std::make_shared<PsoHash>();
+        hash->shader = shader;
+        hash->renderInterface = renderParameter->getInterface();
+        hash->primitiveType = primitiveType;
+        hash->vertexComponent = vertexComponent;
+        hash->isUsingTexCoord = isUsingTexCoord;
+        hash->pso = pso;
+        m_psoTable.emplace_back(hash);
     }
     auto constant = renderParameter->getConstant();
     constant->update();
 
-    m_pso->command(m_impl->commandList, constant);
+    pso->command(m_impl->commandList, constant);
     uint32_t stride = 0;
     if (vertexComponent == 2) {
         if (isUsingTexCoord) {
@@ -105,6 +132,7 @@ void Surface::draw(
 // private
 Surface::Surface()
     : m_swapchain()
+    , m_psoTable()
     , m_impl(std::make_shared<Impl>())
 {
 }
@@ -133,5 +161,6 @@ std::shared_ptr<Surface> Surface::create(
 
 void Surface::destroy()
 {
+    m_psoTable.clear();
 }
 }

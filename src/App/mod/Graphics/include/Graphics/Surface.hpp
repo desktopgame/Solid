@@ -3,6 +3,7 @@
 #include <Graphics/PrimitiveType.hpp>
 #include <any>
 #include <memory>
+#include <vector>
 
 namespace Lib::Graphics::Internal {
 class Swapchain;
@@ -36,7 +37,9 @@ private:
     Surface();
 
     std::shared_ptr<Internal::Swapchain> m_swapchain;
-    std::shared_ptr<Internal::Pso> m_pso;
+
+    class PsoHash;
+    std::vector<std::shared_ptr<PsoHash>> m_psoTable;
 
     class Impl;
     std::shared_ptr<Impl> m_impl;

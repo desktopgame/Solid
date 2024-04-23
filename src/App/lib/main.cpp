@@ -40,6 +40,30 @@ int main(int argc, char* argv[])
             return col;
         })",
         "psMain");
+    auto shader2 = Lib::Graphics::Shader::compile(R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float4 color : COLOR;
+        };
+        cbuffer cbuff0 : register(b0) { matrix mat; }
+        cbuffer cbuff1 : register(b1) { float4 color; }
+
+        Output vsMain(float2 pos : POSITION) {
+            Output output;
+            output.svpos = mul(mat, float4(pos, 0, 1));
+            output.color = color;
+            return output;
+        })",
+        "vsMain", R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float4 color : COLOR;
+        };
+
+        float4 psMain(Output input) : SV_TARGET {
+            return input.color;
+        })",
+        "psMain");
     const float left = -0.5;
     const float right = 0.5;
     const float top = 0.5;
@@ -53,12 +77,22 @@ int main(int argc, char* argv[])
     vb->allocate(sizeof(Lib::Graphics::VertexData2D) * verts.size());
     vb->update(verts.data());
 
+    auto vb2 = Lib::Graphics::Buffer::create();
+    const std::vector<Lib::Math::Vector2> verts2(
+        { (Lib::Math::Vector2({ left, bottom })),
+            (Lib::Math::Vector2({ left, top })),
+            (Lib::Math::Vector2({ right, bottom })),
+            (Lib::Math::Vector2({ right, top })) });
+    vb2->allocate(sizeof(Lib::Math::Vector2) * verts2.size());
+    vb2->update(verts2.data());
+
     auto ib = Lib::Graphics::Buffer::create();
     const std::vector<uint32_t> index { 0, 1, 2, 2, 1, 3 };
     ib->allocate(sizeof(uint32_t) * index.size());
     ib->update(index.data());
 
     auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::UseTextureAndColor);
+    auto param2 = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::UseColor);
     auto t = Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 2, 0 }));
     auto r = Lib::Math::Matrix ::rotateZ(Lib::Math::Mathf::Deg2Rad * 45.0f);
     auto ortho = Lib::Math::Matrix::ortho(800, 600, -1, 1);
@@ -70,6 +104,9 @@ int main(int argc, char* argv[])
     param->setTransform((scale * r * t) * view * ortho);
     param->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
     param->setTexture(texture);
+    param2->setTransform((scale * r * (Lib::Math::Matrix::translate(Lib::Math::Vector3({ -100, 0, 0 })))) * view * ortho);
+    param2->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
+    // param2->setTexture(texture);
 
     window->show();
     while (true) {
@@ -78,6 +115,7 @@ int main(int argc, char* argv[])
         }
         surface->begin();
         surface->draw(shader, param, Lib::Graphics::PrimitiveType::Triangles, 2, true, vb, ib, 6);
+        surface->draw(shader2, param2, Lib::Graphics::PrimitiveType::Triangles, 2, false, vb2, ib, 6);
         surface->end();
         // Show messages
         device->flushLogEntries();
