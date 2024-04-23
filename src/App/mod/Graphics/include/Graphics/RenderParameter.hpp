@@ -1,13 +1,24 @@
 #pragma once
+#include <Graphics/RenderInterface.hpp>
+#include <Graphics/Surface.hpp>
 #include <Math/Matrix.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
 
+namespace Lib::Graphics::Internal {
+class Constant;
+}
+
 namespace Lib::Graphics {
+class Shader;
+class Buffer;
 class Texture;
 class RenderParameter {
 public:
-    RenderParameter();
+    static std::shared_ptr<RenderParameter> create(RenderInterface interfaze);
+    ~RenderParameter();
+
+    void update();
 
     void setTransform(const Math::Matrix& transform);
     Math::Matrix getTransform() const;
@@ -20,13 +31,20 @@ public:
     Math::Vector4 getColor() const;
     bool useColor() const;
 
+    RenderInterface getInterface() const;
+
 private:
-    Math::Matrix m_transform;
+    RenderParameter();
+    std::shared_ptr<Internal::Constant> getConstant() const;
+    friend void Surface::draw(const std::shared_ptr<Shader>& shader,
+        const std::shared_ptr<RenderParameter>& renderParameter,
+        PrimitiveType primitiveType,
+        int32_t vertexComponent,
+        bool isUsingTexCoord,
+        const std::shared_ptr<Buffer>& vertexBuffer,
+        const std::shared_ptr<Buffer>& indexBuffer,
+        int32_t indexLength);
 
-    std::shared_ptr<Texture> m_texture;
-    bool m_useTexture;
-
-    Math::Vector4 m_color;
-    bool m_useColor;
+    std::shared_ptr<Internal::Constant> m_constant;
 };
 }

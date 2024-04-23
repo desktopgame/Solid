@@ -9,28 +9,27 @@ class Shader;
 }
 class ID3D12GraphicsCommandList;
 namespace Lib::Graphics::Internal {
+class Constant;
 class Pso {
 public:
     static std::shared_ptr<Pso> create(
         const std::shared_ptr<Shader>& shader,
-        const std::shared_ptr<RenderParameter>& renderParameter,
+        RenderInterface renderInterface,
         PrimitiveType primitiveType,
         int32_t vertexComponent,
         bool usingTexCoord);
 
     ~Pso();
-    void update();
-    void command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Constant> constant);
 
 private:
     Pso();
 
     std::shared_ptr<Shader> m_shader;
-    std::shared_ptr<RenderParameter> m_renderParameter;
+    RenderInterface m_renderInterface;
     PrimitiveType m_primitiveType;
     int32_t m_vertexComponent;
     bool m_isUsingTexCoord;
-    bool m_isDirty;
 
     class Impl;
     std::shared_ptr<Impl> m_impl;

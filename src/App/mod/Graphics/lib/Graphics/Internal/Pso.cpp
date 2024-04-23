@@ -1,5 +1,6 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/Internal/Constant.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
@@ -41,23 +42,20 @@ public:
     explicit Impl() = default;
     ComPtr<ID3D12PipelineState> pipelineState;
     ComPtr<ID3D12RootSignature> rootSignature;
-    ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-    ComPtr<ID3D12Resource> matrixBuff;
-    ComPtr<ID3D12Resource> colorBuff;
 
 private:
 };
 // public
 std::shared_ptr<Pso> Pso::create(
     const std::shared_ptr<Shader>& shader,
-    const std::shared_ptr<RenderParameter>& renderParameter,
+    RenderInterface renderInterface,
     PrimitiveType primitiveType,
     int32_t vertexComponent,
     bool usingTexCoord)
 {
     auto pso = std::shared_ptr<Pso>(new Pso());
     pso->m_shader = shader;
-    pso->m_renderParameter = renderParameter;
+    pso->m_renderInterface = renderInterface;
     pso->m_primitiveType = primitiveType;
     pso->m_vertexComponent = vertexComponent;
     pso->m_isUsingTexCoord = usingTexCoord;
@@ -132,21 +130,21 @@ std::shared_ptr<Pso> Pso::create(
     descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
     descTableRange.at(0).BaseShaderRegister = 0;
     descTableRange.at(0).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    if (pso->m_renderParameter->useTexture()) {
+    if (renderInterface == RenderInterface::UseTexture || renderInterface == RenderInterface::UseTextureAndColor) {
         descTableRange.push_back({});
         descTableRange.at(1).NumDescriptors = 1;
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
         descTableRange.at(1).BaseShaderRegister = 0;
         descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-        if (pso->m_renderParameter->useColor()) {
+        if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
             descTableRange.push_back({});
             descTableRange.at(2).NumDescriptors = 1;
             descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
             descTableRange.at(2).BaseShaderRegister = 1;
             descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
-    } else if (pso->m_renderParameter->useColor()) {
+    } else if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
         descTableRange.push_back({});
         descTableRange.at(1).NumDescriptors = 1;
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -160,21 +158,21 @@ std::shared_ptr<Pso> Pso::create(
     rootParam.at(0).DescriptorTable.pDescriptorRanges = &descTableRange.at(0);
     rootParam.at(0).DescriptorTable.NumDescriptorRanges = 1;
 
-    if (pso->m_renderParameter->useTexture()) {
+    if (renderInterface == RenderInterface::UseTexture || renderInterface == RenderInterface::UseTextureAndColor) {
         rootParam.push_back({});
         rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
         rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
         rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
 
-        if (pso->m_renderParameter->useColor()) {
+        if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
             rootParam.push_back({});
             rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
             rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
             rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
             rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
         }
-    } else if (pso->m_renderParameter->useColor()) {
+    } else if (renderInterface == RenderInterface::UseColor || renderInterface == RenderInterface::UseTextureAndColor) {
         rootParam.push_back({});
         rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
@@ -209,165 +207,32 @@ std::shared_ptr<Pso> Pso::create(
     if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pso->m_impl->pipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
-    // descriptor heap
-    D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
-    descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    descHeapDesc.NodeMask = 0;
-    descHeapDesc.NumDescriptors = 1;
-    if (pso->m_renderParameter->useTexture()) {
-        descHeapDesc.NumDescriptors++;
-    }
-    if (pso->m_renderParameter->useColor()) {
-        descHeapDesc.NumDescriptors++;
-    }
-    descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&pso->m_impl->descriptorHeap)))) {
-        throw std::runtime_error("failed CreateDescriptorHeap()");
-    }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Waddress-of-temporary"
-    // transform
-    if (!pso->m_impl->matrixBuff) {
-
-        D3D12_HEAP_PROPERTIES heapProps = {};
-        heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-        heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-        heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-        D3D12_RESOURCE_DESC resDesc = {};
-        resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-        resDesc.Width = (sizeof(Math::Matrix) + 0xff) & ~0xff;
-        resDesc.Height = 1;
-        resDesc.DepthOrArraySize = 1;
-        resDesc.MipLevels = 1;
-        resDesc.Format = DXGI_FORMAT_UNKNOWN;
-        resDesc.SampleDesc.Count = 1;
-        resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-        if (FAILED(device->CreateCommittedResource(
-                &heapProps,
-                D3D12_HEAP_FLAG_NONE,
-                &resDesc,
-                D3D12_RESOURCE_STATE_GENERIC_READ,
-                nullptr,
-                IID_PPV_ARGS(&pso->m_impl->matrixBuff)))) {
-            throw std::runtime_error("failed CreateCommittedResource()");
-        }
-    }
-    // color
-    if (pso->m_renderParameter->useColor()) {
-        if (!pso->m_impl->colorBuff) {
-            D3D12_HEAP_PROPERTIES heapProps = {};
-            heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-            heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-            heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-            D3D12_RESOURCE_DESC resDesc = {};
-            resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-            resDesc.Width = (sizeof(Math::Vector4) + 0xff) & ~0xff;
-            resDesc.Height = 1;
-            resDesc.DepthOrArraySize = 1;
-            resDesc.MipLevels = 1;
-            resDesc.Format = DXGI_FORMAT_UNKNOWN;
-            resDesc.SampleDesc.Count = 1;
-            resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-            resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-            if (FAILED(device->CreateCommittedResource(
-                    &heapProps,
-                    D3D12_HEAP_FLAG_NONE,
-                    &resDesc,
-                    D3D12_RESOURCE_STATE_GENERIC_READ,
-                    nullptr,
-                    IID_PPV_ARGS(&pso->m_impl->colorBuff)))) {
-                throw std::runtime_error("failed CreateCommittedResource()");
-            }
-        }
-    }
-    pso->update();
-    pso->m_isDirty = false;
-    // constant buffer
-    auto basicHeapHandle = pso->m_impl->descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    // constant buffer(matrix)
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvMatrixDesc = {};
-    cbvMatrixDesc.BufferLocation = pso->m_impl->matrixBuff->GetGPUVirtualAddress();
-    cbvMatrixDesc.SizeInBytes = pso->m_impl->matrixBuff->GetDesc().Width;
-    device->CreateConstantBufferView(&cbvMatrixDesc, basicHeapHandle);
-    // constant buffer(color)
-    if (pso->m_renderParameter->useTexture()) {
-        basicHeapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-        srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-        srvDesc.Texture2D.MipLevels = 1;
-
-        auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(pso->m_renderParameter->getTexture()->getHandle());
-        device->CreateShaderResourceView(texBuff.Get(), &srvDesc, basicHeapHandle);
-
-        if (pso->m_renderParameter->useColor()) {
-            basicHeapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-            cbvColorDesc.BufferLocation = pso->m_impl->colorBuff->GetGPUVirtualAddress();
-            cbvColorDesc.SizeInBytes = pso->m_impl->colorBuff->GetDesc().Width;
-            device->CreateConstantBufferView(&cbvColorDesc, basicHeapHandle);
-        }
-    } else if (pso->m_renderParameter->useColor()) {
-        basicHeapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-        cbvColorDesc.BufferLocation = pso->m_impl->colorBuff->GetGPUVirtualAddress();
-        cbvColorDesc.SizeInBytes = pso->m_impl->colorBuff->GetDesc().Width;
-        device->CreateConstantBufferView(&cbvColorDesc, basicHeapHandle);
-    }
-#pragma clang diagnostic pop
     return pso;
 }
 Pso::~Pso()
 {
 }
-void Pso::update()
-{
-    // transfrom
-    {
-        void* mapMatrix = nullptr;
-        if (FAILED(m_impl->matrixBuff->Map(0, nullptr, (void**)&mapMatrix))) {
-            throw std::runtime_error("failed Map()");
-        } else {
-            Math::Matrix matrix = m_renderParameter->getTransform();
-            ::memcpy(mapMatrix, matrix.data(), sizeof(Math::Matrix));
-            m_impl->matrixBuff->Unmap(0, nullptr);
-        }
-    }
-    // color
-    if (m_renderParameter->useColor()) {
-        void* mapColor = nullptr;
-        if (FAILED(m_impl->colorBuff->Map(0, nullptr, (void**)&mapColor))) {
-            throw std::runtime_error("failed Map()");
-        } else {
-            Math::Vector4 color = m_renderParameter->getColor();
-            ::memcpy(mapColor, color.data(), sizeof(Math::Vector4));
-            m_impl->colorBuff->Unmap(0, nullptr);
-        }
-    }
-    m_isDirty = true;
-}
 
-void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Constant> constant)
 {
     cmdList->SetPipelineState(m_impl->pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_impl->rootSignature.Get());
 
     auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto descriptorHeap = constant->getDescriptorHeap();
     uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = m_impl->descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-    cmdList->SetDescriptorHeaps(1, m_impl->descriptorHeap.GetAddressOf());
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
-    if (m_renderParameter->useTexture()) {
+    if (m_renderInterface == RenderInterface::UseTexture || m_renderInterface == RenderInterface::UseTextureAndColor) {
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
-        if (m_renderParameter->useColor()) {
+        if (m_renderInterface == RenderInterface::UseColor || m_renderInterface == RenderInterface::UseTextureAndColor) {
             heapHandle.ptr += incrementSize;
             cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
         }
-    } else if (m_renderParameter->useColor()) {
+    } else if (m_renderInterface == RenderInterface::UseColor || m_renderInterface == RenderInterface::UseTextureAndColor) {
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
     }
@@ -376,11 +241,10 @@ void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdLi
 // private
 Pso::Pso()
     : m_shader()
-    , m_renderParameter()
+    , m_renderInterface()
     , m_primitiveType()
     , m_vertexComponent(0)
     , m_isUsingTexCoord(false)
-    , m_isDirty(false)
     , m_impl(std::make_shared<Impl>())
 {
 }

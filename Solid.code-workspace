@@ -82,16 +82,6 @@
 			"any": "cpp",
 			"array": "cpp",
 			"sstream": "cpp",
-			"chrono": "cpp",
-			"codecvt": "cpp",
-			"cstdarg": "cpp",
-			"cwctype": "cpp",
-			"forward_list": "cpp",
-			"set": "cpp",
-			"filesystem": "cpp",
-			"fstream": "cpp",
-			"iomanip": "cpp",
-			"xtree": "cpp",
 			"numeric": "cpp"
 		},
 		"files.exclude": {

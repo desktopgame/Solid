@@ -42,6 +42,7 @@ add_library(
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/RenderParameter.cpp
     ./lib/Graphics/Internal/Swapchain.cpp
+    ./lib/Graphics/Internal/Constant.cpp
     ./lib/Graphics/Internal/Error.cpp
     ./lib/Graphics/Internal/Pso.cpp
 )

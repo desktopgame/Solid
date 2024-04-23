@@ -1,5 +1,6 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
+#include <Graphics/Internal/Constant.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Internal/Swapchain.hpp>
 #include <Graphics/Screen.hpp>
@@ -67,10 +68,12 @@ void Surface::draw(
 {
     if (!m_pso) {
         // TODO: rent from pool.
-        m_pso = Internal::Pso::create(shader, renderParameter, primitiveType, vertexComponent, isUsingTexCoord);
+        m_pso = Internal::Pso::create(shader, renderParameter->getInterface(), primitiveType, vertexComponent, isUsingTexCoord);
     }
-    m_pso->update();
-    m_pso->command(m_impl->commandList);
+    auto constant = renderParameter->getConstant();
+    constant->update();
+
+    m_pso->command(m_impl->commandList, constant);
     uint32_t stride = 0;
     if (vertexComponent == 2) {
         if (isUsingTexCoord) {

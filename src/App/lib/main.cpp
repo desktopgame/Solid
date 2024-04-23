@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     ib->allocate(sizeof(uint32_t) * index.size());
     ib->update(index.data());
 
-    auto param = std::make_shared<Lib::Graphics::RenderParameter>();
+    auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::UseTextureAndColor);
     auto t = Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 2, 0 }));
     auto r = Lib::Math::Matrix ::rotateZ(Lib::Math::Mathf::Deg2Rad * 45.0f);
     auto ortho = Lib::Math::Matrix::ortho(800, 600, -1, 1);

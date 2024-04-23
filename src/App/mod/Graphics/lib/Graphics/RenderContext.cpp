@@ -79,7 +79,7 @@ bool RenderContext::isUsingTexCoord() const
 }
 // private
 RenderContext::RenderContext()
-    : m_parameter(std::make_shared<RenderParameter>())
+    : m_parameter(RenderParameter::create(RenderInterface::None))
     , m_vertexComponent(0)
     , m_vertexLength(0)
     , m_indexLength(0)
