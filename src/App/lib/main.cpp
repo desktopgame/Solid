@@ -106,24 +106,24 @@ int main(int argc, char* argv[])
     param2->setTransform((modelS * modelR * (Lib::Math::Matrix::translate(Lib::Math::Vector3({ -100, 0, 0 })))) * view * ortho);
     param2->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
 
-    auto controller = Lib::Input::Controller::getController(0);
+    auto controller = Lib::Input::Gamepad::getGamepad(0);
 
     window->show();
     while (true) {
         if (window->translateMessage()) {
             break;
         }
-        Lib::Input::Controller::sync();
+        Lib::Input::Gamepad::sync();
         std::cout << "LT: " << controller->getLeftTrigger() << " " << //
             "RT: " << controller->getRightTrigger() << " " << //
             "LX: " << controller->getLeftStickX() << " " << //
             "LY: " << controller->getLeftStickY() << " " << //
             "RX: " << controller->getRightStickX() << " " << //
             "RY: " << controller->getRightStickY() << " " << //
-            "A: " << controller->isPressed(Lib::Input::Controller::A) << " " << //
-            "B: " << controller->isPressed(Lib::Input::Controller::B) << " " << //
-            "X: " << controller->isPressed(Lib::Input::Controller::X) << " " << //
-            "Y: " << controller->isPressed(Lib::Input::Controller::Y) << " " << //
+            "A: " << controller->isPressed(Lib::Input::Gamepad::A) << " " << //
+            "B: " << controller->isPressed(Lib::Input::Gamepad::B) << " " << //
+            "X: " << controller->isPressed(Lib::Input::Gamepad::X) << " " << //
+            "Y: " << controller->isPressed(Lib::Input::Gamepad::Y) << " " << //
             std::endl; //
 
         surface->begin();
