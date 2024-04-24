@@ -3,10 +3,10 @@
 #include <vector>
 
 namespace Lib::Input {
-class Controller {
+class Gamepad {
 public:
     static void sync();
-    static std::shared_ptr<Controller> getController(int32_t index);
+    static std::shared_ptr<Gamepad> getGamepad(int32_t index);
 
     enum Button : uint16_t {
         DPadUp = 0x001,
@@ -35,7 +35,7 @@ public:
     bool isEnabled() const;
 
 private:
-    Controller(int32_t index);
+    Gamepad(int32_t index);
 
     int32_t m_index;
     bool m_isEnabled;
@@ -43,7 +43,7 @@ private:
     class Impl;
     static std::shared_ptr<Impl> s_impl;
 
-    static std::vector<std::shared_ptr<Controller>> s_controllers;
+    static std::vector<std::shared_ptr<Gamepad>> s_controllers;
     inline static constexpr int32_t k_maxCount = 4;
 };
 }
