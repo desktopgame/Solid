@@ -90,6 +90,9 @@ Math::Matrix Constant::getTransform() const
 
 void Constant::setTexture(const std::shared_ptr<Texture>& texture)
 {
+    if (!m_interface.useTexture()) {
+        throw std::runtime_error("missmatch interface.");
+    }
     m_isDirty = true;
     m_texture = texture;
 }
@@ -97,6 +100,9 @@ std::shared_ptr<Texture> Constant::getTexture() const { return m_texture; }
 
 void Constant::setColor(const Math::Vector4& color)
 {
+    if (!m_interface.useColor()) {
+        throw std::runtime_error("missmatch interface.");
+    }
     m_isDirty = true;
     m_color = color;
 }
