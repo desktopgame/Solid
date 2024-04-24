@@ -106,14 +106,26 @@ int main(int argc, char* argv[])
     param2->setTransform((modelS * modelR * (Lib::Math::Matrix::translate(Lib::Math::Vector3({ -100, 0, 0 })))) * view * ortho);
     param2->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
 
-    Lib::Input::Controller controller;
-    controller.hello();
+    auto controller = Lib::Input::Controller::getController(0);
 
     window->show();
     while (true) {
         if (window->translateMessage()) {
             break;
         }
+        Lib::Input::Controller::sync();
+        std::cout << "LT: " << controller->getLeftTrigger() << " " << //
+            "RT: " << controller->getRightTrigger() << " " << //
+            "LX: " << controller->getLeftStickX() << " " << //
+            "LY: " << controller->getLeftStickY() << " " << //
+            "RX: " << controller->getRightStickX() << " " << //
+            "RY: " << controller->getRightStickY() << " " << //
+            "A: " << controller->isPressed(Lib::Input::Controller::A) << " " << //
+            "B: " << controller->isPressed(Lib::Input::Controller::B) << " " << //
+            "X: " << controller->isPressed(Lib::Input::Controller::X) << " " << //
+            "Y: " << controller->isPressed(Lib::Input::Controller::Y) << " " << //
+            std::endl; //
+
         surface->begin();
         surface->draw(shader, param, rc1);
         surface->draw(shader2, param2, rc2);
