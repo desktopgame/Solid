@@ -1,4 +1,5 @@
 #include <Graphics.hpp>
+#include <Input.hpp>
 #include <cassert>
 
 int main(int argc, char* argv[])
@@ -104,6 +105,9 @@ int main(int argc, char* argv[])
     auto param2 = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
     param2->setTransform((modelS * modelR * (Lib::Math::Matrix::translate(Lib::Math::Vector3({ -100, 0, 0 })))) * view * ortho);
     param2->setColor(Lib::Math::Vector4({ 1, 1, 1, 1 }));
+
+    Lib::Input::Controller controller;
+    controller.hello();
 
     window->show();
     while (true) {

@@ -16,6 +16,10 @@
 			"path": "src/App/mod/Math",
 			"name": "Math"
 		},
+		{
+			"path": "src/App/mod/Input",
+			"name": "Input"
+		},
 	],
 	"settings": {
 		"files.associations": {

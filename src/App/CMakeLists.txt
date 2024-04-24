@@ -21,6 +21,7 @@ endfunction()
 #
 set(VCPKG_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mod/vcpkg/scripts/buildsystems/vcpkg.cmake)
 set(VCPKG_PACKAGES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mod/vcpkg/packages)
+add_subdirectory(./mod/Input)
 add_subdirectory(./mod/Math)
 add_subdirectory(./mod/Graphics)
 #
@@ -37,12 +38,14 @@ target_include_directories(
     App
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${MODS}/Math/include"
+    "${MODS}/Input/include"
     "${MODS}/Graphics/include"
+    "${MODS}/Math/include"
 )
 target_link_libraries(
     App
     PRIVATE
-    Lib-Graphics
+    Lib-Input
     Lib-Math
+    Lib-Graphics
 )
