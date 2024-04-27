@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     rc->updateIndex(index.data(), static_cast<int32_t>(index.size()));
 
     std::vector<Tile> tiles;
-    const float tileSize = 2.0f;
+    const float tileSize = 5.0f;
     for (int32_t i = 0; i < 5; i++) {
         float fi = static_cast<float>(i + 1) * tileSize;
         for (int32_t j = 0; j < 5; j++) {
