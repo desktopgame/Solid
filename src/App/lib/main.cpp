@@ -1,6 +1,7 @@
 #include <Graphics.hpp>
 #include <Input.hpp>
 #include <cassert>
+#include <functional>
 
 class Tile {
 public:
@@ -12,6 +13,20 @@ public:
     std::shared_ptr<Lib::Graphics::RenderParameter> renderParameter;
     Lib::Math::Matrix modelMatrix;
 };
+
+void eachAxisY(const Lib::Math::Vector3& axis, const std::function<void(Lib::Math::Vector3)>& cb)
+{
+    cb(Lib::Math::Vector3({ axis.x(), axis.y(), axis.z() }));
+    cb(Lib::Math::Vector3({ -axis.x(), axis.y(), axis.z() }));
+    cb(Lib::Math::Vector3({ axis.x(), axis.y(), -axis.z() }));
+    cb(Lib::Math::Vector3({ -axis.x(), axis.y(), -axis.z() }));
+    // x = 0
+    cb(Lib::Math::Vector3({ 0, axis.y(), axis.z() }));
+    cb(Lib::Math::Vector3({ 0, axis.y(), -axis.z() }));
+    // z = 0
+    cb(Lib::Math::Vector3({ axis.x(), axis.y(), 0 }));
+    cb(Lib::Math::Vector3({ -axis.x(), axis.y(), 0 }));
+}
 
 int main(int argc, char* argv[])
 {
@@ -62,46 +77,42 @@ int main(int argc, char* argv[])
 
     std::vector<Tile> tiles;
     Lib::Math::Vector3 eyePos = Lib::Math::Vector3({ 0, 0, -5 });
-    int32_t globalIndex = 0;
     const float tileSize = 2.0f;
     for (int32_t i = 0; i < 5; i++) {
-        float fi = static_cast<float>(i) * tileSize;
+        float fi = static_cast<float>(i + 1) * tileSize;
         for (int32_t j = 0; j < 5; j++) {
-            float fj = static_cast<float>(j) * tileSize;
+            float fj = static_cast<float>(j + 1) * tileSize;
             auto modelR = Lib::Math::Matrix ::rotateX(Lib::Math::Mathf::Deg2Rad * -90.0f);
             auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ tileSize, tileSize, 1.0f }));
-            auto color = Lib::Math::Vector4({ static_cast<float>(globalIndex) / 25.0f, 0, 0, 1 });
-            globalIndex++;
+            auto color = Lib::Math::Vector4({ static_cast<float>(i) / 5.0f, static_cast<float>(j) / 5.0f, 0.5f, 1 });
 
-            {
-                auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ fi, -1.0f, fj }));
+            eachAxisY(Lib::Math::Vector3({ fi, -1.0f, fj }), [&](Lib::Math::Vector3 t) -> void {
+                auto modelT = Lib::Math::Matrix::translate(t);
                 Tile tile(Lib::Graphics::RenderInterface::Color);
                 tile.modelMatrix = (modelS * modelR * modelT);
                 tile.renderParameter->setColor(color);
                 tiles.emplace_back(tile);
-            }
-            {
-                auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ -fi, -1.0f, fj }));
+            });
+
+            modelR = Lib::Math::Matrix ::rotateX(Lib::Math::Mathf::Deg2Rad * 90.0f);
+            eachAxisY(Lib::Math::Vector3({ fi, tileSize * 5, fj }), [&](Lib::Math::Vector3 t) -> void {
+                auto modelT = Lib::Math::Matrix::translate(t);
                 Tile tile(Lib::Graphics::RenderInterface::Color);
                 tile.modelMatrix = (modelS * modelR * modelT);
                 tile.renderParameter->setColor(color);
                 tiles.emplace_back(tile);
-            }
-            {
-                auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ fi, -1.0f, -fj }));
-                Tile tile(Lib::Graphics::RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            }
-            {
-                auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ -fi, -1.0f, -fj }));
-                Tile tile(Lib::Graphics::RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            }
+            });
         }
+    }
+
+    {
+        auto modelR = Lib::Math::Matrix ::rotateX(Lib::Math::Mathf::Deg2Rad * -90.0f);
+        auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ tileSize, tileSize, 1.0f }));
+        auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0.0f, -1.0f, 0.0f }));
+        Tile tile(Lib::Graphics::RenderInterface::Color);
+        tile.modelMatrix = (modelS * modelR * modelT);
+        tile.renderParameter->setColor(Lib::Math::Vector4({ 0, 0, 0.5f, 1.0f }));
+        tiles.emplace_back(tile);
     }
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
