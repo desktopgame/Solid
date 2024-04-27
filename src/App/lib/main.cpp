@@ -191,6 +191,7 @@ int main(int argc, char* argv[])
     auto persp = Matrix::perspective(90.0f, Screen::getAspectRatio(), 1, 1000);
     float eyeAngleX = 0.0f;
     float eyeAngleY = 0.0f;
+    bool stopMove = false;
     window->show();
     while (true) {
         if (window->translateMessage()) {
@@ -200,60 +201,73 @@ int main(int argc, char* argv[])
         float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
         float leftStickY = static_cast<float>(controller->getLeftStickY() / 32768.0f);
         // eyePos.x() += leftStickX * 0.1f;
-        if (controller->getLeftTrigger() > 0) {
-            eyePos += Vector3(
-                {
-                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
-                    0, //
-                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
-                });
-        } else if (controller->getRightTrigger() > 0) {
-            eyePos -= Vector3(
-                {
-                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
-                    0, //
-                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
-                });
-        } else if (leftStickX > 0.5f) {
-            eyePos += Vector3(
-                {
-                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
-                    0, //
-                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
-                });
-        } else if (leftStickX < -0.5f) {
-            eyePos -= Vector3(
-                {
-                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
-                    0, //
-                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
-                });
-        } else if (leftStickY > 0) {
-            eyePos += Vector3(
-                {
-                    0, //
-                    leftStickY, //
-                    0 //
-                });
-        } else if (leftStickY < 0) {
-            eyePos -= Vector3(
-                {
-                    0, //
-                    -leftStickY, //
-                    0 //
-                });
+        if (!stopMove) {
+            if (controller->getLeftTrigger() > 0) {
+                eyePos += Vector3(
+                    {
+                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
+                        0, //
+                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
+                    });
+            } else if (controller->getRightTrigger() > 0) {
+                eyePos -= Vector3(
+                    {
+                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
+                        0, //
+                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
+                    });
+            } else if (leftStickX > 0.5f) {
+                eyePos += Vector3(
+                    {
+                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
+                        0, //
+                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                    });
+            } else if (leftStickX < -0.5f) {
+                eyePos -= Vector3(
+                    {
+                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
+                        0, //
+                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                    });
+            } else if (leftStickY > 0) {
+                eyePos += Vector3(
+                    {
+                        0, //
+                        leftStickY, //
+                        0 //
+                    });
+            } else if (leftStickY < 0) {
+                eyePos -= Vector3(
+                    {
+                        0, //
+                        -leftStickY, //
+                        0 //
+                    });
+            }
         }
 
-        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f);
-        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f);
-        eyeAngleX = rightStickX;
+        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.02f;
+        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f) * 0.02f;
+        stopMove = false;
+        if (rightStickX == 0.0f) {
+            eyeAngleX /= 2.0f;
+        } else {
+            stopMove = true;
+        }
+        eyeAngleX += rightStickX;
         if (eyeAngleX < -0.5f) {
             eyeAngleX = -0.5f;
         }
         if (eyeAngleX > 0.5f) {
             eyeAngleX = 0.5f;
         }
-        eyeAngleY = rightStickY;
+        if (rightStickY == 0.0f) {
+            eyeAngleY /= 2.0f;
+        } else {
+            stopMove = true;
+        }
+        eyeAngleY += rightStickY;
         if (eyeAngleY < -1.0f) {
             eyeAngleY = -1.0f;
         }
