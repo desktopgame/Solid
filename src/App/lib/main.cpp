@@ -187,8 +187,8 @@ int main(int argc, char* argv[])
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
 
-    Vector3 eyePos = Vector3({ 0, 0, -5 });
-    auto ortho = Matrix::perspective(90.0f, Screen::getAspectRatio(), 1, 1000);
+    auto eyePos = Vector3({ 0, 0, -5 });
+    auto persp = Matrix::perspective(90.0f, Screen::getAspectRatio(), 1, 1000);
     auto view = Matrix::lookAt(
         eyePos,
         Vector3({ 0, 0, 1 }),
@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
 
         surface->begin();
         for (auto& tile : tiles) {
-            tile.renderParameter->setTransform(tile.modelMatrix * view * ortho);
+            tile.renderParameter->setTransform(tile.modelMatrix * view * persp);
             surface->draw(shader, tile.renderParameter, rc);
         }
         surface->end();
