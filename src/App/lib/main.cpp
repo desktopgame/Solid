@@ -187,23 +187,71 @@ int main(int argc, char* argv[])
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
 
-    auto eyePos = Vector3({ 0, 0, -5 });
+    auto eyePos = Vector3({ 0, 1, -5 });
     auto persp = Matrix::perspective(90.0f, Screen::getAspectRatio(), 1, 1000);
-    auto view = Matrix::lookAt(
-        eyePos,
-        Vector3({ 0, 0, 1 }),
-        Vector3({ 0, 1, 0 }));
+    float eyeAngleX = 0.0f;
+    float eyeAngleY = 0.0f;
     window->show();
     while (true) {
         if (window->translateMessage()) {
             break;
         }
         Lib::Input::Gamepad::sync();
-        eyePos.x() += (static_cast<float>(controller->getLeftStickX() / 32768.0f)) * 0.1f;
-        eyePos.y() += (static_cast<float>(controller->getLeftStickY() / 32768.0f)) * 0.1f;
-        view = Matrix::lookAt(
+        float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
+        // eyePos.x() += leftStickX * 0.1f;
+        if (controller->getLeftTrigger() > 0) {
+            eyePos += Vector3(
+                {
+                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
+                    0, //
+                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
+                });
+        } else if (controller->getRightTrigger() > 0) {
+            eyePos -= Vector3(
+                {
+                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
+                    0, //
+                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
+                });
+        } else if (leftStickX > 0.5f) {
+            eyePos += Vector3(
+                {
+                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
+                    0, //
+                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                });
+        } else if (leftStickX < -0.5f) {
+            eyePos -= Vector3(
+                {
+                    Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
+                    0, //
+                    -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                });
+        }
+
+        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.1f;
+        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f) * 0.1f;
+        eyeAngleX += rightStickX;
+        if (eyeAngleX < -0.5f) {
+            eyeAngleX = -0.5f;
+        }
+        if (eyeAngleX > 0.5f) {
+            eyeAngleX = 0.5f;
+        }
+        eyeAngleY += rightStickY;
+        if (eyeAngleY < -1.0f) {
+            eyeAngleY = -1.0f;
+        }
+        if (eyeAngleY > 1.0f) {
+            eyeAngleY = 1.0f;
+        }
+        auto view = Matrix::lookAt(
             eyePos,
-            Vector3({ 0, 0, 1 }),
+            eyePos + Vector3({
+                Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
+                0, //
+                -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
+            }),
             Vector3({ 0, 1, 0 }));
 
         surface->begin();
