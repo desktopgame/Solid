@@ -229,16 +229,16 @@ int main(int argc, char* argv[])
                 });
         }
 
-        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.1f;
-        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f) * 0.1f;
-        eyeAngleX += rightStickX;
+        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f);
+        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f);
+        eyeAngleX = rightStickX;
         if (eyeAngleX < -0.5f) {
             eyeAngleX = -0.5f;
         }
         if (eyeAngleX > 0.5f) {
             eyeAngleX = 0.5f;
         }
-        eyeAngleY += rightStickY;
+        eyeAngleY = rightStickY;
         if (eyeAngleY < -1.0f) {
             eyeAngleY = -1.0f;
         }
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
             eyePos,
             eyePos + Vector3({
                 Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
-                0, //
+                eyeAngleY, //
                 -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
             }),
             Vector3({ 0, 1, 0 }));
