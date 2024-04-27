@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
+set(VCPKG_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/App/mod/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(VCPKG_PACKAGES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/App/mod/vcpkg/packages)
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_TOOLCHAIN_FILE}")
 project(
     Solid
     VERSION 0.0.1

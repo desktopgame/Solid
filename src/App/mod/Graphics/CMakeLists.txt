@@ -7,25 +7,7 @@ project(
 #
 # Build Options
 #
-find_path(
-    DirectXTex-Include
-    NAMES
-    DirectXTex.h
-    PATHS
-    ${VCPKG_PACKAGES_DIR}/directxtex_x64-windows
-    PATH_SUFFIXES
-    include
-)
-find_library(
-    DirectXTex-Library
-    NAMES
-    DirectXTex
-    PATHS
-    $<$<CONFIG:Debug>: ${VCPKG_PACKAGES_DIR}/directxtex_x64-windows/debug>
-    $<$<CONFIG:Release>: ${VCPKG_PACKAGES_DIR}/directxtex_x64-windows>
-    PATH_SUFFIXES
-    lib
-)
+find_package(directxtex CONFIG REQUIRED)
 add_library(
     Lib-Graphics
     STATIC
@@ -53,7 +35,6 @@ target_include_directories(
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${MODS}/Math/include"
-    "${DirectXTex-Include}"
 )
 target_link_libraries(
     Lib-Graphics
@@ -62,5 +43,5 @@ target_link_libraries(
     "dxgi.lib"
     "d3dcompiler.lib"
     Lib-Math
-    "${DirectXTex-Library}"
+    Microsoft::DirectXTex
 )
