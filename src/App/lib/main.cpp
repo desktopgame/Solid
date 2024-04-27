@@ -2,6 +2,17 @@
 #include <Input.hpp>
 #include <cassert>
 
+class Tile {
+public:
+    explicit Tile(Lib::Graphics::RenderInterface renderInterface)
+        : renderParameter(Lib::Graphics::RenderParameter::create(renderInterface))
+    {
+    }
+
+    std::shared_ptr<Lib::Graphics::RenderParameter> renderParameter;
+    Lib::Math::Matrix modelMatrix;
+};
+
 int main(int argc, char* argv[])
 {
     auto engine = Lib::Graphics::Engine::getInstance()->startup(argc, argv);
@@ -49,56 +60,56 @@ int main(int argc, char* argv[])
     rc->updateVertex(verts.data(), static_cast<int32_t>(verts.size()));
     rc->updateIndex(index.data(), static_cast<int32_t>(index.size()));
 
-    std::vector<std::shared_ptr<Lib::Graphics::RenderParameter>> parameters;
+    std::vector<Tile> tiles;
     Lib::Math::Vector3 eyePos = Lib::Math::Vector3({ 0, 0, -5 });
     int32_t globalIndex = 0;
-    for (int32_t i = 0; i < 10; i++) {
-        float fi = static_cast<float>(i);
-        for (int32_t j = 0; j < 10; j++) {
-            float fj = static_cast<float>(j);
+    for (int32_t i = 0; i < 5; i++) {
+        float fi = static_cast<float>(i) * 2.0f;
+        for (int32_t j = 0; j < 5; j++) {
+            float fj = static_cast<float>(j) * 2.0f;
             auto modelR = Lib::Math::Matrix ::rotateX(Lib::Math::Mathf::Deg2Rad * -90.0f);
-            auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ 1.0f, 1, 1.0f }));
-            auto ortho = Lib::Math::Matrix::perspective(90.0f, Lib::Graphics::Screen::getAspectRatio(), 1, 1000);
-            auto view = Lib::Math::Matrix::lookAt(
-                eyePos,
-                Lib::Math::Vector3({ 0, 0, 1 }),
-                Lib::Math::Vector3({ 0, 1, 0 }));
-            auto color = Lib::Math::Vector4({ static_cast<float>(globalIndex) / 100.0f, 0, 0, 1 });
+            auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ 2.0f, 2.0f, 1.0f }));
+            auto color = Lib::Math::Vector4({ static_cast<float>(globalIndex) / 25.0f, 0, 0, 1 });
             globalIndex++;
 
             {
                 auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ fi, -1.0f, fj }));
-                auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
-                param->setTransform((modelS * modelR * modelT) * view * ortho);
-                param->setColor(color);
-                parameters.emplace_back(param);
+                Tile tile(Lib::Graphics::RenderInterface::Color);
+                tile.modelMatrix = (modelS * modelR * modelT);
+                tile.renderParameter->setColor(color);
+                tiles.emplace_back(tile);
             }
             {
                 auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ -fi, -1.0f, fj }));
-                auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
-                param->setTransform((modelS * modelR * modelT) * view * ortho);
-                param->setColor(color);
-                parameters.emplace_back(param);
+                Tile tile(Lib::Graphics::RenderInterface::Color);
+                tile.modelMatrix = (modelS * modelR * modelT);
+                tile.renderParameter->setColor(color);
+                tiles.emplace_back(tile);
             }
             {
                 auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ fi, -1.0f, -fj }));
-                auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
-                param->setTransform((modelS * modelR * modelT) * view * ortho);
-                param->setColor(color);
-                parameters.emplace_back(param);
+                Tile tile(Lib::Graphics::RenderInterface::Color);
+                tile.modelMatrix = (modelS * modelR * modelT);
+                tile.renderParameter->setColor(color);
+                tiles.emplace_back(tile);
             }
             {
                 auto modelT = Lib::Math::Matrix::translate(Lib::Math::Vector3({ -fi, -1.0f, -fj }));
-                auto param = Lib::Graphics::RenderParameter::create(Lib::Graphics::RenderInterface::Color);
-                param->setTransform((modelS * modelR * modelT) * view * ortho);
-                param->setColor(color);
-                parameters.emplace_back(param);
+                Tile tile(Lib::Graphics::RenderInterface::Color);
+                tile.modelMatrix = (modelS * modelR * modelT);
+                tile.renderParameter->setColor(color);
+                tiles.emplace_back(tile);
             }
         }
     }
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
 
+    auto ortho = Lib::Math::Matrix::perspective(90.0f, Lib::Graphics::Screen::getAspectRatio(), 1, 1000);
+    auto view = Lib::Math::Matrix::lookAt(
+        eyePos,
+        Lib::Math::Vector3({ 0, 0, 1 }),
+        Lib::Math::Vector3({ 0, 1, 0 }));
     window->show();
     while (true) {
         if (window->translateMessage()) {
@@ -107,8 +118,9 @@ int main(int argc, char* argv[])
         Lib::Input::Gamepad::sync();
 
         surface->begin();
-        for (auto param : parameters) {
-            surface->draw(shader, param, rc);
+        for (auto& tile : tiles) {
+            tile.renderParameter->setTransform(tile.modelMatrix * view * ortho);
+            surface->draw(shader, tile.renderParameter, rc);
         }
         surface->end();
         // Show messages
