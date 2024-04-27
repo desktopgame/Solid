@@ -63,12 +63,13 @@ int main(int argc, char* argv[])
     std::vector<Tile> tiles;
     Lib::Math::Vector3 eyePos = Lib::Math::Vector3({ 0, 0, -5 });
     int32_t globalIndex = 0;
+    const float tileSize = 2.0f;
     for (int32_t i = 0; i < 5; i++) {
-        float fi = static_cast<float>(i) * 2.0f;
+        float fi = static_cast<float>(i) * tileSize;
         for (int32_t j = 0; j < 5; j++) {
-            float fj = static_cast<float>(j) * 2.0f;
+            float fj = static_cast<float>(j) * tileSize;
             auto modelR = Lib::Math::Matrix ::rotateX(Lib::Math::Mathf::Deg2Rad * -90.0f);
-            auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ 2.0f, 2.0f, 1.0f }));
+            auto modelS = Lib::Math::Matrix::scale(Lib::Math::Vector3({ tileSize, tileSize, 1.0f }));
             auto color = Lib::Math::Vector4({ static_cast<float>(globalIndex) / 25.0f, 0, 0, 1 });
             globalIndex++;
 
