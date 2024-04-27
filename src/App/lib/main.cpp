@@ -198,6 +198,7 @@ int main(int argc, char* argv[])
         }
         Lib::Input::Gamepad::sync();
         float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
+        float leftStickY = static_cast<float>(controller->getLeftStickY() / 32768.0f);
         // eyePos.x() += leftStickX * 0.1f;
         if (controller->getLeftTrigger() > 0) {
             eyePos += Vector3(
@@ -226,6 +227,20 @@ int main(int argc, char* argv[])
                     Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
                     0, //
                     -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                });
+        } else if (leftStickY > 0) {
+            eyePos += Vector3(
+                {
+                    0, //
+                    leftStickY, //
+                    0 //
+                });
+        } else if (leftStickY < 0) {
+            eyePos -= Vector3(
+                {
+                    0, //
+                    -leftStickY, //
+                    0 //
                 });
         }
 
