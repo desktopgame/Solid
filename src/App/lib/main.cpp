@@ -1,7 +1,8 @@
 #include <Graphics.hpp>
 #include <Input.hpp>
 #include <cassert>
-#include <functional>
+#include <fstream>
+#include <picojson/picojson.h>
 
 using namespace Lib::Graphics;
 using namespace Lib::Math;
@@ -16,52 +17,6 @@ public:
     std::shared_ptr<RenderParameter> renderParameter;
     Matrix modelMatrix;
 };
-
-void eachAxisY(const Vector3& axis, const std::function<void(Vector3)>& cb)
-{
-    cb(Vector3({ axis.x(), axis.y(), axis.z() }));
-    cb(Vector3({ -axis.x(), axis.y(), axis.z() }));
-    cb(Vector3({ axis.x(), axis.y(), -axis.z() }));
-    cb(Vector3({ -axis.x(), axis.y(), -axis.z() }));
-    // x = 0
-    cb(Vector3({ 0, axis.y(), axis.z() }));
-    cb(Vector3({ 0, axis.y(), -axis.z() }));
-    // z = 0
-    cb(Vector3({ axis.x(), axis.y(), 0 }));
-    cb(Vector3({ -axis.x(), axis.y(), 0 }));
-}
-
-void eachAxisRight(const Vector3& axis, const std::function<void(Vector3)>& cb)
-{
-    cb(Vector3({ axis.x(), axis.y(), axis.z() }));
-    cb(Vector3({ axis.x(), axis.y(), -axis.z() }));
-    cb(Vector3({ axis.x(), 0.0f, axis.z() }));
-    cb(Vector3({ axis.x(), 0.0f, -axis.z() }));
-}
-
-void eachAxisLeft(const Vector3& axis, const std::function<void(Vector3)>& cb)
-{
-    cb(Vector3({ -axis.x(), axis.y(), axis.z() }));
-    cb(Vector3({ -axis.x(), axis.y(), -axis.z() }));
-    cb(Vector3({ -axis.x(), 0.0f, axis.z() }));
-    cb(Vector3({ -axis.x(), 0.0f, -axis.z() }));
-}
-
-void eachAxisForward(const Vector3& axis, const std::function<void(Vector3)>& cb)
-{
-    cb(Vector3({ axis.x(), axis.y(), axis.z() }));
-    cb(Vector3({ -axis.x(), axis.y(), axis.z() }));
-    cb(Vector3({ axis.x(), 0.0f, axis.z() }));
-    cb(Vector3({ -axis.x(), 0.0f, axis.z() }));
-}
-
-void eachAxisBackward(const Vector3& axis, const std::function<void(Vector3)>& cb)
-{
-    cb(Vector3({ axis.x(), axis.y(), -axis.z() }));
-    cb(Vector3({ -axis.x(), axis.y(), -axis.z() }));
-    cb(Vector3({ axis.x(), 0.0f, -axis.z() }));
-    cb(Vector3({ -axis.x(), 0.0f, -axis.z() }));
-}
 
 int main(int argc, char* argv[])
 {
@@ -112,77 +67,29 @@ int main(int argc, char* argv[])
 
     std::vector<Tile> tiles;
     const float tileSize = 5.0f;
-    for (int32_t i = 0; i < 5; i++) {
-        float fi = static_cast<float>(i + 1) * tileSize;
-        for (int32_t j = 0; j < 5; j++) {
-            float fj = static_cast<float>(j + 1) * tileSize;
-            auto modelR = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
-            auto modelS = Matrix::scale(Vector3({ tileSize, tileSize, 1.0f }));
-            auto color = Vector4({ static_cast<float>(i) / 5.0f, static_cast<float>(j) / 5.0f, 0.5f, 1 });
-
-            eachAxisY(Vector3({ fi, -1.0f, fj }), [&](Vector3 t) -> void {
-                auto modelT = Matrix::translate(t);
-                Tile tile(RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            });
-
-            modelR = Matrix ::rotateX(Mathf::Deg2Rad * 90.0f);
-            eachAxisY(Vector3({ fi, tileSize * 5, fj }), [&](Vector3 t) -> void {
-                auto modelT = Matrix::translate(t);
-                Tile tile(RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            });
-
-            modelR = Matrix ::rotateY(Mathf::Deg2Rad * -90.0f);
-            eachAxisRight(Vector3({ tileSize * 5.0f, fj - 1.0f, fi }), [&](Vector3 t) -> void {
-                auto modelT = Matrix::translate(t);
-                Tile tile(RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            });
-
-            modelR = Matrix ::rotateY(Mathf::Deg2Rad * 90.0f);
-            eachAxisLeft(Vector3({ tileSize * 5.0f, fj - 1.0f, fi }), [&](Vector3 t) -> void {
-                auto modelT = Matrix::translate(t);
-                Tile tile(RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            });
-
-            modelR = Matrix ::rotateY(0.0f);
-            eachAxisForward(Vector3({ fi, fj - 1.0f, tileSize * 5.0f }), [&](Vector3 t) -> void {
-                auto modelT = Matrix::translate(t);
-                Tile tile(RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            });
-
-            modelR = Matrix ::rotateY(Mathf::Deg2Rad * 180.0f);
-            eachAxisBackward(Vector3({ fi, fj - 1.0f, tileSize * 5.0f }), [&](Vector3 t) -> void {
-                auto modelT = Matrix::translate(t);
-                Tile tile(RenderInterface::Color);
-                tile.modelMatrix = (modelS * modelR * modelT);
-                tile.renderParameter->setColor(color);
-                tiles.emplace_back(tile);
-            });
-        }
-    }
-
     {
+        std::ifstream ifs("assets\\Stage\\Stage01.json");
+        picojson::value stage;
+        picojson::parse(stage, ifs);
+
         auto modelR = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
         auto modelS = Matrix::scale(Vector3({ tileSize, tileSize, 1.0f }));
-        auto modelT = Matrix::translate(Vector3({ 0.0f, -1.0f, 0.0f }));
-        Tile tile(RenderInterface::Color);
-        tile.modelMatrix = (modelS * modelR * modelT);
-        tile.renderParameter->setColor(Vector4({ 0, 0, 0.5f, 1.0f }));
-        tiles.emplace_back(tile);
+        picojson::array& tileDatas = stage.get<picojson::object>()["tiles"].get<picojson::array>();
+        for (picojson::value tileData : tileDatas) {
+            picojson::object tileObject = tileData.get<picojson::object>();
+            float x = static_cast<float>(tileObject["x"].get<double>());
+            float y = static_cast<float>(tileObject["y"].get<double>());
+            float z = static_cast<float>(tileObject["z"].get<double>());
+            float r = static_cast<float>(tileObject["r"].get<double>());
+            float g = static_cast<float>(tileObject["g"].get<double>());
+            float b = static_cast<float>(tileObject["b"].get<double>());
+            auto modelT = Matrix::translate(Vector3({ x, y, z }));
+
+            Tile tile(RenderInterface::Color);
+            tile.modelMatrix = modelS * modelR * modelT;
+            tile.renderParameter->setColor(Vector4({ r, g, b, 1.0f }));
+            tiles.emplace_back(tile);
+        }
     }
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
