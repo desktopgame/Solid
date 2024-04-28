@@ -66,15 +66,15 @@ int main(int argc, char* argv[])
     rc->updateIndex(index.data(), static_cast<int32_t>(index.size()));
 
     std::vector<Tile> tiles;
-    const float tileSize = 5.0f;
     {
         std::ifstream ifs("assets\\Stage\\Stage01.json");
         picojson::value stage;
         picojson::parse(stage, ifs);
 
+        picojson::array& tileDatas = stage.get<picojson::object>()["tiles"].get<picojson::array>();
+        float tileSize = static_cast<float>(stage.get<picojson::object>()["tileSize"].get<double>());
         auto modelR = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
         auto modelS = Matrix::scale(Vector3({ tileSize, tileSize, 1.0f }));
-        picojson::array& tileDatas = stage.get<picojson::object>()["tiles"].get<picojson::array>();
         for (picojson::value tileData : tileDatas) {
             picojson::object tileObject = tileData.get<picojson::object>();
             float x = static_cast<float>(tileObject["x"].get<double>());
