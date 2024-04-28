@@ -20,6 +20,10 @@
 			"path": "src/App/mod/Input",
 			"name": "Input"
 		},
+		{
+			"path": "src/App/mod/Json",
+			"name": "Json"
+		},
 	],
 	"settings": {
 		"files.associations": {

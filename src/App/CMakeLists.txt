@@ -19,6 +19,7 @@ endfunction()
 #
 # Submodules
 #
+add_subdirectory(./mod/Json)
 add_subdirectory(./mod/Input)
 add_subdirectory(./mod/Math)
 add_subdirectory(./mod/Graphics)
@@ -43,6 +44,7 @@ target_include_directories(
 target_link_libraries(
     App
     PRIVATE
+    Lib-Json
     Lib-Input
     Lib-Math
     Lib-Graphics
