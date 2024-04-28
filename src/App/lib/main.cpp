@@ -36,6 +36,66 @@ void primPlane(std::vector<Vector3>& verts, std::vector<uint32_t>& index)
     index.emplace_back(3);
 }
 
+void primBox(std::vector<Vector3>& verts, std::vector<uint32_t>& index)
+{
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    const float forward = 0.5f;
+    const float backward = -0.5f;
+    verts.emplace_back(Vector3({ left, bottom, backward }));
+    verts.emplace_back(Vector3({ left, top, backward }));
+    verts.emplace_back(Vector3({ right, bottom, backward }));
+    verts.emplace_back(Vector3({ right, top, backward }));
+    verts.emplace_back(Vector3({ left, bottom, forward }));
+    verts.emplace_back(Vector3({ left, top, forward }));
+    verts.emplace_back(Vector3({ right, bottom, forward }));
+    verts.emplace_back(Vector3({ right, top, forward }));
+    // backward
+    index.emplace_back(0);
+    index.emplace_back(1);
+    index.emplace_back(2);
+    index.emplace_back(2);
+    index.emplace_back(1);
+    index.emplace_back(3);
+    // left
+    index.emplace_back(4);
+    index.emplace_back(5);
+    index.emplace_back(1);
+    index.emplace_back(4);
+    index.emplace_back(1);
+    index.emplace_back(0);
+    // right
+    index.emplace_back(2);
+    index.emplace_back(3);
+    index.emplace_back(6);
+    index.emplace_back(3);
+    index.emplace_back(7);
+    index.emplace_back(6);
+    // forward
+    index.emplace_back(6);
+    index.emplace_back(7);
+    index.emplace_back(4);
+    index.emplace_back(4);
+    index.emplace_back(7);
+    index.emplace_back(5);
+    // top
+    index.emplace_back(1);
+    index.emplace_back(5);
+    index.emplace_back(3);
+    index.emplace_back(5);
+    index.emplace_back(7);
+    index.emplace_back(3);
+    // bottom
+    index.emplace_back(4);
+    index.emplace_back(0);
+    index.emplace_back(2);
+    index.emplace_back(4);
+    index.emplace_back(2);
+    index.emplace_back(6);
+}
+
 int main(int argc, char* argv[])
 {
     auto engine = Engine::getInstance()->startup(argc, argv);
@@ -75,6 +135,15 @@ int main(int argc, char* argv[])
     primPlane(planeVerts, planeIndex);
     rc->updateVertex(planeVerts.data(), static_cast<int32_t>(planeVerts.size()));
     rc->updateIndex(planeIndex.data(), static_cast<int32_t>(planeIndex.size()));
+
+    std::vector<Vector3> boxVerts;
+    std::vector<uint32_t> boxIndex;
+    auto rc2 = RenderContext::create(PrimitiveType::Triangles);
+    primBox(boxVerts, boxIndex);
+    rc2->updateVertex(boxVerts.data(), static_cast<int32_t>(boxVerts.size()));
+    rc2->updateIndex(boxIndex.data(), static_cast<int32_t>(boxIndex.size()));
+    auto param2 = RenderParameter::create(RenderInterface::Color);
+    param2->setColor(Vector4({ 1.0f, 0, 0, 1.0f }));
 
     std::vector<Tile> tiles;
     {
@@ -133,7 +202,7 @@ int main(int argc, char* argv[])
         float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
         float leftStickY = static_cast<float>(controller->getLeftStickY() / 32768.0f);
         // eyePos.x() += leftStickX * 0.1f;
-        eyePos += Vector3({ 0, 0, 1.1f * (1.0f + (static_cast<float>(controller->getLeftTrigger()) / 255.0f)) });
+        eyePos += Vector3({ 0, 0, 1.1f * ((static_cast<float>(controller->getLeftTrigger()) / 255.0f)) });
         if (leftStickX > 0.5f) {
             eyePos += Vector3({ 4.0f, 0, 0 });
         } else if (leftStickX < -0.5f) {
@@ -189,6 +258,12 @@ int main(int argc, char* argv[])
         for (auto& tile : tiles) {
             tile.renderParameter->setTransform(tile.modelMatrix * view * persp);
             surface->draw(shader, tile.renderParameter, rc);
+        }
+        {
+            auto boxS = Matrix::scale(Vector3({ 10, 10, 10 }));
+            auto boxT = Matrix::translate(Vector3({ 0, 50, 10 }));
+            param2->setTransform((boxS * boxT) * view * persp);
+            surface->draw(shader, param2, rc2);
         }
         surface->end();
         // Show messages
