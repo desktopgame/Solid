@@ -72,6 +72,9 @@ _deps
 .ninja_log
 build.ninja
 
+# VScode
+.cmake
+
 # CLion
 cmake-build-debug
 cmake-build-release
