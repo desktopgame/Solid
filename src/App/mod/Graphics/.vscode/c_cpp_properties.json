@@ -2,21 +2,8 @@
     "configurations": [
         {
             "name": "Win32",
-            "includePath": [
-                "include",
-                "../Math/include",
-                "../vcpkg/packages/directxtex_x64-windows/include"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "windowsSdkVersion": "10.0.22621.0",
-            "compilerPath": "C:\\Program Files\\LLVM\\bin\\clang.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "compileCommands": "../../../../build/compile_commands.json",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
