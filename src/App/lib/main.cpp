@@ -73,7 +73,6 @@ int main(int argc, char* argv[])
 
         picojson::array& tileDatas = stage.get<picojson::object>()["tiles"].get<picojson::array>();
         float tileSize = static_cast<float>(stage.get<picojson::object>()["tileSize"].get<double>());
-        auto modelR = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
         auto modelS = Matrix::scale(Vector3({ tileSize, tileSize, 1.0f }));
         for (picojson::value tileData : tileDatas) {
             picojson::object tileObject = tileData.get<picojson::object>();
@@ -83,7 +82,23 @@ int main(int argc, char* argv[])
             float r = static_cast<float>(tileObject["r"].get<double>());
             float g = static_cast<float>(tileObject["g"].get<double>());
             float b = static_cast<float>(tileObject["b"].get<double>());
+            std::string n = tileObject["n"].get<std::string>();
             auto modelT = Matrix::translate(Vector3({ x, y, z }));
+            auto modelR = Matrix::scale(Vector3({ 1, 1, 1 }));
+
+            if (n == "Y+") {
+                modelR = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
+            } else if (n == "Y-") {
+                modelR = Matrix ::rotateX(Mathf::Deg2Rad * 90.0f);
+            } else if (n == "X+") {
+                modelR = Matrix ::rotateY(Mathf::Deg2Rad * 90.0f);
+            } else if (n == "X-") {
+                modelR = Matrix ::rotateY(Mathf::Deg2Rad * -90.0f);
+            } else if (n == "Z+") {
+                modelR = Matrix ::rotateY(Mathf::Deg2Rad * 180.0f);
+            } else if (n == "Z-") {
+                modelR = Matrix ::scale(Vector3({ 1, 1, 1 }));
+            }
 
             Tile tile(RenderInterface::Color);
             tile.modelMatrix = modelS * modelR * modelT;
@@ -94,7 +109,7 @@ int main(int argc, char* argv[])
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
 
-    auto eyePos = Vector3({ 0, 1, -5 });
+    auto eyePos = Vector3({ 0, 1, -205 });
     auto persp = Matrix::perspective(90.0f, Screen::getAspectRatio(), 1, 1000);
     float eyeAngleX = 0.0f;
     float eyeAngleY = 0.0f;
