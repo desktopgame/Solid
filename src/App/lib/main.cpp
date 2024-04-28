@@ -123,50 +123,35 @@ int main(int argc, char* argv[])
         float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
         float leftStickY = static_cast<float>(controller->getLeftStickY() / 32768.0f);
         // eyePos.x() += leftStickX * 0.1f;
-        if (!stopMove) {
-            if (controller->getLeftTrigger() > 0) {
-                eyePos += Vector3(
-                    {
-                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
-                        0, //
-                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
-                    });
-            } else if (controller->getRightTrigger() > 0) {
-                eyePos -= Vector3(
-                    {
-                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
-                        0, //
-                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
-                    });
-            } else if (leftStickX > 0.5f) {
-                eyePos += Vector3(
-                    {
-                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
-                        0, //
-                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
-                    });
-            } else if (leftStickX < -0.5f) {
-                eyePos -= Vector3(
-                    {
-                        Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
-                        0, //
-                        -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
-                    });
-            } else if (leftStickY > 0) {
-                eyePos += Vector3(
-                    {
-                        0, //
-                        leftStickY, //
-                        0 //
-                    });
-            } else if (leftStickY < 0) {
-                eyePos -= Vector3(
-                    {
-                        0, //
-                        -leftStickY, //
-                        0 //
-                    });
-            }
+        eyePos += Vector3({ 0, 0, 2 * (1.0f + (static_cast<float>(controller->getLeftTrigger()) / 255.0f)) });
+        if (leftStickX > 0.5f && !stopMove) {
+            eyePos += Vector3(
+                {
+                    2.0f * Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
+                    0, //
+                    2.0f * -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                });
+        } else if (leftStickX < -0.5f && !stopMove) {
+            eyePos -= Vector3(
+                {
+                    2.0f * Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f), //
+                    0, //
+                    2.0f * -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 0.0f) * 90.0f) //
+                });
+        } else if (leftStickY > 0) {
+            eyePos += Vector3(
+                {
+                    0, //
+                    leftStickY, //
+                    0 //
+                });
+        } else if (leftStickY < 0) {
+            eyePos -= Vector3(
+                {
+                    0, //
+                    -leftStickY, //
+                    0 //
+                });
         }
 
         float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.02f;
