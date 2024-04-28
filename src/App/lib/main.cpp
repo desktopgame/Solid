@@ -18,6 +18,24 @@ public:
     Matrix modelMatrix;
 };
 
+void primPlane(std::vector<Vector3>& verts, std::vector<uint32_t>& index)
+{
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    verts.emplace_back(Vector3({ left, bottom, 0 }));
+    verts.emplace_back(Vector3({ left, top, 0 }));
+    verts.emplace_back(Vector3({ right, bottom, 0 }));
+    verts.emplace_back(Vector3({ right, top, 0 }));
+    index.emplace_back(0);
+    index.emplace_back(1);
+    index.emplace_back(2);
+    index.emplace_back(2);
+    index.emplace_back(1);
+    index.emplace_back(3);
+}
+
 int main(int argc, char* argv[])
 {
     auto engine = Engine::getInstance()->startup(argc, argv);
@@ -51,19 +69,12 @@ int main(int argc, char* argv[])
             return input.color;
         })",
         "psMain");
-    const float left = -0.5;
-    const float right = 0.5;
-    const float top = 0.5;
-    const float bottom = -0.5;
-    const std::vector<uint32_t> index { 0, 1, 2, 2, 1, 3 };
+    std::vector<Vector3> planeVerts;
+    std::vector<uint32_t> planeIndex;
     auto rc = RenderContext::create(PrimitiveType::Triangles);
-    const std::vector<Vector3> verts(
-        { (Vector3({ left, bottom, 0 })),
-            (Vector3({ left, top, 0 })),
-            (Vector3({ right, bottom, 0 })),
-            (Vector3({ right, top, 0 })) });
-    rc->updateVertex(verts.data(), static_cast<int32_t>(verts.size()));
-    rc->updateIndex(index.data(), static_cast<int32_t>(index.size()));
+    primPlane(planeVerts, planeIndex);
+    rc->updateVertex(planeVerts.data(), static_cast<int32_t>(planeVerts.size()));
+    rc->updateIndex(planeIndex.data(), static_cast<int32_t>(planeIndex.size()));
 
     std::vector<Tile> tiles;
     {

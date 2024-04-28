@@ -90,7 +90,14 @@
 			"any": "cpp",
 			"array": "cpp",
 			"sstream": "cpp",
-			"numeric": "cpp"
+			"numeric": "cpp",
+			"xtree": "cpp",
+			"deque": "cpp",
+			"random": "cpp",
+			"ranges": "cpp",
+			"regex": "cpp",
+			"span": "cpp",
+			"valarray": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,
