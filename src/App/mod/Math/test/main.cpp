@@ -22,10 +22,10 @@ int main(int argc, char* argv[])
         Vector4({ 0.0f, 0.0f, 0.0f, 1.0f }),
     });
 
-    assert(Mathf::equals(matrix.row(0).at(0), 1.0f));
-    assert(Mathf::equals(matrix.row(1).at(1), 1.0f));
-    assert(Mathf::equals(matrix.row(2).at(2), 1.0f));
-    assert(Mathf::equals(matrix.row(3).at(3), 1.0f));
+    assert(Mathf::equals<float>(matrix.row(0).at(0), 1.0f));
+    assert(Mathf::equals<float>(matrix.row(1).at(1), 1.0f));
+    assert(Mathf::equals<float>(matrix.row(2).at(2), 1.0f));
+    assert(Mathf::equals<float>(matrix.row(3).at(3), 1.0f));
 
     Matrix matrix2({
         Vector4({ 0.0f, 1.0f, 0.0f, 0.0f }),

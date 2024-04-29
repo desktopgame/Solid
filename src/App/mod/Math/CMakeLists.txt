@@ -9,14 +9,11 @@ project(
 #
 add_library(
     Lib-Math
-    STATIC
-    ./lib/Math/Mathf.cpp
+    INTERFACE
 )
-common_target_compile_params(Lib-Math)
-common_target_link_params(Lib-Math)
 target_include_directories(
     Lib-Math
-    PRIVATE
+    INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
