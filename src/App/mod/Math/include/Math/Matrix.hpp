@@ -141,17 +141,17 @@ struct MatrixT {
 
     static VectorT<T, 2> multiply(const MatrixT<T>& a, const VectorT<T, 2>& b)
     {
-        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.row(0);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.row(1);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.column(0);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.column(1);
         return VectorT<T, 2>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + r1.at(2) + r1.at(3),
             (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + r2.at(2) + r2.at(3) });
     }
 
     static VectorT<T, 3> multiply(const MatrixT<T>& a, const VectorT<T, 3>& b)
     {
-        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.row(0);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.row(1);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r3 = a.row(2);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.column(0);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.column(1);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r3 = a.column(2);
         return VectorT<T, 3>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + (r1.at(2) * b.at(2)) + r1.at(3),
             (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + (r2.at(2) * b.at(2) + r2.at(3)),
             (r3.at(0) * b.at(0)) + (r3.at(1) * b.at(1)) + (r3.at(2) * b.at(2)) + r3.at(3) });
