@@ -15,6 +15,10 @@ int main(int argc, char* argv[])
     v2 *= 3.0f;
     assert(Mathf::equals(v2.x(), 3.0f) && Mathf::equals(v2.y(), 3.0f));
 
+    //
+    // Matrix
+    //
+
     Matrix matrix({
         Vector4({ 1.0f, 0.0f, 0.0f, 0.0f }),
         Vector4({ 0.0f, 1.0f, 0.0f, 0.0f }),
@@ -81,5 +85,22 @@ int main(int argc, char* argv[])
         point2D.y() = -300;
         assert(Matrix::multiply(ortho, point2D) == Vector2({ -1, -1 }));
     }
+
+    //
+    // Quaternion
+    //
+
+    Quaternion q;
+    assert(Mathf::equals(q.w, 1.0f));
+
+    q.x = 3;
+    q.y = 4;
+    Quaternion qc = Quaternion::conjugate(q);
+    assert(Mathf::equals(qc.x, -3.0f));
+    assert(Mathf::equals(qc.y, -4.0f));
+    assert(Mathf::equals(qc.w, 1.0f));
+
+    Quaternion qn = Quaternion::normalized(q);
+    assert(Mathf::equals(qn.length(), 1.0f));
     return 0;
 }
