@@ -54,7 +54,7 @@ public:
     }
 
     template <typename T>
-    inline static float tan(float v)
+    inline static T tan(T v)
     {
         return static_cast<T>(std::tan(static_cast<float>(v)));
     }
