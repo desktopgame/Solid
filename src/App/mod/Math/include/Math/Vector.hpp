@@ -62,6 +62,17 @@ public:
     };
 
     template <>
+    struct CrossHelper<2> {
+        static inline constexpr int32_t NumV = 2;
+        using Type = T;
+
+        static Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
+        {
+            return a.x() * b.y() - a.y() * b.x();
+        }
+    };
+
+    template <>
     struct CrossHelper<3> {
         static inline constexpr int32_t NumV = 3;
         using Type = VectorT<T, NumV>;
