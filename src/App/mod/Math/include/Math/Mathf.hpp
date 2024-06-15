@@ -60,6 +60,24 @@ public:
     }
 
     template <typename T>
+    inline static T asin(T v)
+    {
+        return static_cast<T>(std::asin(static_cast<float>(v)));
+    }
+
+    template <typename T>
+    inline static T acos(T v)
+    {
+        return static_cast<T>(std::acos(static_cast<float>(v)));
+    }
+
+    template <typename T>
+    inline static T atan(T v)
+    {
+        return static_cast<T>(std::atan(static_cast<float>(v)));
+    }
+
+    template <typename T>
     inline static T sqrt(T v)
     {
         return static_cast<T>(std::sqrt(static_cast<float>(v)));
