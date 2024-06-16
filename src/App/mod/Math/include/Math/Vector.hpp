@@ -1,4 +1,5 @@
 #pragma once
+#include <Math/Mathf.hpp>
 #include <array>
 #include <cmath>
 #include <iostream>
