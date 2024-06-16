@@ -89,6 +89,7 @@ public:
         vq.x = v.x();
         vq.y = v.y();
         vq.z = v.z();
+        vq.w = static_cast<T>(0);
 
         QuaternionT<T> q2 = QuaternionT<T>::conjugate(q);
         QuaternionT<T> qr = QuaternionT<T>::multiply(QuaternionT<T>::multiply(q, vq), q2);
