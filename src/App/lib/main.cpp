@@ -1,5 +1,6 @@
 #include <Graphics.hpp>
 #include <Input.hpp>
+#include <Math.hpp>
 #include <cassert>
 #include <fstream>
 #include <picojson/picojson.h>
@@ -204,15 +205,41 @@ int main(int argc, char* argv[])
         // eyePos.x() += leftStickX * 0.1f;
         float lt = (static_cast<float>(controller->getLeftTrigger()) / 255.0f);
         float rt = (static_cast<float>(controller->getRightTrigger()) / 255.0f);
+
+        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.04f;
+        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f) * 0.04f;
+        if (rightStickX == 0.0f) {
+            // eyeAngleX /= 2.0f;
+        }
+        eyeAngleX += rightStickX;
+        if (eyeAngleX < -2.0f) {
+            eyeAngleX = -2.0f;
+        }
+        if (eyeAngleX > 2.0f) {
+            eyeAngleX = 2.0f;
+        }
+        if (rightStickY == 0.0f) {
+            // eyeAngleY /= 2.0f;
+        }
+        eyeAngleY += rightStickY;
+        if (eyeAngleY < -0.5f) {
+            eyeAngleY = -0.5f;
+        }
+        if (eyeAngleY > 0.5f) {
+            eyeAngleY = 0.5f;
+        }
+        auto q = Quaternion::angleAxis(-eyeAngleY * 90.0f, Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(eyeAngleX * 90.0f, Vector3({ 0, 1, 0 }));
+        auto fwd = Quaternion::transform(q, Vector3({ 0, 0, 1 }));
+        auto right = Quaternion::transform(q * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
         if (lt > 0.0f) {
-            eyePos += Vector3({ 0, 0, 1.1f * lt });
+            eyePos += fwd * Vector3({ 1, 0, 1 });
         } else if (rt > 0.0f) {
-            eyePos -= Vector3({ 0, 0, 1.1f * rt });
+            eyePos -= fwd * Vector3({ 1, 0, 1 });
         }
         if (leftStickX > 0.5f) {
-            eyePos += Vector3({ 4.0f, 0, 0 });
+            eyePos += right * Vector3({ 1, 0, 1 });
         } else if (leftStickX < -0.5f) {
-            eyePos -= Vector3({ 4.0f, 0, 0 });
+            eyePos -= right * Vector3({ 1, 0, 1 });
         } else if (leftStickY > 0) {
             eyePos += Vector3(
                 {
@@ -229,35 +256,9 @@ int main(int argc, char* argv[])
                 });
         }
 
-        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.04f;
-        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f) * 0.04f;
-        if (rightStickX == 0.0f) {
-            eyeAngleX /= 2.0f;
-        }
-        eyeAngleX += rightStickX;
-        if (eyeAngleX < -0.5f) {
-            eyeAngleX = -0.5f;
-        }
-        if (eyeAngleX > 0.5f) {
-            eyeAngleX = 0.5f;
-        }
-        if (rightStickY == 0.0f) {
-            eyeAngleY /= 2.0f;
-        }
-        eyeAngleY += rightStickY;
-        if (eyeAngleY < -1.0f) {
-            eyeAngleY = -1.0f;
-        }
-        if (eyeAngleY > 1.0f) {
-            eyeAngleY = 1.0f;
-        }
         auto view = Matrix::lookAt(
             eyePos,
-            eyePos + Vector3({
-                Mathf::cos(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f), //
-                eyeAngleY, //
-                -Mathf::sin(Mathf::Deg2Rad * (eyeAngleX - 1.0f) * 90.0f) //
-            }),
+            eyePos + fwd,
             Vector3({ 0, 1, 0 }));
 
         surface->begin();
