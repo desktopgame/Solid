@@ -102,5 +102,12 @@ int main(int argc, char* argv[])
 
     Quaternion qn = Quaternion::normalized(q);
     assert(Mathf::equals(qn.length(), 1.0f));
+
+    Quaternion rotZ45 = Quaternion::angleAxis(45.0f, Vector3({ 0, 0, 1 }));
+    Quaternion rotZ90 = Quaternion::angleAxis(90.0f, Vector3({ 0, 0, 1 }));
+    assert(rotZ45 * rotZ45 == rotZ90);
+
+    Vector3 up = Vector3({ 0, 1, 0 });
+    assert(Quaternion::transform(rotZ45, Quaternion::transform(rotZ45, up)) == Quaternion::transform(rotZ90, up));
     return 0;
 }
