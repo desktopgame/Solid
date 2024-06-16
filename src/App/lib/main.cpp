@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 
     auto controller = Lib::Input::Gamepad::getGamepad(0);
 
-    auto eyePos = Vector3({ 0, 1, -205 });
+    auto eyePos = Vector3({ 0, 1, -1 });
     auto persp = Matrix::perspective(90.0f, Screen::getAspectRatio(), 1, 1000);
     float eyeAngleX = 0.0f;
     float eyeAngleY = 0.0f;
@@ -202,7 +202,13 @@ int main(int argc, char* argv[])
         float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
         float leftStickY = static_cast<float>(controller->getLeftStickY() / 32768.0f);
         // eyePos.x() += leftStickX * 0.1f;
-        eyePos += Vector3({ 0, 0, 1.1f * ((static_cast<float>(controller->getLeftTrigger()) / 255.0f)) });
+        float lt = (static_cast<float>(controller->getLeftTrigger()) / 255.0f);
+        float rt = (static_cast<float>(controller->getRightTrigger()) / 255.0f);
+        if (lt > 0.0f) {
+            eyePos += Vector3({ 0, 0, 1.1f * lt });
+        } else if (rt > 0.0f) {
+            eyePos -= Vector3({ 0, 0, 1.1f * rt });
+        }
         if (leftStickX > 0.5f) {
             eyePos += Vector3({ 4.0f, 0, 0 });
         } else if (leftStickX < -0.5f) {
@@ -259,12 +265,12 @@ int main(int argc, char* argv[])
             tile.renderParameter->setTransform(tile.modelMatrix * view * persp);
             surface->draw(shader, tile.renderParameter, rc);
         }
-        {
-            auto boxS = Matrix::scale(Vector3({ 10, 10, 10 }));
-            auto boxT = Matrix::translate(Vector3({ 0, 50, 10 }));
-            param2->setTransform((boxS * boxT) * view * persp);
-            surface->draw(shader, param2, rc2);
-        }
+        // {
+        //     auto boxS = Matrix::scale(Vector3({ 10, 10, 10 }));
+        //     auto boxT = Matrix::translate(Vector3({ 0, 50, 10 }));
+        //     param2->setTransform((boxS * boxT) * view * persp);
+        //     surface->draw(shader, param2, rc2);
+        // }
         surface->end();
         // Show messages
         device->flushLogEntries();
