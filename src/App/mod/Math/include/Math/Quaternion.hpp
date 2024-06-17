@@ -1,6 +1,7 @@
 #pragma once
 #include <Math/Mathf.hpp>
 #include <Math/Vector.hpp>
+#include <string>
 
 namespace Lib::Math {
 template <typename T>
@@ -30,6 +31,13 @@ public:
         y /= len;
         z /= len;
         w /= len;
+    }
+
+    std::string str() const
+    {
+        std::stringstream ss;
+        ss << '(' << x << ',' << y << ',' << z << ',' << w << ')';
+        return ss.str();
     }
 
     static QuaternionT<T> normalized(QuaternionT<T> q)
@@ -94,6 +102,12 @@ public:
         QuaternionT<T> q2 = QuaternionT<T>::conjugate(q);
         QuaternionT<T> qr = QuaternionT<T>::multiply(QuaternionT<T>::multiply(q, vq), q2);
         return VectorT<T, 3>({ qr.x, qr.y, qr.z });
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const QuaternionT<T>& a)
+    {
+        os << a.str();
+        return os;
     }
 
     T x;
