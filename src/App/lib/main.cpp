@@ -148,42 +148,51 @@ int main(int argc, char* argv[])
 
     std::vector<Tile> tiles;
     {
-        std::ifstream ifs("assets\\Stage\\Stage01.json");
-        picojson::value stage;
-        picojson::parse(stage, ifs);
+        float size = 1000.0f;
+        Matrix modelScale = Matrix::scale(Vector3({ size, size, 1 }));
+        Matrix modelPosY = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
+        Matrix modelNegY = Matrix ::rotateX(Mathf::Deg2Rad * 90.0f);
+        Matrix modelPosX = Matrix ::rotateY(Mathf::Deg2Rad * 90.0f);
+        Matrix modelNegX = Matrix ::rotateY(Mathf::Deg2Rad * -90.0f);
+        Matrix modelPosZ = Matrix ::rotateY(Mathf::Deg2Rad * 180.0f);
+        Matrix modelNegZ = Matrix ::scale(Vector3({ 1, 1, 1 }));
 
-        picojson::array& tileDatas = stage.get<picojson::object>()["tiles"].get<picojson::array>();
-        float tileSize = static_cast<float>(stage.get<picojson::object>()["tileSize"].get<double>());
-        auto modelS = Matrix::scale(Vector3({ tileSize, tileSize, 1.0f }));
-        for (picojson::value tileData : tileDatas) {
-            picojson::object tileObject = tileData.get<picojson::object>();
-            float x = static_cast<float>(tileObject["x"].get<double>());
-            float y = static_cast<float>(tileObject["y"].get<double>());
-            float z = static_cast<float>(tileObject["z"].get<double>());
-            float r = static_cast<float>(tileObject["r"].get<double>());
-            float g = static_cast<float>(tileObject["g"].get<double>());
-            float b = static_cast<float>(tileObject["b"].get<double>());
-            std::string n = tileObject["n"].get<std::string>();
-            auto modelT = Matrix::translate(Vector3({ x, y, z }));
-            auto modelR = Matrix::scale(Vector3({ 1, 1, 1 }));
-
-            if (n == "Y+") {
-                modelR = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
-            } else if (n == "Y-") {
-                modelR = Matrix ::rotateX(Mathf::Deg2Rad * 90.0f);
-            } else if (n == "X+") {
-                modelR = Matrix ::rotateY(Mathf::Deg2Rad * 90.0f);
-            } else if (n == "X-") {
-                modelR = Matrix ::rotateY(Mathf::Deg2Rad * -90.0f);
-            } else if (n == "Z+") {
-                modelR = Matrix ::rotateY(Mathf::Deg2Rad * 180.0f);
-            } else if (n == "Z-") {
-                modelR = Matrix ::scale(Vector3({ 1, 1, 1 }));
-            }
-
+        {
             Tile tile(RenderInterface::Color);
-            tile.modelMatrix = modelS * modelR * modelT;
-            tile.renderParameter->setColor(Vector4({ r, g, b, 1.0f }));
+            tile.modelMatrix = modelScale * modelPosY * Matrix::translate(Vector3({ 0, -size / 2.0f, 0 }));
+            tile.renderParameter->setColor(Vector4({ 1, 1, 1, 1 }));
+            tiles.emplace_back(tile);
+        }
+        {
+            Tile tile(RenderInterface::Color);
+            tile.modelMatrix = modelScale * modelNegY * Matrix::translate(Vector3({ 0, size / 2.0f, 0 }));
+            tile.renderParameter->setColor(Vector4({ 1, 1, 1, 1 }));
+            tiles.emplace_back(tile);
+        }
+
+        {
+            Tile tile(RenderInterface::Color);
+            tile.modelMatrix = modelScale * modelPosZ * Matrix::translate(Vector3({ 0, 0, -size / 2.0f }));
+            tile.renderParameter->setColor(Vector4({ 0.25f, 0.8f, 0.25f, 1 }));
+            tiles.emplace_back(tile);
+        }
+        {
+            Tile tile(RenderInterface::Color);
+            tile.modelMatrix = modelScale * modelNegZ * Matrix::translate(Vector3({ 0, 0, size / 2.0f }));
+            tile.renderParameter->setColor(Vector4({ 0.25f, 0.8f, 0.25f, 1 }));
+            tiles.emplace_back(tile);
+        }
+
+        {
+            Tile tile(RenderInterface::Color);
+            tile.modelMatrix = modelScale * modelPosX * Matrix::translate(Vector3({ -size / 2.0f, 0, 0 }));
+            tile.renderParameter->setColor(Vector4({ 0.25f, 0.8f, 0.25f, 1 }));
+            tiles.emplace_back(tile);
+        }
+        {
+            Tile tile(RenderInterface::Color);
+            tile.modelMatrix = modelScale * modelNegX * Matrix::translate(Vector3({ size / 2.0f, 0, 0 }));
+            tile.renderParameter->setColor(Vector4({ 0.25f, 0.8f, 0.25f, 1 }));
             tiles.emplace_back(tile);
         }
     }
