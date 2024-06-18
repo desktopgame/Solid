@@ -34,7 +34,7 @@ public:
 private:
     RenderParameter();
     std::shared_ptr<Internal::Constant> getConstant() const;
-    friend void Surface::draw(const std::shared_ptr<Shader>& shader,
+    friend void Surface::render(const std::shared_ptr<Shader>& shader,
         const std::shared_ptr<RenderParameter>& renderParameter,
         PrimitiveType primitiveType,
         int32_t vertexComponent,

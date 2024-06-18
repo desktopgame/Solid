@@ -51,11 +51,6 @@ void Device::flushLogEntries()
 #endif
 }
 
-void Device::render()
-{
-    m_surface->render();
-}
-
 std::any Device::getHandle() const
 {
     return m_impl->device;

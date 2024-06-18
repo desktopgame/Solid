@@ -65,7 +65,7 @@ void Surface::end()
     m_impl->commandList->Reset(m_impl->commandAllocator.Get(), nullptr);
 }
 
-void Surface::draw(
+void Surface::render(
     const std::shared_ptr<Shader>& shader,
     const std::shared_ptr<RenderParameter>& renderParameter,
     PrimitiveType primitiveType,
@@ -127,12 +127,12 @@ void Surface::draw(
     m_impl->commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
 }
 
-void Surface::draw(
+void Surface::render(
     const std::shared_ptr<Shader>& shader,
     const std::shared_ptr<RenderParameter>& renderParameter,
     const std::shared_ptr<RenderContext>& context)
 {
-    draw(shader, renderParameter,
+    render(shader, renderParameter,
         context->getPrimitiveType(),
         context->getVertexComponent(),
         context->isUsingTexCoord(),

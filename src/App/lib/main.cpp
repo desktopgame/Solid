@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
         surface->begin();
         for (auto& tile : tiles) {
             tile.renderParameter->setTransform(tile.modelMatrix * view * persp);
-            surface->draw(shader, tile.renderParameter, rc);
+            surface->render(shader, tile.renderParameter, rc);
         }
         surface->end();
         // Show messages

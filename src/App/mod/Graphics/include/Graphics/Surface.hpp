@@ -23,7 +23,7 @@ public:
     void begin();
     void end();
 
-    void draw(
+    void render(
         const std::shared_ptr<Shader>& shader,
         const std::shared_ptr<RenderParameter>& renderParameter,
         PrimitiveType primitiveType,
@@ -33,7 +33,7 @@ public:
         const std::shared_ptr<Buffer>& indexBuffer,
         int32_t indexLength);
 
-    void draw(
+    void render(
         const std::shared_ptr<Shader>& shader,
         const std::shared_ptr<RenderParameter>& renderParameter,
         const std::shared_ptr<RenderContext>& context);
