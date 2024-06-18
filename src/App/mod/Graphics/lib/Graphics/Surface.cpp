@@ -47,10 +47,6 @@ Surface::~Surface()
 {
 }
 
-void Surface::render()
-{
-}
-
 void Surface::begin()
 {
     m_swapchain->clear(m_impl->commandList);

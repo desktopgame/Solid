@@ -20,7 +20,6 @@ class RenderContext;
 class Surface {
 public:
     ~Surface();
-    void render();
     void begin();
     void end();
 
