@@ -285,7 +285,7 @@ struct MatrixT {
         MatrixT<T> ret;
         T one = static_cast<T>(1);
         T zero = static_cast<T>(0);
-        T yScale = one / std::tan(fovy / static_cast<T>(2));
+        T yScale = one / Mathf::tan(fovy / static_cast<T>(2) * Mathf::Deg2Rad);
         T xScale = yScale / aspectRatio;
         std::fill(ret.components.begin(), ret.components.end(), zero);
         ret.at(0, 0) = xScale;
