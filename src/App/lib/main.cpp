@@ -200,41 +200,24 @@ int main(int argc, char* argv[])
             break;
         }
         Lib::Input::Gamepad::sync();
-        float leftStickX = static_cast<float>(controller->getLeftStickX() / 32768.0f);
-        float leftStickY = static_cast<float>(controller->getLeftStickY() / 32768.0f);
-        // eyePos.x() += leftStickX * 0.1f;
+        float leftStickX = static_cast<float>(controller->getLeftStickX()) / 32768.0f;
+        float leftStickY = static_cast<float>(controller->getLeftStickY()) / 32768.0f;
+
         float lt = (static_cast<float>(controller->getLeftTrigger()) / 255.0f);
         float rt = (static_cast<float>(controller->getRightTrigger()) / 255.0f);
 
-        float rightStickX = static_cast<float>(controller->getRightStickX() / 32768.0f) * 0.04f;
-        float rightStickY = static_cast<float>(controller->getRightStickY() / 32768.0f) * 0.04f;
-        if (rightStickX == 0.0f) {
-            // eyeAngleX /= 2.0f;
-        }
-        eyeAngleX += rightStickX;
-        if (eyeAngleX < -2.0f) {
-            eyeAngleX = -2.0f;
-        }
-        if (eyeAngleX > 2.0f) {
-            eyeAngleX = 2.0f;
-        }
-        if (rightStickY == 0.0f) {
-            // eyeAngleY /= 2.0f;
-        }
-        eyeAngleY += rightStickY;
-        if (eyeAngleY < -0.5f) {
-            eyeAngleY = -0.5f;
-        }
-        if (eyeAngleY > 0.5f) {
-            eyeAngleY = 0.5f;
-        }
-        auto q = Quaternion::angleAxis(-eyeAngleY * 90.0f, Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(eyeAngleX * 90.0f, Vector3({ 0, 1, 0 }));
-        auto fwd = Quaternion::transform(q, Vector3({ 0, 0, 1 }));
-        auto right = Quaternion::transform(q * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
+        float rightStickX = static_cast<float>(controller->getRightStickX()) / 32768.0f;
+        float rightStickY = static_cast<float>(controller->getRightStickY()) / 32768.0f;
+        eyeAngleX += rightStickY * 3.0f;
+        eyeAngleY += rightStickX * 10.0f;
+
+        auto rotation = Quaternion::angleAxis(eyeAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-eyeAngleX, Vector3({ 1, 0, 0 }));
+        auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
+        auto right = Quaternion::transform(rotation * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
         if (lt > 0.0f) {
-            eyePos += fwd * Vector3({ 1, 0, 1 });
+            eyePos += forward * Vector3({ 1, 0, 1 });
         } else if (rt > 0.0f) {
-            eyePos -= fwd * Vector3({ 1, 0, 1 });
+            eyePos -= forward * Vector3({ 1, 0, 1 });
         }
         if (leftStickX > 0.5f) {
             eyePos += right * Vector3({ 1, 0, 1 });
@@ -258,7 +241,7 @@ int main(int argc, char* argv[])
 
         auto view = Matrix::lookAt(
             eyePos,
-            eyePos + fwd,
+            eyePos + forward,
             Vector3({ 0, 1, 0 }));
 
         surface->begin();
@@ -266,12 +249,6 @@ int main(int argc, char* argv[])
             tile.renderParameter->setTransform(tile.modelMatrix * view * persp);
             surface->draw(shader, tile.renderParameter, rc);
         }
-        // {
-        //     auto boxS = Matrix::scale(Vector3({ 10, 10, 10 }));
-        //     auto boxT = Matrix::translate(Vector3({ 0, 50, 10 }));
-        //     param2->setTransform((boxS * boxT) * view * persp);
-        //     surface->draw(shader, param2, rc2);
-        // }
         surface->end();
         // Show messages
         device->flushLogEntries();
