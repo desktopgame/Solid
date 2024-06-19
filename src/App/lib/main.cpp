@@ -150,11 +150,11 @@ int main(int argc, char* argv[])
     {
         float size = 1000.0f;
         Matrix modelScale = Matrix::scale(Vector3({ size, size, 1 }));
-        Matrix modelPosY = Matrix ::rotateX(Mathf::Deg2Rad * -90.0f);
-        Matrix modelNegY = Matrix ::rotateX(Mathf::Deg2Rad * 90.0f);
-        Matrix modelPosX = Matrix ::rotateY(Mathf::Deg2Rad * 90.0f);
-        Matrix modelNegX = Matrix ::rotateY(Mathf::Deg2Rad * -90.0f);
-        Matrix modelPosZ = Matrix ::rotateY(Mathf::Deg2Rad * 180.0f);
+        Matrix modelPosY = Matrix ::rotateX(-90.0f);
+        Matrix modelNegY = Matrix ::rotateX(90.0f);
+        Matrix modelPosX = Matrix ::rotateY(90.0f);
+        Matrix modelNegX = Matrix ::rotateY(-90.0f);
+        Matrix modelPosZ = Matrix ::rotateY(180.0f);
         Matrix modelNegZ = Matrix ::scale(Vector3({ 1, 1, 1 }));
 
         {

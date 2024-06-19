@@ -50,13 +50,13 @@ int main(int argc, char* argv[])
         Matrix t = Matrix::translate(Vector3({ 1, 2, 3 }));
         assert(Matrix::multiply(Matrix::inverse(t), t) == Matrix());
 
-        Matrix rx = Matrix::rotateX(Mathf::Deg2Rad * 45.0f);
+        Matrix rx = Matrix::rotateX(45.0f);
         assert(Matrix::multiply(Matrix::inverse(rx), rx) == Matrix());
 
-        Matrix ry = Matrix::rotateY(Mathf::Deg2Rad * 45.0f);
+        Matrix ry = Matrix::rotateY(45.0f);
         assert(Matrix::multiply(Matrix::inverse(ry), ry) == Matrix());
 
-        Matrix rz = Matrix::rotateZ(Mathf::Deg2Rad * 45.0f);
+        Matrix rz = Matrix::rotateZ(45.0f);
         assert(Matrix::multiply(Matrix::inverse(rz), rz) == Matrix());
 
         Matrix s = Matrix::scale(Vector3({ 1, 2, 3 }));

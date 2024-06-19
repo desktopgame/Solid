@@ -166,33 +166,33 @@ struct MatrixT {
         return m;
     }
 
-    static MatrixT<T> rotateX(T angle)
+    static MatrixT<T> rotateX(T degree)
     {
         MatrixT<T> m;
-        m.at(1, 1) = Mathf::cos(angle);
-        m.at(1, 2) = -Mathf::sin(angle);
-        m.at(2, 1) = Mathf::sin(angle);
-        m.at(2, 2) = Mathf::cos(angle);
+        m.at(1, 1) = Mathf::cos(degree * Mathf::Deg2Rad);
+        m.at(1, 2) = -Mathf::sin(degree * Mathf::Deg2Rad);
+        m.at(2, 1) = Mathf::sin(degree * Mathf::Deg2Rad);
+        m.at(2, 2) = Mathf::cos(degree * Mathf::Deg2Rad);
         return m;
     }
 
-    static MatrixT<T> rotateY(T angle)
+    static MatrixT<T> rotateY(T degree)
     {
         MatrixT<T> m;
-        m.at(0, 0) = Mathf::cos(angle);
-        m.at(0, 2) = Mathf::sin(angle);
-        m.at(2, 0) = -Mathf::sin(angle);
-        m.at(2, 2) = Mathf::cos(angle);
+        m.at(0, 0) = Mathf::cos(degree * Mathf::Deg2Rad);
+        m.at(0, 2) = Mathf::sin(degree * Mathf::Deg2Rad);
+        m.at(2, 0) = -Mathf::sin(degree * Mathf::Deg2Rad);
+        m.at(2, 2) = Mathf::cos(degree * Mathf::Deg2Rad);
         return m;
     }
 
-    static MatrixT<T> rotateZ(T angle)
+    static MatrixT<T> rotateZ(T degree)
     {
         MatrixT<T> m;
-        m.at(0, 0) = Mathf::cos(angle);
-        m.at(0, 1) = -Mathf::sin(angle);
-        m.at(1, 0) = Mathf::sin(angle);
-        m.at(1, 1) = Mathf::cos(angle);
+        m.at(0, 0) = Mathf::cos(degree * Mathf::Deg2Rad);
+        m.at(0, 1) = -Mathf::sin(degree * Mathf::Deg2Rad);
+        m.at(1, 0) = Mathf::sin(degree * Mathf::Deg2Rad);
+        m.at(1, 1) = Mathf::cos(degree * Mathf::Deg2Rad);
         return m;
     }
 
