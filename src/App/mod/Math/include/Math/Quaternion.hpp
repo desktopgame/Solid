@@ -64,12 +64,12 @@ public:
         return c;
     }
 
-    static QuaternionT<T> angleAxis(float angle, VectorT<T, 3> axis)
+    static QuaternionT<T> angleAxis(float degree, VectorT<T, 3> axis)
     {
         // see: http://marupeke296.com/DXG_No10_Quaternion.html
         QuaternionT<T> q = QuaternionT<T>();
-        float sin = Mathf::sin((angle / 2.0f) * Mathf::Deg2Rad);
-        float cos = Mathf::cos((angle / 2.0f) * Mathf::Deg2Rad);
+        float sin = Mathf::sin((degree / 2.0f) * Mathf::Deg2Rad);
+        float cos = Mathf::cos((degree / 2.0f) * Mathf::Deg2Rad);
         q.x = axis.x() * sin;
         q.y = axis.y() * sin;
         q.z = axis.z() * sin;
