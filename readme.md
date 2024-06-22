@@ -9,6 +9,7 @@
 cd src\App\mod\vcpkg
 bootstrap-vcpkg.bat
 vcpkg install directxtex
+vcpkg install picojson
 ````
 
 ここから先のセットアップ手順は開発環境により異なります。
