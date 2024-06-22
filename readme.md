@@ -6,7 +6,7 @@
 いくつかのライブラリを `vcpkg` から取得しており、それらはサブモジュールとしてぶら下がる構造になっています。
 まずは `vcpkg` を初期化し、必要なライブラリをインストールしてください。
 ````bat
-cd src\Solid\mod\vcpkg
+cd src\App\mod\vcpkg
 bootstrap-vcpkg.bat
 vcpkg install directxtex
 ````
