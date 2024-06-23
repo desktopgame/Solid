@@ -23,6 +23,7 @@ add_subdirectory(./mod/Json)
 add_subdirectory(./mod/Input)
 add_subdirectory(./mod/Math)
 add_subdirectory(./mod/Graphics)
+add_subdirectory(./mod/Utils)
 #
 # Build Options
 #
@@ -40,6 +41,7 @@ target_include_directories(
     "${MODS}/Input/include"
     "${MODS}/Graphics/include"
     "${MODS}/Math/include"
+    "${MODS}/Utils/include"
 )
 target_link_libraries(
     App
@@ -48,4 +50,5 @@ target_link_libraries(
     Lib-Input
     Lib-Math
     Lib-Graphics
+    Lib-Utils
 )

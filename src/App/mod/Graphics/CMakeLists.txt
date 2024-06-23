@@ -35,6 +35,7 @@ target_include_directories(
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${MODS}/Math/include"
+    "${MODS}/Utils/include"
 )
 target_link_libraries(
     Lib-Graphics
@@ -43,5 +44,6 @@ target_link_libraries(
     "dxgi.lib"
     "d3dcompiler.lib"
     Lib-Math
+    Lib-Utils
     Microsoft::DirectXTex
 )

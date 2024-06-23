@@ -48,4 +48,5 @@ CLionの場合、 `App` という名前になっている構成で実行ファ�
 ````bat
 cd Solid
 make -C build Math-Test
+make -C build Utils-Test
 ````
