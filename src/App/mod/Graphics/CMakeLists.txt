@@ -28,8 +28,8 @@ add_library(
     ./lib/Graphics/Internal/Error.cpp
     ./lib/Graphics/Internal/Pso.cpp
 )
-common_target_compile_params(Lib-Graphics)
-common_target_link_params(Lib-Graphics)
+lib_target_compile_params(Lib-Graphics)
+lib_target_link_params(Lib-Graphics)
 target_include_directories(
     Lib-Graphics
     PRIVATE

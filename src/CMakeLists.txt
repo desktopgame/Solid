@@ -35,7 +35,7 @@ set(STD_RELEASE_LINK "")
 #
 # Function
 #
-function(common_target_compile_params target)
+function(app_target_compile_params target)
     target_compile_definitions(
         ${target}
         PRIVATE
@@ -51,7 +51,32 @@ function(common_target_compile_params target)
     target_compile_features(${target} PRIVATE cxx_std_17)
 endfunction()
 
-function(common_target_link_params target)
+function(app_target_link_params target)
+    target_link_options(
+        ${target}
+        PRIVATE
+        $<$<CONFIG:Debug>: ${STD_DEBUG_LINK}>
+        $<$<CONFIG:Release>: ${STD_RELEASE_LINK}>
+    )
+endfunction()
+
+function(lib_target_compile_params target)
+    target_compile_definitions(
+        ${target}
+        PRIVATE
+        $<$<CONFIG:Debug>:${STD_DEBUG_DEFINE} SOLID_ENABLE_INTERNAL>
+        $<$<CONFIG:Release>:${STD_RELEASE_DEFINE} SOLID_ENABLE_INTERNAL>
+    )
+    target_compile_options(
+        ${target}
+        PRIVATE
+        $<$<CONFIG:Debug>:${STD_DEBUG_COMPILE}>
+        $<$<CONFIG:Release>:${STD_RELEASE_COMPILE}>
+    )
+    target_compile_features(${target} PRIVATE cxx_std_17)
+endfunction()
+
+function(lib_target_link_params target)
     target_link_options(
         ${target}
         PRIVATE

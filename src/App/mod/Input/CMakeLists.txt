@@ -12,8 +12,8 @@ add_library(
     STATIC
     lib/Input/Gamepad.cpp
 )
-common_target_compile_params(Lib-Input)
-common_target_link_params(Lib-Input)
+lib_target_compile_params(Lib-Input)
+lib_target_link_params(Lib-Input)
 target_include_directories(
     Lib-Input
     PRIVATE

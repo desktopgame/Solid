@@ -32,8 +32,8 @@ add_executable(
     App
     ${SOURCES}
 )
-common_target_compile_params(App)
-common_target_link_params(App)
+app_target_compile_params(App)
+app_target_link_params(App)
 target_include_directories(
     App
     PRIVATE

@@ -12,8 +12,8 @@ add_library(
     STATIC
     lib/Utils/String.cpp
 )
-common_target_compile_params(Lib-Utils)
-common_target_link_params(Lib-Utils)
+lib_target_compile_params(Lib-Utils)
+lib_target_link_params(Lib-Utils)
 target_include_directories(
     Lib-Utils
     PRIVATE
