@@ -14,7 +14,7 @@ public:
     ~Window();
 
     void show();
-    bool translateMessage() const;
+    bool peekMessage() const;
     void hide();
 
 #if SOLID_ENABLE_INTERNAL

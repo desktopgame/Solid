@@ -22,7 +22,7 @@ void Window::show()
     ShowWindow(m_hwnd, SW_SHOW);
 }
 
-bool Window::translateMessage() const
+bool Window::peekMessage() const
 {
     MSG msg = {};
     if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -30,9 +30,9 @@ bool Window::translateMessage() const
         DispatchMessage(&msg);
     }
     if (msg.message == WM_QUIT) {
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 void Window::hide()

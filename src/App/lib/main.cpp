@@ -204,10 +204,7 @@ int main(int argc, char* argv[])
     float eyeAngleX = 0.0f;
     float eyeAngleY = 0.0f;
     window->show();
-    while (true) {
-        if (window->translateMessage()) {
-            break;
-        }
+    while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
         float leftStickX = static_cast<float>(controller->getLeftStickX()) / 32768.0f;
         float leftStickY = static_cast<float>(controller->getLeftStickY()) / 32768.0f;
