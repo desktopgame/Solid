@@ -74,10 +74,10 @@ std::shared_ptr<Pso> Pso::create(
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
-    psoDesc.VS.pShaderBytecode = pso->m_shader->getVertexProgram().getPointer();
-    psoDesc.VS.BytecodeLength = pso->m_shader->getVertexProgram().getSize();
-    psoDesc.PS.pShaderBytecode = pso->m_shader->getPixelProgram().getPointer();
-    psoDesc.PS.BytecodeLength = pso->m_shader->getPixelProgram().getSize();
+    psoDesc.VS.pShaderBytecode = pso->m_shader->getVertexShaderBlob()->GetBufferPointer();
+    psoDesc.VS.BytecodeLength = pso->m_shader->getVertexShaderBlob()->GetBufferSize();
+    psoDesc.PS.pShaderBytecode = pso->m_shader->getPixelShaderBlob()->GetBufferPointer();
+    psoDesc.PS.BytecodeLength = pso->m_shader->getPixelShaderBlob()->GetBufferSize();
     // rasterize
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;

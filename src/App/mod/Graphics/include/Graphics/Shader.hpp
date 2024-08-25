@@ -2,35 +2,34 @@
 #include <memory>
 #include <string>
 
+#if SOLID_ENABLE_INTERNAL
+#include <d3d12.h>
+#include <d3dcompiler.h>
+#include <dxgi1_6.h>
+#include <wrl/client.h>
+#endif
+
 namespace Lib::Graphics {
 class Shader {
 public:
-    ~Shader();
-
-    class Program {
-    public:
-        explicit Program(const void* pointer, size_t size);
-        const void* getPointer() const;
-        size_t getSize() const;
-
-    private:
-        const void* m_pointer;
-        size_t m_size;
-    };
-
     static std::shared_ptr<Shader> compile(
         const std::string& vertexShader,
         const std::string& vertexEntrypoint,
         const std::string& pixelShader,
         const std::string& pixelEntrypoint);
+    ~Shader();
 
-    Program getVertexProgram() const;
-    Program getPixelProgram() const;
+#if SOLID_ENABLE_INTERNAL
+    Microsoft::WRL::ComPtr<ID3DBlob> getVertexShaderBlob() const;
+    Microsoft::WRL::ComPtr<ID3DBlob> getPixelShaderBlob() const;
+#endif
 
 private:
     Shader();
 
-    class Impl;
-    std::shared_ptr<Impl> m_impl;
+#if SOLID_ENABLE_INTERNAL
+    Microsoft::WRL::ComPtr<ID3DBlob> m_vertexBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> m_pixelBlob;
+#endif
 };
 }

@@ -1,32 +1,9 @@
 #include <Graphics/Shader.hpp>
-#include <d3d12.h>
-#include <d3dcompiler.h>
-#include <dxgi1_6.h>
 #include <stdexcept>
-#include <wrl/client.h>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
-// Program
-Shader::Program::Program(const void* pointer, size_t size)
-    : m_pointer(pointer)
-    , m_size(size)
-{
-}
-const void* Shader::Program::getPointer() const { return m_pointer; }
-size_t Shader::Program::getSize() const { return m_size; }
-// Impl
-class Shader::Impl {
-public:
-    explicit Impl() = default;
-    ComPtr<ID3DBlob> m_vertexBlob;
-    ComPtr<ID3DBlob> m_pixelBlob;
-};
 // public
-Shader::~Shader()
-{
-}
-
 std::shared_ptr<Shader> Shader::compile(
     const std::string& vertexShader,
     const std::string& vertexEntrypoint,
@@ -51,7 +28,7 @@ std::shared_ptr<Shader> Shader::compile(
             "vs_5_0",
             flags,
             0,
-            &shader->m_impl->m_vertexBlob,
+            &shader->m_vertexBlob,
             &errorMessage))) {
         std::string errorString;
         errorString.resize(errorMessage->GetBufferSize());
@@ -69,7 +46,7 @@ std::shared_ptr<Shader> Shader::compile(
             "ps_5_0",
             flags,
             0,
-            &shader->m_impl->m_pixelBlob,
+            &shader->m_pixelBlob,
             &errorMessage))) {
         std::string errorString;
         errorString.resize(errorMessage->GetBufferSize());
@@ -79,21 +56,17 @@ std::shared_ptr<Shader> Shader::compile(
     return shader;
 }
 
-Shader::Program Shader::getVertexProgram() const
+Shader::~Shader()
 {
-    LPVOID ptr = m_impl->m_vertexBlob->GetBufferPointer();
-    SIZE_T size = m_impl->m_vertexBlob->GetBufferSize();
-    return Program(static_cast<void*>(ptr), static_cast<size_t>(size));
 }
-Shader::Program Shader::getPixelProgram() const
-{
-    LPVOID ptr = m_impl->m_pixelBlob->GetBufferPointer();
-    SIZE_T size = m_impl->m_pixelBlob->GetBufferSize();
-    return Program(static_cast<void*>(ptr), static_cast<size_t>(size));
-}
+// internal
+Microsoft::WRL::ComPtr<ID3DBlob> Shader::getVertexShaderBlob() const { return m_vertexBlob; }
+
+Microsoft::WRL::ComPtr<ID3DBlob> Shader::getPixelShaderBlob() const { return m_pixelBlob; }
 // private
 Shader::Shader()
-    : m_impl(std::make_shared<Impl>())
+    : m_vertexBlob()
+    , m_pixelBlob()
 {
 }
 }
