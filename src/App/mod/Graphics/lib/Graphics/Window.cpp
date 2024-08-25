@@ -39,16 +39,7 @@ void Window::hide()
 {
     ShowWindow(m_hwnd, SW_HIDE);
 }
-HWND Window::getHWND() const
-{
-    return m_hwnd;
-}
-// private
-Window::Window()
-    : m_hwnd(nullptr)
-{
-}
-
+// internal
 std::shared_ptr<Window> Window::create(int32_t width, int32_t height)
 {
     auto window = std::shared_ptr<Window>(new Window());
@@ -88,5 +79,15 @@ void Window::destroy()
         DestroyWindow(m_hwnd);
         m_hwnd = nullptr;
     }
+}
+
+HWND Window::getHWND() const
+{
+    return m_hwnd;
+}
+// private
+Window::Window()
+    : m_hwnd(nullptr)
+{
 }
 }

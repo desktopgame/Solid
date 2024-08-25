@@ -18,6 +18,9 @@ public:
     void hide();
 
 #if SOLID_ENABLE_INTERNAL
+    static std::shared_ptr<Window> create(int32_t width, int32_t height);
+    void destroy();
+
     HWND getHWND() const;
 #endif
 
@@ -28,11 +31,5 @@ private:
     HWND m_hwnd;
     WNDCLASSEX m_class;
 #endif
-
-    static std::shared_ptr<Window> create(int32_t width, int32_t height);
-    void destroy();
-
-    friend std::shared_ptr<Engine> Engine::startup(int argc, char* argv[]);
-    friend void Engine::shutdown();
 };
 }
