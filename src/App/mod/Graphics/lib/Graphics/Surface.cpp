@@ -8,11 +8,8 @@
 #include <Graphics/VertexData2D.hpp>
 #include <Graphics/VertexData3D.hpp>
 #include <Math/Vector.hpp>
-#include <d3d12.h>
-#include <dxgi1_6.h>
 #include <stdexcept>
 #include <vector>
-#include <wrl/client.h>
 
 namespace Lib::Graphics {
 
@@ -29,18 +26,6 @@ public:
 
     std::shared_ptr<Pso> pso;
 };
-// Impl
-class Surface::Impl {
-public:
-    explicit Impl() = default;
-    ComPtr<IDXGIFactory6> dxgiFactory;
-    ComPtr<ID3D12InfoQueue> infoQueue;
-    ComPtr<ID3D12CommandAllocator> commandAllocator;
-    ComPtr<ID3D12GraphicsCommandList> commandList;
-    ComPtr<ID3D12Fence> fence;
-
-private:
-};
 // public
 Surface::~Surface()
 {
@@ -48,20 +33,20 @@ Surface::~Surface()
 
 void Surface::begin()
 {
-    m_swapchain->clear(m_impl->commandList);
+    m_swapchain->clear(m_commandList);
 }
 
 void Surface::end()
 {
-    m_swapchain->swap(m_impl->commandList);
-    m_impl->commandList->Close();
-    m_swapchain->execute(m_impl->commandList);
+    m_swapchain->swap(m_commandList);
+    m_commandList->Close();
+    m_swapchain->execute(m_commandList);
 
-    m_swapchain->present(m_impl->commandList);
+    m_swapchain->present(m_commandList);
     m_swapchain->waitSync();
 
-    m_impl->commandAllocator->Reset();
-    m_impl->commandList->Reset(m_impl->commandAllocator.Get(), nullptr);
+    m_commandAllocator->Reset();
+    m_commandList->Reset(m_commandAllocator.Get(), nullptr);
 }
 
 void Surface::render(
@@ -95,7 +80,7 @@ void Surface::render(
     }
     renderParameter->update();
 
-    pso->command(m_impl->commandList, renderParameter);
+    pso->command(m_commandList, renderParameter);
     uint32_t stride = 0;
     if (vertexComponent == 2) {
         if (isUsingTexCoord) {
@@ -114,15 +99,15 @@ void Surface::render(
     vbView.BufferLocation = vertexBuffer->getVirtualAddress();
     vbView.SizeInBytes = vertexBuffer->getSize();
     vbView.StrideInBytes = static_cast<UINT>(stride);
-    m_impl->commandList->IASetVertexBuffers(0, 1, &vbView);
+    m_commandList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
     ibView.BufferLocation = indexBuffer->getVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = indexBuffer->getSize();
-    m_impl->commandList->IASetIndexBuffer(&ibView);
+    m_commandList->IASetIndexBuffer(&ibView);
 
-    m_impl->commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
+    m_commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
 }
 
 void Surface::render(
@@ -138,13 +123,7 @@ void Surface::render(
         context->getIndexBuffer(),
         context->getIndexLength());
 }
-// private
-Surface::Surface()
-    : m_swapchain()
-    , m_psoTable()
-    , m_impl(std::make_shared<Impl>())
-{
-}
+// internal
 
 std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
@@ -157,13 +136,13 @@ std::shared_ptr<Surface> Surface::create(
     if (FAILED(nativeDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator)))) {
         throw std::runtime_error("failed CreateCommandAllocator()");
     }
-    surface->m_impl->commandAllocator = commandAllocator;
+    surface->m_commandAllocator = commandAllocator;
     // CommandList
     ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
     if (FAILED(nativeDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)))) {
         throw std::runtime_error("failed CreateCommandList()");
     }
-    surface->m_impl->commandList = commandList;
+    surface->m_commandList = commandList;
     surface->m_swapchain = swapchain;
     return surface;
 }
@@ -171,5 +150,16 @@ std::shared_ptr<Surface> Surface::create(
 void Surface::destroy()
 {
     m_psoTable.clear();
+}
+// private
+Surface::Surface()
+    : m_swapchain()
+    , m_psoTable()
+    , m_dxgiFactory()
+    , m_infoQueue()
+    , m_commandAllocator()
+    , m_commandList()
+    , m_fence()
+{
 }
 }

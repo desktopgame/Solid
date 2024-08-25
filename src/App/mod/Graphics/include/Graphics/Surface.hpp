@@ -1,9 +1,14 @@
 #pragma once
 #include <Graphics/Device.hpp>
 #include <Graphics/PrimitiveType.hpp>
-#include <any>
 #include <memory>
 #include <vector>
+
+#if SOLID_ENABLE_INTERNAL
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <wrl/client.h>
+#endif
 
 namespace Lib::Graphics {
 class Device;
@@ -35,6 +40,13 @@ public:
         const std::shared_ptr<RenderParameter>& renderParameter,
         const std::shared_ptr<RenderContext>& context);
 
+#if SOLID_ENABLE_INTERNAL
+    static std::shared_ptr<Surface> create(
+        const std::shared_ptr<Device>& device,
+        const std::shared_ptr<Swapchain>& swapchain);
+    void destroy();
+#endif
+
 private:
     Surface();
 
@@ -43,14 +55,12 @@ private:
     class PsoHash;
     std::vector<std::shared_ptr<PsoHash>> m_psoTable;
 
-    class Impl;
-    std::shared_ptr<Impl> m_impl;
-
-    static std::shared_ptr<Surface> create(
-        const std::shared_ptr<Device>& device,
-        const std::shared_ptr<Swapchain>& swapchain);
-    void destroy();
-    // friend std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window);
-    friend class Lib::Graphics::Device;
+#if SOLID_ENABLE_INTERNAL
+    Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
+    Microsoft::WRL::ComPtr<ID3D12InfoQueue> m_infoQueue;
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
+    Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
+#endif
 };
 }
