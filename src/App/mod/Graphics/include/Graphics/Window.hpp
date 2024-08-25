@@ -1,7 +1,6 @@
 #pragma once
 #include <Graphics/Engine.hpp>
 #include <Graphics/Window.hpp>
-#include <any>
 #include <memory>
 
 #if SOLID_ENABLE_INTERNAL

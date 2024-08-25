@@ -1,6 +1,5 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Window.hpp>
-#include <Windows.h>
 #include <tchar.h>
 
 namespace Lib::Graphics {
