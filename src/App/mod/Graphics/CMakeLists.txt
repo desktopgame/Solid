@@ -23,7 +23,7 @@ add_library(
     ./lib/Graphics/VertexData3D.cpp
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/RenderParameter.cpp
-    ./lib/Graphics/Internal/Swapchain.cpp
+    ./lib/Graphics/Swapchain.cpp
     ./lib/Graphics/Internal/Constant.cpp
     ./lib/Graphics/Internal/Error.cpp
     ./lib/Graphics/Internal/Pso.cpp

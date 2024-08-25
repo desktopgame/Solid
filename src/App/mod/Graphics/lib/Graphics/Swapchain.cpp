@@ -1,7 +1,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
-#include <Graphics/Internal/Swapchain.hpp>
 #include <Graphics/Screen.hpp>
+#include <Graphics/Swapchain.hpp>
 #include <Graphics/Window.hpp>
 #include <Windows.h>
 #include <any>
@@ -9,6 +9,7 @@
 #include <dxgi1_6.h>
 #include <stdexcept>
 #include <vector>
+
 
 namespace Lib::Graphics::Internal {
 using Microsoft::WRL::ComPtr;
