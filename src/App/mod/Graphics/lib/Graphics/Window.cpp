@@ -88,6 +88,7 @@ HWND Window::getHWND() const
 // private
 Window::Window()
     : m_hwnd(nullptr)
+    , m_class()
 {
 }
 }
