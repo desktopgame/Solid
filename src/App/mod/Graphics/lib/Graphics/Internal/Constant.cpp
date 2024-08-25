@@ -182,7 +182,7 @@ void Constant::defineTextureView(const std::shared_ptr<Texture>& texture, int32_
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
 
-    auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(texture->getHandle());
+    auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(texture->getID3D12Resource());
     device->CreateShaderResourceView(texBuff.Get(), &srvDesc, heapHandle);
 }
 

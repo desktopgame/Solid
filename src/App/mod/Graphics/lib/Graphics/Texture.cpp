@@ -3,17 +3,9 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/Texture.hpp>
 #include <cassert>
-#include <d3d12.h>
-#include <wrl/client.h>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
-// Impl
-class Texture::Impl {
-public:
-    explicit Impl() = default;
-    ComPtr<ID3D12Resource> resource;
-};
 // public
 std::shared_ptr<Texture> Texture::create(const std::wstring& path)
 {
@@ -53,10 +45,10 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, const ui
     texResDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
     texResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-    if (FAILED(device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, nullptr, IID_PPV_ARGS(&texture->m_impl->resource)))) {
+    if (FAILED(device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, nullptr, IID_PPV_ARGS(&texture->m_resource)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
-    if (FAILED(texture->m_impl->resource->WriteToSubresource(0, nullptr, data, sizeof(uint8_t) * 4 * width, sizeof(uint8_t) * 4 * (width * height)))) {
+    if (FAILED(texture->m_resource->WriteToSubresource(0, nullptr, data, sizeof(uint8_t) * 4 * width, sizeof(uint8_t) * 4 * (width * height)))) {
         throw std::runtime_error("failed WriteToSubresource()");
     }
     return texture;
@@ -65,15 +57,16 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, const ui
 Texture::~Texture()
 {
 }
-std::any Texture::getHandle() const
+// internal
+Microsoft::WRL::ComPtr<ID3D12Resource> Texture::getID3D12Resource() const
 {
-    return m_impl->resource;
+    return m_resource;
 }
 // private
 Texture::Texture()
     : m_width(0)
     , m_height(0)
-    , m_impl(std::make_shared<Impl>())
+    , m_resource()
 {
 }
 }
