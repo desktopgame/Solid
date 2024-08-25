@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <vector>
 
-
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
@@ -102,7 +101,7 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
     device->m_infoQueue = infoQueue;
 #endif
     // Swapchain
-    device->m_swapchain = Internal::Swapchain::create(window, device->m_dxgiFactory, nativeDevice);
+    device->m_swapchain = Swapchain::create(window, device->m_dxgiFactory, nativeDevice);
     // Surface
     device->m_surface = Surface::create(device, device->m_swapchain);
     return device;

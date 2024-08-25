@@ -8,12 +8,10 @@
 #include <wrl/client.h>
 #endif
 
-namespace Lib::Graphics::Internal {
-class Swapchain;
-}
 namespace Lib::Graphics {
 class Window;
 class Surface;
+class Swapchain;
 class Device {
 public:
     ~Device();
@@ -32,7 +30,7 @@ public:
 private:
     Device();
 
-    std::shared_ptr<Internal::Swapchain> m_swapchain;
+    std::shared_ptr<Swapchain> m_swapchain;
     std::shared_ptr<Surface> m_surface;
 
 #if SOLID_ENABLE_INTERNAL

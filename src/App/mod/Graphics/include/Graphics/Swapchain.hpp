@@ -13,7 +13,7 @@ namespace Lib::Graphics {
 class Window;
 class Device;
 }
-namespace Lib::Graphics::Internal {
+namespace Lib::Graphics {
 class Swapchain {
 public:
     ~Swapchain();

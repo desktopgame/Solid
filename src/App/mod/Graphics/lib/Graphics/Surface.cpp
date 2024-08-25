@@ -15,7 +15,6 @@
 #include <vector>
 #include <wrl/client.h>
 
-
 namespace Lib::Graphics {
 
 using Microsoft::WRL::ComPtr;
@@ -151,7 +150,7 @@ Surface::Surface()
 
 std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
-    const std::shared_ptr<Internal::Swapchain>& swapchain)
+    const std::shared_ptr<Swapchain>& swapchain)
 {
     auto nativeDevice = device->getID3D12Device();
     auto surface = std::shared_ptr<Surface>(new Surface());

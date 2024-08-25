@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace Lib::Graphics::Internal {
+namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
 Swapchain::~Swapchain()
