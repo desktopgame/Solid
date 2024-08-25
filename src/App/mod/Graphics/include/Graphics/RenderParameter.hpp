@@ -10,10 +10,6 @@
 #include <wrl/client.h>
 #endif
 
-namespace Lib::Graphics::Internal {
-class Constant;
-}
-
 namespace Lib::Graphics {
 class Shader;
 class Buffer;
