@@ -11,27 +11,27 @@ project(
 #
 # Common Variables
 #
-set(STD_DEBUG_DEFINE
-    STD_DEBUG _DEBUG
+set(SOLID_DEBUG_DEFINE
+    SOLID_DEBUG _DEBUG
     _LIBCPP_HAS_NO_ASAN # https://stackoverflow.com/questions/38723374/why-does-xcode-define-libcpp-has-no-asan-when-creating-an-address-sanitized-bui
     $<$<CONFIG:Debug>: _ITERATOR_DEBUG_LEVEL=2>
     $<$<CONFIG:Release>: _ITERATOR_DEBUG_LEVEL=0>
 )
-set(STD_RELEASE_DEFINE STD_NDEBUG)
-set(STD_DEBUG_COMPILE
+set(SOLID_RELEASE_DEFINE SOLID_NDEBUG)
+set(SOLID_DEBUG_COMPILE
     -O0
     -g
     -Wall
     -Werror
     $<$<NOT:${WIN32}>:-fsanitize=address>
 )
-set(STD_RELEASE_COMPILE
+set(SOLID_RELEASE_COMPILE
     -O3
 )
-set(STD_DEBUG_LINK
+set(SOLID_DEBUG_LINK
     $<$<NOT:${WIN32}>:-fsanitize=address>
 )
-set(STD_RELEASE_LINK "")
+set(SOLID_RELEASE_LINK "")
 #
 # Function
 #
@@ -39,14 +39,14 @@ function(app_target_compile_params target)
     target_compile_definitions(
         ${target}
         PRIVATE
-        $<$<CONFIG:Debug>:${STD_DEBUG_DEFINE}>
-        $<$<CONFIG:Release>:${STD_RELEASE_DEFINE}>
+        $<$<CONFIG:Debug>:${SOLID_DEBUG_DEFINE}>
+        $<$<CONFIG:Release>:${SOLID_RELEASE_DEFINE}>
     )
     target_compile_options(
         ${target}
         PRIVATE
-        $<$<CONFIG:Debug>:${STD_DEBUG_COMPILE}>
-        $<$<CONFIG:Release>:${STD_RELEASE_COMPILE}>
+        $<$<CONFIG:Debug>:${SOLID_DEBUG_COMPILE}>
+        $<$<CONFIG:Release>:${SOLID_RELEASE_COMPILE}>
     )
     target_compile_features(${target} PRIVATE cxx_std_17)
 endfunction()
@@ -55,8 +55,8 @@ function(app_target_link_params target)
     target_link_options(
         ${target}
         PRIVATE
-        $<$<CONFIG:Debug>: ${STD_DEBUG_LINK}>
-        $<$<CONFIG:Release>: ${STD_RELEASE_LINK}>
+        $<$<CONFIG:Debug>: ${SOLID_DEBUG_LINK}>
+        $<$<CONFIG:Release>: ${SOLID_RELEASE_LINK}>
     )
 endfunction()
 
@@ -64,14 +64,14 @@ function(lib_target_compile_params target)
     target_compile_definitions(
         ${target}
         PRIVATE
-        $<$<CONFIG:Debug>:${STD_DEBUG_DEFINE} SOLID_ENABLE_INTERNAL>
-        $<$<CONFIG:Release>:${STD_RELEASE_DEFINE} SOLID_ENABLE_INTERNAL>
+        $<$<CONFIG:Debug>:${SOLID_DEBUG_DEFINE} SOLID_ENABLE_INTERNAL>
+        $<$<CONFIG:Release>:${SOLID_RELEASE_DEFINE} SOLID_ENABLE_INTERNAL>
     )
     target_compile_options(
         ${target}
         PRIVATE
-        $<$<CONFIG:Debug>:${STD_DEBUG_COMPILE}>
-        $<$<CONFIG:Release>:${STD_RELEASE_COMPILE}>
+        $<$<CONFIG:Debug>:${SOLID_DEBUG_COMPILE}>
+        $<$<CONFIG:Release>:${SOLID_RELEASE_COMPILE}>
     )
     target_compile_features(${target} PRIVATE cxx_std_17)
 endfunction()
@@ -80,8 +80,8 @@ function(lib_target_link_params target)
     target_link_options(
         ${target}
         PRIVATE
-        $<$<CONFIG:Debug>: ${STD_DEBUG_LINK}>
-        $<$<CONFIG:Release>: ${STD_RELEASE_LINK}>
+        $<$<CONFIG:Debug>: ${SOLID_DEBUG_LINK}>
+        $<$<CONFIG:Release>: ${SOLID_RELEASE_LINK}>
     )
 endfunction()
 #
