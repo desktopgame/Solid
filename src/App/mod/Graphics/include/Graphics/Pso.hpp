@@ -2,12 +2,17 @@
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/RenderParameter.hpp>
 #include <memory>
+
+#if SOLID_ENABLE_INTERNAL
+#include <d3d12.h>
 #include <wrl/client.h>
+
+class ID3D12GraphicsCommandList;
+#endif
 
 namespace Lib::Graphics {
 class Shader;
 }
-class ID3D12GraphicsCommandList;
 namespace Lib::Graphics::Internal {
 // class Constant;
 class Pso {
@@ -18,9 +23,11 @@ public:
         PrimitiveType primitiveType,
         int32_t vertexComponent,
         bool usingTexCoord);
-
     ~Pso();
+
+#if SOLID_ENABLE_INTERNAL
     void command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter);
+#endif
 
 private:
     Pso();
@@ -31,7 +38,9 @@ private:
     int32_t m_vertexComponent;
     bool m_isUsingTexCoord;
 
-    class Impl;
-    std::shared_ptr<Impl> m_impl;
+#if SOLID_ENABLE_INTERNAL
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+#endif
 };
 }

@@ -4,7 +4,6 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
 #include <Math/Matrix.hpp>
-#include <d3d12.h>
 
 namespace Lib::Graphics::Internal {
 using Microsoft::WRL::ComPtr;
@@ -35,15 +34,6 @@ static D3D12_PRIMITIVE_TOPOLOGY_TYPE convPrimitiveTopologyType(PrimitiveType pri
 #pragma clang diagnostic pop
     return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
 }
-// Impl
-class Pso::Impl {
-public:
-    explicit Impl() = default;
-    ComPtr<ID3D12PipelineState> pipelineState;
-    ComPtr<ID3D12RootSignature> rootSignature;
-
-private:
-};
 // public
 std::shared_ptr<Pso> Pso::create(
     const std::shared_ptr<Shader>& shader,
@@ -199,11 +189,11 @@ std::shared_ptr<Pso> Pso::create(
     if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
         throw std::runtime_error("failed D3D12SerializeRootSignature()");
     }
-    if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&pso->m_impl->rootSignature)))) {
+    if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&pso->m_rootSignature)))) {
         throw std::runtime_error("failed CreateRootSignature()");
     }
-    psoDesc.pRootSignature = pso->m_impl->rootSignature.Get();
-    if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pso->m_impl->pipelineState)))) {
+    psoDesc.pRootSignature = pso->m_rootSignature.Get();
+    if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pso->m_pipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
     return pso;
@@ -211,11 +201,11 @@ std::shared_ptr<Pso> Pso::create(
 Pso::~Pso()
 {
 }
-
+// internal
 void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter)
 {
-    cmdList->SetPipelineState(m_impl->pipelineState.Get());
-    cmdList->SetGraphicsRootSignature(m_impl->rootSignature.Get());
+    cmdList->SetPipelineState(m_pipelineState.Get());
+    cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     auto descriptorHeap = renderParameter->getID3D12DescriptorHeap();
@@ -250,7 +240,8 @@ Pso::Pso()
     , m_primitiveType()
     , m_vertexComponent(0)
     , m_isUsingTexCoord(false)
-    , m_impl(std::make_shared<Impl>())
+    , m_pipelineState()
+    , m_rootSignature()
 {
 }
 }
