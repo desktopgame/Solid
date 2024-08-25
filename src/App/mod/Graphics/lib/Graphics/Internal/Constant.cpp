@@ -18,7 +18,7 @@ std::shared_ptr<Constant> Constant::create(RenderInterface interfaze)
 
 void Constant::update()
 {
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     if (!m_descriptorHeap) {
         // descriptor heap
         D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
@@ -125,7 +125,7 @@ Constant::Constant(RenderInterface interfaze)
 
 void Constant::defineConstant(uint64_t width)
 {
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     D3D12_HEAP_PROPERTIES heapProps = {};
     heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -155,7 +155,7 @@ void Constant::defineConstant(uint64_t width)
 
 void Constant::defineConstantView(int32_t constantIndex, int32_t slotIndex)
 {
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -170,7 +170,7 @@ void Constant::defineConstantView(int32_t constantIndex, int32_t slotIndex)
 
 void Constant::defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex)
 {
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();

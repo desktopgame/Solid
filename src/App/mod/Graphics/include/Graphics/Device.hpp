@@ -1,7 +1,12 @@
 #pragma once
 #include <Graphics/Engine.hpp>
-#include <any>
 #include <memory>
+
+#if SOLID_ENABLE_INTERNAL
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <wrl/client.h>
+#endif
 
 namespace Lib::Graphics::Internal {
 class Swapchain;
@@ -15,21 +20,26 @@ public:
 
     void flushLogEntries();
 
-    std::any getHandle() const;
     std::shared_ptr<Surface> getSurface() const;
+
+#if SOLID_ENABLE_INTERNAL
+    static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
+    void destroy();
+
+    Microsoft::WRL::ComPtr<ID3D12Device> getID3D12Device() const;
+#endif
 
 private:
     Device();
-    static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
-    void destroy();
 
     std::shared_ptr<Internal::Swapchain> m_swapchain;
     std::shared_ptr<Surface> m_surface;
 
-    class Impl;
-    std::shared_ptr<Impl> m_impl;
-
-    friend std::shared_ptr<Engine> Engine::startup(int argc, char* argv[]);
-    friend void Engine::shutdown();
+#if SOLID_ENABLE_INTERNAL
+    HWND m_hwnd;
+    Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
+    Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+    Microsoft::WRL::ComPtr<ID3D12InfoQueue> m_infoQueue;
+#endif
 };
 }

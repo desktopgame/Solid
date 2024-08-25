@@ -152,7 +152,7 @@ std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
     const std::shared_ptr<Internal::Swapchain>& swapchain)
 {
-    auto nativeDevice = std::any_cast<ComPtr<ID3D12Device>>(device->getHandle());
+    auto nativeDevice = device->getID3D12Device();
     auto surface = std::shared_ptr<Surface>(new Surface());
     // CommandAllocator
     ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;

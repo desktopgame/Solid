@@ -30,7 +30,7 @@ std::shared_ptr<Texture> Texture::create(const std::wstring& path)
 
 std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, const uint8_t* data)
 {
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     auto texture = std::shared_ptr<Texture>(new Texture());
     texture->m_width = width;
     texture->m_height = height;

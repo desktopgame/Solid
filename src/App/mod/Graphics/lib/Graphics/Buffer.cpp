@@ -18,7 +18,7 @@ public:
 std::shared_ptr<Buffer> Buffer::create()
 {
     auto buffer = std::shared_ptr<Buffer>(new Buffer());
-    buffer->m_impl->device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    buffer->m_impl->device = Engine::getInstance()->getDevice()->getID3D12Device();
     return buffer;
 }
 

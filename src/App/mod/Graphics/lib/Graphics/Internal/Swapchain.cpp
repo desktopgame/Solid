@@ -33,8 +33,7 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
 {
     uint32_t backBufferIndex
         = m_impl->swapchain->GetCurrentBackBufferIndex();
-    std::any deviceHandle = Engine::getInstance()->getDevice()->getHandle();
-    auto nativeDevice = std::any_cast<ComPtr<ID3D12Device>>(deviceHandle);
+    auto nativeDevice = Engine::getInstance()->getDevice()->getID3D12Device();
     // Barrier
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;

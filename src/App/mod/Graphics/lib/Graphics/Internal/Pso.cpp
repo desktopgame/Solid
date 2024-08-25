@@ -60,7 +60,7 @@ std::shared_ptr<Pso> Pso::create(
     pso->m_vertexComponent = vertexComponent;
     pso->m_isUsingTexCoord = usingTexCoord;
 
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
     // input layout
@@ -218,7 +218,7 @@ void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdLi
     cmdList->SetPipelineState(m_impl->pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_impl->rootSignature.Get());
 
-    auto device = std::any_cast<ComPtr<ID3D12Device>>(Engine::getInstance()->getDevice()->getHandle());
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     auto descriptorHeap = constant->getDescriptorHeap();
     uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
