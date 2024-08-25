@@ -5,6 +5,11 @@
 #include <Math/Vector.hpp>
 #include <memory>
 
+#if SOLID_ENABLE_INTERNAL
+#include <d3d12.h>
+#include <wrl/client.h>
+#endif
+
 namespace Lib::Graphics::Internal {
 class Constant;
 }
@@ -15,6 +20,9 @@ class Buffer;
 class Texture;
 class RenderParameter {
 public:
+    inline static constexpr int32_t CbMatrixIndex = 0;
+    inline static constexpr int32_t CbColorIndex = 1;
+
     static std::shared_ptr<RenderParameter> create(RenderInterface interfaze);
     ~RenderParameter();
 
@@ -31,18 +39,24 @@ public:
 
     RenderInterface getInterface() const;
 
-private:
-    RenderParameter();
-    std::shared_ptr<Internal::Constant> getConstant() const;
-    friend void Surface::render(const std::shared_ptr<Shader>& shader,
-        const std::shared_ptr<RenderParameter>& renderParameter,
-        PrimitiveType primitiveType,
-        int32_t vertexComponent,
-        bool isUsingTexCoord,
-        const std::shared_ptr<Buffer>& vertexBuffer,
-        const std::shared_ptr<Buffer>& indexBuffer,
-        int32_t indexLength);
+#if SOLID_ENABLE_INTERNAL
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> getID3D12DescriptorHeap() const;
+#endif
 
-    std::shared_ptr<Internal::Constant> m_constant;
+private:
+    RenderParameter(RenderInterface interfaze);
+    void defineConstant(uint64_t width);
+    void defineConstantView(int32_t constantIndex, int32_t slotIndex);
+    void defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex);
+
+#if SOLID_ENABLE_INTERNAL
+    bool m_isDirty;
+    Math::Matrix m_transform;
+    std::shared_ptr<Texture> m_texture;
+    Math::Vector4 m_color;
+    RenderInterface m_interface;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_resources;
+#endif
 };
 }

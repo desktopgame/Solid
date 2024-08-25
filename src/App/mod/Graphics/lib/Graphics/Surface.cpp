@@ -1,6 +1,5 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
-#include <Graphics/Internal/Constant.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
@@ -94,10 +93,9 @@ void Surface::render(
         hash->pso = pso;
         m_psoTable.emplace_back(hash);
     }
-    auto constant = renderParameter->getConstant();
-    constant->update();
+    renderParameter->update();
 
-    pso->command(m_impl->commandList, constant);
+    pso->command(m_impl->commandList, renderParameter);
     uint32_t stride = 0;
     if (vertexComponent == 2) {
         if (isUsingTexCoord) {

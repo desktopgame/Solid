@@ -1,6 +1,5 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
-#include <Graphics/Internal/Constant.hpp>
 #include <Graphics/Internal/Pso.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
@@ -213,23 +212,23 @@ Pso::~Pso()
 {
 }
 
-void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Constant> constant)
+void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter)
 {
     cmdList->SetPipelineState(m_impl->pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_impl->rootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-    auto descriptorHeap = constant->getDescriptorHeap();
+    auto descriptorHeap = renderParameter->getID3D12DescriptorHeap();
     uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
-    if (m_renderInterface != constant->getInterface()) {
+    if (m_renderInterface != renderParameter->getInterface()) {
         throw std::runtime_error("missmatch interfaces.");
     }
     if (m_renderInterface.useTexture()) {
-        if (!constant->getTexture()) {
+        if (!renderParameter->getTexture()) {
             throw std::runtime_error("texture missing.");
         }
         heapHandle.ptr += incrementSize;

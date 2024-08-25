@@ -9,7 +9,7 @@ class Shader;
 }
 class ID3D12GraphicsCommandList;
 namespace Lib::Graphics::Internal {
-class Constant;
+// class Constant;
 class Pso {
 public:
     static std::shared_ptr<Pso> create(
@@ -20,7 +20,7 @@ public:
         bool usingTexCoord);
 
     ~Pso();
-    void command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Constant> constant);
+    void command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter);
 
 private:
     Pso();
