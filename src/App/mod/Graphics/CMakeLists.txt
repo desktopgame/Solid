@@ -24,7 +24,7 @@ add_library(
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/RenderParameter.cpp
     ./lib/Graphics/Swapchain.cpp
-    ./lib/Graphics/Internal/Pso.cpp
+    ./lib/Graphics/Pso.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)

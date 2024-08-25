@@ -1,6 +1,6 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
-#include <Graphics/Internal/Pso.hpp>
+#include <Graphics/Pso.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
 #include <Math/Matrix.hpp>
