@@ -121,7 +121,7 @@ std::shared_ptr<Swapchain> Swapchain::create(
     const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
     const Microsoft::WRL::ComPtr<ID3D12Device>& device)
 {
-    HWND hwnd = std::any_cast<HWND>(window->getHandle());
+    HWND hwnd = window->getHWND();
     auto nativeDevice = device;
     auto swapchain = std::shared_ptr<Swapchain>(new Swapchain());
     // CommandQueue

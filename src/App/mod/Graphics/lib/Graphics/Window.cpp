@@ -12,15 +12,6 @@ static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
-// Impl
-class Window::Impl {
-public:
-    explicit Impl() = default;
-    WNDCLASSEX w;
-    HWND hwnd;
-
-private:
-};
 // public
 Window::~Window()
 {
@@ -28,7 +19,7 @@ Window::~Window()
 
 void Window::show()
 {
-    ShowWindow(m_impl->hwnd, SW_SHOW);
+    ShowWindow(m_hwnd, SW_SHOW);
 }
 
 bool Window::translateMessage() const
@@ -46,16 +37,15 @@ bool Window::translateMessage() const
 
 void Window::hide()
 {
-    ShowWindow(std::any_cast<HWND>(m_impl->hwnd), SW_HIDE);
+    ShowWindow(m_hwnd, SW_HIDE);
 }
-
-std::any Window::getHandle() const
+HWND Window::getHWND() const
 {
-    return m_impl->hwnd;
+    return m_hwnd;
 }
 // private
 Window::Window()
-    : m_impl(std::make_shared<Impl>())
+    : m_hwnd(nullptr)
 {
 }
 
@@ -69,7 +59,7 @@ std::shared_ptr<Window> Window::create(int32_t width, int32_t height)
     w.lpszClassName = _T("DX12");
     w.hInstance = GetModuleHandle(nullptr);
     RegisterClassEx(&w);
-    window->m_impl->w = w;
+    window->m_class = w;
 
     RECT wrc = { 0, 0, width, height };
     AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
@@ -86,17 +76,17 @@ std::shared_ptr<Window> Window::create(int32_t width, int32_t height)
         nullptr,
         w.hInstance,
         nullptr);
-    window->m_impl->hwnd = hwnd;
+    window->m_hwnd = hwnd;
     return window;
 }
 
 void Window::destroy()
 {
-    if (m_impl->hwnd != nullptr) {
-        WNDCLASSEX w = m_impl->w;
+    if (m_hwnd != nullptr) {
+        WNDCLASSEX w = m_class;
         UnregisterClass(w.lpszClassName, w.hInstance);
-        DestroyWindow(m_impl->hwnd);
-        m_impl->hwnd = nullptr;
+        DestroyWindow(m_hwnd);
+        m_hwnd = nullptr;
     }
 }
 }

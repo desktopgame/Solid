@@ -4,6 +4,10 @@
 #include <any>
 #include <memory>
 
+#if SOLID_ENABLE_INTERNAL
+#include <Windows.h>
+#endif
+
 namespace Lib::Graphics {
 class Window {
 public:
@@ -13,13 +17,17 @@ public:
     bool translateMessage() const;
     void hide();
 
-    std::any getHandle() const;
+#if SOLID_ENABLE_INTERNAL
+    HWND getHWND() const;
+#endif
 
 private:
     Window();
 
-    class Impl;
-    std::shared_ptr<Impl> m_impl;
+#if SOLID_ENABLE_INTERNAL
+    HWND m_hwnd;
+    WNDCLASSEX m_class;
+#endif
 
     static std::shared_ptr<Window> create(int32_t width, int32_t height);
     void destroy();
