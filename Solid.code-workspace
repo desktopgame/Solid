@@ -119,7 +119,8 @@
 			"iomanip": "cpp",
 			"queue": "cpp",
 			"stack": "cpp",
-			"variant": "cpp"
+			"variant": "cpp",
+			"cassert": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,
