@@ -16,7 +16,6 @@ public:
     void allocate(size_t size);
     void update(const void* data);
 
-    uint64_t getVirtualAddress() const;
     size_t getSize() const;
 
 #if SOLID_ENABLE_INTERNAL

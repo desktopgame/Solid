@@ -96,13 +96,13 @@ void Surface::render(
         }
     }
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = vertexBuffer->getVirtualAddress();
+    vbView.BufferLocation = vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
     vbView.SizeInBytes = vertexBuffer->getSize();
     vbView.StrideInBytes = static_cast<UINT>(stride);
     m_commandList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = indexBuffer->getVirtualAddress();
+    ibView.BufferLocation = indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = indexBuffer->getSize();
     m_commandList->IASetIndexBuffer(&ibView);

@@ -55,10 +55,6 @@ void Buffer::update(const void* data)
     m_resource->Unmap(0, nullptr);
 }
 
-uint64_t Buffer::getVirtualAddress() const
-{
-    return static_cast<uint64_t>(m_resource->GetGPUVirtualAddress());
-}
 size_t Buffer::getSize() const
 {
     return m_size;
