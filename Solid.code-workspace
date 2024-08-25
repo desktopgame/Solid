@@ -30,6 +30,7 @@
 		},
 	],
 	"settings": {
+		"cmake.sourceDirectory": "${workspaceFolder}/src",
 		"files.associations": {
 			"list": "cpp",
 			"vector": "cpp",
