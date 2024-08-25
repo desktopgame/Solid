@@ -11,7 +11,6 @@ namespace Lib::Graphics {
 class Buffer {
 public:
     static std::shared_ptr<Buffer> create();
-
     ~Buffer();
 
     void allocate(size_t size);

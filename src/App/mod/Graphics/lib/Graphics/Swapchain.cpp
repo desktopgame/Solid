@@ -14,7 +14,6 @@ using Microsoft::WRL::ComPtr;
 Swapchain::~Swapchain()
 {
 }
-
 // internal
 std::shared_ptr<Swapchain> Swapchain::create(
     const std::shared_ptr<Window>& window,

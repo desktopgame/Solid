@@ -124,7 +124,6 @@ void Surface::render(
         context->getIndexLength());
 }
 // internal
-
 std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
     const std::shared_ptr<Swapchain>& swapchain)

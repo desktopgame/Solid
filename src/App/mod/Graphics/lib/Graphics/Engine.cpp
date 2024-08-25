@@ -64,7 +64,6 @@ std::shared_ptr<Device> Engine::getDevice() const
     require();
     return m_device;
 }
-
 // private
 Engine::Engine()
     : m_started(false)

@@ -42,7 +42,6 @@ std::shared_ptr<Surface> Device::getSurface() const
     return m_surface;
 }
 // internal
-
 std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
 {
     auto device = std::shared_ptr<Device>(new Device());

@@ -14,7 +14,6 @@ class Shader;
 class RenderContext {
 public:
     static std::shared_ptr<RenderContext> create(PrimitiveType primitiveType);
-
     ~RenderContext();
 
     void updateVertex(const Math::Vector2* data, int32_t len);

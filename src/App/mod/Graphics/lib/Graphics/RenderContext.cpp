@@ -62,7 +62,6 @@ int32_t RenderContext::getIndexLength() const { return m_indexLength; }
 bool RenderContext::isUsingTexCoord() const { return m_isUsingTexCoord; }
 const std::shared_ptr<Buffer>& RenderContext::getVertexBuffer() const { return m_vertexBuffer; }
 const std::shared_ptr<Buffer>& RenderContext::getIndexBuffer() const { return m_indexBuffer; }
-
 // private
 RenderContext::RenderContext(PrimitiveType primitiveType)
     : m_primitiveType(primitiveType)
