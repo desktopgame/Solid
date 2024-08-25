@@ -12,9 +12,6 @@ class ID3D12GraphicsCommandList;
 
 namespace Lib::Graphics {
 class Shader;
-}
-namespace Lib::Graphics::Internal {
-// class Constant;
 class Pso {
 public:
     static std::shared_ptr<Pso> create(

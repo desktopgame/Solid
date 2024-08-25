@@ -5,10 +5,6 @@
 #include <memory>
 #include <vector>
 
-namespace Lib::Graphics::Internal {
-class Pso;
-}
-
 namespace Lib::Graphics {
 class Device;
 class Window;
@@ -17,6 +13,7 @@ class Shader;
 class Swapchain;
 class RenderParameter;
 class RenderContext;
+class Pso;
 class Surface {
 public:
     ~Surface();

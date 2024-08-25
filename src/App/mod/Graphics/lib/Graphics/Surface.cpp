@@ -27,7 +27,7 @@ public:
     int32_t vertexComponent;
     bool isUsingTexCoord;
 
-    std::shared_ptr<Internal::Pso> pso;
+    std::shared_ptr<Pso> pso;
 };
 // Impl
 class Surface::Impl {
@@ -74,7 +74,7 @@ void Surface::render(
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
 {
-    std::shared_ptr<Internal::Pso> pso = nullptr;
+    std::shared_ptr<Pso> pso = nullptr;
     for (auto& hash : m_psoTable) {
         if (hash->shader == shader && hash->renderInterface == renderParameter->getInterface() && hash->primitiveType == primitiveType && hash->vertexComponent == vertexComponent && hash->isUsingTexCoord == isUsingTexCoord) {
             pso = hash->pso;
@@ -82,7 +82,7 @@ void Surface::render(
         }
     }
     if (!pso) {
-        pso = Internal::Pso::create(shader, renderParameter->getInterface(), primitiveType, vertexComponent, isUsingTexCoord);
+        pso = Pso::create(shader, renderParameter->getInterface(), primitiveType, vertexComponent, isUsingTexCoord);
 
         auto hash = std::make_shared<PsoHash>();
         hash->shader = shader;

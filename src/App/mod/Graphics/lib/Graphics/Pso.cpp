@@ -5,7 +5,7 @@
 #include <Graphics/Texture.hpp>
 #include <Math/Matrix.hpp>
 
-namespace Lib::Graphics::Internal {
+namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // static
 static D3D_PRIMITIVE_TOPOLOGY convPrimitiveTopology(PrimitiveType primitiveType)
