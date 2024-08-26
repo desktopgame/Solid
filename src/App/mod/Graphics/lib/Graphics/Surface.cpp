@@ -14,18 +14,6 @@
 namespace Lib::Graphics {
 
 using Microsoft::WRL::ComPtr;
-// PsoHash
-class Surface::PsoHash {
-public:
-    explicit PsoHash() = default;
-    std::shared_ptr<Shader> shader;
-    RenderInterface renderInterface;
-    PrimitiveType primitiveType;
-    int32_t vertexComponent;
-    bool isUsingTexCoord;
-
-    std::shared_ptr<PipelineStateObject> pso;
-};
 // public
 Surface::~Surface()
 {
@@ -50,36 +38,15 @@ void Surface::end()
 }
 
 void Surface::render(
-    const std::shared_ptr<Shader>& shader,
+    const std::shared_ptr<PipelineStateObject>& pso,
     const std::shared_ptr<RenderParameter>& renderParameter,
-    PrimitiveType primitiveType,
     int32_t vertexComponent,
     bool isUsingTexCoord,
     const std::shared_ptr<Buffer>& vertexBuffer,
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
 {
-    std::shared_ptr<PipelineStateObject> pso = nullptr;
-    for (auto& hash : m_psoTable) {
-        if (hash->shader == shader && hash->renderInterface == renderParameter->getInterface() && hash->primitiveType == primitiveType && hash->vertexComponent == vertexComponent && hash->isUsingTexCoord == isUsingTexCoord) {
-            pso = hash->pso;
-            break;
-        }
-    }
-    if (!pso) {
-        pso = PipelineStateObject::create(shader, renderParameter->getInterface(), primitiveType, vertexComponent, isUsingTexCoord);
-
-        auto hash = std::make_shared<PsoHash>();
-        hash->shader = shader;
-        hash->renderInterface = renderParameter->getInterface();
-        hash->primitiveType = primitiveType;
-        hash->vertexComponent = vertexComponent;
-        hash->isUsingTexCoord = isUsingTexCoord;
-        hash->pso = pso;
-        m_psoTable.emplace_back(hash);
-    }
     renderParameter->update();
-
     pso->command(m_commandList, renderParameter);
     uint32_t stride = 0;
     if (vertexComponent == 2) {
@@ -109,20 +76,6 @@ void Surface::render(
 
     m_commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
 }
-
-void Surface::render(
-    const std::shared_ptr<Shader>& shader,
-    const std::shared_ptr<RenderParameter>& renderParameter,
-    const std::shared_ptr<RenderContext>& context)
-{
-    render(shader, renderParameter,
-        context->getPrimitiveType(),
-        context->getVertexComponent(),
-        context->isUsingTexCoord(),
-        context->getVertexBuffer(),
-        context->getIndexBuffer(),
-        context->getIndexLength());
-}
 // internal
 std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
@@ -148,12 +101,10 @@ std::shared_ptr<Surface> Surface::create(
 
 void Surface::destroy()
 {
-    m_psoTable.clear();
 }
 // private
 Surface::Surface()
     : m_swapchain()
-    , m_psoTable()
     , m_dxgiFactory()
     , m_infoQueue()
     , m_commandAllocator()

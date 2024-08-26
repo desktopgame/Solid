@@ -26,6 +26,15 @@ public:
     void end();
 
     void render(
+        const std::shared_ptr<PipelineStateObject>& pso,
+        const std::shared_ptr<RenderParameter>& renderParameter,
+        int32_t vertexComponent,
+        bool isUsingTexCoord,
+        const std::shared_ptr<Buffer>& vertexBuffer,
+        const std::shared_ptr<Buffer>& indexBuffer,
+        int32_t indexLength);
+
+    void render(
         const std::shared_ptr<Shader>& shader,
         const std::shared_ptr<RenderParameter>& renderParameter,
         PrimitiveType primitiveType,
@@ -51,9 +60,6 @@ private:
     Surface();
 
     std::shared_ptr<Swapchain> m_swapchain;
-
-    class PsoHash;
-    std::vector<std::shared_ptr<PsoHash>> m_psoTable;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
