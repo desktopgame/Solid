@@ -14,13 +14,13 @@ namespace Lib::Graphics {
 class Shader;
 class Buffer;
 class Texture;
-class RenderParameter {
+class Constant {
 public:
     inline static constexpr int32_t CbMatrixIndex = 0;
     inline static constexpr int32_t CbColorIndex = 1;
 
-    static std::shared_ptr<RenderParameter> create(RenderInterface interfaze);
-    ~RenderParameter();
+    static std::shared_ptr<Constant> create(RenderInterface interfaze);
+    ~Constant();
 
     void update();
 
@@ -40,7 +40,7 @@ public:
 #endif
 
 private:
-    RenderParameter(RenderInterface interfaze);
+    Constant(RenderInterface interfaze);
     void defineConstant(uint64_t width);
     void defineConstantView(int32_t constantIndex, int32_t slotIndex);
     void defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex);

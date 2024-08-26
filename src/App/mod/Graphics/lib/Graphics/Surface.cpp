@@ -38,13 +38,13 @@ void Surface::end()
 
 void Surface::render(
     const std::shared_ptr<PipelineStateObject>& pso,
-    const std::shared_ptr<RenderParameter>& renderParameter,
+    const std::shared_ptr<Constant>& constant,
     const std::shared_ptr<Buffer>& vertexBuffer,
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
 {
-    renderParameter->update();
-    pso->render(m_commandList, renderParameter, vertexBuffer, indexBuffer, indexLength);
+    constant->update();
+    pso->render(m_commandList, constant, vertexBuffer, indexBuffer, indexLength);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(

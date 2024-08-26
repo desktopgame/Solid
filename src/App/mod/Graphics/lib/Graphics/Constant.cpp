@@ -4,13 +4,13 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<RenderParameter> RenderParameter::create(RenderInterface interfaze)
+std::shared_ptr<Constant> Constant::create(RenderInterface interfaze)
 {
-    auto param = std::shared_ptr<RenderParameter>(new RenderParameter(interfaze));
+    auto param = std::shared_ptr<Constant>(new Constant(interfaze));
     return param;
 }
-RenderParameter::~RenderParameter() { }
-void RenderParameter::update()
+Constant::~Constant() { }
+void Constant::update()
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     if (!m_descriptorHeap) {
@@ -72,14 +72,14 @@ void RenderParameter::update()
     m_isDirty = false;
 }
 
-void RenderParameter::setTransform(const Math::Matrix& transform)
+void Constant::setTransform(const Math::Matrix& transform)
 {
     m_isDirty = true;
     m_transform = transform;
 }
-Math::Matrix RenderParameter::getTransform() const { return m_transform; }
+Math::Matrix Constant::getTransform() const { return m_transform; }
 
-void RenderParameter::setTexture(const std::shared_ptr<Texture>& texture)
+void Constant::setTexture(const std::shared_ptr<Texture>& texture)
 {
     if (!m_interface.useTexture()) {
         throw std::runtime_error("missmatch interface.");
@@ -87,9 +87,9 @@ void RenderParameter::setTexture(const std::shared_ptr<Texture>& texture)
     m_isDirty = true;
     m_texture = texture;
 }
-std::shared_ptr<Texture> RenderParameter::getTexture() const { return m_texture; }
+std::shared_ptr<Texture> Constant::getTexture() const { return m_texture; }
 
-void RenderParameter::setColor(const Math::Vector4& color)
+void Constant::setColor(const Math::Vector4& color)
 {
     if (!m_interface.useColor()) {
         throw std::runtime_error("missmatch interface.");
@@ -97,13 +97,13 @@ void RenderParameter::setColor(const Math::Vector4& color)
     m_isDirty = true;
     m_color = color;
 }
-Math::Vector4 RenderParameter::getColor() const { return m_color; }
+Math::Vector4 Constant::getColor() const { return m_color; }
 
-RenderInterface RenderParameter::getInterface() const { return m_interface; }
+RenderInterface Constant::getInterface() const { return m_interface; }
 // internal
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> RenderParameter::getID3D12DescriptorHeap() const { return m_descriptorHeap; }
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> Constant::getID3D12DescriptorHeap() const { return m_descriptorHeap; }
 // private
-RenderParameter::RenderParameter(RenderInterface interfaze)
+Constant::Constant(RenderInterface interfaze)
     : m_isDirty(true)
     , m_transform()
     , m_texture()
@@ -114,7 +114,7 @@ RenderParameter::RenderParameter(RenderInterface interfaze)
 {
 }
 
-void RenderParameter::defineConstant(uint64_t width)
+void Constant::defineConstant(uint64_t width)
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     D3D12_HEAP_PROPERTIES heapProps = {};
@@ -144,7 +144,7 @@ void RenderParameter::defineConstant(uint64_t width)
     }
 }
 
-void RenderParameter::defineConstantView(int32_t constantIndex, int32_t slotIndex)
+void Constant::defineConstantView(int32_t constantIndex, int32_t slotIndex)
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -159,7 +159,7 @@ void RenderParameter::defineConstantView(int32_t constantIndex, int32_t slotInde
     device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
 }
 
-void RenderParameter::defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex)
+void Constant::defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex)
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);

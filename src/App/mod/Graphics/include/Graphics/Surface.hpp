@@ -14,10 +14,9 @@ namespace Lib::Graphics {
 class Device;
 class Window;
 class Buffer;
+class Constant;
 class Shader;
 class Swapchain;
-class RenderParameter;
-class RenderContext;
 class PipelineStateObject;
 class Surface {
 public:
@@ -27,7 +26,7 @@ public:
 
     void render(
         const std::shared_ptr<PipelineStateObject>& pso,
-        const std::shared_ptr<RenderParameter>& renderParameter,
+        const std::shared_ptr<Constant>& constant,
         const std::shared_ptr<Buffer>& vertexBuffer,
         const std::shared_ptr<Buffer>& indexBuffer,
         int32_t indexLength);

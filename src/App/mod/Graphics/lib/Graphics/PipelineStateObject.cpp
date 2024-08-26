@@ -213,7 +213,7 @@ bool PipelineStateObject::isUsingTexCoord() const { return m_isUsingTexCoord; }
 // internal
 void PipelineStateObject::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
-    const std::shared_ptr<RenderParameter> renderParameter,
+    const std::shared_ptr<Constant> constant,
     const std::shared_ptr<Buffer>& vertexBuffer,
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
@@ -222,17 +222,17 @@ void PipelineStateObject::render(
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-    auto descriptorHeap = renderParameter->getID3D12DescriptorHeap();
+    auto descriptorHeap = constant->getID3D12DescriptorHeap();
     uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
-    if (m_renderInterface != renderParameter->getInterface()) {
+    if (m_renderInterface != constant->getInterface()) {
         throw std::runtime_error("missmatch interfaces.");
     }
     if (m_renderInterface.useTexture()) {
-        if (!renderParameter->getTexture()) {
+        if (!constant->getTexture()) {
             throw std::runtime_error("texture missing.");
         }
         heapHandle.ptr += incrementSize;

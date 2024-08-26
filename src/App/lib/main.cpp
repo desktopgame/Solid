@@ -63,11 +63,11 @@ int main(int argc, char* argv[])
     indexBuffer->update(indices.data());
 
     auto pso = PipelineStateObject::create(shader, RenderInterface::Color, PrimitiveType::Triangles, 2, false);
-    auto renderParameter = RenderParameter::create(RenderInterface::Color);
+    auto consant = Constant::create(RenderInterface::Color);
     Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
     Matrix model = Matrix::scale(Vector3({ 100, 100, 1 }));
-    renderParameter->setTransform(model * ortho);
-    renderParameter->setColor(Vector4({ 1, 0, 0, 1 }));
+    consant->setTransform(model * ortho);
+    consant->setColor(Vector4({ 1, 0, 0, 1 }));
 
     auto controller
         = Lib::Input::Gamepad::getGamepad(0);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         Lib::Input::Gamepad::sync();
 
         surface->begin();
-        surface->render(pso, renderParameter, vertexBuffer, indexBuffer, indices.size());
+        surface->render(pso, consant, vertexBuffer, indexBuffer, indices.size());
         surface->end();
 
         // Show messages
