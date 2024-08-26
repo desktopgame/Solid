@@ -22,12 +22,6 @@ public:
         bool usingTexCoord);
     ~PipelineStateObject();
 
-    std::shared_ptr<Shader> getShader() const;
-    Constant::Layout getConstantLayout() const;
-    PrimitiveType getPrimitiveType() const;
-    int32_t getVertexComponent() const;
-    bool isUsingTexCoord() const;
-
 #if SOLID_ENABLE_INTERNAL
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,

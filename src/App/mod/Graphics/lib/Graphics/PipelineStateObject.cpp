@@ -204,12 +204,6 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
 PipelineStateObject::~PipelineStateObject()
 {
 }
-
-std::shared_ptr<Shader> PipelineStateObject::getShader() const { return m_shader; }
-Constant::Layout PipelineStateObject::getConstantLayout() const { return m_constantLayout; }
-PrimitiveType PipelineStateObject::getPrimitiveType() const { return m_primitiveType; }
-int32_t PipelineStateObject::getVertexComponent() const { return m_vertexComponent; }
-bool PipelineStateObject::isUsingTexCoord() const { return m_isUsingTexCoord; }
 // internal
 void PipelineStateObject::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
