@@ -1,6 +1,6 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
-#include <Graphics/Pso.hpp>
+#include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
