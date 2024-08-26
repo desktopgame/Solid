@@ -1,8 +1,11 @@
+#include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
+#include <Graphics/VertexData2D.hpp>
+#include <Graphics/VertexData3D.hpp>
 #include <Math/Matrix.hpp>
 
 namespace Lib::Graphics {
@@ -208,7 +211,12 @@ PrimitiveType PipelineStateObject::getPrimitiveType() const { return m_primitive
 int32_t PipelineStateObject::getVertexComponent() const { return m_vertexComponent; }
 bool PipelineStateObject::isUsingTexCoord() const { return m_isUsingTexCoord; }
 // internal
-void PipelineStateObject::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter)
+void PipelineStateObject::render(
+    const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+    const std::shared_ptr<RenderParameter> renderParameter,
+    const std::shared_ptr<Buffer>& vertexBuffer,
+    const std::shared_ptr<Buffer>& indexBuffer,
+    int32_t indexLength)
 {
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
@@ -238,6 +246,34 @@ void PipelineStateObject::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCom
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
     }
     cmdList->IASetPrimitiveTopology(convPrimitiveTopology(m_primitiveType));
+
+    uint32_t stride = 0;
+    if (m_vertexComponent == 2) {
+        if (m_isUsingTexCoord) {
+            stride = sizeof(VertexData2D);
+        } else {
+            stride = sizeof(Math::Vector2);
+        }
+    } else if (m_vertexComponent == 3) {
+        if (m_isUsingTexCoord) {
+            stride = sizeof(VertexData3D);
+        } else {
+            stride = sizeof(Math::Vector3);
+        }
+    }
+    D3D12_VERTEX_BUFFER_VIEW vbView = {};
+    vbView.BufferLocation = vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    vbView.SizeInBytes = vertexBuffer->getSize();
+    vbView.StrideInBytes = static_cast<UINT>(stride);
+    cmdList->IASetVertexBuffers(0, 1, &vbView);
+
+    D3D12_INDEX_BUFFER_VIEW ibView = {};
+    ibView.BufferLocation = indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    ibView.Format = DXGI_FORMAT_R32_UINT;
+    ibView.SizeInBytes = indexBuffer->getSize();
+    cmdList->IASetIndexBuffer(&ibView);
+
+    cmdList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
 }
 // private
 PipelineStateObject::PipelineStateObject()

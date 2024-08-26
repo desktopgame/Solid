@@ -45,37 +45,7 @@ void Surface::render(
     int32_t indexLength)
 {
     renderParameter->update();
-    pso->command(m_commandList, renderParameter);
-
-    int32_t vertexComponent = pso->getVertexComponent();
-    bool isUsingTexCoord = pso->isUsingTexCoord();
-    uint32_t stride = 0;
-    if (vertexComponent == 2) {
-        if (isUsingTexCoord) {
-            stride = sizeof(VertexData2D);
-        } else {
-            stride = sizeof(Math::Vector2);
-        }
-    } else if (vertexComponent == 3) {
-        if (isUsingTexCoord) {
-            stride = sizeof(VertexData3D);
-        } else {
-            stride = sizeof(Math::Vector3);
-        }
-    }
-    D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
-    vbView.SizeInBytes = vertexBuffer->getSize();
-    vbView.StrideInBytes = static_cast<UINT>(stride);
-    m_commandList->IASetVertexBuffers(0, 1, &vbView);
-
-    D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
-    ibView.Format = DXGI_FORMAT_R32_UINT;
-    ibView.SizeInBytes = indexBuffer->getSize();
-    m_commandList->IASetIndexBuffer(&ibView);
-
-    m_commandList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
+    pso->render(m_commandList, renderParameter, vertexBuffer, indexBuffer, indexLength);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(
