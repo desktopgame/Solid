@@ -1,5 +1,4 @@
 #pragma once
-#include <Graphics/RenderInterface.hpp>
 #include <Graphics/Surface.hpp>
 #include <Math/Matrix.hpp>
 #include <Math/Vector.hpp>
@@ -16,10 +15,53 @@ class Buffer;
 class Texture;
 class Constant {
 public:
+    class Layout {
+    public:
+        enum Value : uint8_t {
+            None = 0,
+            /**
+             * Layout:
+             * Matrix = 0
+             * Texture = 1
+             */
+            Texture,
+
+            /**
+             * Layout:
+             * Matrix = 0
+             * Color = 1
+             */
+            Color,
+
+            /**
+             * Layout:
+             * Matrix = 0
+             * Texture = 1
+             * Color = 2
+             */
+            TextureAndColor,
+        };
+
+        Layout() = default;
+        inline constexpr Layout(Value value)
+            : m_value(value)
+        {
+        }
+
+        inline constexpr bool operator==(Layout a) const { return m_value == a.m_value; }
+        inline constexpr bool operator!=(Layout a) const { return m_value != a.m_value; }
+
+        inline constexpr bool useTexture() const { return m_value == Texture || m_value == TextureAndColor; }
+        inline constexpr bool useColor() const { return m_value == Color || m_value == TextureAndColor; }
+
+    private:
+        Value m_value;
+    };
+
     inline static constexpr int32_t CbMatrixIndex = 0;
     inline static constexpr int32_t CbColorIndex = 1;
 
-    static std::shared_ptr<Constant> create(RenderInterface interfaze);
+    static std::shared_ptr<Constant> create(Layout layout);
     ~Constant();
 
     void update();
@@ -33,14 +75,14 @@ public:
     void setColor(const Math::Vector4& color);
     Math::Vector4 getColor() const;
 
-    RenderInterface getInterface() const;
+    Layout getLayout() const;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> getID3D12DescriptorHeap() const;
 #endif
 
 private:
-    Constant(RenderInterface interfaze);
+    Constant(Layout layout);
     void defineConstant(uint64_t width);
     void defineConstantView(int32_t constantIndex, int32_t slotIndex);
     void defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex);
@@ -50,7 +92,7 @@ private:
     Math::Matrix m_transform;
     std::shared_ptr<Texture> m_texture;
     Math::Vector4 m_color;
-    RenderInterface m_interface;
+    Layout m_layout;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_resources;
 #endif

@@ -4,9 +4,9 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<Constant> Constant::create(RenderInterface interfaze)
+std::shared_ptr<Constant> Constant::create(Layout layout)
 {
-    auto param = std::shared_ptr<Constant>(new Constant(interfaze));
+    auto param = std::shared_ptr<Constant>(new Constant(layout));
     return param;
 }
 Constant::~Constant() { }
@@ -19,10 +19,10 @@ void Constant::update()
         descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         descHeapDesc.NodeMask = 0;
         descHeapDesc.NumDescriptors = 1;
-        if (m_interface.useTexture()) {
+        if (m_layout.useTexture()) {
             descHeapDesc.NumDescriptors++;
         }
-        if (m_interface.useColor()) {
+        if (m_layout.useColor()) {
             descHeapDesc.NumDescriptors++;
         }
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -31,17 +31,17 @@ void Constant::update()
         }
         // define constants
         defineConstant((sizeof(Math::Matrix) + 0xff) & ~0xff);
-        if (m_interface.useColor()) {
+        if (m_layout.useColor()) {
             defineConstant((sizeof(Math::Vector4) + 0xff) & ~0xff);
         }
         // define view
         defineConstantView(CbMatrixIndex, 0);
-        if (m_interface.useTexture()) {
+        if (m_layout.useTexture()) {
             defineTextureView(m_texture, 1);
-            if (m_interface.useColor()) {
+            if (m_layout.useColor()) {
                 defineConstantView(CbColorIndex, 2);
             }
-        } else if (m_interface.useColor()) {
+        } else if (m_layout.useColor()) {
             defineConstantView(CbColorIndex, 1);
         }
     }
@@ -58,7 +58,7 @@ void Constant::update()
             }
         }
         // color
-        if (m_interface.useColor()) {
+        if (m_layout.useColor()) {
             void* mapColor = nullptr;
             if (FAILED(m_resources.at(CbColorIndex)->Map(0, nullptr, (void**)&mapColor))) {
                 throw std::runtime_error("failed Map()");
@@ -81,7 +81,7 @@ Math::Matrix Constant::getTransform() const { return m_transform; }
 
 void Constant::setTexture(const std::shared_ptr<Texture>& texture)
 {
-    if (!m_interface.useTexture()) {
+    if (!m_layout.useTexture()) {
         throw std::runtime_error("missmatch interface.");
     }
     m_isDirty = true;
@@ -91,7 +91,7 @@ std::shared_ptr<Texture> Constant::getTexture() const { return m_texture; }
 
 void Constant::setColor(const Math::Vector4& color)
 {
-    if (!m_interface.useColor()) {
+    if (!m_layout.useColor()) {
         throw std::runtime_error("missmatch interface.");
     }
     m_isDirty = true;
@@ -99,16 +99,16 @@ void Constant::setColor(const Math::Vector4& color)
 }
 Math::Vector4 Constant::getColor() const { return m_color; }
 
-RenderInterface Constant::getInterface() const { return m_interface; }
+Constant::Layout Constant::getLayout() const { return m_layout; }
 // internal
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> Constant::getID3D12DescriptorHeap() const { return m_descriptorHeap; }
 // private
-Constant::Constant(RenderInterface interfaze)
+Constant::Constant(Layout layout)
     : m_isDirty(true)
     , m_transform()
     , m_texture()
     , m_color()
-    , m_interface(interfaze)
+    , m_layout(layout)
     , m_descriptorHeap(nullptr)
     , m_resources()
 {

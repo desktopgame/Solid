@@ -40,14 +40,14 @@ static D3D12_PRIMITIVE_TOPOLOGY_TYPE convPrimitiveTopologyType(PrimitiveType pri
 // public
 std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     const std::shared_ptr<Shader>& shader,
-    RenderInterface renderInterface,
+    Constant::Layout constantLayout,
     PrimitiveType primitiveType,
     int32_t vertexComponent,
     bool usingTexCoord)
 {
     auto pso = std::shared_ptr<PipelineStateObject>(new PipelineStateObject());
     pso->m_shader = shader;
-    pso->m_renderInterface = renderInterface;
+    pso->m_constantLayout = constantLayout;
     pso->m_primitiveType = primitiveType;
     pso->m_vertexComponent = vertexComponent;
     pso->m_isUsingTexCoord = usingTexCoord;
@@ -122,21 +122,21 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
     descTableRange.at(0).BaseShaderRegister = 0;
     descTableRange.at(0).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    if (renderInterface.useTexture()) {
+    if (constantLayout.useTexture()) {
         descTableRange.push_back({});
         descTableRange.at(1).NumDescriptors = 1;
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
         descTableRange.at(1).BaseShaderRegister = 0;
         descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-        if (renderInterface.useColor()) {
+        if (constantLayout.useColor()) {
             descTableRange.push_back({});
             descTableRange.at(2).NumDescriptors = 1;
             descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
             descTableRange.at(2).BaseShaderRegister = 1;
             descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
-    } else if (renderInterface.useColor()) {
+    } else if (constantLayout.useColor()) {
         descTableRange.push_back({});
         descTableRange.at(1).NumDescriptors = 1;
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -150,21 +150,21 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     rootParam.at(0).DescriptorTable.pDescriptorRanges = &descTableRange.at(0);
     rootParam.at(0).DescriptorTable.NumDescriptorRanges = 1;
 
-    if (renderInterface.useTexture()) {
+    if (constantLayout.useTexture()) {
         rootParam.push_back({});
         rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
         rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
         rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
 
-        if (renderInterface.useColor()) {
+        if (constantLayout.useColor()) {
             rootParam.push_back({});
             rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
             rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
             rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
             rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
         }
-    } else if (renderInterface.useColor()) {
+    } else if (constantLayout.useColor()) {
         rootParam.push_back({});
         rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
@@ -206,7 +206,7 @@ PipelineStateObject::~PipelineStateObject()
 }
 
 std::shared_ptr<Shader> PipelineStateObject::getShader() const { return m_shader; }
-RenderInterface PipelineStateObject::getRenderInterface() const { return m_renderInterface; }
+Constant::Layout PipelineStateObject::getConstantLayout() const { return m_constantLayout; }
 PrimitiveType PipelineStateObject::getPrimitiveType() const { return m_primitiveType; }
 int32_t PipelineStateObject::getVertexComponent() const { return m_vertexComponent; }
 bool PipelineStateObject::isUsingTexCoord() const { return m_isUsingTexCoord; }
@@ -228,20 +228,20 @@ void PipelineStateObject::render(
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
-    if (m_renderInterface != constant->getInterface()) {
+    if (m_constantLayout != constant->getLayout()) {
         throw std::runtime_error("missmatch interfaces.");
     }
-    if (m_renderInterface.useTexture()) {
+    if (m_constantLayout.useTexture()) {
         if (!constant->getTexture()) {
             throw std::runtime_error("texture missing.");
         }
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
-        if (m_renderInterface.useColor()) {
+        if (m_constantLayout.useColor()) {
             heapHandle.ptr += incrementSize;
             cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
         }
-    } else if (m_renderInterface.useColor()) {
+    } else if (m_constantLayout.useColor()) {
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
     }
@@ -278,7 +278,7 @@ void PipelineStateObject::render(
 // private
 PipelineStateObject::PipelineStateObject()
     : m_shader()
-    , m_renderInterface()
+    , m_constantLayout()
     , m_primitiveType()
     , m_vertexComponent(0)
     , m_isUsingTexCoord(false)

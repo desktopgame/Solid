@@ -16,14 +16,14 @@ class PipelineStateObject {
 public:
     static std::shared_ptr<PipelineStateObject> create(
         const std::shared_ptr<Shader>& shader,
-        RenderInterface renderInterface,
+        Constant::Layout constantLayout,
         PrimitiveType primitiveType,
         int32_t vertexComponent,
         bool usingTexCoord);
     ~PipelineStateObject();
 
     std::shared_ptr<Shader> getShader() const;
-    RenderInterface getRenderInterface() const;
+    Constant::Layout getConstantLayout() const;
     PrimitiveType getPrimitiveType() const;
     int32_t getVertexComponent() const;
     bool isUsingTexCoord() const;
@@ -41,7 +41,7 @@ private:
     PipelineStateObject();
 
     std::shared_ptr<Shader> m_shader;
-    RenderInterface m_renderInterface;
+    Constant::Layout m_constantLayout;
     PrimitiveType m_primitiveType;
     int32_t m_vertexComponent;
     bool m_isUsingTexCoord;

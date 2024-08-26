@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
     indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     indexBuffer->update(indices.data());
 
-    auto pso = PipelineStateObject::create(shader, RenderInterface::Color, PrimitiveType::Triangles, 2, false);
-    auto consant = Constant::create(RenderInterface::Color);
+    auto pso = PipelineStateObject::create(shader, Constant::Layout::Color, PrimitiveType::Triangles, 2, false);
+    auto consant = Constant::create(Constant::Layout::Color);
     Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
     Matrix model = Matrix::scale(Vector3({ 100, 100, 1 }));
     consant->setTransform(model * ortho);
