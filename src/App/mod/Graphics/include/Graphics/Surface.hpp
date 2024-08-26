@@ -28,26 +28,9 @@ public:
     void render(
         const std::shared_ptr<PipelineStateObject>& pso,
         const std::shared_ptr<RenderParameter>& renderParameter,
-        int32_t vertexComponent,
-        bool isUsingTexCoord,
         const std::shared_ptr<Buffer>& vertexBuffer,
         const std::shared_ptr<Buffer>& indexBuffer,
         int32_t indexLength);
-
-    void render(
-        const std::shared_ptr<Shader>& shader,
-        const std::shared_ptr<RenderParameter>& renderParameter,
-        PrimitiveType primitiveType,
-        int32_t vertexComponent,
-        bool isUsingTexCoord,
-        const std::shared_ptr<Buffer>& vertexBuffer,
-        const std::shared_ptr<Buffer>& indexBuffer,
-        int32_t indexLength);
-
-    void render(
-        const std::shared_ptr<Shader>& shader,
-        const std::shared_ptr<RenderParameter>& renderParameter,
-        const std::shared_ptr<RenderContext>& context);
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(

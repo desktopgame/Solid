@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         Lib::Input::Gamepad::sync();
 
         surface->begin();
-        surface->render(pso, renderParameter, 2, false, vertexBuffer, indexBuffer, indices.size());
+        surface->render(pso, renderParameter, vertexBuffer, indexBuffer, indices.size());
         surface->end();
 
         // Show messages

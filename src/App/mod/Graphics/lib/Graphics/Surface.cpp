@@ -40,14 +40,15 @@ void Surface::end()
 void Surface::render(
     const std::shared_ptr<PipelineStateObject>& pso,
     const std::shared_ptr<RenderParameter>& renderParameter,
-    int32_t vertexComponent,
-    bool isUsingTexCoord,
     const std::shared_ptr<Buffer>& vertexBuffer,
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
 {
     renderParameter->update();
     pso->command(m_commandList, renderParameter);
+
+    int32_t vertexComponent = pso->getVertexComponent();
+    bool isUsingTexCoord = pso->isUsingTexCoord();
     uint32_t stride = 0;
     if (vertexComponent == 2) {
         if (isUsingTexCoord) {
