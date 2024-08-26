@@ -2,6 +2,7 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/RenderParameter.hpp>
