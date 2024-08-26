@@ -18,7 +18,7 @@ class Shader;
 class Swapchain;
 class RenderParameter;
 class RenderContext;
-class Pso;
+class PipelineStateObject;
 class Surface {
 public:
     ~Surface();

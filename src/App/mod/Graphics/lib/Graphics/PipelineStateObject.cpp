@@ -35,14 +35,14 @@ static D3D12_PRIMITIVE_TOPOLOGY_TYPE convPrimitiveTopologyType(PrimitiveType pri
     return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
 }
 // public
-std::shared_ptr<Pso> Pso::create(
+std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     const std::shared_ptr<Shader>& shader,
     RenderInterface renderInterface,
     PrimitiveType primitiveType,
     int32_t vertexComponent,
     bool usingTexCoord)
 {
-    auto pso = std::shared_ptr<Pso>(new Pso());
+    auto pso = std::shared_ptr<PipelineStateObject>(new PipelineStateObject());
     pso->m_shader = shader;
     pso->m_renderInterface = renderInterface;
     pso->m_primitiveType = primitiveType;
@@ -198,11 +198,11 @@ std::shared_ptr<Pso> Pso::create(
     }
     return pso;
 }
-Pso::~Pso()
+PipelineStateObject::~PipelineStateObject()
 {
 }
 // internal
-void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter)
+void PipelineStateObject::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<RenderParameter> renderParameter)
 {
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
@@ -234,7 +234,7 @@ void Pso::command(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdLi
     cmdList->IASetPrimitiveTopology(convPrimitiveTopology(m_primitiveType));
 }
 // private
-Pso::Pso()
+PipelineStateObject::PipelineStateObject()
     : m_shader()
     , m_renderInterface()
     , m_primitiveType()
