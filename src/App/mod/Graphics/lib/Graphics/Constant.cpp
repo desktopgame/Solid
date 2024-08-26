@@ -3,11 +3,30 @@
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
+std::vector<std::shared_ptr<Constant>> Constant::s_freeVec;
+std::vector<std::shared_ptr<Constant>> Constant::s_usedVec;
 // public
-std::shared_ptr<Constant> Constant::create(Layout layout)
+std::shared_ptr<Constant> Constant::rent(Layout layout)
 {
-    auto param = std::shared_ptr<Constant>(new Constant(layout));
-    return param;
+    auto iter = std::find_if(s_freeVec.begin(), s_freeVec.end(), [layout](const std::shared_ptr<Constant>& constant) -> bool {
+        return layout == constant->getLayout();
+    });
+    if (iter == s_freeVec.end()) {
+        auto param = std::shared_ptr<Constant>(new Constant(layout));
+        s_usedVec.emplace_back(param);
+        return param;
+    }
+    auto cache = *iter;
+    s_freeVec.erase(iter);
+    s_usedVec.emplace_back(cache);
+    return cache;
+}
+void Constant::release()
+{
+    for (auto cache : s_usedVec) {
+        s_freeVec.emplace_back(cache);
+    }
+    s_usedVec.clear();
 }
 Constant::~Constant() { }
 void Constant::update()

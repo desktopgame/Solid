@@ -3,6 +3,7 @@
 #include <Math/Matrix.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
+#include <vector>
 
 #if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
@@ -61,7 +62,8 @@ public:
     inline static constexpr int32_t CbMatrixIndex = 0;
     inline static constexpr int32_t CbColorIndex = 1;
 
-    static std::shared_ptr<Constant> create(Layout layout);
+    static std::shared_ptr<Constant> rent(Layout layout);
+    static void release();
     ~Constant();
 
     void update();
@@ -86,6 +88,9 @@ private:
     void defineConstant(uint64_t width);
     void defineConstantView(int32_t constantIndex, int32_t slotIndex);
     void defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex);
+
+    static std::vector<std::shared_ptr<Constant>> s_freeVec;
+    static std::vector<std::shared_ptr<Constant>> s_usedVec;
 
 #if SOLID_ENABLE_INTERNAL
     bool m_isDirty;

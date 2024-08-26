@@ -63,20 +63,29 @@ int main(int argc, char* argv[])
     indexBuffer->update(indices.data());
 
     auto pso = PipelineStateObject::create(shader, Constant::Layout::Color, PrimitiveType::Triangles, 2, false);
-    auto consant = Constant::create(Constant::Layout::Color);
-    Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
-    Matrix model = Matrix::scale(Vector3({ 100, 100, 1 }));
-    consant->setTransform(model * ortho);
-    consant->setColor(Vector4({ 1, 0, 0, 1 }));
-
-    auto controller
-        = Lib::Input::Gamepad::getGamepad(0);
     window->show();
     while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
 
         surface->begin();
-        surface->render(pso, consant, vertexBuffer, indexBuffer, indices.size());
+
+        {
+            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
+            Matrix model = Matrix::scale(Vector3({ 100, 100, 1 }));
+            auto constant = Constant::rent(Constant::Layout::Color);
+            constant->setTransform(model * ortho);
+            constant->setColor(Vector4({ 1, 0, 0, 1 }));
+            surface->render(pso, constant, vertexBuffer, indexBuffer, indices.size());
+        }
+        {
+            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
+            Matrix model = Matrix::scale(Vector3({ 100, 200, 1 }));
+            auto constant = Constant::rent(Constant::Layout::Color);
+            constant->setTransform(model * ortho);
+            constant->setColor(Vector4({ 1, 0, 0, 1 }));
+            surface->render(pso, constant, vertexBuffer, indexBuffer, indices.size());
+        }
+        Constant::release();
         surface->end();
 
         // Show messages
