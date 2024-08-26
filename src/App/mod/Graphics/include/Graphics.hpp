@@ -4,7 +4,6 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/PrimitiveType.hpp>
-#include <Graphics/RenderContext.hpp>
 #include <Graphics/RenderParameter.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
