@@ -1,7 +1,8 @@
 #pragma once
+#include <Graphics/Constant.hpp>
 #include <Graphics/PrimitiveType.hpp>
-#include <Graphics/RenderParameter.hpp>
 #include <memory>
+
 
 #if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>

@@ -1,4 +1,4 @@
-#include <Graphics/RenderParameter.hpp>
+#include <Graphics/Constant.hpp>
 #include <Graphics/Texture.hpp>
 
 namespace Lib::Graphics {
