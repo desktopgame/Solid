@@ -340,6 +340,11 @@ struct MatrixT {
         return ret;
     }
 
+    static MatrixT<T> transform(const MatrixT& translate, const MatrixT& rotate, const MatrixT& scale)
+    {
+        return scale * rotate * translate;
+    }
+
     std::string str() const
     {
         std::stringstream ss;
