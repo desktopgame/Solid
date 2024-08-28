@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 
     {
         Vector2 point2D({ 0, 0 });
-        Matrix ortho = Matrix::ortho(800, 600, -1, 1);
+        Matrix ortho = Matrix::ortho(800, 600);
         assert(Matrix::multiply(ortho, point2D) == Vector2({ 0, 0 }));
 
         point2D.x() = 400;

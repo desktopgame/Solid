@@ -262,20 +262,18 @@ struct MatrixT {
         return ret;
     }
 
-    static MatrixT<T> ortho(T width, T height, T zNear, T zFar)
+    static MatrixT<T> ortho(T width, T height)
     {
         MatrixT<T> ret;
-        T two = static_cast<T>(2);
         T zero = static_cast<T>(0);
-        // T one = static_cast<T>(1);
-        // x, y -> 0~2 -> -1~+1
-        // z -> 0~2 -> -1~+1
+        T one = static_cast<T>(1);
+        T two = static_cast<T>(2);
         ret.at(0, 0) = two / (width);
         ret.at(1, 1) = two / (height);
-        ret.at(2, 2) = static_cast<T>(1) / (zFar - zNear);
+        ret.at(2, 2) = one;
         ret.at(3, 0) = zero;
         ret.at(3, 1) = zero;
-        ret.at(3, 2) = -zNear / (zFar - zNear);
+        ret.at(3, 2) = zero;
         return ret;
     }
 

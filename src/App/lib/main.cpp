@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
         surface->begin();
 
         {
-            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
+            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight());
             Matrix model = Matrix::scale(Vector3({ 100, 100, 1 }));
             auto constant = Constant::rent(Constant::Layout::Color);
             constant->setTransform(model * ortho);
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
             surface->render(pso, constant, vertexBuffer, indexBuffer, indices.size());
         }
         {
-            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight(), -1.0f, 1.0f);
+            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight());
             Matrix model = Matrix::scale(Vector3({ 100, 200, 1 }));
             auto constant = Constant::rent(Constant::Layout::Color);
             constant->setTransform(model * ortho);
