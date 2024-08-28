@@ -25,6 +25,11 @@ int main(int argc, char* argv[])
         surface->begin();
         renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawCircle(Vector2({ 0, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawRect(Vector2({ 0, 100 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawRect(Vector2({ 0, -100 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawRect(Vector2({ 100, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawRect(Vector2({ -100, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         surface->end();
 
         Constant::release();

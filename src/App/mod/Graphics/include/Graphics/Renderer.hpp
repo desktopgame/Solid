@@ -12,6 +12,7 @@ public:
     explicit Renderer();
 
     void drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
+    void drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
 
 private:
     class Object {
@@ -26,5 +27,6 @@ private:
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
 
     Object m_rectObject;
+    Object m_circleObject;
 };
 }
