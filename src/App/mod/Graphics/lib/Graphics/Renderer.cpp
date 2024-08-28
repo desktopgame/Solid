@@ -57,6 +57,14 @@ void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Ve
 
 void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color)
 {
+    initBox();
+    auto constant = Constant::rent(Constant::Layout::Color);
+    constant->setTransform(Camera::transform3D(Lib::Math::Matrix::transform(
+        Lib::Math::Matrix::translate(position),
+        Lib::Math::Matrix(),
+        Lib::Math::Matrix::scale(size))));
+    constant->setColor(color);
+    renderObject(m_boxObject, constant);
 }
 // private
 void Renderer::initRect()
@@ -233,6 +241,95 @@ void Renderer::initBox()
     if (m_boxObject.pso != nullptr) {
         return;
     }
+    auto shader = Shader::compile(R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float4 color : COLOR;
+        };
+        cbuffer cbuff0 : register(b0) { matrix mat; }
+        cbuffer cbuff1 : register(b1) { float4 color; }
+
+        Output vsMain(float3 pos : POSITION) {
+            Output output;
+            output.svpos = mul(mat, float4(pos, 1));
+            output.color = color;
+            return output;
+        })",
+        "vsMain", R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float4 color : COLOR;
+        };
+
+        float4 psMain(Output input) : SV_TARGET {
+            return input.color;
+        })",
+        "psMain");
+    m_boxObject.vertexBuffer = Buffer::create();
+    m_boxObject.indexBuffer = Buffer::create();
+    std::vector<Lib::Math::Vector3> vertices;
+    std::vector<uint32_t> indices;
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    const float forward = 0.5f;
+    const float backward = -0.5f;
+    vertices.emplace_back(Lib::Math::Vector3({ left, bottom, backward }));
+    vertices.emplace_back(Lib::Math::Vector3({ left, top, backward }));
+    vertices.emplace_back(Lib::Math::Vector3({ right, bottom, backward }));
+    vertices.emplace_back(Lib::Math::Vector3({ right, top, backward }));
+    vertices.emplace_back(Lib::Math::Vector3({ left, bottom, forward }));
+    vertices.emplace_back(Lib::Math::Vector3({ left, top, forward }));
+    vertices.emplace_back(Lib::Math::Vector3({ right, bottom, forward }));
+    vertices.emplace_back(Lib::Math::Vector3({ right, top, forward }));
+    m_boxObject.vertexBuffer->allocate(sizeof(Lib::Math::Vector3) * vertices.size());
+    m_boxObject.vertexBuffer->update(vertices.data());
+    indices.emplace_back(0);
+    indices.emplace_back(1);
+    indices.emplace_back(2);
+    indices.emplace_back(2);
+    indices.emplace_back(1);
+    indices.emplace_back(3);
+    // left
+    indices.emplace_back(4);
+    indices.emplace_back(5);
+    indices.emplace_back(1);
+    indices.emplace_back(4);
+    indices.emplace_back(1);
+    indices.emplace_back(0);
+    // right
+    indices.emplace_back(2);
+    indices.emplace_back(3);
+    indices.emplace_back(6);
+    indices.emplace_back(3);
+    indices.emplace_back(7);
+    indices.emplace_back(6);
+    // forward
+    indices.emplace_back(6);
+    indices.emplace_back(7);
+    indices.emplace_back(4);
+    indices.emplace_back(4);
+    indices.emplace_back(7);
+    indices.emplace_back(5);
+    // top
+    indices.emplace_back(1);
+    indices.emplace_back(5);
+    indices.emplace_back(3);
+    indices.emplace_back(5);
+    indices.emplace_back(7);
+    indices.emplace_back(3);
+    // bottom
+    indices.emplace_back(4);
+    indices.emplace_back(0);
+    indices.emplace_back(2);
+    indices.emplace_back(4);
+    indices.emplace_back(2);
+    indices.emplace_back(6);
+    m_boxObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_boxObject.indexBuffer->update(indices.data());
+    m_boxObject.indexLength = indices.size();
+    m_boxObject.pso = PipelineStateObject::create(shader, Constant::Layout::Color, PrimitiveType::Triangles, 3, false);
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant> constant)
