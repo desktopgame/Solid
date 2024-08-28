@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphics/Buffer.hpp>
+#include <Graphics/Camera.hpp>
 #include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
@@ -12,4 +13,3 @@
 #include <Graphics/VertexData2D.hpp>
 #include <Graphics/VertexData3D.hpp>
 #include <Graphics/Window.hpp>
-
