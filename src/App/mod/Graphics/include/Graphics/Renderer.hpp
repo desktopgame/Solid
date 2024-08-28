@@ -24,6 +24,9 @@ private:
         int32_t indexLength;
     };
 
+    void initRect();
+    void initCircle();
+
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
 
     Object m_rectObject;
