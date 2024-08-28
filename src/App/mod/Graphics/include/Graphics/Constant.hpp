@@ -92,12 +92,13 @@ private:
     static std::vector<std::shared_ptr<Constant>> s_freeVec;
     static std::vector<std::shared_ptr<Constant>> s_usedVec;
 
-#if SOLID_ENABLE_INTERNAL
     bool m_isDirty;
     Math::Matrix m_transform;
     std::shared_ptr<Texture> m_texture;
     Math::Vector4 m_color;
     Layout m_layout;
+
+#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_resources;
 #endif
