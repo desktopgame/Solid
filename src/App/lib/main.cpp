@@ -10,6 +10,8 @@ using namespace Lib::Math;
 
 int main(int argc, char* argv[])
 {
+    Screen::setSize(800, 600);
+
     auto engine = Engine::getInstance()->startup(argc, argv);
     auto device = engine->getDevice();
     auto window = engine->getWindow();
@@ -70,18 +72,16 @@ int main(int argc, char* argv[])
         surface->begin();
 
         {
-            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight());
-            Matrix model = Matrix::scale(Vector3({ 100, 100, 1 }));
+            Matrix model = Matrix::transform(Matrix::translate(Vector3({ 400, 0, 0 })), Matrix(), Matrix::scale(Vector3({ 100, 100, 1 })));
             auto constant = Constant::rent(Constant::Layout::Color);
-            constant->setTransform(model * ortho);
+            constant->setTransform(Camera::transform2D(model));
             constant->setColor(Vector4({ 1, 0, 0, 1 }));
             surface->render(pso, constant, vertexBuffer, indexBuffer, indices.size());
         }
         {
-            Matrix ortho = Matrix::ortho(Screen::getWidth(), Screen::getHeight());
-            Matrix model = Matrix::scale(Vector3({ 100, 200, 1 }));
+            Matrix model = Matrix::transform(Matrix::translate(Vector3({ -400, 0, 0 })), Matrix(), Matrix::scale(Vector3({ 100, 100, 1 })));
             auto constant = Constant::rent(Constant::Layout::Color);
-            constant->setTransform(model * ortho);
+            constant->setTransform(Camera::transform2D(model));
             constant->setColor(Vector4({ 1, 0, 0, 1 }));
             surface->render(pso, constant, vertexBuffer, indexBuffer, indices.size());
         }
