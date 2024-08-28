@@ -13,6 +13,9 @@ namespace Lib::Graphics {
 // public
 Renderer::Renderer()
     : m_rectObject()
+    , m_circleObject()
+    , m_planeObject()
+    , m_boxObject()
 {
 }
 
@@ -38,6 +41,22 @@ void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::V
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
     constant->setColor(color);
     renderObject(m_circleObject, constant);
+}
+
+void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color)
+{
+    initPlane();
+    auto constant = Constant::rent(Constant::Layout::Color);
+    constant->setTransform(Camera::transform3D(Lib::Math::Matrix::transform(
+        Lib::Math::Matrix::translate(position),
+        Lib::Math::Matrix(),
+        Lib::Math::Matrix::scale(size))));
+    constant->setColor(color);
+    renderObject(m_planeObject, constant);
+}
+
+void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color)
+{
 }
 // private
 void Renderer::initRect()
@@ -152,6 +171,68 @@ void Renderer::initCircle()
     m_circleObject.indexBuffer->update(indices.data());
     m_circleObject.indexLength = indices.size();
     m_circleObject.pso = PipelineStateObject::create(shader, Constant::Layout::Color, PrimitiveType::Triangles, 2, false);
+}
+
+void Renderer::initPlane()
+{
+    if (m_planeObject.pso != nullptr) {
+        return;
+    }
+    auto shader = Shader::compile(R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float4 color : COLOR;
+        };
+        cbuffer cbuff0 : register(b0) { matrix mat; }
+        cbuffer cbuff1 : register(b1) { float4 color; }
+
+        Output vsMain(float3 pos : POSITION) {
+            Output output;
+            output.svpos = mul(mat, float4(pos, 1));
+            output.color = color;
+            return output;
+        })",
+        "vsMain", R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float4 color : COLOR;
+        };
+
+        float4 psMain(Output input) : SV_TARGET {
+            return input.color;
+        })",
+        "psMain");
+    m_planeObject.vertexBuffer = Buffer::create();
+    m_planeObject.indexBuffer = Buffer::create();
+    std::vector<Lib::Math::Vector3> vertices;
+    std::vector<uint32_t> indices;
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    vertices.emplace_back(Lib::Math::Vector3({ left, bottom, 0 }));
+    vertices.emplace_back(Lib::Math::Vector3({ left, top, 0 }));
+    vertices.emplace_back(Lib::Math::Vector3({ right, bottom, 0 }));
+    vertices.emplace_back(Lib::Math::Vector3({ right, top, 0 }));
+    m_planeObject.vertexBuffer->allocate(sizeof(Lib::Math::Vector3) * vertices.size());
+    m_planeObject.vertexBuffer->update(vertices.data());
+    indices.emplace_back(0);
+    indices.emplace_back(1);
+    indices.emplace_back(2);
+    indices.emplace_back(2);
+    indices.emplace_back(1);
+    indices.emplace_back(3);
+    m_planeObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_planeObject.indexBuffer->update(indices.data());
+    m_planeObject.indexLength = indices.size();
+    m_planeObject.pso = PipelineStateObject::create(shader, Constant::Layout::Color, PrimitiveType::Triangles, 3, false);
+}
+
+void Renderer::initBox()
+{
+    if (m_boxObject.pso != nullptr) {
+        return;
+    }
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant> constant)
