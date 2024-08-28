@@ -15,7 +15,7 @@ Renderer::Renderer()
 {
 }
 
-void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Lib::Math::Color& color)
+void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color)
 {
     if (m_rectObject.pso == nullptr) {
         auto shader = Shader::compile(R"(

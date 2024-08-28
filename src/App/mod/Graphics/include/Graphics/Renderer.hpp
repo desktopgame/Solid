@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/Color.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
 
@@ -10,7 +11,7 @@ class Renderer {
 public:
     explicit Renderer();
 
-    void drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Lib::Math::Color& color);
+    void drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
 
 private:
     class Object {

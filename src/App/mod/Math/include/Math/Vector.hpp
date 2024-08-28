@@ -468,5 +468,4 @@ using Vector4 = VectorT<float, 4>;
 using IntVector2 = VectorT<int32_t, 2>;
 using IntVector3 = VectorT<int32_t, 3>;
 using IntVector4 = VectorT<int32_t, 4>;
-using Color = Vector4;
 }
