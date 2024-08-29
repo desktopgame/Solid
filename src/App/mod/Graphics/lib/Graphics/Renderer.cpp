@@ -58,37 +58,37 @@ void Renderer::fovY(float fovY)
     m_dirtyProjectionMatrix = true;
 }
 
-void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color)
+void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color)
 {
     initRect();
     auto constant = Constant::rent(Constant::Layout::Color);
     constant->setTransform(transform2D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
-        Lib::Math::Matrix(),
+        Lib::Math::Matrix::rotateZ(degree),
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
     constant->setColor(color);
     renderObject(m_rectObject, constant);
 }
 
-void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color)
+void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color)
 {
     initCircle();
     auto constant = Constant::rent(Constant::Layout::Color);
     constant->setTransform(transform2D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
-        Lib::Math::Matrix(),
+        Lib::Math::Matrix::rotateZ(degree),
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
     constant->setColor(color);
     renderObject(m_circleObject, constant);
 }
 
-void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const std::shared_ptr<Texture>& texture, const Color& color)
+void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color)
 {
     initSprite();
     auto constant = Constant::rent(Constant::Layout::TextureAndColor);
     constant->setTransform(transform2D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
-        Lib::Math::Matrix(),
+        Lib::Math::Matrix::rotateZ(degree),
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
     constant->setColor(color);
     constant->setTexture(texture);
