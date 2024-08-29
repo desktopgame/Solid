@@ -104,6 +104,30 @@ public:
         return VectorT<T, 3>({ qr.x, qr.y, qr.z });
     }
 
+    static MatrixT<T> toMatrix(QuaternionT<T> q)
+    {
+        MatrixT<T> mat;
+        T two = static_cast<T>(2);
+        T one = static_cast<T>(1);
+        mat.at(0, 0) = two * (q.w * q.w) + two * (q.x * q.x) - one;
+        mat.at(0, 1) = two * q.x * q.y - two * q.z * q.w;
+        mat.at(0, 2) = two * q.x * q.z + two * q.y * q.w;
+        mat.at(0, 3) = 0;
+        mat.at(1, 0) = two * q.x * q.y + two * q.z * q.w;
+        mat.at(1, 1) = two * (q.w * q.w) + two * (q.y * q.y) - one;
+        mat.at(1, 2) = two * q.y * q.z - two * q.x * q.w;
+        mat.at(1, 3) = 0;
+        mat.at(2, 0) = two * q.x * q.z - two * q.y * q.w;
+        mat.at(2, 1) = two * q.y * q.z + two * q.x * q.w;
+        mat.at(2, 2) = two * (q.w * q.w) + two * (q.z * q.z) - one;
+        mat.at(2, 3) = 0;
+        mat.at(3, 0) = 0;
+        mat.at(3, 1) = 0;
+        mat.at(3, 2) = 0;
+        mat.at(3, 3) = one;
+        return mat;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const QuaternionT<T>& a)
     {
         os << a.str();

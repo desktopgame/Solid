@@ -95,25 +95,25 @@ void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::V
     renderObject(m_spriteObject, constant);
 }
 
-void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color)
+void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color)
 {
     initPlane();
     auto constant = Constant::rent(Constant::Layout::Color);
     constant->setTransform(transform3D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(position),
-        Lib::Math::Matrix(),
+        Lib::Math::Quaternion::toMatrix(rotation),
         Lib::Math::Matrix::scale(size))));
     constant->setColor(color);
     renderObject(m_planeObject, constant);
 }
 
-void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color)
+void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color)
 {
     initBox();
     auto constant = Constant::rent(Constant::Layout::Color);
     constant->setTransform(transform3D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(position),
-        Lib::Math::Matrix(),
+        Lib::Math::Quaternion::toMatrix(rotation),
         Lib::Math::Matrix::scale(size))));
     constant->setColor(color);
     renderObject(m_boxObject, constant);

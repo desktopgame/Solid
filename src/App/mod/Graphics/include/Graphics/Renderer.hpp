@@ -22,8 +22,8 @@ public:
     void drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color);
     void drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
 
-    void drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color);
-    void drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color);
+    void drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color);
+    void drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color);
 
 private:
     class Object {
