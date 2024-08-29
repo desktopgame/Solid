@@ -23,6 +23,8 @@ add_library(
     ./lib/Graphics/Constant.cpp
     ./lib/Graphics/VertexTexCoord2D.cpp
     ./lib/Graphics/VertexTexCoord3D.cpp
+    ./lib/Graphics/VertexNormal3D.cpp
+    ./lib/Graphics/VertexNormalTexCoord3D.cpp
     ./lib/Graphics/Swapchain.cpp
     ./lib/Graphics/PipelineStateObject.cpp
 )
