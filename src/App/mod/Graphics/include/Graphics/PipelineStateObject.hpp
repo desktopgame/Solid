@@ -19,7 +19,7 @@ public:
         Constant::Layout constantLayout,
         PrimitiveType primitiveType,
         int32_t vertexComponent,
-        bool usingTexCoord);
+        bool isUsingTexCoord);
     ~PipelineStateObject();
 
 #if SOLID_ENABLE_INTERNAL

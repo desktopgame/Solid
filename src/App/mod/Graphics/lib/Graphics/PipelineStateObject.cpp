@@ -43,14 +43,14 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     Constant::Layout constantLayout,
     PrimitiveType primitiveType,
     int32_t vertexComponent,
-    bool usingTexCoord)
+    bool isUsingTexCoord)
 {
     auto pso = std::shared_ptr<PipelineStateObject>(new PipelineStateObject());
     pso->m_shader = shader;
     pso->m_constantLayout = constantLayout;
     pso->m_primitiveType = primitiveType;
     pso->m_vertexComponent = vertexComponent;
-    pso->m_isUsingTexCoord = usingTexCoord;
+    pso->m_isUsingTexCoord = isUsingTexCoord;
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
 
