@@ -244,13 +244,13 @@ void PipelineStateObject::render(
     uint32_t stride = 0;
     if (m_vertexComponent == 2) {
         if (m_isUsingTexCoord) {
-            stride = sizeof(VertexData2D);
+            stride = sizeof(VertexTexCoord2D);
         } else {
             stride = sizeof(Math::Vector2);
         }
     } else if (m_vertexComponent == 3) {
         if (m_isUsingTexCoord) {
-            stride = sizeof(VertexData3D);
+            stride = sizeof(VertexTexCoord3D);
         } else {
             stride = sizeof(Math::Vector3);
         }
