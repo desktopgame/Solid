@@ -8,6 +8,7 @@ namespace Lib::Graphics {
 class PipelineStateObject;
 class Buffer;
 class Constant;
+class Texture;
 class Renderer {
 public:
     explicit Renderer();
@@ -19,6 +20,7 @@ public:
 
     void drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
     void drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
+    void drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const std::shared_ptr<Texture>& texture, const Color& color);
 
     void drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color);
     void drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color);
@@ -35,6 +37,7 @@ private:
 
     void initRect();
     void initCircle();
+    void initSprite();
 
     void initPlane();
     void initBox();
@@ -57,6 +60,7 @@ private:
 
     Object m_rectObject;
     Object m_circleObject;
+    Object m_spriteObject;
 
     Object m_planeObject;
     Object m_boxObject;

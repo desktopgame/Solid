@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
     auto device = engine->getDevice();
     auto window = engine->getWindow();
     auto surface = device->getSurface();
+    auto texture = Lib::Graphics::Texture::create(L"assets/Sprite.png");
 
     Lib::Graphics::Renderer renderer;
     window->show();
@@ -29,6 +30,7 @@ int main(int argc, char* argv[])
         renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawCircle(Vector2({ 200, 200 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawSprite(Vector2({ -300, 200 }), Vector2({ 100, 100 }), texture, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
         surface->end();
 
         Constant::release();

@@ -7,6 +7,8 @@
 #include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
+#include <Graphics/Texture.hpp>
+#include <Graphics/VertexTexCoord2D.hpp>
 #include <Math/Mathf.hpp>
 
 namespace Lib::Graphics {
@@ -25,6 +27,7 @@ Renderer::Renderer()
     , m_projectionMatrix()
     , m_rectObject()
     , m_circleObject()
+    , m_spriteObject()
     , m_planeObject()
     , m_boxObject()
 {
@@ -77,6 +80,19 @@ void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::V
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
     constant->setColor(color);
     renderObject(m_circleObject, constant);
+}
+
+void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const std::shared_ptr<Texture>& texture, const Color& color)
+{
+    initSprite();
+    auto constant = Constant::rent(Constant::Layout::TextureAndColor);
+    constant->setTransform(transform2D(Lib::Math::Matrix::transform(
+        Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
+        Lib::Math::Matrix(),
+        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
+    constant->setColor(color);
+    constant->setTexture(texture);
+    renderObject(m_spriteObject, constant);
 }
 
 void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Color& color)
@@ -215,6 +231,68 @@ void Renderer::initCircle()
     m_circleObject.indexBuffer->update(indices.data());
     m_circleObject.indexLength = indices.size();
     m_circleObject.pso = PipelineStateObject::create(shader, Constant::Layout::Color, PrimitiveType::Triangles, 2, false);
+}
+
+void Renderer::initSprite()
+{
+    if (m_spriteObject.pso != nullptr) {
+        return;
+    }
+    auto shader = Shader::compile(R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float2 uv : TEXCOORD;
+            float4 color : COLOR;
+        };
+        cbuffer cbuff0 : register(b0) { matrix mat; }
+        cbuffer cbuff1 : register(b1) { float4 color; }
+
+        Output vsMain(float2 pos : POSITION, float2 uv : TEXCOORD) {
+            Output output;
+            output.svpos = mul(mat, float4(pos, 0, 1));
+            output.uv = uv;
+            output.color = color;
+            return output;
+        })",
+        "vsMain", R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float2 uv : TEXCOORD;
+            float4 color : COLOR;
+        };
+
+        Texture2D<float4> tex : register(t0);
+        SamplerState smp : register(s0);
+
+        float4 psMain(Output input) : SV_TARGET {
+            float4 col = float4(tex.Sample(smp, input.uv)) * input.color;
+            return col;
+        })",
+        "psMain");
+    m_spriteObject.vertexBuffer = Buffer::create();
+    m_spriteObject.indexBuffer = Buffer::create();
+    std::vector<VertexTexCoord2D> vertices;
+    std::vector<uint32_t> indices;
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ left, top }), Lib::Math::Vector2({ 0.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ right, top }), Lib::Math::Vector2({ 1.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ right, bottom }), Lib::Math::Vector2({ 1.0f, 1.0f })));
+    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ left, bottom }), Lib::Math::Vector2({ 0.0f, 1.0f })));
+    m_spriteObject.vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
+    m_spriteObject.vertexBuffer->update(vertices.data());
+    indices.push_back(1);
+    indices.push_back(3);
+    indices.push_back(0);
+    indices.push_back(2);
+    indices.push_back(3);
+    indices.push_back(1);
+    m_spriteObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_spriteObject.indexBuffer->update(indices.data());
+    m_spriteObject.indexLength = indices.size();
+    m_spriteObject.pso = PipelineStateObject::create(shader, Constant::Layout::TextureAndColor, PrimitiveType::Triangles, 2, true);
 }
 
 void Renderer::initPlane()
