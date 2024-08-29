@@ -19,7 +19,6 @@ add_library(
     ./lib/Graphics/Buffer.cpp
     ./lib/Graphics/Texture.cpp
     ./lib/Graphics/Screen.cpp
-    ./lib/Graphics/Camera.cpp
     ./lib/Graphics/Renderer.cpp
     ./lib/Graphics/Constant.cpp
     ./lib/Graphics/VertexData2D.cpp
