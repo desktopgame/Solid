@@ -11,6 +11,6 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Texture.hpp>
-#include <Graphics/VertexData2D.hpp>
-#include <Graphics/VertexData3D.hpp>
+#include <Graphics/VertexTexCoord2D.hpp>
+#include <Graphics/VertexTexCoord3D.hpp>
 #include <Graphics/Window.hpp>

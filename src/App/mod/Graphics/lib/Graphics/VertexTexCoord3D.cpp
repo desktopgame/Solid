@@ -1,4 +1,4 @@
-#include <Graphics/VertexData3D.hpp>
+#include <Graphics/VertexTexCoord3D.hpp>
 
 namespace Lib::Graphics {
 VertexTexCoord3D::VertexTexCoord3D(const Math::Vector3& position, const Math::Vector2& texCoord)

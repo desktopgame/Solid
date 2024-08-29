@@ -21,8 +21,8 @@ add_library(
     ./lib/Graphics/Screen.cpp
     ./lib/Graphics/Renderer.cpp
     ./lib/Graphics/Constant.cpp
-    ./lib/Graphics/VertexData2D.cpp
-    ./lib/Graphics/VertexData3D.cpp
+    ./lib/Graphics/VertexTexCoord2D.cpp
+    ./lib/Graphics/VertexTexCoord3D.cpp
     ./lib/Graphics/Swapchain.cpp
     ./lib/Graphics/PipelineStateObject.cpp
 )
