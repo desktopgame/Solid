@@ -12,6 +12,11 @@ class Renderer {
 public:
     explicit Renderer();
 
+    void position(const Lib::Math::Vector3& position);
+    void lookAt(const Lib::Math::Vector3& lookAt);
+    void depthRange(float zNear, float zFar);
+    void fovY(float fovY);
+
     void drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
     void drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color);
 
@@ -35,6 +40,20 @@ private:
     void initBox();
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
+    Lib::Math::Matrix transform2D(const Lib::Math::Matrix& m);
+    Lib::Math::Matrix transform3D(const Lib::Math::Matrix& m);
+
+    Lib::Math::Vector3 m_position;
+    Lib::Math::Vector3 m_lookAt;
+    float m_zNear;
+    float m_zFar;
+    float m_fovY;
+    bool m_dirtyOrthoMatrix;
+    bool m_dirtyViewMatrix;
+    bool m_dirtyProjectionMatrix;
+    Lib::Math::Matrix m_orthoMatrix;
+    Lib::Math::Matrix m_viewMatrix;
+    Lib::Math::Matrix m_projectionMatrix;
 
     Object m_rectObject;
     Object m_circleObject;

@@ -1,10 +1,10 @@
 #include <Graphics/Buffer.hpp>
-#include <Graphics/Camera.hpp>
 #include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/Renderer.hpp>
+#include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
 #include <Math/Mathf.hpp>
@@ -12,18 +12,54 @@
 namespace Lib::Graphics {
 // public
 Renderer::Renderer()
-    : m_rectObject()
+    : m_position({ 0, 0, -1 })
+    , m_lookAt({ 0, 0, 0 })
+    , m_zNear(1.0f)
+    , m_zFar(1000.0f)
+    , m_fovY(30.0f)
+    , m_dirtyOrthoMatrix(true)
+    , m_dirtyViewMatrix(true)
+    , m_dirtyProjectionMatrix(true)
+    , m_orthoMatrix()
+    , m_viewMatrix()
+    , m_projectionMatrix()
+    , m_rectObject()
     , m_circleObject()
     , m_planeObject()
     , m_boxObject()
 {
 }
 
+void Renderer::position(const Lib::Math::Vector3& position)
+{
+    m_position = position;
+    m_dirtyViewMatrix = true;
+}
+
+void Renderer::lookAt(const Lib::Math::Vector3& lookAt)
+{
+    m_lookAt = lookAt;
+    m_dirtyViewMatrix = true;
+}
+
+void Renderer::depthRange(float zNear, float zFar)
+{
+    m_zNear = zNear;
+    m_zFar = zFar;
+    m_dirtyProjectionMatrix = true;
+}
+
+void Renderer::fovY(float fovY)
+{
+    m_fovY = fovY;
+    m_dirtyProjectionMatrix = true;
+}
+
 void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, const Color& color)
 {
     initRect();
     auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(Camera::transform2D(Lib::Math::Matrix::transform(
+    constant->setTransform(transform2D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
         Lib::Math::Matrix(),
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
@@ -35,7 +71,7 @@ void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::V
 {
     initCircle();
     auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(Camera::transform2D(Lib::Math::Matrix::transform(
+    constant->setTransform(transform2D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
         Lib::Math::Matrix(),
         Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
@@ -47,7 +83,7 @@ void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Ve
 {
     initPlane();
     auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(Camera::transform3D(Lib::Math::Matrix::transform(
+    constant->setTransform(transform3D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(position),
         Lib::Math::Matrix(),
         Lib::Math::Matrix::scale(size))));
@@ -59,7 +95,7 @@ void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vect
 {
     initBox();
     auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(Camera::transform3D(Lib::Math::Matrix::transform(
+    constant->setTransform(transform3D(Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(position),
         Lib::Math::Matrix(),
         Lib::Math::Matrix::scale(size))));
@@ -340,5 +376,32 @@ void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant
         object.vertexBuffer,
         object.indexBuffer,
         object.indexLength);
+}
+
+Lib::Math::Matrix Renderer::transform2D(const Lib::Math::Matrix& m)
+{
+    if (m_dirtyOrthoMatrix) {
+        m_dirtyOrthoMatrix = false;
+        m_orthoMatrix = Lib::Math::Matrix::ortho(
+            static_cast<float>(Screen::getWidth()),
+            static_cast<float>(Screen::getHeight()));
+    }
+    return m * m_orthoMatrix;
+}
+
+Lib::Math::Matrix Renderer::transform3D(const Lib::Math::Matrix& m)
+{
+    if (m_dirtyViewMatrix) {
+        m_dirtyViewMatrix = false;
+        m_viewMatrix = Lib::Math::Matrix::lookAt(m_position, m_lookAt, Lib::Math::Vector3({ 0, 1, 0 }));
+    }
+    if (m_dirtyProjectionMatrix) {
+        m_dirtyProjectionMatrix = false;
+        m_projectionMatrix = Lib::Math::Matrix::perspective(m_fovY,
+            static_cast<float>(Screen::getWidth()) / static_cast<float>(Screen::getHeight()),
+            m_zNear,
+            m_zFar);
+    }
+    return m * m_viewMatrix * m_projectionMatrix;
 }
 }
