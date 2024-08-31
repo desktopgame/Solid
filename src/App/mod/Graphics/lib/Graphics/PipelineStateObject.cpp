@@ -4,6 +4,7 @@
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
+#include <Graphics/VertexNormal3D.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Matrix.hpp>
@@ -43,6 +44,7 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     Constant::Layout constantLayout,
     PrimitiveType primitiveType,
     int32_t vertexComponent,
+    bool isUsingNormal,
     bool isUsingTexCoord)
 {
     auto pso = std::shared_ptr<PipelineStateObject>(new PipelineStateObject());
@@ -50,6 +52,7 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     pso->m_constantLayout = constantLayout;
     pso->m_primitiveType = primitiveType;
     pso->m_vertexComponent = vertexComponent;
+    pso->m_isUsingNormal = isUsingNormal;
     pso->m_isUsingTexCoord = isUsingTexCoord;
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
@@ -62,11 +65,20 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
             { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
                 D3D12_APPEND_ALIGNED_ELEMENT,
                 D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+        if (pso->m_isUsingNormal) {
+            inputLayout.push_back(
+                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+                    D3D12_APPEND_ALIGNED_ELEMENT,
+                    D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+        }
     } else {
         inputLayout.push_back(
             { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
                 D3D12_APPEND_ALIGNED_ELEMENT,
                 D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+        if (pso->m_isUsingNormal) {
+            throw std::runtime_error(" isUsingNormal can use only by 3d vertex.");
+        }
     }
     if (pso->m_isUsingTexCoord) {
         inputLayout.push_back(
@@ -135,6 +147,12 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
             descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
             descTableRange.at(2).BaseShaderRegister = 1;
             descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        } else if (constantLayout.useLightDirection()) {
+            descTableRange.push_back({});
+            descTableRange.at(2).NumDescriptors = 1;
+            descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(2).BaseShaderRegister = 1;
+            descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
     } else if (constantLayout.useColor()) {
         descTableRange.push_back({});
@@ -142,6 +160,14 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
         descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
         descTableRange.at(1).BaseShaderRegister = 1;
         descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+        if (constantLayout.useLightDirection()) {
+            descTableRange.push_back({});
+            descTableRange.at(2).NumDescriptors = 1;
+            descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(2).BaseShaderRegister = 2;
+            descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        }
     }
     std::vector<D3D12_ROOT_PARAMETER> rootParam;
     rootParam.push_back({});
@@ -163,6 +189,12 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
             rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
             rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
             rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+        } else if (constantLayout.useLightDirection()) {
+            rootParam.push_back({});
+            rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+            rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
+            rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
         }
     } else if (constantLayout.useColor()) {
         rootParam.push_back({});
@@ -170,6 +202,14 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
         rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
         rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
         rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
+
+        if (constantLayout.useLightDirection()) {
+            rootParam.push_back({});
+            rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+            rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
+            rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+        }
     }
     D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
     samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -238,6 +278,11 @@ void PipelineStateObject::render(
     } else if (m_constantLayout.useColor()) {
         heapHandle.ptr += incrementSize;
         cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
+
+        if (m_constantLayout.useLightDirection()) {
+            heapHandle.ptr += incrementSize;
+            cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
+        }
     }
     cmdList->IASetPrimitiveTopology(convPrimitiveTopology(m_primitiveType));
 
@@ -252,7 +297,11 @@ void PipelineStateObject::render(
         if (m_isUsingTexCoord) {
             stride = sizeof(VertexTexCoord3D);
         } else {
-            stride = sizeof(Math::Vector3);
+            if (m_isUsingNormal) {
+                stride = sizeof(VertexNormal3D);
+            } else {
+                stride = sizeof(Math::Vector3);
+            }
         }
     }
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
@@ -275,6 +324,7 @@ PipelineStateObject::PipelineStateObject()
     , m_constantLayout()
     , m_primitiveType()
     , m_vertexComponent(0)
+    , m_isUsingNormal(false)
     , m_isUsingTexCoord(false)
     , m_pipelineState()
     , m_rootSignature()

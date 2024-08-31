@@ -44,6 +44,9 @@ void Constant::update()
         if (m_layout.useColor()) {
             descHeapDesc.NumDescriptors++;
         }
+        if (m_layout.useLightDirection()) {
+            descHeapDesc.NumDescriptors++;
+        }
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
         if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
             throw std::runtime_error("failed CreateDescriptorHeap()");
@@ -53,15 +56,23 @@ void Constant::update()
         if (m_layout.useColor()) {
             defineConstant((sizeof(Math::Vector4) + 0xff) & ~0xff);
         }
+        if (m_layout.useLightDirection()) {
+            defineConstant((sizeof(Math::Vector3) + 0xff) & ~0xff);
+        }
         // define view
         defineConstantView(CbMatrixIndex, 0);
         if (m_layout.useTexture()) {
             defineTextureView(m_texture, 1);
             if (m_layout.useColor()) {
                 defineConstantView(CbColorIndex, 2);
+            } else if (m_layout.useLightDirection()) {
+                defineConstantView(CbLightDirectionIndex, 2);
             }
         } else if (m_layout.useColor()) {
             defineConstantView(CbColorIndex, 1);
+            if (m_layout.useLightDirection()) {
+                defineConstantView(CbLightDirectionIndex, 2);
+            }
         }
     }
     if (m_isDirty) {
@@ -85,6 +96,17 @@ void Constant::update()
                 Math::Vector4 color = getColor();
                 ::memcpy(mapColor, color.data(), sizeof(Math::Vector4));
                 m_resources.at(CbColorIndex)->Unmap(0, nullptr);
+            }
+        }
+        // light direction
+        if (m_layout.useLightDirection()) {
+            void* mapLightDirection = nullptr;
+            if (FAILED(m_resources.at(CbLightDirectionIndex)->Map(0, nullptr, (void**)&mapLightDirection))) {
+                throw std::runtime_error("failed Map()");
+            } else {
+                Math::Vector3 lightDirection = getLightDirection();
+                ::memcpy(mapLightDirection, lightDirection.data(), sizeof(Math::Vector3));
+                m_resources.at(CbLightDirectionIndex)->Unmap(0, nullptr);
             }
         }
     }
@@ -118,6 +140,16 @@ void Constant::setColor(const Math::Vector4& color)
 }
 Math::Vector4 Constant::getColor() const { return m_color; }
 
+void Constant::setLightDirection(const Math::Vector3& lightDirection)
+{
+    if (!m_layout.useLightDirection()) {
+        throw std::runtime_error("missmatch interface.");
+    }
+    m_isDirty = true;
+    m_lightDirection = lightDirection;
+}
+Math::Vector3 Constant::getLightDirection() const { return m_lightDirection; }
+
 Constant::Layout Constant::getLayout() const { return m_layout; }
 // internal
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> Constant::getID3D12DescriptorHeap() const { return m_descriptorHeap; }
@@ -127,6 +159,7 @@ Constant::Constant(Layout layout)
     , m_transform()
     , m_texture()
     , m_color()
+    , m_lightDirection()
     , m_layout(layout)
     , m_descriptorHeap(nullptr)
     , m_resources()

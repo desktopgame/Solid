@@ -40,7 +40,9 @@ private:
     void initSprite();
 
     void initPlane();
+    void initPlaneLighting();
     void initBox();
+    void initBoxLighting();
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
     Lib::Math::Matrix transform2D(const Lib::Math::Matrix& m);
@@ -63,6 +65,8 @@ private:
     Object m_spriteObject;
 
     Object m_planeObject;
+    Object m_planeLightingObject;
     Object m_boxObject;
+    Object m_boxLightingObject;
 };
 }

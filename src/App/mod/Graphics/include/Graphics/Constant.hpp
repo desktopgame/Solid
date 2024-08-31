@@ -41,6 +41,22 @@ public:
              * Color = 2
              */
             TextureAndColor,
+
+            /**
+             * Layout:
+             * Matrix = 0
+             * Texture = 1
+             * LightDirection = 2
+             */
+            LightTexture,
+
+            /**
+             * Layout:
+             * Matrix = 0
+             * Color = 1
+             * LightDirection = 2
+             */
+            LightColor,
         };
 
         Layout() = default;
@@ -52,8 +68,9 @@ public:
         inline constexpr bool operator==(Layout a) const { return m_value == a.m_value; }
         inline constexpr bool operator!=(Layout a) const { return m_value != a.m_value; }
 
-        inline constexpr bool useTexture() const { return m_value == Texture || m_value == TextureAndColor; }
-        inline constexpr bool useColor() const { return m_value == Color || m_value == TextureAndColor; }
+        inline constexpr bool useTexture() const { return m_value == Texture || m_value == TextureAndColor || m_value == LightTexture; }
+        inline constexpr bool useColor() const { return m_value == Color || m_value == TextureAndColor || m_value == LightColor; }
+        inline constexpr bool useLightDirection() const { return m_value == LightColor || m_value == LightTexture; }
 
     private:
         Value m_value;
@@ -61,6 +78,7 @@ public:
 
     inline static constexpr int32_t CbMatrixIndex = 0;
     inline static constexpr int32_t CbColorIndex = 1;
+    inline static constexpr int32_t CbLightDirectionIndex = 2;
 
     static std::shared_ptr<Constant> rent(Layout layout);
     static void release();
@@ -76,6 +94,9 @@ public:
 
     void setColor(const Math::Vector4& color);
     Math::Vector4 getColor() const;
+
+    void setLightDirection(const Math::Vector3& lightDirection);
+    Math::Vector3 getLightDirection() const;
 
     Layout getLayout() const;
 
@@ -96,6 +117,7 @@ private:
     Math::Matrix m_transform;
     std::shared_ptr<Texture> m_texture;
     Math::Vector4 m_color;
+    Math::Vector3 m_lightDirection;
     Layout m_layout;
 
 #if SOLID_ENABLE_INTERNAL

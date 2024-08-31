@@ -24,17 +24,17 @@ int main(int argc, char* argv[])
     while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
 
-        Quaternion rotation = Quaternion::angleAxis(degree, Lib::Math::Vector3({ 0, 1, 0 }));
+        Quaternion rotation = Quaternion::angleAxis(degree, Lib::Math::Vector3({ 1, 0, 0 }));
 
         surface->begin();
-        renderer.drawPlane(Vector3({ 0, 0, 10 }), Vector3({ 1, 1, 1 }), rotation, Color({ 0.5f, 0.0f, 0.0f, 1.0f }));
-        renderer.drawBox(Vector3({ -3, 0, 10 }), Vector3({ 1, 1, 1 }), rotation, Color({ 0.5f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawPlane(Vector3({ 0, 0, 5 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawBox(Vector3({ -3, 0, 10 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
 
         renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawCircle(Vector2({ 200, 200 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawSprite(Vector2({ -300, 200 }), Vector2({ 100, 100 }), degree, texture, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
-        degree += 10.0f;
+        degree += 1.0f;
         surface->end();
 
         Constant::release();
