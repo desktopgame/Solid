@@ -82,9 +82,9 @@ void Constant::update()
             if (FAILED(m_resources.at(CbMatrixIndex)->Map(0, nullptr, (void**)&mapMatrix))) {
                 throw std::runtime_error("failed Map()");
             } else {
-                Math::Matrix matrix = getTransform();
-                ::memcpy(mapMatrix, matrix.data(), sizeof(Math::Matrix));
-                m_resources.at(CbMatrixIndex)->Unmap(0, nullptr);
+                // Math::Matrix matrix = getTransform();
+                // ::memcpy(mapMatrix, matrix.data(), sizeof(Math::Matrix));
+                // m_resources.at(CbMatrixIndex)->Unmap(0, nullptr);
             }
         }
         // color
@@ -113,12 +113,26 @@ void Constant::update()
     m_isDirty = false;
 }
 
-void Constant::setTransform(const Math::Matrix& transform)
+void Constant::setModelMatrix(const Math::Matrix& modelMatrix)
 {
     m_isDirty = true;
-    m_transform = transform;
+    m_modelMatrix = modelMatrix;
 }
-Math::Matrix Constant::getTransform() const { return m_transform; }
+Math::Matrix Constant::getModelMatrix() const { return m_modelMatrix; }
+
+void Constant::setViewMatrix(const Math::Matrix& viewMatrix)
+{
+    m_isDirty = true;
+    m_viewMatrix = viewMatrix;
+}
+Math::Matrix Constant::getViewMatrix() const { return m_viewMatrix; }
+
+void Constant::setProjectionMatrix(const Math::Matrix& projectionMatrix)
+{
+    m_isDirty = true;
+    m_projectionMatrix = projectionMatrix;
+}
+Math::Matrix Constant::getProjectionMatrix() const { return m_projectionMatrix; }
 
 void Constant::setTexture(const std::shared_ptr<Texture>& texture)
 {
@@ -156,7 +170,9 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> Constant::getID3D12DescriptorHeap()
 // private
 Constant::Constant(Layout layout)
     : m_isDirty(true)
-    , m_transform()
+    , m_modelMatrix()
+    , m_viewMatrix()
+    , m_projectionMatrix()
     , m_texture()
     , m_color()
     , m_lightDirection()

@@ -86,8 +86,14 @@ public:
 
     void update();
 
-    void setTransform(const Math::Matrix& transform);
-    Math::Matrix getTransform() const;
+    void setModelMatrix(const Math::Matrix& modelMatrix);
+    Math::Matrix getModelMatrix() const;
+
+    void setViewMatrix(const Math::Matrix& viewMatrix);
+    Math::Matrix getViewMatrix() const;
+
+    void setProjectionMatrix(const Math::Matrix& projectionMatrix);
+    Math::Matrix getProjectionMatrix() const;
 
     void setTexture(const std::shared_ptr<Texture>& texture);
     std::shared_ptr<Texture> getTexture() const;
@@ -114,7 +120,9 @@ private:
     static std::vector<std::shared_ptr<Constant>> s_usedVec;
 
     bool m_isDirty;
-    Math::Matrix m_transform;
+    Math::Matrix m_modelMatrix;
+    Math::Matrix m_viewMatrix;
+    Math::Matrix m_projectionMatrix;
     std::shared_ptr<Texture> m_texture;
     Math::Vector4 m_color;
     Math::Vector3 m_lightDirection;
