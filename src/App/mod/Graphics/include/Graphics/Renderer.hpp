@@ -45,8 +45,9 @@ private:
     void initBoxLighting();
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
-    Lib::Math::Matrix transform2D(const Lib::Math::Matrix& m);
-    Lib::Math::Matrix transform3D(const Lib::Math::Matrix& m);
+    Lib::Math::Matrix getOrthoMatrix();
+    Lib::Math::Matrix getLookAtMatrix();
+    Lib::Math::Matrix getPerspectiveMatrix();
 
     Lib::Math::Vector3 m_position;
     Lib::Math::Vector3 m_lookAt;

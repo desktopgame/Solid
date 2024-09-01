@@ -37,15 +37,19 @@ void Constant::update()
         D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
         descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         descHeapDesc.NodeMask = 0;
-        descHeapDesc.NumDescriptors = 1;
+        descHeapDesc.NumDescriptors = 3;
         if (m_layout.useTexture()) {
             descHeapDesc.NumDescriptors++;
-        }
-        if (m_layout.useColor()) {
+
+            if (m_layout.useColor()) {
+                descHeapDesc.NumDescriptors++;
+            }
+        } else if (m_layout.useColor()) {
             descHeapDesc.NumDescriptors++;
-        }
-        if (m_layout.useLightDirection()) {
-            descHeapDesc.NumDescriptors++;
+
+            if (m_layout.useLightDirection()) {
+                descHeapDesc.NumDescriptors++;
+            }
         }
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
         if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
@@ -53,60 +57,96 @@ void Constant::update()
         }
         // define constants
         defineConstant((sizeof(Math::Matrix) + 0xff) & ~0xff);
-        if (m_layout.useColor()) {
+        defineConstant((sizeof(Math::Matrix) + 0xff) & ~0xff);
+        defineConstant((sizeof(Math::Matrix) + 0xff) & ~0xff);
+        if (m_layout.useTexture()) {
+            if (m_layout.useColor()) {
+                defineConstant((sizeof(Math::Vector4) + 0xff) & ~0xff);
+            } else if (m_layout.useLightDirection()) {
+                defineConstant((sizeof(Math::Vector3) + 0xff) & ~0xff);
+            }
+
+        } else if (m_layout.useColor()) {
             defineConstant((sizeof(Math::Vector4) + 0xff) & ~0xff);
-        }
-        if (m_layout.useLightDirection()) {
-            defineConstant((sizeof(Math::Vector3) + 0xff) & ~0xff);
+
+            if (m_layout.useLightDirection()) {
+                defineConstant((sizeof(Math::Vector3) + 0xff) & ~0xff);
+            }
         }
         // define view
-        defineConstantView(CbMatrixIndex, 0);
+        defineConstantView(0, 0);
+        defineConstantView(1, 1);
+        defineConstantView(2, 2);
         if (m_layout.useTexture()) {
-            defineTextureView(m_texture, 1);
+            defineTextureView(m_texture, 3);
+
             if (m_layout.useColor()) {
-                defineConstantView(CbColorIndex, 2);
+                defineConstantView(3, 4);
             } else if (m_layout.useLightDirection()) {
-                defineConstantView(CbLightDirectionIndex, 2);
+                defineConstantView(3, 4);
             }
         } else if (m_layout.useColor()) {
-            defineConstantView(CbColorIndex, 1);
+            defineConstantView(3, 3);
+
             if (m_layout.useLightDirection()) {
-                defineConstantView(CbLightDirectionIndex, 2);
+                defineConstantView(4, 4);
             }
         }
     }
     if (m_isDirty) {
-        // transfrom
+        // model Matrix
         {
-            void* mapMatrix = nullptr;
-            if (FAILED(m_resources.at(CbMatrixIndex)->Map(0, nullptr, (void**)&mapMatrix))) {
+            void* mapModelMatrix = nullptr;
+            if (FAILED(m_resources.at(0)->Map(0, nullptr, (void**)&mapModelMatrix))) {
                 throw std::runtime_error("failed Map()");
             } else {
-                // Math::Matrix matrix = getTransform();
-                // ::memcpy(mapMatrix, matrix.data(), sizeof(Math::Matrix));
-                // m_resources.at(CbMatrixIndex)->Unmap(0, nullptr);
+                Math::Matrix modelMatrix = getModelMatrix();
+                ::memcpy(mapModelMatrix, modelMatrix.data(), sizeof(Math::Matrix));
+                m_resources.at(0)->Unmap(0, nullptr);
+            }
+        }
+        // view Matrix
+        {
+            void* mapViewMatrix = nullptr;
+            if (FAILED(m_resources.at(1)->Map(0, nullptr, (void**)&mapViewMatrix))) {
+                throw std::runtime_error("failed Map()");
+            } else {
+                Math::Matrix viewMatrix = getViewMatrix();
+                ::memcpy(mapViewMatrix, viewMatrix.data(), sizeof(Math::Matrix));
+                m_resources.at(1)->Unmap(0, nullptr);
+            }
+        }
+        // projection Matrix
+        {
+            void* mapProjectionMatrix = nullptr;
+            if (FAILED(m_resources.at(2)->Map(0, nullptr, (void**)&mapProjectionMatrix))) {
+                throw std::runtime_error("failed Map()");
+            } else {
+                Math::Matrix projectionMatrix = getProjectionMatrix();
+                ::memcpy(mapProjectionMatrix, projectionMatrix.data(), sizeof(Math::Matrix));
+                m_resources.at(2)->Unmap(0, nullptr);
             }
         }
         // color
         if (m_layout.useColor()) {
             void* mapColor = nullptr;
-            if (FAILED(m_resources.at(CbColorIndex)->Map(0, nullptr, (void**)&mapColor))) {
+            if (FAILED(m_resources.at(3)->Map(0, nullptr, (void**)&mapColor))) {
                 throw std::runtime_error("failed Map()");
             } else {
                 Math::Vector4 color = getColor();
                 ::memcpy(mapColor, color.data(), sizeof(Math::Vector4));
-                m_resources.at(CbColorIndex)->Unmap(0, nullptr);
+                m_resources.at(3)->Unmap(0, nullptr);
             }
         }
         // light direction
         if (m_layout.useLightDirection()) {
             void* mapLightDirection = nullptr;
-            if (FAILED(m_resources.at(CbLightDirectionIndex)->Map(0, nullptr, (void**)&mapLightDirection))) {
+            if (FAILED(m_resources.at(4)->Map(0, nullptr, (void**)&mapLightDirection))) {
                 throw std::runtime_error("failed Map()");
             } else {
                 Math::Vector3 lightDirection = getLightDirection();
                 ::memcpy(mapLightDirection, lightDirection.data(), sizeof(Math::Vector3));
-                m_resources.at(CbLightDirectionIndex)->Unmap(0, nullptr);
+                m_resources.at(4)->Unmap(0, nullptr);
             }
         }
     }

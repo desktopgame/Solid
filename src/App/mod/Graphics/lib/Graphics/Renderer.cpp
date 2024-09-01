@@ -17,9 +17,9 @@ namespace Lib::Graphics {
 Renderer::Renderer()
     : m_position({ 0, 0, -1 })
     , m_lookAt({ 0, 0, 0 })
-    , m_zNear(1.0f)
-    , m_zFar(1000.0f)
-    , m_fovY(30.0f)
+    , m_zNear(0.1f)
+    , m_zFar(100.0f)
+    , m_fovY(90.0f)
     , m_dirtyOrthoMatrix(true)
     , m_dirtyViewMatrix(true)
     , m_dirtyProjectionMatrix(true)
@@ -65,10 +65,13 @@ void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vec
 {
     initRect();
     auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(transform2D(Lib::Math::Matrix::transform(
+    auto modelMatrix = Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
         Lib::Math::Matrix::rotateZ(degree),
-        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
+        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)));
+    constant->setModelMatrix(modelMatrix);
+    constant->setViewMatrix(Lib::Math::Matrix());
+    constant->setProjectionMatrix(getOrthoMatrix());
     constant->setColor(color);
     renderObject(m_rectObject, constant);
 }
@@ -77,10 +80,13 @@ void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::V
 {
     initCircle();
     auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(transform2D(Lib::Math::Matrix::transform(
+    auto modelMatrix = Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
         Lib::Math::Matrix::rotateZ(degree),
-        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
+        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)));
+    constant->setModelMatrix(modelMatrix);
+    constant->setViewMatrix(Lib::Math::Matrix());
+    constant->setProjectionMatrix(getOrthoMatrix());
     constant->setColor(color);
     renderObject(m_circleObject, constant);
 }
@@ -89,10 +95,13 @@ void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::V
 {
     initSprite();
     auto constant = Constant::rent(Constant::Layout::TextureAndColor);
-    constant->setTransform(transform2D(Lib::Math::Matrix::transform(
+    auto modelMatrix = Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
         Lib::Math::Matrix::rotateZ(degree),
-        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)))));
+        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)));
+    constant->setModelMatrix(modelMatrix);
+    constant->setViewMatrix(Lib::Math::Matrix());
+    constant->setProjectionMatrix(getOrthoMatrix());
     constant->setColor(color);
     constant->setTexture(texture);
     renderObject(m_spriteObject, constant);
@@ -112,10 +121,13 @@ void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Ve
     */
     initPlaneLighting();
     auto constant = Constant::rent(Constant::Layout::LightColor);
-    constant->setTransform(transform3D(Lib::Math::Matrix::transform(
+    auto modelMatrix = Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(position),
         Lib::Math::Quaternion::toMatrix(rotation),
-        Lib::Math::Matrix::scale(size))));
+        Lib::Math::Matrix::scale(size));
+    constant->setModelMatrix(modelMatrix);
+    constant->setViewMatrix(getLookAtMatrix());
+    constant->setProjectionMatrix(getPerspectiveMatrix());
     constant->setColor(color);
     constant->setLightDirection(Lib::Math::Vector3({ 0, 1, 0 }));
     renderObject(m_planeLightingObject, constant);
@@ -135,12 +147,15 @@ void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vect
     */
     initBoxLighting();
     auto constant = Constant::rent(Constant::Layout::LightColor);
-    constant->setTransform(transform3D(Lib::Math::Matrix::transform(
+    auto modelMatrix = Lib::Math::Matrix::transform(
         Lib::Math::Matrix::translate(position),
         Lib::Math::Quaternion::toMatrix(rotation),
-        Lib::Math::Matrix::scale(size))));
+        Lib::Math::Matrix::scale(size));
+    constant->setModelMatrix(modelMatrix);
+    constant->setViewMatrix(getLookAtMatrix());
+    constant->setProjectionMatrix(getPerspectiveMatrix());
     constant->setColor(color);
-    constant->setLightDirection(Lib::Math::Vector3({ 0, 1, 0 }));
+    constant->setLightDirection(Lib::Math::Vector3::normalized(Lib::Math::Vector3({ 0, 0.5f, -1.0f })));
     renderObject(m_boxLightingObject, constant);
 }
 // private
@@ -154,12 +169,14 @@ void Renderer::initRect()
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
 
         Output vsMain(float2 pos : POSITION) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 0, 1));
+            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 0, 1));
             output.color = color;
             return output;
         })",
@@ -209,12 +226,14 @@ void Renderer::initCircle()
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
 
         Output vsMain(float2 pos : POSITION) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 0, 1));
+            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 0, 1));
             output.color = color;
             return output;
         })",
@@ -269,12 +288,14 @@ void Renderer::initSprite()
             float2 uv : TEXCOORD;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
 
         Output vsMain(float2 pos : POSITION, float2 uv : TEXCOORD) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 0, 1));
+            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 0, 1));
             output.uv = uv;
             output.color = color;
             return output;
@@ -330,12 +351,14 @@ void Renderer::initPlane()
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
 
         Output vsMain(float3 pos : POSITION) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 1));
+            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
             output.color = color;
             return output;
         })",
@@ -385,15 +408,17 @@ void Renderer::initPlaneLighting()
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
-        cbuffer cbuff2 : register(b2) { float3 lightDirection; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
+        cbuffer cbuff4 : register(b4) { float3 lightDirection; }
 
         Output vsMain(float3 pos : POSITION, float3 normal : NORMAL) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 1));
+            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
 
-            float3 nor = normalize(mul(mat, float4(normal, 1)).xyz);
+            float3 nor = normalize(mul(modelMatrix, float4(normal, 1)).xyz);
             float col = saturate(dot(nor, lightDirection));
             col = col * 0.5f + 0.5f;
 
@@ -446,12 +471,14 @@ void Renderer::initBox()
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
 
         Output vsMain(float3 pos : POSITION) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 1));
+            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
             output.color = color;
             return output;
         })",
@@ -542,16 +569,22 @@ void Renderer::initBoxLighting()
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
-        cbuffer cbuff0 : register(b0) { matrix mat; }
-        cbuffer cbuff1 : register(b1) { float4 color; }
-        cbuffer cbuff2 : register(b2) { float3 lightDirection; }
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
+        cbuffer cbuff4 : register(b4) { float3 lightDirection; }
 
         Output vsMain(float3 pos : POSITION, float3 normal : NORMAL) {
             Output output;
-            output.svpos = mul(mat, float4(pos, 1));
+            
+            output.svpos = mul(modelMatrix, float4(pos, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
+            // output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
 
-            float3 nor = normalize(mul(mat, float4(normal, 1)).xyz);
-            float col = saturate(dot(nor, lightDirection));
+            float3 nor = normalize(mul(modelMatrix, float4(normal, 1)).xyz);
+            float col = saturate(dot(nor, float3(0,1,0)));
             col = col * 0.5f + 0.5f;
 
             output.color = float4(color.x * col, color.y * col, color.z * col, color.w);
@@ -667,7 +700,7 @@ void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant
         object.indexLength);
 }
 
-Lib::Math::Matrix Renderer::transform2D(const Lib::Math::Matrix& m)
+Lib::Math::Matrix Renderer::getOrthoMatrix()
 {
     if (m_dirtyOrthoMatrix) {
         m_dirtyOrthoMatrix = false;
@@ -675,15 +708,20 @@ Lib::Math::Matrix Renderer::transform2D(const Lib::Math::Matrix& m)
             static_cast<float>(Screen::getWidth()),
             static_cast<float>(Screen::getHeight()));
     }
-    return m * m_orthoMatrix;
+    return m_orthoMatrix;
 }
 
-Lib::Math::Matrix Renderer::transform3D(const Lib::Math::Matrix& m)
+Lib::Math::Matrix Renderer::getLookAtMatrix()
 {
     if (m_dirtyViewMatrix) {
         m_dirtyViewMatrix = false;
         m_viewMatrix = Lib::Math::Matrix::lookAt(m_position, m_lookAt, Lib::Math::Vector3({ 0, 1, 0 }));
     }
+    return m_viewMatrix;
+}
+
+Lib::Math::Matrix Renderer::getPerspectiveMatrix()
+{
     if (m_dirtyProjectionMatrix) {
         m_dirtyProjectionMatrix = false;
         m_projectionMatrix = Lib::Math::Matrix::perspective(m_fovY,
@@ -691,6 +729,6 @@ Lib::Math::Matrix Renderer::transform3D(const Lib::Math::Matrix& m)
             m_zNear,
             m_zFar);
     }
-    return m * m_viewMatrix * m_projectionMatrix;
+    return m_projectionMatrix;
 }
 }

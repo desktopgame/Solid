@@ -134,39 +134,49 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
     descTableRange.at(0).BaseShaderRegister = 0;
     descTableRange.at(0).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(1).NumDescriptors = 1;
+    descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(1).BaseShaderRegister = 1;
+    descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(2).NumDescriptors = 1;
+    descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(2).BaseShaderRegister = 2;
+    descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
     if (constantLayout.useTexture()) {
         descTableRange.push_back({});
-        descTableRange.at(1).NumDescriptors = 1;
-        descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-        descTableRange.at(1).BaseShaderRegister = 0;
-        descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        descTableRange.at(3).NumDescriptors = 1;
+        descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+        descTableRange.at(3).BaseShaderRegister = 0;
+        descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
         if (constantLayout.useColor()) {
             descTableRange.push_back({});
-            descTableRange.at(2).NumDescriptors = 1;
-            descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-            descTableRange.at(2).BaseShaderRegister = 1;
-            descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+            descTableRange.at(4).NumDescriptors = 1;
+            descTableRange.at(4).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(4).BaseShaderRegister = 3;
+            descTableRange.at(4).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         } else if (constantLayout.useLightDirection()) {
             descTableRange.push_back({});
-            descTableRange.at(2).NumDescriptors = 1;
-            descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-            descTableRange.at(2).BaseShaderRegister = 1;
-            descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+            descTableRange.at(4).NumDescriptors = 1;
+            descTableRange.at(4).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(4).BaseShaderRegister = 3;
+            descTableRange.at(4).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
     } else if (constantLayout.useColor()) {
         descTableRange.push_back({});
-        descTableRange.at(1).NumDescriptors = 1;
-        descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-        descTableRange.at(1).BaseShaderRegister = 1;
-        descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        descTableRange.at(3).NumDescriptors = 1;
+        descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+        descTableRange.at(3).BaseShaderRegister = 3;
+        descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
         if (constantLayout.useLightDirection()) {
             descTableRange.push_back({});
-            descTableRange.at(2).NumDescriptors = 1;
-            descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-            descTableRange.at(2).BaseShaderRegister = 2;
-            descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+            descTableRange.at(4).NumDescriptors = 1;
+            descTableRange.at(4).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(4).BaseShaderRegister = 4;
+            descTableRange.at(4).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
     }
     std::vector<D3D12_ROOT_PARAMETER> rootParam;
@@ -175,40 +185,50 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     rootParam.at(0).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
     rootParam.at(0).DescriptorTable.pDescriptorRanges = &descTableRange.at(0);
     rootParam.at(0).DescriptorTable.NumDescriptorRanges = 1;
+    rootParam.push_back({});
+    rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
+    rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
+    rootParam.push_back({});
+    rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
+    rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
 
     if (constantLayout.useTexture()) {
         rootParam.push_back({});
-        rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-        rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-        rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
-        rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
+        rootParam.at(3).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+        rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+        rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
+        rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
         if (constantLayout.useColor()) {
             rootParam.push_back({});
-            rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-            rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-            rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
-            rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+            rootParam.at(4).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+            rootParam.at(4).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(4).DescriptorTable.pDescriptorRanges = &descTableRange.at(4);
+            rootParam.at(4).DescriptorTable.NumDescriptorRanges = 1;
         } else if (constantLayout.useLightDirection()) {
             rootParam.push_back({});
-            rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-            rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-            rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
-            rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+            rootParam.at(4).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+            rootParam.at(4).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(4).DescriptorTable.pDescriptorRanges = &descTableRange.at(4);
+            rootParam.at(4).DescriptorTable.NumDescriptorRanges = 1;
         }
     } else if (constantLayout.useColor()) {
         rootParam.push_back({});
-        rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-        rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-        rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
-        rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
+        rootParam.at(3).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+        rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+        rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
+        rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
         if (constantLayout.useLightDirection()) {
             rootParam.push_back({});
-            rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-            rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-            rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
-            rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+            rootParam.at(4).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+            rootParam.at(4).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(4).DescriptorTable.pDescriptorRanges = &descTableRange.at(4);
+            rootParam.at(4).DescriptorTable.NumDescriptorRanges = 1;
         }
     }
     D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
@@ -261,7 +281,15 @@ void PipelineStateObject::render(
 
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
+
     cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
+
+    heapHandle.ptr += incrementSize;
+    cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
+
+    heapHandle.ptr += incrementSize;
+    cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
+
     if (m_constantLayout != constant->getLayout()) {
         throw std::runtime_error("missmatch interfaces.");
     }
@@ -270,18 +298,18 @@ void PipelineStateObject::render(
             throw std::runtime_error("texture missing.");
         }
         heapHandle.ptr += incrementSize;
-        cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
+        cmdList->SetGraphicsRootDescriptorTable(3, heapHandle);
         if (m_constantLayout.useColor()) {
             heapHandle.ptr += incrementSize;
-            cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
+            cmdList->SetGraphicsRootDescriptorTable(4, heapHandle);
         }
     } else if (m_constantLayout.useColor()) {
         heapHandle.ptr += incrementSize;
-        cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
+        cmdList->SetGraphicsRootDescriptorTable(3, heapHandle);
 
         if (m_constantLayout.useLightDirection()) {
             heapHandle.ptr += incrementSize;
-            cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
+            cmdList->SetGraphicsRootDescriptorTable(4, heapHandle);
         }
     }
     cmdList->IASetPrimitiveTopology(convPrimitiveTopology(m_primitiveType));

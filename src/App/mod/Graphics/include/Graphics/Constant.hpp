@@ -76,10 +76,6 @@ public:
         Value m_value;
     };
 
-    inline static constexpr int32_t CbMatrixIndex = 0;
-    inline static constexpr int32_t CbColorIndex = 1;
-    inline static constexpr int32_t CbLightDirectionIndex = 2;
-
     static std::shared_ptr<Constant> rent(Layout layout);
     static void release();
     ~Constant();
