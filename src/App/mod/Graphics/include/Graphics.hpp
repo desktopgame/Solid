@@ -4,6 +4,10 @@
 #include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/Font.hpp>
+#include <Graphics/FontFactory.hpp>
+#include <Graphics/FontMap.hpp>
+#include <Graphics/FontMetrics.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/Renderer.hpp>

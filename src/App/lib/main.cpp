@@ -18,6 +18,9 @@ int main(int argc, char* argv[])
     auto surface = device->getSurface();
     auto texture = Lib::Graphics::Texture::create(L"assets/Sprite.png");
 
+    auto font = FontFactory::getInstance()->load("assets/NotoSansJP-Regular.ttf");
+    font->load(16, u"こんにちわ");
+
     float degree = 0.0f;
     Lib::Graphics::Renderer renderer;
     window->show();

@@ -16,11 +16,10 @@ std::shared_ptr<Texture> Texture::create(const std::wstring& path)
     }
     int32_t width = static_cast<int32_t>(md.width);
     int32_t height = static_cast<int32_t>(md.height);
-    assert(md.format == DXGI_FORMAT_B8G8R8A8_UNORM);
-    return create(width, height, image.GetPixels());
+    return create(width, height, toPublicFormat(md.format), image.GetPixels());
 }
 
-std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, const uint8_t* data)
+std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, Format format, const uint8_t* data)
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     auto texture = std::shared_ptr<Texture>(new Texture());
@@ -34,7 +33,7 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, const ui
     texHeapProps.CreationNodeMask = 0;
     texHeapProps.VisibleNodeMask = 0;
     D3D12_RESOURCE_DESC texResDesc = {};
-    texResDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texResDesc.Format = toPrivateFormat(format);
     texResDesc.Width = width;
     texResDesc.Height = height;
     texResDesc.DepthOrArraySize = 1;
@@ -48,7 +47,19 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, const ui
     if (FAILED(device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, nullptr, IID_PPV_ARGS(&texture->m_resource)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
-    if (FAILED(texture->m_resource->WriteToSubresource(0, nullptr, data, sizeof(uint8_t) * 4 * width, sizeof(uint8_t) * 4 * (width * height)))) {
+    uint32_t rowSize = 0;
+    uint32_t totalSize = 0;
+    switch (format) {
+    case Format::Red:
+        rowSize = sizeof(uint8_t) * width;
+        totalSize = sizeof(uint8_t) * (width * height);
+        break;
+    case Format::RGBA:
+        rowSize = sizeof(uint8_t) * 4 * width;
+        totalSize = sizeof(uint8_t) * 4 * (width * height);
+        break;
+    }
+    if (FAILED(texture->m_resource->WriteToSubresource(0, nullptr, data, rowSize, totalSize))) {
         throw std::runtime_error("failed WriteToSubresource()");
     }
     return texture;
@@ -68,5 +79,26 @@ Texture::Texture()
     , m_height(0)
     , m_resource()
 {
+}
+
+DXGI_FORMAT Texture::toPrivateFormat(Format format)
+{
+    switch (format) {
+    case Format::Red:
+        return DXGI_FORMAT_R8_UNORM;
+    case Format::RGBA:
+        return DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
+}
+Texture::Format Texture::toPublicFormat(DXGI_FORMAT format)
+{
+    switch (format) {
+    case DXGI_FORMAT_R8_UNORM:
+        return Format::Red;
+    case DXGI_FORMAT_R8G8B8A8_UNORM:
+        return Format::RGBA;
+    default:
+        return (Format)0;
+    }
 }
 }

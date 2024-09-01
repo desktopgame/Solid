@@ -28,6 +28,11 @@ add_library(
     ./lib/Graphics/VertexNormalTexCoord3D.cpp
     ./lib/Graphics/Swapchain.cpp
     ./lib/Graphics/PipelineStateObject.cpp
+    ./lib/Graphics/Font.cpp
+    ./lib/Graphics/FontFactory.cpp
+    ./lib/Graphics/FontMap.cpp
+    ./lib/Graphics/FontSprite.cpp
+    ./lib/Graphics/FontMetrics.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)
