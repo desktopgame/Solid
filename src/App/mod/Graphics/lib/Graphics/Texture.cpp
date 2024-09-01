@@ -3,6 +3,7 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/Texture.hpp>
 #include <cassert>
+#include <stdexcept>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
@@ -98,7 +99,7 @@ Texture::Format Texture::toPublicFormat(DXGI_FORMAT format)
     case DXGI_FORMAT_R8G8B8A8_UNORM:
         return Format::RGBA;
     default:
-        return (Format)0;
+        throw std::logic_error("unsupported format.");
     }
 }
 }
