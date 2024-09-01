@@ -622,7 +622,7 @@ void Renderer::initBoxLighting()
             output.svpos = mul(projectionMatrix, output.svpos);
 
             float3 nor = normalize(mul(modelMatrix, float4(normal, 1)).xyz);
-            float col = saturate(dot(nor, float3(0,1,0)));
+            float col = saturate(dot(nor, lightDirection));
             col = col * 0.5f + 0.5f;
 
             output.color = float4(color.x * col, color.y * col, color.z * col, color.w);
