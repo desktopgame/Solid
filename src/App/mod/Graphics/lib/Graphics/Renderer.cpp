@@ -2,6 +2,7 @@
 #include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/FontSprite.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/Renderer.hpp>
 #include <Graphics/Screen.hpp>
@@ -22,6 +23,8 @@ Renderer::Renderer()
     , m_fovY(90.0f)
     , m_lightEnable(false)
     , m_lightDirection({ 0, 1, 0 })
+    , m_fontMap()
+    , m_fontSize(16)
     , m_dirtyOrthoMatrix(true)
     , m_dirtyViewMatrix(true)
     , m_dirtyProjectionMatrix(true)
@@ -31,6 +34,7 @@ Renderer::Renderer()
     , m_rectObject()
     , m_circleObject()
     , m_spriteObject()
+    , m_textObject()
     , m_planeObject()
     , m_planeLightingObject()
     , m_boxObject()
@@ -68,6 +72,10 @@ void Renderer::lightEnable() { m_lightEnable = true; }
 void Renderer::lightDisable() { m_lightEnable = false; }
 
 void Renderer::lightDirection(const Math::Vector3& lightDirection) { m_lightDirection = lightDirection; }
+
+void Renderer::textFont(const std::shared_ptr<FontMap>& fontMap) { m_fontMap = fontMap; }
+
+void Renderer::textSize(int32_t size) { m_fontSize = size; }
 
 void Renderer::begin()
 {
@@ -124,6 +132,47 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
     constant->setColor(color);
     constant->setTexture(texture);
     renderObject(m_spriteObject, constant);
+}
+
+void Renderer::drawText(const Math::Vector2& position, float degree, const std::u16string& label, const Color& color)
+{
+    if (!m_fontMap) {
+        return;
+    }
+    initText();
+    auto fontSprites = m_fontMap->load(m_fontSize, label);
+    float maxY = -1;
+    for (auto fontSprite : fontSprites) {
+        auto size = fontSprite->metrics.size.y();
+        if (maxY < size) {
+            maxY = size;
+        }
+    }
+    Math::Vector2 offset(position);
+    for (char16_t c : label) {
+        auto fontSprite = m_fontMap->load(m_fontSize, c);
+        float xpos = offset.x() + fontSprite->metrics.bearing.x();
+        float ypos = offset.y() - (fontSprite->metrics.bearing.y());
+        ypos += maxY;
+
+        auto constant = Constant::rent(Constant::Layout::TextureAndColor);
+        auto modelMatrix = Math::Matrix::transform(
+            Math::Matrix::translate(Math::Vector3(Math::Vector2({ xpos, ypos }), 0)),
+            Math::Matrix::rotateZ(degree),
+            Math::Matrix::scale(Math::Vector3({ static_cast<float>(fontSprite->metrics.size.x()), static_cast<float>(fontSprite->metrics.size.y()), 1.0f })));
+        constant->setModelMatrix(modelMatrix);
+        constant->setViewMatrix(Math::Matrix());
+        constant->setProjectionMatrix(getOrthoMatrix());
+        constant->setColor(color);
+        constant->setTexture(fontSprite->texture);
+        renderObject(m_textObject, constant);
+        offset.x() += fontSprite->metrics.advance.x() >> 6;
+    }
+}
+
+Math::Vector2 Renderer::measureText(const std::u16string& label)
+{
+    return Math::Vector2({ 0, 0 });
 }
 
 void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color)
@@ -372,6 +421,76 @@ void Renderer::initSprite()
     m_spriteObject.indexBuffer->update(indices.data());
     m_spriteObject.indexLength = indices.size();
     m_spriteObject.pso = PipelineStateObject::create(shader, Constant::Layout::TextureAndColor, PrimitiveType::Triangles, 2, false, true);
+}
+
+void Renderer::initText()
+{
+    if (m_textObject.pso != nullptr) {
+        return;
+    }
+    auto shader = Shader::compile(R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float2 uv : TEXCOORD;
+            float4 color : COLOR;
+        };
+        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
+        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
+        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff3 : register(b3) { float4 color; }
+
+        Output vsMain(float2 pos : POSITION, float2 uv : TEXCOORD) {
+            Output output;
+            output.svpos = mul(modelMatrix, float4(pos, 0, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
+            output.uv = uv;
+            output.color = color;
+            return output;
+        })",
+        "vsMain", R"(
+        struct Output {
+            float4 svpos : SV_POSITION;
+            float2 uv : TEXCOORD;
+            float4 color : COLOR;
+        };
+
+        Texture2D<float4> tex : register(t0);
+        SamplerState smp : register(s0);
+
+        float4 psMain(Output input) : SV_TARGET {
+            float4 col = float4(tex.Sample(smp, input.uv));
+            col.w = col.x * input.color.w;
+            col.x = input.color.x;
+            col.y = input.color.y;
+            col.z = input.color.z;
+            return col;
+        })",
+        "psMain");
+    m_textObject.vertexBuffer = Buffer::create();
+    m_textObject.indexBuffer = Buffer::create();
+    std::vector<VertexTexCoord2D> vertices;
+    std::vector<uint32_t> indices;
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, top }), Math::Vector2({ 1.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
+    m_textObject.vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
+    m_textObject.vertexBuffer->update(vertices.data());
+    indices.push_back(1);
+    indices.push_back(3);
+    indices.push_back(0);
+    indices.push_back(2);
+    indices.push_back(3);
+    indices.push_back(1);
+    m_textObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_textObject.indexBuffer->update(indices.data());
+    m_textObject.indexLength = indices.size();
+    m_textObject.pso = PipelineStateObject::create(shader, Constant::Layout::TextureAndColor, PrimitiveType::Triangles, 2, false, true);
 }
 
 void Renderer::initPlane()

@@ -13,7 +13,7 @@ public:
     explicit FontMap(const std::shared_ptr<Font>& font);
     std::vector<std::shared_ptr<FontSprite>> load(
         int32_t size, const std::u16string& str);
-    std::shared_ptr<FontSprite> load(int32_t size, unsigned long charcode);
+    std::shared_ptr<FontSprite> load(int32_t size, char16_t charcode);
 
 private:
     class Container;

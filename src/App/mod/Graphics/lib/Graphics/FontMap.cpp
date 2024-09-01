@@ -14,7 +14,7 @@ public:
     {
     }
     int32_t size;
-    std::unordered_map<char, std::shared_ptr<FontSprite>> textureMap;
+    std::unordered_map<char16_t, std::shared_ptr<FontSprite>> textureMap;
 };
 // FontMap
 FontMap::FontMap(const std::shared_ptr<Font>& font)
@@ -22,7 +22,7 @@ FontMap::FontMap(const std::shared_ptr<Font>& font)
     , m_containerVec()
 {
 }
-std::shared_ptr<FontSprite> FontMap::load(int32_t size, unsigned long charcode)
+std::shared_ptr<FontSprite> FontMap::load(int32_t size, char16_t charcode)
 {
     auto iter = std::find_if(m_containerVec.begin(), m_containerVec.end(),
         [size](std::shared_ptr<Container> c) -> bool {

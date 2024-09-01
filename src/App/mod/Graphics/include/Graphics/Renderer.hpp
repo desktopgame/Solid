@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphics/Color.hpp>
+#include <Graphics/FontMap.hpp>
 #include <Math/Quaternion.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
@@ -22,12 +23,17 @@ public:
     void lightDisable();
     void lightDirection(const Math::Vector3& lightDirection);
 
+    void textFont(const std::shared_ptr<FontMap>& fontMap);
+    void textSize(int32_t size);
+
     void begin();
     void end();
 
     void drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color);
     void drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color);
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
+    void drawText(const Math::Vector2& position, float degree, const std::u16string& label, const Color& color);
+    Math::Vector2 measureText(const std::u16string& label);
 
     void drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
     void drawBox(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
@@ -45,6 +51,7 @@ private:
     void initRect();
     void initCircle();
     void initSprite();
+    void initText();
 
     void initPlane();
     void initPlaneLighting();
@@ -56,13 +63,19 @@ private:
     Math::Matrix getLookAtMatrix();
     Math::Matrix getPerspectiveMatrix();
 
+    // camera
     Math::Vector3 m_position;
     Math::Vector3 m_lookAt;
     float m_zNear;
     float m_zFar;
     float m_fovY;
+    // light
     bool m_lightEnable;
     Math::Vector3 m_lightDirection;
+    // text
+    std::shared_ptr<FontMap> m_fontMap;
+    int32_t m_fontSize;
+
     bool m_dirtyOrthoMatrix;
     bool m_dirtyViewMatrix;
     bool m_dirtyProjectionMatrix;
@@ -73,6 +86,7 @@ private:
     Object m_rectObject;
     Object m_circleObject;
     Object m_spriteObject;
+    Object m_textObject;
 
     Object m_planeObject;
     Object m_planeLightingObject;
