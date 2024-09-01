@@ -192,7 +192,9 @@ void Renderer::initRect()
 
         Output vsMain(float2 pos : POSITION) {
             Output output;
-            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 0, 1));
+            output.svpos = mul(modelMatrix, float4(pos, 0, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
             output.color = color;
             return output;
         })",
@@ -249,7 +251,9 @@ void Renderer::initCircle()
 
         Output vsMain(float2 pos : POSITION) {
             Output output;
-            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 0, 1));
+            output.svpos = mul(modelMatrix, float4(pos, 0, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
             output.color = color;
             return output;
         })",
@@ -311,7 +315,9 @@ void Renderer::initSprite()
 
         Output vsMain(float2 pos : POSITION, float2 uv : TEXCOORD) {
             Output output;
-            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 0, 1));
+            output.svpos = mul(modelMatrix, float4(pos, 0, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
             output.uv = uv;
             output.color = color;
             return output;
@@ -374,7 +380,9 @@ void Renderer::initPlane()
 
         Output vsMain(float3 pos : POSITION) {
             Output output;
-            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
+            output.svpos = mul(modelMatrix, float4(pos, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
             output.color = color;
             return output;
         })",
@@ -432,7 +440,9 @@ void Renderer::initPlaneLighting()
 
         Output vsMain(float3 pos : POSITION, float3 normal : NORMAL) {
             Output output;
-            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
+            output.svpos = mul(modelMatrix, float4(pos, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
 
             float3 nor = normalize(mul(modelMatrix, float4(normal, 1)).xyz);
             float col = saturate(dot(nor, lightDirection));
@@ -494,7 +504,9 @@ void Renderer::initBox()
 
         Output vsMain(float3 pos : POSITION) {
             Output output;
-            output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
+            output.svpos = mul(modelMatrix, float4(pos, 1));
+            output.svpos = mul(viewMatrix, output.svpos);
+            output.svpos = mul(projectionMatrix, output.svpos);
             output.color = color;
             return output;
         })",
@@ -597,7 +609,6 @@ void Renderer::initBoxLighting()
             output.svpos = mul(modelMatrix, float4(pos, 1));
             output.svpos = mul(viewMatrix, output.svpos);
             output.svpos = mul(projectionMatrix, output.svpos);
-            // output.svpos = mul(mul(mul(projectionMatrix, viewMatrix), modelMatrix), float4(pos, 1));
 
             float3 nor = normalize(mul(modelMatrix, float4(normal, 1)).xyz);
             float col = saturate(dot(nor, float3(0,1,0)));
