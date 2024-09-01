@@ -23,7 +23,7 @@ public:
     void lightDirection(const Math::Vector3& lightDirection);
 
     void drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color);
-    void drawCircle(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color);
+    void drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color);
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
 
     void drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);

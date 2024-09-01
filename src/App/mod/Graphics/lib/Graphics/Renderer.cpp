@@ -84,13 +84,13 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
     renderObject(m_rectObject, constant);
 }
 
-void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
+void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color)
 {
     initCircle();
     auto constant = Constant::rent(Constant::Layout::Color);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
-        Math::Matrix::rotateZ(degree),
+        Math::Matrix(),
         Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
     constant->setViewMatrix(Math::Matrix());
