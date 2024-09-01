@@ -38,13 +38,13 @@ Renderer::Renderer()
 {
 }
 
-void Renderer::position(const Lib::Math::Vector3& position)
+void Renderer::position(const Math::Vector3& position)
 {
     m_position = position;
     m_dirtyViewMatrix = true;
 }
 
-void Renderer::lookAt(const Lib::Math::Vector3& lookAt)
+void Renderer::lookAt(const Math::Vector3& lookAt)
 {
     m_lookAt = lookAt;
     m_dirtyViewMatrix = true;
@@ -67,63 +67,63 @@ void Renderer::lightEnable() { m_lightEnable = true; }
 
 void Renderer::lightDisable() { m_lightEnable = false; }
 
-void Renderer::lightDirection(const Lib::Math::Vector3& lightDirection) { m_lightDirection = lightDirection; }
+void Renderer::lightDirection(const Math::Vector3& lightDirection) { m_lightDirection = lightDirection; }
 
-void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color)
+void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
 {
     initRect();
     auto constant = Constant::rent(Constant::Layout::Color);
-    auto modelMatrix = Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
-        Lib::Math::Matrix::rotateZ(degree),
-        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)));
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(Math::Vector3(position, 0)),
+        Math::Matrix::rotateZ(degree),
+        Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
-    constant->setViewMatrix(Lib::Math::Matrix());
+    constant->setViewMatrix(Math::Matrix());
     constant->setProjectionMatrix(getOrthoMatrix());
     constant->setColor(color);
     renderObject(m_rectObject, constant);
 }
 
-void Renderer::drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color)
+void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
 {
     initCircle();
     auto constant = Constant::rent(Constant::Layout::Color);
-    auto modelMatrix = Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
-        Lib::Math::Matrix::rotateZ(degree),
-        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)));
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(Math::Vector3(position, 0)),
+        Math::Matrix::rotateZ(degree),
+        Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
-    constant->setViewMatrix(Lib::Math::Matrix());
+    constant->setViewMatrix(Math::Matrix());
     constant->setProjectionMatrix(getOrthoMatrix());
     constant->setColor(color);
     renderObject(m_circleObject, constant);
 }
 
-void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color)
+void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color)
 {
     initSprite();
     auto constant = Constant::rent(Constant::Layout::TextureAndColor);
-    auto modelMatrix = Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(Lib::Math::Vector3(position, 0)),
-        Lib::Math::Matrix::rotateZ(degree),
-        Lib::Math::Matrix::scale(Lib::Math::Vector3(size, 1.0f)));
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(Math::Vector3(position, 0)),
+        Math::Matrix::rotateZ(degree),
+        Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
-    constant->setViewMatrix(Lib::Math::Matrix());
+    constant->setViewMatrix(Math::Matrix());
     constant->setProjectionMatrix(getOrthoMatrix());
     constant->setColor(color);
     constant->setTexture(texture);
     renderObject(m_spriteObject, constant);
 }
 
-void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color)
+void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color)
 {
     if (!m_lightEnable) {
         initPlane();
         auto constant = Constant::rent(Constant::Layout::Color);
-        auto modelMatrix = Lib::Math::Matrix::transform(
-            Lib::Math::Matrix::translate(position),
-            Lib::Math::Quaternion::toMatrix(rotation),
-            Lib::Math::Matrix::scale(size));
+        auto modelMatrix = Math::Matrix::transform(
+            Math::Matrix::translate(position),
+            Math::Quaternion::toMatrix(rotation),
+            Math::Matrix::scale(size));
         constant->setModelMatrix(modelMatrix);
         constant->setViewMatrix(getLookAtMatrix());
         constant->setProjectionMatrix(getPerspectiveMatrix());
@@ -132,10 +132,10 @@ void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Ve
     } else {
         initPlaneLighting();
         auto constant = Constant::rent(Constant::Layout::LightColor);
-        auto modelMatrix = Lib::Math::Matrix::transform(
-            Lib::Math::Matrix::translate(position),
-            Lib::Math::Quaternion::toMatrix(rotation),
-            Lib::Math::Matrix::scale(size));
+        auto modelMatrix = Math::Matrix::transform(
+            Math::Matrix::translate(position),
+            Math::Quaternion::toMatrix(rotation),
+            Math::Matrix::scale(size));
         constant->setModelMatrix(modelMatrix);
         constant->setViewMatrix(getLookAtMatrix());
         constant->setProjectionMatrix(getPerspectiveMatrix());
@@ -145,15 +145,15 @@ void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Ve
     }
 }
 
-void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color)
+void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color)
 {
     if (!m_lightEnable) {
         initBox();
         auto constant = Constant::rent(Constant::Layout::Color);
-        auto modelMatrix = Lib::Math::Matrix::transform(
-            Lib::Math::Matrix::translate(position),
-            Lib::Math::Quaternion::toMatrix(rotation),
-            Lib::Math::Matrix::scale(size));
+        auto modelMatrix = Math::Matrix::transform(
+            Math::Matrix::translate(position),
+            Math::Quaternion::toMatrix(rotation),
+            Math::Matrix::scale(size));
         constant->setModelMatrix(modelMatrix);
         constant->setViewMatrix(getLookAtMatrix());
         constant->setProjectionMatrix(getPerspectiveMatrix());
@@ -162,10 +162,10 @@ void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vect
     } else {
         initBoxLighting();
         auto constant = Constant::rent(Constant::Layout::LightColor);
-        auto modelMatrix = Lib::Math::Matrix::transform(
-            Lib::Math::Matrix::translate(position),
-            Lib::Math::Quaternion::toMatrix(rotation),
-            Lib::Math::Matrix::scale(size));
+        auto modelMatrix = Math::Matrix::transform(
+            Math::Matrix::translate(position),
+            Math::Quaternion::toMatrix(rotation),
+            Math::Matrix::scale(size));
         constant->setModelMatrix(modelMatrix);
         constant->setViewMatrix(getLookAtMatrix());
         constant->setProjectionMatrix(getPerspectiveMatrix());
@@ -208,17 +208,17 @@ void Renderer::initRect()
         "psMain");
     m_rectObject.vertexBuffer = Buffer::create();
     m_rectObject.indexBuffer = Buffer::create();
-    std::vector<Lib::Math::Vector2> vertices;
+    std::vector<Math::Vector2> vertices;
     std::vector<uint32_t> indices;
     const float left = -0.5;
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    vertices.push_back(Lib::Math::Vector2({ left, top }));
-    vertices.push_back(Lib::Math::Vector2({ right, top }));
-    vertices.push_back(Lib::Math::Vector2({ right, bottom }));
-    vertices.push_back(Lib::Math::Vector2({ left, bottom }));
-    m_rectObject.vertexBuffer->allocate(sizeof(Lib::Math::Vector2) * vertices.size());
+    vertices.push_back(Math::Vector2({ left, top }));
+    vertices.push_back(Math::Vector2({ right, top }));
+    vertices.push_back(Math::Vector2({ right, bottom }));
+    vertices.push_back(Math::Vector2({ left, bottom }));
+    m_rectObject.vertexBuffer->allocate(sizeof(Math::Vector2) * vertices.size());
     m_rectObject.vertexBuffer->update(vertices.data());
     indices.push_back(1);
     indices.push_back(3);
@@ -265,17 +265,17 @@ void Renderer::initCircle()
         "psMain");
     m_circleObject.vertexBuffer = Buffer::create();
     m_circleObject.indexBuffer = Buffer::create();
-    std::vector<Lib::Math::Vector2> vertices;
+    std::vector<Math::Vector2> vertices;
     std::vector<uint32_t> indices;
     float degree = 0.0f;
-    vertices.emplace_back(Lib::Math::Vector2({ 0.0f, 0.0f }));
+    vertices.emplace_back(Math::Vector2({ 0.0f, 0.0f }));
     while (degree < 360.0f) {
-        float x = Lib::Math::Mathf::cos(Lib::Math::Mathf::Deg2Rad * degree) * 0.5f;
-        float y = Lib::Math::Mathf::sin(Lib::Math::Mathf::Deg2Rad * degree) * 0.5f;
-        vertices.emplace_back(Lib::Math::Vector2({ x, y }));
+        float x = Math::Mathf::cos(Math::Mathf::Deg2Rad * degree) * 0.5f;
+        float y = Math::Mathf::sin(Math::Mathf::Deg2Rad * degree) * 0.5f;
+        vertices.emplace_back(Math::Vector2({ x, y }));
         degree += 5.0f;
     }
-    m_circleObject.vertexBuffer->allocate(sizeof(Lib::Math::Vector2) * vertices.size());
+    m_circleObject.vertexBuffer->allocate(sizeof(Math::Vector2) * vertices.size());
     m_circleObject.vertexBuffer->update(vertices.data());
     uint32_t index = 1;
     while (index < vertices.size()) {
@@ -339,10 +339,10 @@ void Renderer::initSprite()
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ left, top }), Lib::Math::Vector2({ 0.0f, 0.0f })));
-    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ right, top }), Lib::Math::Vector2({ 1.0f, 0.0f })));
-    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ right, bottom }), Lib::Math::Vector2({ 1.0f, 1.0f })));
-    vertices.push_back(VertexTexCoord2D(Lib::Math::Vector2({ left, bottom }), Lib::Math::Vector2({ 0.0f, 1.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, top }), Math::Vector2({ 1.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
+    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
     m_spriteObject.vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
     m_spriteObject.vertexBuffer->update(vertices.data());
     indices.push_back(1);
@@ -390,17 +390,17 @@ void Renderer::initPlane()
         "psMain");
     m_planeObject.vertexBuffer = Buffer::create();
     m_planeObject.indexBuffer = Buffer::create();
-    std::vector<Lib::Math::Vector3> vertices;
+    std::vector<Math::Vector3> vertices;
     std::vector<uint32_t> indices;
     const float left = -0.5;
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    vertices.emplace_back(Lib::Math::Vector3({ left, bottom, 0 }));
-    vertices.emplace_back(Lib::Math::Vector3({ left, top, 0 }));
-    vertices.emplace_back(Lib::Math::Vector3({ right, bottom, 0 }));
-    vertices.emplace_back(Lib::Math::Vector3({ right, top, 0 }));
-    m_planeObject.vertexBuffer->allocate(sizeof(Lib::Math::Vector3) * vertices.size());
+    vertices.emplace_back(Math::Vector3({ left, bottom, 0 }));
+    vertices.emplace_back(Math::Vector3({ left, top, 0 }));
+    vertices.emplace_back(Math::Vector3({ right, bottom, 0 }));
+    vertices.emplace_back(Math::Vector3({ right, top, 0 }));
+    m_planeObject.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
     m_planeObject.vertexBuffer->update(vertices.data());
     indices.emplace_back(0);
     indices.emplace_back(1);
@@ -459,10 +459,10 @@ void Renderer::initPlaneLighting()
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, 0 }), Lib::Math::Vector3({ 0, 0, -1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, 0 }), Lib::Math::Vector3({ 0, 0, -1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, 0 }), Lib::Math::Vector3({ 0, 0, -1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, 0 }), Lib::Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, 0 }), Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, 0 }), Math::Vector3({ 0, 0, -1 })));
     m_planeLightingObject.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
     m_planeLightingObject.vertexBuffer->update(vertices.data());
     indices.emplace_back(0);
@@ -510,7 +510,7 @@ void Renderer::initBox()
         "psMain");
     m_boxObject.vertexBuffer = Buffer::create();
     m_boxObject.indexBuffer = Buffer::create();
-    std::vector<Lib::Math::Vector3> vertices;
+    std::vector<Math::Vector3> vertices;
     std::vector<uint32_t> indices;
     const float left = -0.5;
     const float right = 0.5;
@@ -518,15 +518,15 @@ void Renderer::initBox()
     const float bottom = -0.5;
     const float forward = 0.5f;
     const float backward = -0.5f;
-    vertices.emplace_back(Lib::Math::Vector3({ left, bottom, backward }));
-    vertices.emplace_back(Lib::Math::Vector3({ left, top, backward }));
-    vertices.emplace_back(Lib::Math::Vector3({ right, bottom, backward }));
-    vertices.emplace_back(Lib::Math::Vector3({ right, top, backward }));
-    vertices.emplace_back(Lib::Math::Vector3({ left, bottom, forward }));
-    vertices.emplace_back(Lib::Math::Vector3({ left, top, forward }));
-    vertices.emplace_back(Lib::Math::Vector3({ right, bottom, forward }));
-    vertices.emplace_back(Lib::Math::Vector3({ right, top, forward }));
-    m_boxObject.vertexBuffer->allocate(sizeof(Lib::Math::Vector3) * vertices.size());
+    vertices.emplace_back(Math::Vector3({ left, bottom, backward }));
+    vertices.emplace_back(Math::Vector3({ left, top, backward }));
+    vertices.emplace_back(Math::Vector3({ right, bottom, backward }));
+    vertices.emplace_back(Math::Vector3({ right, top, backward }));
+    vertices.emplace_back(Math::Vector3({ left, bottom, forward }));
+    vertices.emplace_back(Math::Vector3({ left, top, forward }));
+    vertices.emplace_back(Math::Vector3({ right, bottom, forward }));
+    vertices.emplace_back(Math::Vector3({ right, top, forward }));
+    m_boxObject.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
     m_boxObject.vertexBuffer->update(vertices.data());
     indices.emplace_back(0);
     indices.emplace_back(1);
@@ -627,35 +627,35 @@ void Renderer::initBoxLighting()
     const float forward = 0.5f;
     const float backward = -0.5f;
 
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, backward }), Lib::Math::Vector3({ 0, 0, -1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, backward }), Lib::Math::Vector3({ 0, 0, -1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, backward }), Lib::Math::Vector3({ 0, 0, -1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, backward }), Lib::Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, backward }), Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, backward }), Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, backward }), Math::Vector3({ 0, 0, -1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, backward }), Math::Vector3({ 0, 0, -1 })));
 
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, forward }), Lib::Math::Vector3({ 0, 0, 1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, forward }), Lib::Math::Vector3({ 0, 0, 1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, forward }), Lib::Math::Vector3({ 0, 0, 1 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, forward }), Lib::Math::Vector3({ 0, 0, 1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, forward }), Math::Vector3({ 0, 0, 1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, forward }), Math::Vector3({ 0, 0, 1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, forward }), Math::Vector3({ 0, 0, 1 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, forward }), Math::Vector3({ 0, 0, 1 })));
 
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, forward }), Lib::Math::Vector3({ -1, 0, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, backward }), Lib::Math::Vector3({ -1, 0, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, forward }), Lib::Math::Vector3({ -1, 0, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, backward }), Lib::Math::Vector3({ -1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, forward }), Math::Vector3({ -1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, backward }), Math::Vector3({ -1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, forward }), Math::Vector3({ -1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, backward }), Math::Vector3({ -1, 0, 0 })));
 
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, forward }), Lib::Math::Vector3({ 1, 0, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, forward }), Lib::Math::Vector3({ 1, 0, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, backward }), Lib::Math::Vector3({ 1, 0, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, backward }), Lib::Math::Vector3({ 1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, forward }), Math::Vector3({ 1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, forward }), Math::Vector3({ 1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, backward }), Math::Vector3({ 1, 0, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, backward }), Math::Vector3({ 1, 0, 0 })));
 
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, forward }), Lib::Math::Vector3({ 0, 1, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, forward }), Lib::Math::Vector3({ 0, 1, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, top, backward }), Lib::Math::Vector3({ 0, 1, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, top, backward }), Lib::Math::Vector3({ 0, 1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, forward }), Math::Vector3({ 0, 1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, forward }), Math::Vector3({ 0, 1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, top, backward }), Math::Vector3({ 0, 1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, top, backward }), Math::Vector3({ 0, 1, 0 })));
 
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, forward }), Lib::Math::Vector3({ 0, -1, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ left, bottom, backward }), Lib::Math::Vector3({ 0, -1, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, forward }), Lib::Math::Vector3({ 0, -1, 0 })));
-    vertices.emplace_back(VertexNormal3D(Lib::Math::Vector3({ right, bottom, backward }), Lib::Math::Vector3({ 0, -1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, forward }), Math::Vector3({ 0, -1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ left, bottom, backward }), Math::Vector3({ 0, -1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, forward }), Math::Vector3({ 0, -1, 0 })));
+    vertices.emplace_back(VertexNormal3D(Math::Vector3({ right, bottom, backward }), Math::Vector3({ 0, -1, 0 })));
     m_boxLightingObject.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
     m_boxLightingObject.vertexBuffer->update(vertices.data());
     // backward
@@ -716,31 +716,31 @@ void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant
         object.indexLength);
 }
 
-Lib::Math::Matrix Renderer::getOrthoMatrix()
+Math::Matrix Renderer::getOrthoMatrix()
 {
     if (m_dirtyOrthoMatrix) {
         m_dirtyOrthoMatrix = false;
-        m_orthoMatrix = Lib::Math::Matrix::ortho(
+        m_orthoMatrix = Math::Matrix::ortho(
             static_cast<float>(Screen::getWidth()),
             static_cast<float>(Screen::getHeight()));
     }
     return m_orthoMatrix;
 }
 
-Lib::Math::Matrix Renderer::getLookAtMatrix()
+Math::Matrix Renderer::getLookAtMatrix()
 {
     if (m_dirtyViewMatrix) {
         m_dirtyViewMatrix = false;
-        m_viewMatrix = Lib::Math::Matrix::lookAt(m_position, m_lookAt, Lib::Math::Vector3({ 0, 1, 0 }));
+        m_viewMatrix = Math::Matrix::lookAt(m_position, m_lookAt, Math::Vector3({ 0, 1, 0 }));
     }
     return m_viewMatrix;
 }
 
-Lib::Math::Matrix Renderer::getPerspectiveMatrix()
+Math::Matrix Renderer::getPerspectiveMatrix()
 {
     if (m_dirtyProjectionMatrix) {
         m_dirtyProjectionMatrix = false;
-        m_projectionMatrix = Lib::Math::Matrix::perspective(m_fovY,
+        m_projectionMatrix = Math::Matrix::perspective(m_fovY,
             static_cast<float>(Screen::getWidth()) / static_cast<float>(Screen::getHeight()),
             m_zNear,
             m_zFar);
