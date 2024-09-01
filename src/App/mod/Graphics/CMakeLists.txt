@@ -8,6 +8,7 @@ project(
 # Build Options
 #
 find_package(directxtex CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
 add_library(
     Lib-Graphics
     STATIC
@@ -36,6 +37,7 @@ target_include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${MODS}/Math/include"
     "${MODS}/Utils/include"
+    FREETYPE_INCLUDE_DIRS
 )
 target_link_libraries(
     Lib-Graphics
@@ -46,4 +48,5 @@ target_link_libraries(
     Lib-Math
     Lib-Utils
     Microsoft::DirectXTex
+    Freetype::Freetype
 )
