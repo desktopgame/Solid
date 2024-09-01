@@ -30,7 +30,7 @@ Font::Font(void* ft, const std::string& path)
         path.c_str(), 0, &m_impl->face);
 }
 Font::~Font() { FT_Done_Face(m_impl->face); }
-void Font::load(int size, unsigned long charcode)
+void Font::load(int32_t size, unsigned long charcode)
 {
     if (this->m_size != size) {
         this->m_size = size;
@@ -50,9 +50,9 @@ std::shared_ptr<FontInstance> Font::getCurrentInstance()
     FT_Face& face = m_impl->face;
     FT_GlyphSlot& glyph = face->glyph;
 
-    FontMetrics metrics(Math::makeVector2<int>(glyph->bitmap.width, glyph->bitmap.rows),
-        Math::makeVector2<int>(glyph->bitmap_left, glyph->bitmap_top),
-        Math::makeVector2<int>(glyph->advance.x, glyph->advance.y));
+    FontMetrics metrics(Math::makeVector2<int32_t>(glyph->bitmap.width, glyph->bitmap.rows),
+        Math::makeVector2<int32_t>(glyph->bitmap_left, glyph->bitmap_top),
+        Math::makeVector2<int32_t>(glyph->advance.x, glyph->advance.y));
     auto instance = std::make_shared<FontInstance>(glyph->bitmap.buffer, metrics);
     this->m_textureCreated = false;
     return instance;

@@ -17,7 +17,7 @@ class Font {
 public:
     explicit Font(void* ft, const std::string& path);
     ~Font();
-    void load(int size, unsigned long charcode);
+    void load(int32_t size, unsigned long charcode);
     std::shared_ptr<FontInstance> getCurrentInstance();
     bool isOccurredError() const;
 
@@ -26,6 +26,6 @@ private:
     std::unique_ptr<Impl> m_impl;
     bool m_occurredError;
     bool m_textureCreated;
-    int m_size;
+    int32_t m_size;
 };
 }
