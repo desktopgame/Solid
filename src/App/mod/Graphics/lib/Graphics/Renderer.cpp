@@ -172,7 +172,20 @@ void Renderer::drawText(const Math::Vector2& position, float degree, const std::
 
 Math::Vector2 Renderer::measureText(const std::u16string& label)
 {
-    return Math::Vector2({ 0, 0 });
+    auto fontSprites = m_fontMap->load(this->m_fontSize, label);
+    Math::Vector2 offset({ 0, 0 });
+    float maxY = -1;
+    for (auto fontSprite : fontSprites) {
+        auto size = fontSprite->metrics.size.y();
+        if (maxY < size) {
+            maxY = size;
+        }
+    }
+    offset.y() = maxY;
+    for (auto fontSprite : fontSprites) {
+        offset.x() += fontSprite->metrics.advance.x() >> 6;
+    }
+    return offset;
 }
 
 void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color)
