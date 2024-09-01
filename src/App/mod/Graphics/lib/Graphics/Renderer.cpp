@@ -69,6 +69,17 @@ void Renderer::lightDisable() { m_lightEnable = false; }
 
 void Renderer::lightDirection(const Math::Vector3& lightDirection) { m_lightDirection = lightDirection; }
 
+void Renderer::begin()
+{
+    Engine::getInstance()->getDevice()->getSurface()->begin();
+}
+
+void Renderer::end()
+{
+    Engine::getInstance()->getDevice()->getSurface()->end();
+    Constant::release();
+}
+
 void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
 {
     initRect();

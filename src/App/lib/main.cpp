@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
         Quaternion rotation = Quaternion::angleAxis(degree, Vector3({ 1, 0, 0 }));
 
-        surface->begin();
+        renderer.begin();
         renderer.lightEnable();
         renderer.drawBox(Vector3({ 2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.lightDisable();
@@ -37,9 +37,7 @@ int main(int argc, char* argv[])
         renderer.drawCircle(Vector2({ 200, 200 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawSprite(Vector2({ -300, 200 }), Vector2({ 100, 100 }), degree, texture, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
         degree += 1.0f;
-        surface->end();
-
-        Constant::release();
+        renderer.end();
 
         // Show messages
         device->flushLogEntries();
