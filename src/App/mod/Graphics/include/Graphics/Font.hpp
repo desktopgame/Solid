@@ -15,8 +15,6 @@ private:
 };
 class Font {
 public:
-    using Reference = std::weak_ptr<Font>;
-    using Instance = std::shared_ptr<Font>;
     explicit Font(void* ft, const std::string& path);
     ~Font();
     void load(int size, unsigned long charcode);

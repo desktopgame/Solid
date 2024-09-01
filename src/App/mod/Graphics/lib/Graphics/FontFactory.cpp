@@ -16,16 +16,16 @@ public:
     FT_Library ft;
 };
 // FontFactory
-FontFactory::Instance FontFactory::m_instance = nullptr;
+std::shared_ptr<FontFactory> FontFactory::m_instance = nullptr;
 FontFactory::~FontFactory()
 {
     m_fontRegistry.clear();
     FT_Done_FreeType(m_impl->ft);
 }
-FontFactory::Instance FontFactory::getInstance()
+std::shared_ptr<FontFactory> FontFactory::getInstance()
 {
     if (!FontFactory::m_instance) {
-        FontFactory::m_instance = Instance(new FontFactory());
+        FontFactory::m_instance = std::shared_ptr<FontFactory>(new FontFactory());
     }
     return FontFactory::m_instance;
 }
