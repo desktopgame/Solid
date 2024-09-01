@@ -276,7 +276,7 @@ void Constant::defineTextureView(const std::shared_ptr<Texture>& texture, int32_
     heapHandle.ptr += unitSize * slotIndex;
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    srvDesc.Format = Texture::toPrivateFormat(texture->getFormat());
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;

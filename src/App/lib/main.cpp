@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     auto device = engine->getDevice();
     auto window = engine->getWindow();
     auto surface = device->getSurface();
-    auto texture = Lib::Graphics::Texture::create(L"assets/Sprite.png");
+    auto texture = Lib::Graphics::Texture::create("assets/Sprite.png");
 
     auto font = FontFactory::getInstance()->load("assets/NotoSansJP-Regular.ttf");
     font->load(16, u"こんにちわ");

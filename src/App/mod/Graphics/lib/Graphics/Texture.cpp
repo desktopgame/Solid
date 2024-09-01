@@ -2,17 +2,18 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Texture.hpp>
+#include <Utils/String.hpp>
 #include <cassert>
 #include <stdexcept>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<Texture> Texture::create(const std::wstring& path)
+std::shared_ptr<Texture> Texture::create(const std::string& path)
 {
     DirectX::TexMetadata md;
     DirectX::ScratchImage image;
-    if (FAILED(DirectX::LoadFromWICFile(path.c_str(), DirectX::WIC_FLAGS_NONE, &md, image))) {
+    if (FAILED(DirectX::LoadFromWICFile(Utils::String::toWideString(path).c_str(), DirectX::WIC_FLAGS_NONE, &md, image))) {
         return nullptr;
     }
     int32_t width = static_cast<int32_t>(md.width);
@@ -26,6 +27,7 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, Format f
     auto texture = std::shared_ptr<Texture>(new Texture());
     texture->m_width = width;
     texture->m_height = height;
+    texture->m_format = format;
 
     D3D12_HEAP_PROPERTIES texHeapProps = {};
     texHeapProps.Type = D3D12_HEAP_TYPE_CUSTOM;
@@ -56,6 +58,7 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, Format f
         totalSize = sizeof(uint8_t) * (width * height);
         break;
     case Format::RGBA:
+    case Format::BGRA:
         rowSize = sizeof(uint8_t) * 4 * width;
         totalSize = sizeof(uint8_t) * 4 * (width * height);
         break;
@@ -69,17 +72,12 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, Format f
 Texture::~Texture()
 {
 }
+
+Texture::Format Texture::getFormat() const { return m_format; }
 // internal
 Microsoft::WRL::ComPtr<ID3D12Resource> Texture::getID3D12Resource() const
 {
     return m_resource;
-}
-// private
-Texture::Texture()
-    : m_width(0)
-    , m_height(0)
-    , m_resource()
-{
 }
 
 DXGI_FORMAT Texture::toPrivateFormat(Format format)
@@ -89,8 +87,11 @@ DXGI_FORMAT Texture::toPrivateFormat(Format format)
         return DXGI_FORMAT_R8_UNORM;
     case Format::RGBA:
         return DXGI_FORMAT_R8G8B8A8_UNORM;
+    case Format::BGRA:
+        return DXGI_FORMAT_B8G8R8A8_UNORM;
     }
 }
+
 Texture::Format Texture::toPublicFormat(DXGI_FORMAT format)
 {
     switch (format) {
@@ -98,8 +99,18 @@ Texture::Format Texture::toPublicFormat(DXGI_FORMAT format)
         return Format::Red;
     case DXGI_FORMAT_R8G8B8A8_UNORM:
         return Format::RGBA;
+    case DXGI_FORMAT_B8G8R8A8_UNORM:
+        return Format::BGRA;
     default:
         throw std::logic_error("unsupported format.");
     }
+}
+// private
+Texture::Texture()
+    : m_width(0)
+    , m_height(0)
+    , m_format(Format::RGBA)
+    , m_resource()
+{
 }
 }
