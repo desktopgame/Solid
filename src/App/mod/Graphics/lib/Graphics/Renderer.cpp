@@ -20,6 +20,8 @@ Renderer::Renderer()
     , m_zNear(0.1f)
     , m_zFar(100.0f)
     , m_fovY(90.0f)
+    , m_lightEnable(false)
+    , m_lightDirection({ 0, 1, 0 })
     , m_dirtyOrthoMatrix(true)
     , m_dirtyViewMatrix(true)
     , m_dirtyProjectionMatrix(true)
@@ -60,6 +62,12 @@ void Renderer::fovY(float fovY)
     m_fovY = fovY;
     m_dirtyProjectionMatrix = true;
 }
+
+void Renderer::lightEnable() { m_lightEnable = true; }
+
+void Renderer::lightDisable() { m_lightEnable = false; }
+
+void Renderer::lightDirection(const Lib::Math::Vector3& lightDirection) { m_lightDirection = lightDirection; }
 
 void Renderer::drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color)
 {
@@ -109,54 +117,62 @@ void Renderer::drawSprite(const Lib::Math::Vector2& position, const Lib::Math::V
 
 void Renderer::drawPlane(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color)
 {
-    /*
-    initPlane();
-    auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(transform3D(Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(position),
-        Lib::Math::Quaternion::toMatrix(rotation),
-        Lib::Math::Matrix::scale(size))));
-    constant->setColor(color);
-    renderObject(m_planeObject, constant);
-    */
-    initPlaneLighting();
-    auto constant = Constant::rent(Constant::Layout::LightColor);
-    auto modelMatrix = Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(position),
-        Lib::Math::Quaternion::toMatrix(rotation),
-        Lib::Math::Matrix::scale(size));
-    constant->setModelMatrix(modelMatrix);
-    constant->setViewMatrix(getLookAtMatrix());
-    constant->setProjectionMatrix(getPerspectiveMatrix());
-    constant->setColor(color);
-    constant->setLightDirection(Lib::Math::Vector3({ 0, 1, 0 }));
-    renderObject(m_planeLightingObject, constant);
+    if (!m_lightEnable) {
+        initPlane();
+        auto constant = Constant::rent(Constant::Layout::Color);
+        auto modelMatrix = Lib::Math::Matrix::transform(
+            Lib::Math::Matrix::translate(position),
+            Lib::Math::Quaternion::toMatrix(rotation),
+            Lib::Math::Matrix::scale(size));
+        constant->setModelMatrix(modelMatrix);
+        constant->setViewMatrix(getLookAtMatrix());
+        constant->setProjectionMatrix(getPerspectiveMatrix());
+        constant->setColor(color);
+        renderObject(m_planeObject, constant);
+    } else {
+        initPlaneLighting();
+        auto constant = Constant::rent(Constant::Layout::LightColor);
+        auto modelMatrix = Lib::Math::Matrix::transform(
+            Lib::Math::Matrix::translate(position),
+            Lib::Math::Quaternion::toMatrix(rotation),
+            Lib::Math::Matrix::scale(size));
+        constant->setModelMatrix(modelMatrix);
+        constant->setViewMatrix(getLookAtMatrix());
+        constant->setProjectionMatrix(getPerspectiveMatrix());
+        constant->setColor(color);
+        constant->setLightDirection(m_lightDirection);
+        renderObject(m_planeLightingObject, constant);
+    }
 }
 
 void Renderer::drawBox(const Lib::Math::Vector3& position, const Lib::Math::Vector3& size, const Lib::Math::Quaternion& rotation, const Color& color)
 {
-    /*
-    initBox();
-    auto constant = Constant::rent(Constant::Layout::Color);
-    constant->setTransform(transform3D(Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(position),
-        Lib::Math::Quaternion::toMatrix(rotation),
-        Lib::Math::Matrix::scale(size))));
-    constant->setColor(color);
-    renderObject(m_boxObject, constant);
-    */
-    initBoxLighting();
-    auto constant = Constant::rent(Constant::Layout::LightColor);
-    auto modelMatrix = Lib::Math::Matrix::transform(
-        Lib::Math::Matrix::translate(position),
-        Lib::Math::Quaternion::toMatrix(rotation),
-        Lib::Math::Matrix::scale(size));
-    constant->setModelMatrix(modelMatrix);
-    constant->setViewMatrix(getLookAtMatrix());
-    constant->setProjectionMatrix(getPerspectiveMatrix());
-    constant->setColor(color);
-    constant->setLightDirection(Lib::Math::Vector3::normalized(Lib::Math::Vector3({ 0, 0.5f, -1.0f })));
-    renderObject(m_boxLightingObject, constant);
+    if (!m_lightEnable) {
+        initBox();
+        auto constant = Constant::rent(Constant::Layout::Color);
+        auto modelMatrix = Lib::Math::Matrix::transform(
+            Lib::Math::Matrix::translate(position),
+            Lib::Math::Quaternion::toMatrix(rotation),
+            Lib::Math::Matrix::scale(size));
+        constant->setModelMatrix(modelMatrix);
+        constant->setViewMatrix(getLookAtMatrix());
+        constant->setProjectionMatrix(getPerspectiveMatrix());
+        constant->setColor(color);
+        renderObject(m_boxObject, constant);
+    } else {
+        initBoxLighting();
+        auto constant = Constant::rent(Constant::Layout::LightColor);
+        auto modelMatrix = Lib::Math::Matrix::transform(
+            Lib::Math::Matrix::translate(position),
+            Lib::Math::Quaternion::toMatrix(rotation),
+            Lib::Math::Matrix::scale(size));
+        constant->setModelMatrix(modelMatrix);
+        constant->setViewMatrix(getLookAtMatrix());
+        constant->setProjectionMatrix(getPerspectiveMatrix());
+        constant->setColor(color);
+        constant->setLightDirection(m_lightDirection);
+        renderObject(m_boxLightingObject, constant);
+    }
 }
 // private
 void Renderer::initRect()

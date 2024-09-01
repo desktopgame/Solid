@@ -18,6 +18,10 @@ public:
     void depthRange(float zNear, float zFar);
     void fovY(float fovY);
 
+    void lightEnable();
+    void lightDisable();
+    void lightDirection(const Lib::Math::Vector3& lightDirection);
+
     void drawRect(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color);
     void drawCircle(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const Color& color);
     void drawSprite(const Lib::Math::Vector2& position, const Lib::Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
@@ -54,6 +58,8 @@ private:
     float m_zNear;
     float m_zFar;
     float m_fovY;
+    bool m_lightEnable;
+    Lib::Math::Vector3 m_lightDirection;
     bool m_dirtyOrthoMatrix;
     bool m_dirtyViewMatrix;
     bool m_dirtyProjectionMatrix;

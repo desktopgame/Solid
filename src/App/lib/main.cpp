@@ -27,8 +27,10 @@ int main(int argc, char* argv[])
         Quaternion rotation = Quaternion::angleAxis(degree, Lib::Math::Vector3({ 1, 0, 0 }));
 
         surface->begin();
-        renderer.drawPlane(Vector3({ 0, 0, 5 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-        renderer.drawBox(Vector3({ -3, 0, 10 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.lightEnable();
+        renderer.drawBox(Vector3({ 2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.lightDisable();
+        renderer.drawBox(Vector3({ -2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
 
         renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
