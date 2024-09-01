@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
 
-        Quaternion rotation = Quaternion::angleAxis(degree, Lib::Math::Vector3({ 1, 0, 0 }));
+        Quaternion rotation = Quaternion::angleAxis(degree, Vector3({ 1, 0, 0 }));
 
         surface->begin();
         renderer.lightEnable();
