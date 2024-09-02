@@ -22,7 +22,7 @@ FontMap::FontMap(const std::shared_ptr<Font>& font)
     , m_containerVec()
 {
 }
-std::shared_ptr<FontSprite> FontMap::load(int32_t size, char16_t charcode)
+std::shared_ptr<FontSprite> FontMap::load(int32_t size, unsigned long charcode)
 {
     auto iter = std::find_if(m_containerVec.begin(), m_containerVec.end(),
         [size](std::shared_ptr<Container> c) -> bool {
