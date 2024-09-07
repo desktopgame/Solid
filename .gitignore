@@ -79,3 +79,6 @@ build.ninja
 cmake-build-debug
 cmake-build-release
 .idea
+
+# ImGui
+imgui.ini
