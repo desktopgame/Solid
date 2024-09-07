@@ -75,7 +75,7 @@ void Renderer::lightDirection(const Math::Vector3& lightDirection) { m_lightDire
 
 void Renderer::textFont(const std::shared_ptr<FontMap>& fontMap) { m_fontMap = fontMap; }
 
-void Renderer::textSize(int32_t size) { m_fontSize = size; }
+void Renderer::textFontSize(int32_t fontSize) { m_fontSize = fontSize; }
 
 void Renderer::begin()
 {

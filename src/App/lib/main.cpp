@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
         renderer.drawSprite(Vector2({ 0, 200 }), Vector2({ 100, 100 }), degree, texture2, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
 
         renderer.textFont(fontMap);
-        renderer.textSize(40);
+        renderer.textFontSize(40);
         renderer.drawText(Vector2({ 0, 0 }), 0.0f, u"こんにちわ世界", Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
         degree += 1.0f;
         renderer.end();

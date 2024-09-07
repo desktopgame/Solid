@@ -24,7 +24,7 @@ public:
     void lightDirection(const Math::Vector3& lightDirection);
 
     void textFont(const std::shared_ptr<FontMap>& fontMap);
-    void textSize(int32_t size);
+    void textFontSize(int32_t fontSize);
 
     void begin();
     void end();
