@@ -1,6 +1,7 @@
 #include <Graphics/Font.hpp>
 #include <cstdlib>
-#include <freetype/freetype.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 namespace Lib::Graphics {
 // FontInstance
