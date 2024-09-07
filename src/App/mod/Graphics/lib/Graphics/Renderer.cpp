@@ -151,9 +151,8 @@ void Renderer::drawText(const Math::Vector2& position, float degree, const std::
     Math::Vector2 offset(position);
     for (char16_t c : label) {
         auto fontSprite = m_fontMap->load(m_fontSize, c);
-        float xpos = offset.x() + fontSprite->metrics.bearing.x();
-        float ypos = offset.y() - (fontSprite->metrics.bearing.y());
-        ypos += maxY;
+        float xpos = offset.x() + fontSprite->metrics.bearing.x() + (fontSprite->metrics.size.x() / 2);
+        float ypos = offset.y() - (fontSprite->metrics.size.y() - fontSprite->metrics.bearing.y()) + (fontSprite->metrics.size.y() / 2);
 
         auto constant = Constant::rent(Constant::Layout::TextureAndColor);
         auto modelMatrix = Math::Matrix::transform(
