@@ -3,6 +3,7 @@
 #include <Math.hpp>
 #include <cassert>
 #include <fstream>
+#include <imgui.h>
 #include <picojson/picojson.h>
 
 using namespace Lib::Graphics;
@@ -32,7 +33,9 @@ int main(int argc, char* argv[])
         Quaternion rotation = Quaternion::angleAxis(degree, Vector3({ 1, 0, 0 }));
 
         renderer.guiBegin();
-        Gui::showDemoWindow(isGuiOpen);
+        ImGui::Begin("Test", &isGuiOpen);
+        ImGui::DragFloat("Degree", &degree, 1.0f, 0.0f, 360.0f);
+        ImGui::End();
         renderer.guiEnd();
 
         renderer.begin();
@@ -91,7 +94,6 @@ int main(int argc, char* argv[])
             Renderer::TextAlignY::Center,
             u"AAAA",
             Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
-        degree += 1.0f;
         renderer.end();
 
         // Show messages
