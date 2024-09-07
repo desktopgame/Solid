@@ -44,7 +44,48 @@ int main(int argc, char* argv[])
 
         renderer.textFont(fontMap);
         renderer.textFontSize(40);
-        renderer.drawText(Vector2({ 0, 0 }), 0.0f, u"こんにちわ世界", Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ -(static_cast<float>(Screen::getWidth()) / 2.0f), (static_cast<float>(Screen::getHeight() / 2.0f)) }),
+            Renderer::TextAlignX::Left,
+            Renderer::TextAlignY::Top,
+            u"Hello",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ (static_cast<float>(Screen::getWidth()) / 2.0f), (static_cast<float>(Screen::getHeight() / 2.0f)) }),
+            Renderer::TextAlignX::Right,
+            Renderer::TextAlignY::Top,
+            u"こんにちわ",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ -(static_cast<float>(Screen::getWidth()) / 2.0f), (-static_cast<float>(Screen::getHeight() / 2.0f)) }),
+            Renderer::TextAlignX::Left,
+            Renderer::TextAlignY::Bottom,
+            u"おはよう",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ (static_cast<float>(Screen::getWidth()) / 2.0f), (-static_cast<float>(Screen::getHeight() / 2.0f)) }),
+            Renderer::TextAlignX::Right,
+            Renderer::TextAlignY::Bottom,
+            u"さようなら",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ 0, 0 }),
+            Renderer::TextAlignX::Center,
+            Renderer::TextAlignY::Center,
+            u"Sample_Text",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ -(static_cast<float>(Screen::getWidth()) / 2.0f), 0 }),
+            Renderer::TextAlignX::Center,
+            Renderer::TextAlignY::Center,
+            u"AAAA",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        renderer.drawText(
+            Vector2({ (static_cast<float>(Screen::getWidth()) / 2.0f), 0 }),
+            Renderer::TextAlignX::Center,
+            Renderer::TextAlignY::Center,
+            u"AAAA",
+            Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
         degree += 1.0f;
         renderer.end();
 

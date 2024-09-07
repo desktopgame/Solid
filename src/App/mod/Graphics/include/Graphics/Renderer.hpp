@@ -12,6 +12,17 @@ class Constant;
 class Texture;
 class Renderer {
 public:
+    enum class TextAlignX {
+        Center = 0,
+        Left,
+        Right
+    };
+    enum class TextAlignY {
+        Center = 0,
+        Top,
+        Bottom
+    };
+
     explicit Renderer();
 
     void position(const Math::Vector3& position);
@@ -32,8 +43,8 @@ public:
     void drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color);
     void drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color);
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
-    void drawText(const Math::Vector2& position, float degree, const std::u16string& label, const Color& color);
-    Math::Vector2 measureText(const std::u16string& label);
+    void drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color);
+    Math::Vector2 measureText(const std::u16string& label, TextAlignY alignY);
 
     void drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
     void drawBox(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);

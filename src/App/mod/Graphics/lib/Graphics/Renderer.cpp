@@ -134,21 +134,35 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
     renderObject(m_spriteObject, constant);
 }
 
-void Renderer::drawText(const Math::Vector2& position, float degree, const std::u16string& label, const Color& color)
+void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color)
 {
     if (!m_fontMap) {
         return;
     }
     initText();
-    auto fontSprites = m_fontMap->load(m_fontSize, label);
-    float maxY = -1;
-    for (auto fontSprite : fontSprites) {
-        auto size = fontSprite->metrics.size.y();
-        if (maxY < size) {
-            maxY = size;
-        }
-    }
     Math::Vector2 offset(position);
+    Math::Vector2 size = measureText(label, alignY);
+    switch (alignX) {
+    case TextAlignX::Center:
+        offset.x() -= size.x() / 2.0f;
+        break;
+    case TextAlignX::Left:
+        break;
+    case TextAlignX::Right:
+        offset.x() -= size.x();
+        break;
+    }
+    switch (alignY) {
+    case TextAlignY::Center:
+        offset.y() -= size.y() / 2.0f;
+        break;
+    case TextAlignY::Top:
+        offset.y() -= size.y();
+        break;
+    case TextAlignY::Bottom:
+        offset.y() += size.y() / 2.0f;
+        break;
+    }
     for (char16_t c : label) {
         auto fontSprite = m_fontMap->load(m_fontSize, c);
         float xpos = offset.x() + fontSprite->metrics.bearing.x() + (fontSprite->metrics.size.x() / 2);
@@ -157,7 +171,7 @@ void Renderer::drawText(const Math::Vector2& position, float degree, const std::
         auto constant = Constant::rent(Constant::Layout::TextureAndColor);
         auto modelMatrix = Math::Matrix::transform(
             Math::Matrix::translate(Math::Vector3(Math::Vector2({ xpos, ypos }), 0)),
-            Math::Matrix::rotateZ(degree),
+            Math::Matrix(),
             Math::Matrix::scale(Math::Vector3({ static_cast<float>(fontSprite->metrics.size.x()), static_cast<float>(fontSprite->metrics.size.y()), 1.0f })));
         constant->setModelMatrix(modelMatrix);
         constant->setViewMatrix(Math::Matrix());
@@ -169,13 +183,16 @@ void Renderer::drawText(const Math::Vector2& position, float degree, const std::
     }
 }
 
-Math::Vector2 Renderer::measureText(const std::u16string& label)
+Math::Vector2 Renderer::measureText(const std::u16string& label, TextAlignY alignY)
 {
     auto fontSprites = m_fontMap->load(this->m_fontSize, label);
     Math::Vector2 offset({ 0, 0 });
     float maxY = -1;
     for (auto fontSprite : fontSprites) {
         auto size = fontSprite->metrics.size.y();
+        if (alignY == TextAlignY::Bottom) {
+            size = (fontSprite->metrics.size.y() - fontSprite->metrics.bearing.y());
+        }
         if (maxY < size) {
             maxY = size;
         }
