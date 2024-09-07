@@ -11,6 +11,7 @@ bootstrap-vcpkg.bat
 vcpkg install directxtex
 vcpkg install picojson
 vcpkg install freetype
+vcpkg install imgui[core,dx12-binding,win32-binding]:x64-windows
 ````
 
 ここから先のセットアップ手順は開発環境により異なります。

@@ -8,6 +8,7 @@
 #include <Graphics/FontFactory.hpp>
 #include <Graphics/FontMap.hpp>
 #include <Graphics/FontMetrics.hpp>
+#include <Graphics/Gui.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/Renderer.hpp>

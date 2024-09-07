@@ -37,6 +37,9 @@ public:
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
 
+    void guiBegin();
+    void guiEnd();
+
     void begin();
     void end();
 

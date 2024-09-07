@@ -9,6 +9,7 @@ project(
 #
 find_package(directxtex CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 add_library(
     Lib-Graphics
     STATIC
@@ -33,6 +34,7 @@ add_library(
     ./lib/Graphics/FontMap.cpp
     ./lib/Graphics/FontSprite.cpp
     ./lib/Graphics/FontMetrics.cpp
+    ./lib/Graphics/Gui.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)
@@ -43,6 +45,7 @@ target_include_directories(
     "${MODS}/Math/include"
     "${MODS}/Utils/include"
     FREETYPE_INCLUDE_DIRS
+    imgui::imgui
 )
 target_link_libraries(
     Lib-Graphics
@@ -54,4 +57,5 @@ target_link_libraries(
     Lib-Utils
     Microsoft::DirectXTex
     Freetype::Freetype
+    imgui::imgui
 )

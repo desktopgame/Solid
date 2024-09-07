@@ -108,6 +108,8 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
 
 void Device::destroy()
 {
+    m_surface->destroy();
+    m_surface = nullptr;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Device> Device::getID3D12Device() const

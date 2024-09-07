@@ -22,17 +22,23 @@ public:
         const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
         const Microsoft::WRL::ComPtr<ID3D12Device>& device);
 
+    void guiClear();
+    void guiRender();
+
     void clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void waitSync();
+
+    void destroy();
 #endif
 
 private:
     Swapchain();
 
     uint64_t m_fenceVal;
+    bool m_renderGui;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
@@ -42,6 +48,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_imguiDescriptorHeap;
 #endif
 };
 }

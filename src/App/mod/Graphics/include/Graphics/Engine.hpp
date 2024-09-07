@@ -53,6 +53,7 @@ private:
     Engine();
 
     bool m_started;
+    bool m_shutdowned;
     std::shared_ptr<Window> m_window;
     std::shared_ptr<Device> m_device;
 };

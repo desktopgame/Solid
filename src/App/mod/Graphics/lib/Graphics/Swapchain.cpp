@@ -5,6 +5,9 @@
 #include <Graphics/Window.hpp>
 #include <Windows.h>
 #include <any>
+#include <imgui.h>
+#include <imgui_impl_dx12.h>
+#include <imgui_impl_win32.h>
 #include <stdexcept>
 #include <vector>
 
@@ -118,7 +121,35 @@ std::shared_ptr<Swapchain> Swapchain::create(
         throw std::runtime_error("failed CreateFence()");
     }
     swapchain->m_fence = fence;
+    // ImGui
+    ComPtr<ID3D12DescriptorHeap> imguiDescriptorHeap;
+    D3D12_DESCRIPTOR_HEAP_DESC imguiDescriptorHeapDesc = {};
+    imguiDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    imguiDescriptorHeapDesc.NumDescriptors = 1;
+    imguiDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    if (FAILED(nativeDevice->CreateDescriptorHeap(&imguiDescriptorHeapDesc, IID_PPV_ARGS(&imguiDescriptorHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    swapchain->m_imguiDescriptorHeap = imguiDescriptorHeap;
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX12_Init(nativeDevice.Get(), 3,
+        DXGI_FORMAT_R8G8B8A8_UNORM, imguiDescriptorHeap.Get(),
+        imguiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+        imguiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
     return swapchain;
+}
+
+void Swapchain::guiClear()
+{
+    ImGui_ImplDX12_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+}
+
+void Swapchain::guiRender()
+{
+    m_renderGui = true;
+    ImGui::Render();
 }
 
 void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
@@ -170,6 +201,10 @@ void Swapchain::execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 
 void Swapchain::swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
+    if (m_renderGui) {
+        commandList->SetDescriptorHeaps(1, m_imguiDescriptorHeap.GetAddressOf());
+        ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
+    }
 
     uint32_t backBufferIndex = m_swapchain->GetCurrentBackBufferIndex();
     // Barrier
@@ -199,9 +234,16 @@ void Swapchain::waitSync()
         CloseHandle(evt);
     }
 }
+
+void Swapchain::destroy()
+{
+    ImGui_ImplDX12_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+}
 // private
 Swapchain::Swapchain()
     : m_fenceVal(0)
+    , m_renderGui()
     , m_commandQueue()
     , m_swapchain()
     , m_rtvHeaps()
@@ -209,6 +251,7 @@ Swapchain::Swapchain()
     , m_fence()
     , m_depthBuffer()
     , m_depthStencilViewHeap()
+    , m_imguiDescriptorHeap()
 {
 }
 }

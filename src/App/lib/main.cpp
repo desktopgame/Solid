@@ -23,12 +23,17 @@ int main(int argc, char* argv[])
     fontMap->load(16, u"こんにちわ");
 
     float degree = 0.0f;
+    bool isGuiOpen = true;
     Lib::Graphics::Renderer renderer;
     window->show();
     while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
 
         Quaternion rotation = Quaternion::angleAxis(degree, Vector3({ 1, 0, 0 }));
+
+        renderer.guiBegin();
+        Gui::showDemoWindow(isGuiOpen);
+        renderer.guiEnd();
 
         renderer.begin();
         renderer.lightEnable();

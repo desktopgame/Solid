@@ -18,6 +18,16 @@ Surface::~Surface()
 {
 }
 
+void Surface::guiBegin()
+{
+    m_swapchain->guiClear();
+}
+
+void Surface::guiEnd()
+{
+    m_swapchain->guiRender();
+}
+
 void Surface::begin()
 {
     m_swapchain->clear(m_commandList);
@@ -71,6 +81,8 @@ std::shared_ptr<Surface> Surface::create(
 
 void Surface::destroy()
 {
+    m_swapchain->destroy();
+    m_swapchain = nullptr;
 }
 // private
 Surface::Surface()

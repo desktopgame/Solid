@@ -21,6 +21,10 @@ class PipelineStateObject;
 class Surface {
 public:
     ~Surface();
+
+    void guiBegin();
+    void guiEnd();
+
     void begin();
     void end();
 
