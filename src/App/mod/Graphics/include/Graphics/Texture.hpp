@@ -26,8 +26,8 @@ public:
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12Resource> getID3D12Resource() const;
 
-    static DXGI_FORMAT toPrivateFormat(Format format);
-    static Format toPublicFormat(DXGI_FORMAT format);
+    static DXGI_FORMAT encodeFormat(Format format);
+    static Format decodeFormat(DXGI_FORMAT format);
 #endif
 
 private:

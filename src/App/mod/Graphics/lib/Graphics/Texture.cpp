@@ -18,7 +18,7 @@ std::shared_ptr<Texture> Texture::create(const std::string& path)
     }
     int32_t width = static_cast<int32_t>(md.width);
     int32_t height = static_cast<int32_t>(md.height);
-    return create(width, height, toPublicFormat(md.format), image.GetPixels());
+    return create(width, height, decodeFormat(md.format), image.GetPixels());
 }
 
 std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, Format format, const uint8_t* data)
@@ -36,7 +36,7 @@ std::shared_ptr<Texture> Texture::create(int32_t width, int32_t height, Format f
     texHeapProps.CreationNodeMask = 0;
     texHeapProps.VisibleNodeMask = 0;
     D3D12_RESOURCE_DESC texResDesc = {};
-    texResDesc.Format = toPrivateFormat(format);
+    texResDesc.Format = encodeFormat(format);
     texResDesc.Width = width;
     texResDesc.Height = height;
     texResDesc.DepthOrArraySize = 1;
@@ -80,7 +80,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Texture::getID3D12Resource() const
     return m_resource;
 }
 
-DXGI_FORMAT Texture::toPrivateFormat(Format format)
+DXGI_FORMAT Texture::encodeFormat(Format format)
 {
     switch (format) {
     case Format::Red:
@@ -92,7 +92,7 @@ DXGI_FORMAT Texture::toPrivateFormat(Format format)
     }
 }
 
-Texture::Format Texture::toPublicFormat(DXGI_FORMAT format)
+Texture::Format Texture::decodeFormat(DXGI_FORMAT format)
 {
     switch (format) {
     case DXGI_FORMAT_R8_UNORM:
