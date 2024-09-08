@@ -4,6 +4,13 @@
 #include <cmath>
 #include <limits>
 
+// clangでは特殊化された関数にstaticをつけてはいけないが、VC++ではつけなければいけない
+#ifdef __clang__
+#define INLINE_SPEC_STATIC
+#else
+#define INLINE_SPEC_STATIC static
+#endif
+
 namespace Lib::Math {
 
 class Mathf {
@@ -90,7 +97,7 @@ public:
     }
 
     template <>
-    bool static equals<float>(float a, float b)
+    INLINE_SPEC_STATIC bool equals<float>(float a, float b)
     {
         float diff = std::abs(a - b);
         return diff <= std::numeric_limits<float>::epsilon();
@@ -101,3 +108,5 @@ private:
     ~Mathf() = delete;
 };
 }
+
+#undef INLINE_SPEC_STATIC
