@@ -20,8 +20,6 @@ public:
 std::shared_ptr<FontFactory> FontFactory::m_instance = nullptr;
 FontFactory::~FontFactory()
 {
-    m_fontRegistry.clear();
-    FT_Done_FreeType(m_impl->ft);
 }
 std::shared_ptr<FontFactory> FontFactory::getInstance()
 {
@@ -41,6 +39,11 @@ std::shared_ptr<FontMap> FontFactory::load(const std::string& path)
     return fontMap;
 }
 bool FontFactory::isOccurredError() const { return m_occurredError; }
+// internal
+void FontFactory::destroy()
+{
+    m_instance = nullptr;
+}
 // private
 FontFactory::FontFactory()
     : m_impl(std::unique_ptr<FontFactory::Impl>(new FontFactory::Impl()))

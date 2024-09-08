@@ -14,6 +14,10 @@ public:
     bool isOccurredError() const;
     static std::shared_ptr<FontFactory> getInstance();
 
+#if SOLID_ENABLE_INTERNAL
+    static void destroy();
+#endif
+
 private:
     explicit FontFactory();
     static std::shared_ptr<FontFactory> m_instance;

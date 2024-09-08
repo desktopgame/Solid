@@ -1,5 +1,7 @@
+#include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/FontFactory.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Window.hpp>
 #include <Windows.h>
@@ -61,6 +63,9 @@ void Engine::shutdown()
         return;
     }
     m_shutdowned = true;
+
+    Constant::destroy();
+    FontFactory::destroy();
 
     m_window->destroy();
     m_window = nullptr;
