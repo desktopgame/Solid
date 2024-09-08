@@ -89,10 +89,7 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
-    psoDesc.VS.pShaderBytecode = pso->m_shader->getVertexShaderBlob()->GetBufferPointer();
-    psoDesc.VS.BytecodeLength = pso->m_shader->getVertexShaderBlob()->GetBufferSize();
-    psoDesc.PS.pShaderBytecode = pso->m_shader->getPixelShaderBlob()->GetBufferPointer();
-    psoDesc.PS.BytecodeLength = pso->m_shader->getPixelShaderBlob()->GetBufferSize();
+    pso->m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
     // rasterize
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;

@@ -60,9 +60,15 @@ Shader::~Shader()
 {
 }
 // internal
-Microsoft::WRL::ComPtr<ID3DBlob> Shader::getVertexShaderBlob() const { return m_vertexBlob; }
-
-Microsoft::WRL::ComPtr<ID3DBlob> Shader::getPixelShaderBlob() const { return m_pixelBlob; }
+void Shader::getD3D12_SHADER_BYTECODE(
+    D3D12_SHADER_BYTECODE& outVS,
+    D3D12_SHADER_BYTECODE& outPS) const
+{
+    outVS.pShaderBytecode = m_vertexBlob->GetBufferPointer();
+    outVS.BytecodeLength = m_vertexBlob->GetBufferSize();
+    outPS.pShaderBytecode = m_pixelBlob->GetBufferPointer();
+    outPS.BytecodeLength = m_pixelBlob->GetBufferSize();
+}
 // private
 Shader::Shader()
     : m_vertexBlob()

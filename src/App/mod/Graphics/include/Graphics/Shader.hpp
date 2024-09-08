@@ -20,8 +20,9 @@ public:
     ~Shader();
 
 #if SOLID_ENABLE_INTERNAL
-    Microsoft::WRL::ComPtr<ID3DBlob> getVertexShaderBlob() const;
-    Microsoft::WRL::ComPtr<ID3DBlob> getPixelShaderBlob() const;
+    void getD3D12_SHADER_BYTECODE(
+        D3D12_SHADER_BYTECODE& outVS,
+        D3D12_SHADER_BYTECODE& outPS) const;
 #endif
 
 private:
