@@ -1,3 +1,9 @@
+#if _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#include <stdlib.h>
+#endif
+
 #include <Graphics.hpp>
 #include <Input.hpp>
 #include <Math.hpp>
@@ -9,7 +15,7 @@
 using namespace Lib::Graphics;
 using namespace Lib::Math;
 
-int main(int argc, char* argv[])
+static int appMain(int argc, char* argv[])
 {
     Screen::setSize(800, 600);
 
@@ -101,4 +107,17 @@ int main(int argc, char* argv[])
     }
     engine->shutdown();
     return 0;
+}
+
+int main(int argc, char* argv[])
+{
+#if _DEBUG
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    // _CrtSetBreakAlloc(1441);
+#endif
+    int code = appMain(argc, argv);
+#if _DEBUG
+    _CrtDumpMemoryLeaks();
+#endif
+    return code;
 }
