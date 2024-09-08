@@ -57,7 +57,7 @@ void Engine::shutdown()
     if (!m_started) {
         return;
     }
-    if (!m_shutdowned) {
+    if (m_shutdowned) {
         return;
     }
     m_shutdowned = true;
