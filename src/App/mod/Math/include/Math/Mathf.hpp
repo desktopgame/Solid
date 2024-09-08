@@ -90,7 +90,7 @@ public:
     }
 
     template <>
-    bool equals<float>(float a, float b)
+    bool static equals<float>(float a, float b)
     {
         float diff = std::abs(a - b);
         return diff <= std::numeric_limits<float>::epsilon();
