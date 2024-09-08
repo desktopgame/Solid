@@ -103,6 +103,8 @@ public:
     Layout getLayout() const;
 
 #if SOLID_ENABLE_INTERNAL
+    static void destroy();
+
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> getID3D12DescriptorHeap() const;
 #endif
 
@@ -112,8 +114,8 @@ private:
     void defineConstantView(int32_t constantIndex, int32_t slotIndex);
     void defineTextureView(const std::shared_ptr<Texture>& texture, int32_t slotIndex);
 
-    static std::vector<std::shared_ptr<Constant>> s_freeVec;
-    static std::vector<std::shared_ptr<Constant>> s_usedVec;
+    static std::shared_ptr<std::vector<std::shared_ptr<Constant>>> s_freeVec;
+    static std::shared_ptr<std::vector<std::shared_ptr<Constant>>> s_usedVec;
 
     bool m_isDirty;
     Math::Matrix m_modelMatrix;

@@ -1,4 +1,5 @@
 #include <Graphics/Buffer.hpp>
+#include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/Screen.hpp>
@@ -83,6 +84,8 @@ void Surface::destroy()
 {
     m_swapchain->destroy();
     m_swapchain = nullptr;
+
+    Constant::destroy();
 }
 // private
 Surface::Surface()

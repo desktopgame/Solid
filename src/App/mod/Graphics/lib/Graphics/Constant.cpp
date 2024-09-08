@@ -3,30 +3,30 @@
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
-std::vector<std::shared_ptr<Constant>> Constant::s_freeVec;
-std::vector<std::shared_ptr<Constant>> Constant::s_usedVec;
+std::shared_ptr<std::vector<std::shared_ptr<Constant>>> Constant::s_freeVec = std::make_shared<std::vector<std::shared_ptr<Constant>>>();
+std::shared_ptr<std::vector<std::shared_ptr<Constant>>> Constant::s_usedVec = std::make_shared<std::vector<std::shared_ptr<Constant>>>();
 // public
 std::shared_ptr<Constant> Constant::rent(Layout layout)
 {
-    auto iter = std::find_if(s_freeVec.begin(), s_freeVec.end(), [layout](const std::shared_ptr<Constant>& constant) -> bool {
+    auto iter = std::find_if(s_freeVec->begin(), s_freeVec->end(), [layout](const std::shared_ptr<Constant>& constant) -> bool {
         return layout == constant->getLayout();
     });
-    if (iter == s_freeVec.end()) {
+    if (iter == s_freeVec->end()) {
         auto param = std::shared_ptr<Constant>(new Constant(layout));
-        s_usedVec.emplace_back(param);
+        s_usedVec->emplace_back(param);
         return param;
     }
     auto cache = *iter;
-    s_freeVec.erase(iter);
-    s_usedVec.emplace_back(cache);
+    s_freeVec->erase(iter);
+    s_usedVec->emplace_back(cache);
     return cache;
 }
 void Constant::release()
 {
-    for (auto cache : s_usedVec) {
-        s_freeVec.emplace_back(cache);
+    for (auto cache : *s_usedVec) {
+        s_freeVec->emplace_back(cache);
     }
-    s_usedVec.clear();
+    s_usedVec->clear();
 }
 Constant::~Constant() { }
 void Constant::update()
@@ -206,6 +206,12 @@ Math::Vector3 Constant::getLightDirection() const { return m_lightDirection; }
 
 Constant::Layout Constant::getLayout() const { return m_layout; }
 // internal
+void Constant::destroy()
+{
+    s_usedVec = nullptr;
+    s_freeVec = nullptr;
+}
+
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> Constant::getID3D12DescriptorHeap() const { return m_descriptorHeap; }
 // private
 Constant::Constant(Layout layout)
