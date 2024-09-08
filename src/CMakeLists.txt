@@ -19,14 +19,13 @@ set(SOLID_DEBUG_DEFINE
 )
 set(SOLID_RELEASE_DEFINE SOLID_NDEBUG)
 set(SOLID_DEBUG_COMPILE
-    -O0
-    -g
-    -Wall
-    -Werror
+    $<${MSVC}: /utf-8>
+    $<$<NOT:${MSVC}>: -O0 -g -Wall -Werror>
     $<$<NOT:${WIN32}>:-fsanitize=address>
 )
 set(SOLID_RELEASE_COMPILE
-    -O3
+    $<${MSVC}: /utf-8>
+    $<$<NOT:${MSVC}>: -O3>
 )
 set(SOLID_DEBUG_LINK
     $<$<NOT:${WIN32}>:-fsanitize=address>
