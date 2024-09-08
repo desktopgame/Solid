@@ -18,11 +18,11 @@ jobs:
     - name: setup
       run: |
         cd src\App\mod\vcpkg
-        bootstrap-vcpkg.bat
-        vcpkg install directxtex
-        vcpkg install picojson
-        vcpkg install freetype
-        vcpkg install imgui[core,dx12-binding,win32-binding]:x64-windows
+        .\bootstrap-vcpkg.bat
+        .\vcpkg install directxtex
+        .\vcpkg install picojson
+        .\vcpkg install freetype
+        .\vcpkg install imgui[core,dx12-binding,win32-binding]:x64-windows
     - name: build
       run: |
         cmake -S src -B build -G "Visual Studio 17 2022"
