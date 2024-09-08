@@ -1,2 +1,9 @@
 Solid
 App
+
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.tlog
+*.lastbuildsate
+*.recipe
