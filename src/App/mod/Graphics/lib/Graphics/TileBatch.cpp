@@ -61,6 +61,7 @@ std::shared_ptr<TileBatch> TileBatch::create()
     tileBatch->m_indexBuffer = Buffer::create();
     tileBatch->m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     tileBatch->m_indexBuffer->update(indices.data());
+    tileBatch->m_indexLength = static_cast<int32_t>(indices.size());
     // input layout
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
@@ -181,6 +182,7 @@ TileBatch::TileBatch()
     : m_shader()
     , m_vertexBuffer()
     , m_indexBuffer()
+    , m_indexLength()
     , m_pipelineState()
     , m_rootSignature()
 {

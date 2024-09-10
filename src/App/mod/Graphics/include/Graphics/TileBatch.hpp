@@ -20,6 +20,7 @@ private:
     std::shared_ptr<Shader> m_shader;
     std::shared_ptr<Buffer> m_vertexBuffer;
     std::shared_ptr<Buffer> m_indexBuffer;
+    int32_t m_indexLength;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
