@@ -27,6 +27,7 @@ private:
     std::shared_ptr<Shader> m_shader;
     std::shared_ptr<Buffer> m_vertexBuffer;
     std::shared_ptr<Buffer> m_indexBuffer;
+    std::shared_ptr<Buffer> m_tileDataBuffer;
     int32_t m_indexLength;
 
 #if SOLID_ENABLE_INTERNAL

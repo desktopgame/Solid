@@ -23,9 +23,9 @@ std::shared_ptr<TileBatch> TileBatch::create()
         cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
         cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
 
-        Output vsMain(float3 pos : POSITION) {
+        Output vsMain(float3 pos : POSITION, float4 tileData : POSITION1) {
             Output output;
-            output.svpos = mul(modelMatrix, float4(pos, 1));
+            output.svpos = mul(modelMatrix, float4(pos + tileData.xyz, 1));
             output.svpos = mul(viewMatrix, output.svpos);
             output.svpos = mul(projectionMatrix, output.svpos);
             return output;
@@ -63,6 +63,14 @@ std::shared_ptr<TileBatch> TileBatch::create()
     tileBatch->m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     tileBatch->m_indexBuffer->update(indices.data());
     tileBatch->m_indexLength = static_cast<int32_t>(indices.size());
+    // tile data
+    std::vector<Math::Vector4> tileDatas;
+    tileDatas.emplace_back(Math::Vector4({ 0, 0, 0, 0 }));
+    tileDatas.emplace_back(Math::Vector4({ 1.5f, 0, 0, 0 }));
+    tileDatas.emplace_back(Math::Vector4({ -1.5f, 0, 0, 0 }));
+    tileBatch->m_tileDataBuffer = Buffer::create();
+    tileBatch->m_tileDataBuffer->allocate(sizeof(Math::Vector4) * tileDatas.size());
+    tileBatch->m_tileDataBuffer->update(tileDatas.data());
     // input layout
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
@@ -70,6 +78,10 @@ std::shared_ptr<TileBatch> TileBatch::create()
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
             D3D12_APPEND_ALIGNED_ELEMENT,
             D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+    inputLayout.push_back(
+        { "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,
+            D3D12_APPEND_ALIGNED_ELEMENT,
+            D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
@@ -252,19 +264,26 @@ void TileBatch::render(
     vbView.StrideInBytes = static_cast<UINT>(sizeof(Math::Vector3));
     cmdList->IASetVertexBuffers(0, 1, &vbView);
 
+    D3D12_VERTEX_BUFFER_VIEW tileDataView = {};
+    tileDataView.BufferLocation = m_tileDataBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    tileDataView.SizeInBytes = m_tileDataBuffer->getSize();
+    tileDataView.StrideInBytes = static_cast<UINT>(sizeof(Math::Vector4));
+    cmdList->IASetVertexBuffers(1, 1, &tileDataView);
+
     D3D12_INDEX_BUFFER_VIEW ibView = {};
     ibView.BufferLocation = m_indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = m_indexBuffer->getSize();
     cmdList->IASetIndexBuffer(&ibView);
 
-    cmdList->DrawIndexedInstanced(m_indexLength, 1, 0, 0, 0);
+    cmdList->DrawIndexedInstanced(m_indexLength, 3, 0, 0, 0);
 }
 // private
 TileBatch::TileBatch()
     : m_shader()
     , m_vertexBuffer()
     , m_indexBuffer()
+    , m_tileDataBuffer()
     , m_indexLength()
     , m_pipelineState()
     , m_rootSignature()
