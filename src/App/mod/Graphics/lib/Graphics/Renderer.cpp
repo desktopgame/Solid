@@ -9,6 +9,7 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Texture.hpp>
+#include <Graphics/TileBatch.hpp>
 #include <Graphics/VertexNormal3D.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Math/Mathf.hpp>
@@ -39,6 +40,7 @@ Renderer::Renderer()
     , m_planeLightingObject()
     , m_boxObject()
     , m_boxLightingObject()
+    , m_tileBatch()
 {
 }
 
@@ -272,6 +274,21 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& size,
         constant->setLightDirection(m_lightDirection);
         renderObject(m_boxLightingObject, constant);
     }
+}
+
+void Renderer::drawTiles()
+{
+    if (!m_tileBatch) {
+        m_tileBatch = TileBatch::create();
+    }
+    auto constant = Constant::rent(Constant::Layout::Tile);
+    auto modelMatrix = Math::Matrix();
+    constant->setModelMatrix(modelMatrix);
+    constant->setViewMatrix(getLookAtMatrix());
+    constant->setProjectionMatrix(getPerspectiveMatrix());
+    Engine::getInstance()->getDevice()->getSurface()->render(
+        m_tileBatch,
+        constant);
 }
 // private
 void Renderer::initRect()

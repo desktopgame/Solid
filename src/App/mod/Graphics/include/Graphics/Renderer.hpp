@@ -10,6 +10,7 @@ class PipelineStateObject;
 class Buffer;
 class Constant;
 class Texture;
+class TileBatch;
 class Renderer {
 public:
     enum class TextAlignX {
@@ -51,6 +52,8 @@ public:
 
     void drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
     void drawBox(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
+
+    void drawTiles();
 
 private:
     class Object {
@@ -106,5 +109,7 @@ private:
     Object m_planeLightingObject;
     Object m_boxObject;
     Object m_boxLightingObject;
+
+    std::shared_ptr<TileBatch> m_tileBatch;
 };
 }
