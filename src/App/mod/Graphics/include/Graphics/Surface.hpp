@@ -18,6 +18,7 @@ class Constant;
 class Shader;
 class Swapchain;
 class PipelineStateObject;
+class TileBatch;
 class Surface {
 public:
     ~Surface();
@@ -34,6 +35,10 @@ public:
         const std::shared_ptr<Buffer>& vertexBuffer,
         const std::shared_ptr<Buffer>& indexBuffer,
         int32_t indexLength);
+
+    void render(
+        const std::shared_ptr<TileBatch>& tileBatch,
+        const std::shared_ptr<Constant>& constant);
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(

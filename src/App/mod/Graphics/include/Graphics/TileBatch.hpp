@@ -9,10 +9,17 @@
 namespace Lib::Graphics {
 class Shader;
 class Buffer;
+class Constant;
 class TileBatch {
 public:
     static std::shared_ptr<TileBatch> create();
     ~TileBatch();
+
+#if SOLID_ENABLE_INTERNAL
+    void render(
+        const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+        const std::shared_ptr<Constant> constant);
+#endif
 
 private:
     TileBatch();

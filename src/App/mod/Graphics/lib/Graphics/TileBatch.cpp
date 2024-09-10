@@ -1,4 +1,5 @@
 #include <Graphics/Buffer.hpp>
+#include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Shader.hpp>
@@ -176,7 +177,89 @@ std::shared_ptr<TileBatch> TileBatch::create()
 TileBatch::~TileBatch()
 {
 }
+// internal
+void TileBatch::render(
+    const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+    const std::shared_ptr<Constant> constant)
+{
+    cmdList->SetPipelineState(m_pipelineState.Get());
+    cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
 
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+    auto descriptorHeap = constant->getID3D12DescriptorHeap();
+    uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
+
+    cmdList->SetGraphicsRootDescriptorTable(0, heapHandle);
+
+    heapHandle.ptr += incrementSize;
+    cmdList->SetGraphicsRootDescriptorTable(1, heapHandle);
+
+    heapHandle.ptr += incrementSize;
+    cmdList->SetGraphicsRootDescriptorTable(2, heapHandle);
+
+    /*
+    if (m_constantLayout != constant->getLayout()) {
+        throw std::runtime_error("missmatch interfaces.");
+    }
+    if (m_constantLayout.useTexture()) {
+        if (!constant->getTexture()) {
+            throw std::runtime_error("texture missing.");
+        }
+        heapHandle.ptr += incrementSize;
+        cmdList->SetGraphicsRootDescriptorTable(3, heapHandle);
+        if (m_constantLayout.useColor()) {
+            heapHandle.ptr += incrementSize;
+            cmdList->SetGraphicsRootDescriptorTable(4, heapHandle);
+        }
+    } else if (m_constantLayout.useColor()) {
+        heapHandle.ptr += incrementSize;
+        cmdList->SetGraphicsRootDescriptorTable(3, heapHandle);
+
+        if (m_constantLayout.useLightDirection()) {
+            heapHandle.ptr += incrementSize;
+            cmdList->SetGraphicsRootDescriptorTable(4, heapHandle);
+        }
+    }
+    */
+    cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    /*
+    uint32_t stride = 0;
+    if (m_vertexComponent == 2) {
+        if (m_isUsingTexCoord) {
+            stride = sizeof(VertexTexCoord2D);
+        } else {
+            stride = sizeof(Math::Vector2);
+        }
+    } else if (m_vertexComponent == 3) {
+        if (m_isUsingTexCoord) {
+            stride = sizeof(VertexTexCoord3D);
+        } else {
+            if (m_isUsingNormal) {
+                stride = sizeof(VertexNormal3D);
+            } else {
+                stride = sizeof(Math::Vector3);
+            }
+        }
+    }
+    */
+    D3D12_VERTEX_BUFFER_VIEW vbView = {};
+    vbView.BufferLocation = m_vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    vbView.SizeInBytes = m_vertexBuffer->getSize();
+    vbView.StrideInBytes = static_cast<UINT>(sizeof(Math::Vector3));
+    cmdList->IASetVertexBuffers(0, 1, &vbView);
+
+    D3D12_INDEX_BUFFER_VIEW ibView = {};
+    ibView.BufferLocation = m_indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    ibView.Format = DXGI_FORMAT_R32_UINT;
+    ibView.SizeInBytes = m_indexBuffer->getSize();
+    cmdList->IASetIndexBuffer(&ibView);
+
+    cmdList->DrawIndexedInstanced(m_indexLength, 1, 0, 0, 0);
+}
 // private
 TileBatch::TileBatch()
     : m_shader()

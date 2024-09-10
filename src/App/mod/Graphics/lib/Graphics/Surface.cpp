@@ -4,6 +4,7 @@
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Swapchain.hpp>
+#include <Graphics/TileBatch.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
@@ -55,6 +56,14 @@ void Surface::render(
 {
     constant->update();
     pso->render(m_commandList, constant, vertexBuffer, indexBuffer, indexLength);
+}
+
+void Surface::render(
+    const std::shared_ptr<TileBatch>& tileBatch,
+    const std::shared_ptr<Constant>& constant)
+{
+    constant->update();
+    tileBatch->render(m_commandList, constant);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(
