@@ -37,8 +37,7 @@ public:
         int32_t indexLength);
 
     void render(
-        const std::shared_ptr<TileBatch>& tileBatch,
-        const std::shared_ptr<Constant>& constant);
+        const std::shared_ptr<TileBatch>& tileBatch);
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(

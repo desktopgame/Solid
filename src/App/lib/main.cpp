@@ -32,6 +32,8 @@ static int appMain(int argc, char* argv[])
     float degree = 0.0f;
     bool isGuiOpen = true;
     Lib::Graphics::Renderer renderer;
+    Lib::Math::Vector3 cameraPosition = Lib::Math::Vector3({ 0, 0, -1 });
+    Lib::Math::Vector3 cameraLookAt = Lib::Math::Vector3({ 0, 0, 0 });
     window->show();
     while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
@@ -41,10 +43,14 @@ static int appMain(int argc, char* argv[])
         renderer.guiBegin();
         ImGui::Begin("Test", &isGuiOpen);
         ImGui::DragFloat("Degree", &degree, 1.0f, 0.0f, 360.0f);
+        ImGui::DragFloat3("Position", cameraPosition.data());
+        ImGui::DragFloat3("LookAt", cameraLookAt.data());
         ImGui::End();
         renderer.guiEnd();
 
         renderer.begin();
+        renderer.position(cameraPosition);
+        renderer.lookAt(cameraLookAt);
         renderer.lightEnable();
         renderer.drawBox(Vector3({ 2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.lightDisable();

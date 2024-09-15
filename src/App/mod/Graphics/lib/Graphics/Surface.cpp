@@ -58,12 +58,9 @@ void Surface::render(
     pso->render(m_commandList, constant, vertexBuffer, indexBuffer, indexLength);
 }
 
-void Surface::render(
-    const std::shared_ptr<TileBatch>& tileBatch,
-    const std::shared_ptr<Constant>& constant)
+void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
 {
-    constant->update();
-    tileBatch->render(m_commandList, constant);
+    tileBatch->render(m_commandList);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(

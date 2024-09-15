@@ -286,9 +286,7 @@ void Renderer::drawTiles()
     constant->setModelMatrix(modelMatrix);
     constant->setViewMatrix(getLookAtMatrix());
     constant->setProjectionMatrix(getPerspectiveMatrix());
-    Engine::getInstance()->getDevice()->getSurface()->render(
-        m_tileBatch,
-        constant);
+    Engine::getInstance()->getDevice()->getSurface()->render(m_tileBatch);
 }
 // private
 void Renderer::initRect()
