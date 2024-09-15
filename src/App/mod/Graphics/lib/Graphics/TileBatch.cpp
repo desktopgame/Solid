@@ -19,6 +19,7 @@ std::shared_ptr<TileBatch> TileBatch::create()
     tileBatch->m_shader = Shader::compile(R"(
         struct Output {
             float4 svpos : SV_POSITION;
+            float4 color : COLOR;
         };
         cbuffer cbuff0 : register(b0)
         {
@@ -26,24 +27,121 @@ std::shared_ptr<TileBatch> TileBatch::create()
             matrix mvpMatrix;
         };
 
+        static const matrix rotationTable[6] = {
+            // posY
+            matrix(
+            1, 0, 0, 0,
+            0, cos(radians(-90)), -sin(radians(-90)), 0,
+            0, sin(radians(-90)), cos(radians(-90)), 0,
+            0, 0, 0, 1
+            ),
+            // negY
+            matrix(
+            1, 0, 0, 0,
+            0, cos(radians(90)), -sin(radians(90)), 0,
+            0, sin(radians(90)), cos(radians(90)), 0,
+            0, 0, 0, 1
+            ),
+            // posX
+            matrix(
+            cos(radians(90)), 0, sin(radians(90)), 0,
+            0, 1, 0, 0,
+            -sin(radians(90)), 0, cos(radians(90)), 0,
+            0, 0, 0, 1
+            ),
+            // negX
+            matrix(
+            cos(radians(-90)), 0, sin(radians(-90)), 0,
+            0, 1, 0, 0,
+            -sin(radians(-90)), 0, cos(radians(-90)), 0,
+            0, 0, 0, 1
+            ),
+            // posZ
+            matrix(
+            cos(radians(180)), 0, sin(radians(180)), 0,
+            0, 1, 0, 0,
+            -sin(radians(180)), 0, cos(radians(180)), 0,
+            0, 0, 0, 1
+            ),
+            // negZ
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+            )
+        };
+        static const matrix translateTable[6] = {
+            // posY
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0.5, 0, 1
+            ),
+            // negY
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, -0.5, 0, 1
+            ),
+            // posX
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0.5, 0, 0, 1
+            ),
+            // negX
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            -0.5, 0, 0, 1
+            ),
+            // posZ
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0.5, 1
+            ),
+            // negZ
+            matrix(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, -0.5, 1
+            )
+        };
+
         Output vsMain(float3 pos : POSITION, uint instanceID : SV_InstanceID) {
             Output output;
-            output.svpos = mul(mvpMatrix, float4(pos + tileData[instanceID].xyz, 1));
+            int tileInfo = int(tileData[instanceID].w);
+            int tileRotationID = tileInfo % 10;
+            matrix tileRotation = transpose(rotationTable[tileRotationID]);
+            matrix tileTranslate = transpose(translateTable[tileRotationID]);
+            matrix tileTransform = mul(tileTranslate, tileRotation);
+            float3 tileOffset = tileData[instanceID].xyz;
+            output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
+            output.color = float4(float(instanceID) / 12.0, 0, 0, 1);
             return output;
         })",
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
+            float4 color : COLOR;
         };
 
         float4 psMain(Output input) : SV_TARGET {
-            return float4(1,1,1,1);
+            return input.color;
         })",
         "psMain");
     // vertex buffer and index buffer
     std::vector<Math::Vector3> vertices;
     std::vector<uint32_t> indices;
-    const float half = 0.1f;
+    const float half = 0.5f;
     const float left = -half;
     const float right = half;
     const float top = half;
@@ -149,29 +247,29 @@ std::shared_ptr<TileBatch> TileBatch::create()
     // constant buffer
     tileBatch->m_constantBuffer = Buffer::create();
     for (int32_t i = 0; i < 10; i++) {
-        float fx = static_cast<float>(i) * 0.2f;
+        float fx = static_cast<float>(i) * 2.0f;
         tileBatch->m_constantBufferData.push_back(ConstantData {});
         tileBatch->m_constantBufferData.at(i).tiles = {
-            Math::Vector4({ -fx, 0, 0, 0 }),
-            Math::Vector4({ -fx, 0, 0, 1 }),
-            Math::Vector4({ -fx, 0, 0, 2 }),
-            Math::Vector4({ -fx, 0, 0, 3 }),
-            Math::Vector4({ -fx, 0, 0, 4 }),
-            Math::Vector4({ -fx, 0, 0, 5 }),
+            Math::Vector4({ -2.0f, 0, fx, 0 }),
+            Math::Vector4({ -2.0f, 0, fx, 1 }),
+            Math::Vector4({ -2.0f, 0, fx, 2 }),
+            Math::Vector4({ -2.0f, 0, fx, 3 }),
+            Math::Vector4({ -2.0f, 0, fx, 4 }),
+            Math::Vector4({ -2.0f, 0, fx, 5 }),
 
-            Math::Vector4({ fx, 0, 0, 0 }),
-            Math::Vector4({ fx, 0, 0, 1 }),
-            Math::Vector4({ fx, 0, 0, 2 }),
-            Math::Vector4({ fx, 0, 0, 3 }),
-            Math::Vector4({ fx, 0, 0, 4 }),
-            Math::Vector4({ fx, 0, 0, 5 }),
+            Math::Vector4({ 2.0f, 0, fx, 0 }),
+            Math::Vector4({ 2.0f, 0, fx, 1 }),
+            Math::Vector4({ 2.0f, 0, fx, 2 }),
+            Math::Vector4({ 2.0f, 0, fx, 3 }),
+            Math::Vector4({ 2.0f, 0, fx, 4 }),
+            Math::Vector4({ 2.0f, 0, fx, 5 }),
 
             Math::Vector4({ 0, 0, 0, 0 }),
             Math::Vector4({ 0, 0, 0, 0 }),
             Math::Vector4({ 0, 0, 0, 0 }),
             Math::Vector4({ 0, 0, 0, 0 }),
         };
-        tileBatch->m_constantBufferData.at(i).matrix = Math::Matrix() * Math::Matrix::lookAt(Math::Vector3({ 0, 0, -1 }), Math::Vector3({ 0, 0, 0 }), Math::Vector3({ 0, 1, 0 })) * Math::Matrix::perspective(90.0f, Screen::getAspectRatio(), 0.1f, 100.0f);
+        tileBatch->m_constantBufferData.at(i).matrix = Math::Matrix() * Math::Matrix::lookAt(Math::Vector3({ 0, 0.5f, -2 }), Math::Vector3({ 0, 0, 0 }), Math::Vector3({ 0, 1, 0 })) * Math::Matrix::perspective(90.0f, Screen::getAspectRatio(), 0.1f, 100.0f);
     }
     tileBatch->m_constantBuffer->allocate(sizeof(ConstantData) * tileBatch->m_constantBufferData.size());
     tileBatch->m_constantBuffer->update(tileBatch->m_constantBufferData.data());
