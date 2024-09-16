@@ -18,13 +18,6 @@ public:
     ~TileBatch();
 
 #if SOLID_ENABLE_INTERNAL
-    struct IndirectCommand {
-    public:
-        explicit IndirectCommand() = default;
-        D3D12_GPU_VIRTUAL_ADDRESS cbv;
-        D3D12_DRAW_INDEXED_ARGUMENTS drawArguments;
-    };
-
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 #endif
@@ -41,6 +34,13 @@ private:
     int32_t m_indexLength;
 
 #if SOLID_ENABLE_INTERNAL
+    struct IndirectCommand {
+    public:
+        explicit IndirectCommand() = default;
+        D3D12_GPU_VIRTUAL_ADDRESS cbv;
+        D3D12_DRAW_INDEXED_ARGUMENTS drawArguments;
+    };
+
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12CommandSignature> m_commandSignature;
