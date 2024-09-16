@@ -40,7 +40,11 @@ Renderer::Renderer()
     , m_planeLightingObject()
     , m_boxObject()
     , m_boxLightingObject()
-    , m_tileBatch()
+    , m_tileBatchUltraSmall()
+    , m_tileBatchSmall()
+    , m_tileBatchMedium()
+    , m_tileBatchLarge()
+    , m_tileBatchUltraLarge()
 {
 }
 
@@ -278,15 +282,27 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& size,
 
 void Renderer::drawTiles()
 {
-    if (!m_tileBatch) {
-        m_tileBatch = TileBatch::create(TileBufferUltraSmall::create(10));
+    if (!m_tileBatchUltraSmall) {
+        m_tileBatchUltraSmall = TileBatch::create(TileBufferUltraSmall::create(10));
+    }
+    if (!m_tileBatchSmall) {
+        m_tileBatchSmall = TileBatch::create(TileBufferSmall::create(10));
+    }
+    if (!m_tileBatchMedium) {
+        m_tileBatchMedium = TileBatch::create(TileBufferMedium::create(20));
+    }
+    if (!m_tileBatchLarge) {
+        m_tileBatchLarge = TileBatch::create(TileBufferLarge::create(10));
+    }
+    if (!m_tileBatchUltraLarge) {
+        m_tileBatchUltraLarge = TileBatch::create(TileBufferUltraLarge::create(10));
     }
     auto constant = Constant::rent(Constant::Layout::Tile);
     auto modelMatrix = Math::Matrix();
     constant->setModelMatrix(modelMatrix);
     constant->setViewMatrix(getLookAtMatrix());
     constant->setProjectionMatrix(getPerspectiveMatrix());
-    Engine::getInstance()->getDevice()->getSurface()->render(m_tileBatch);
+    Engine::getInstance()->getDevice()->getSurface()->render(m_tileBatchUltraSmall);
 }
 // private
 void Renderer::initRect()

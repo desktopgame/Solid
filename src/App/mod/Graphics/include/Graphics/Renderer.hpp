@@ -110,6 +110,10 @@ private:
     Object m_boxObject;
     Object m_boxLightingObject;
 
-    std::shared_ptr<TileBatch> m_tileBatch;
+    std::shared_ptr<TileBatch> m_tileBatchUltraSmall;
+    std::shared_ptr<TileBatch> m_tileBatchSmall;
+    std::shared_ptr<TileBatch> m_tileBatchMedium;
+    std::shared_ptr<TileBatch> m_tileBatchLarge;
+    std::shared_ptr<TileBatch> m_tileBatchUltraLarge;
 };
 }
