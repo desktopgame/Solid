@@ -252,28 +252,11 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     // constant buffer
     tileBatch->m_tileBuffer = tileBuffer;
     tileBatch->m_constantBuffer = Buffer::create();
-    for (int32_t i = 0; i < tileBatch->m_tileBuffer->getElementCount(); i++) {
-        float fx = static_cast<float>(i) * 2.0f;
-        Math::Vector4* tiles = tileBatch->m_tileBuffer->getArrayAt(i);
-        int32_t index = 0;
-        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 0 });
-        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 1 });
-        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 2 });
-        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 3 });
-        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 4 });
-        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 5 });
-
-        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 0 });
-        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 1 });
-        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 2 });
-        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 3 });
-        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 4 });
-        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 5 });
-
-        tileBatch->m_tileBuffer->getMatrixAt(i) = Math::Matrix() * Math::Matrix::lookAt(Math::Vector3({ 0, 0.5f, -2 }), Math::Vector3({ 0, 0, 0 }), Math::Vector3({ 0, 1, 0 })) * Math::Matrix::perspective(90.0f, Screen::getAspectRatio(), 0.1f, 100.0f);
-    }
     tileBatch->m_constantBuffer->allocate(tileBatch->m_tileBuffer->getElementSize() * tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_constantBuffer->update(tileBatch->m_tileBuffer->getElementPtr());
+
+    tileBatch->m_commandVisibleTable.resize(tileBuffer->getElementCount());
+    std::fill(tileBatch->m_commandVisibleTable.begin(), tileBatch->m_commandVisibleTable.end(), false);
     // command signature
     std::vector<D3D12_INDIRECT_ARGUMENT_DESC> argumentDescs;
     argumentDescs.push_back({});
@@ -291,31 +274,83 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         throw std::runtime_error("failed CreateCommandSignature()");
     }
     // command buffer
+    tileBatch->m_commands.reserve(tileBatch->m_tileBuffer->getElementCount());
+    tileBatch->m_commandIndexTable.reserve(tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_commandBuffer = Buffer::create();
     auto constBufAddr = tileBatch->m_constantBuffer->getID3D12Resource()->GetGPUVirtualAddress();
-    std::vector<IndirectCommand> commands;
     for (int32_t i = 0; i < tileBatch->m_tileBuffer->getElementCount(); i++) {
-        commands.push_back(IndirectCommand {});
-        commands.at(i).cbv = constBufAddr;
-        commands.at(i).drawArguments.IndexCountPerInstance = 6;
-        commands.at(i).drawArguments.InstanceCount = 12;
-        commands.at(i).drawArguments.StartIndexLocation = 0;
-        commands.at(i).drawArguments.StartInstanceLocation = 0;
+        tileBatch->m_commands.push_back(IndirectCommand {});
+        tileBatch->m_commands.at(i).cbv = constBufAddr;
+        tileBatch->m_commands.at(i).drawArguments.IndexCountPerInstance = 6;
+        tileBatch->m_commands.at(i).drawArguments.InstanceCount = 0;
+        tileBatch->m_commands.at(i).drawArguments.StartIndexLocation = 0;
+        tileBatch->m_commands.at(i).drawArguments.StartInstanceLocation = 0;
 
+        tileBatch->m_commandIndexTable.push_back(i);
         constBufAddr += tileBatch->m_tileBuffer->getElementSize();
     }
-    tileBatch->m_commandBuffer->allocate(sizeof(IndirectCommand) * commands.size());
-    tileBatch->m_commandBuffer->update(commands.data());
+    tileBatch->m_commandBuffer->allocate(sizeof(IndirectCommand) * tileBatch->m_commands.size());
+    tileBatch->m_commandBuffer->update(tileBatch->m_commands.data());
     return tileBatch;
 }
 
 TileBatch::~TileBatch()
 {
 }
+
+int32_t TileBatch::rent()
+{
+    for (int32_t i = 0; i < m_commandVisibleTable.size(); i++) {
+        if (!m_commandVisibleTable.at(i)) {
+            m_commandVisibleTable.assign(i, true);
+            m_shouldCompact = true;
+            m_shouldCommandCopy = true;
+            return i;
+        }
+    }
+    return -1;
+}
+
+void TileBatch::release(int32_t index)
+{
+    if (!m_commandVisibleTable.at(index)) {
+        throw std::runtime_error("already released.");
+    }
+    m_commandVisibleTable.at(index) = false;
+    m_shouldCompact = true;
+    m_shouldCommandCopy = true;
+}
 // internal
 void TileBatch::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
+    int32_t visibleCount = std::count(m_commandVisibleTable.begin(), m_commandVisibleTable.end(), true);
+    if (visibleCount == 0) {
+        return;
+    }
+    // compaction
+    if (m_shouldCompact) {
+        auto constBufAddr = m_constantBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+        int32_t cursor = 0;
+        for (int32_t i = 0; i < m_tileBuffer->getElementCount(); i++) {
+            if (m_commandVisibleTable.at(i)) {
+                if (cursor != i) {
+                    m_commands.at(cursor) = m_commands.at(i);
+                    m_commands.at(cursor).cbv = constBufAddr + (i * m_tileBuffer->getElementSize());
+                    m_commandIndexTable.at(i) = cursor;
+                }
+                cursor++;
+                if (cursor == visibleCount) {
+                    break;
+                }
+            }
+        }
+        m_shouldCompact = false;
+    }
+    if (m_shouldCommandCopy) {
+        m_commandBuffer->update(m_commands.data());
+        m_shouldCommandCopy = false;
+    }
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
 
@@ -347,7 +382,10 @@ TileBatch::TileBatch()
     , m_constantBuffer()
     , m_commandBuffer()
     , m_tileBuffer()
+    , m_commandVisibleTable()
+    , m_commandIndexTable()
     , m_indexLength()
+    , m_commands()
     , m_pipelineState()
     , m_rootSignature()
     , m_commandSignature()

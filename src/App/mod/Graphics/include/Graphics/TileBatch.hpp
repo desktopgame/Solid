@@ -17,6 +17,9 @@ public:
     static std::shared_ptr<TileBatch> create(const std::shared_ptr<ITileBuffer> tileBuffer);
     ~TileBatch();
 
+    int32_t rent();
+    void release(int32_t index);
+
 #if SOLID_ENABLE_INTERNAL
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
@@ -31,7 +34,11 @@ private:
     std::shared_ptr<Buffer> m_constantBuffer;
     std::shared_ptr<Buffer> m_commandBuffer;
     std::shared_ptr<ITileBuffer> m_tileBuffer;
+    std::vector<bool> m_commandVisibleTable;
+    std::vector<int32_t> m_commandIndexTable;
     int32_t m_indexLength;
+    bool m_shouldCompact;
+    bool m_shouldCommandCopy;
 
 #if SOLID_ENABLE_INTERNAL
     struct IndirectCommand {
@@ -41,6 +48,7 @@ private:
         D3D12_DRAW_INDEXED_ARGUMENTS drawArguments;
     };
 
+    std::vector<IndirectCommand> m_commands;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12CommandSignature> m_commandSignature;
