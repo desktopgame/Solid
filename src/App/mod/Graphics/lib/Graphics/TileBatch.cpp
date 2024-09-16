@@ -314,11 +314,46 @@ int32_t TileBatch::rent()
 void TileBatch::release(int32_t index)
 {
     if (!m_commandVisibleTable.at(index)) {
-        throw std::runtime_error("already released.");
+        throw std::logic_error("already released.");
     }
     m_commandVisibleTable.at(index) = false;
     m_shouldCompact = true;
     m_shouldCommandCopy = true;
+}
+
+void TileBatch::setTiles(int32_t index, const Math::Vector4* tiles)
+{
+    if (!m_commandVisibleTable.at(index)) {
+        throw std::logic_error("rent() is not being called.");
+    }
+    Math::Vector4* dst = m_tileBuffer->getArrayAt(m_commandIndexTable.at(index));
+    ::memcpy(dst, tiles, sizeof(Math::Vector4) * m_tileBuffer->getArraySize());
+}
+const Math::Vector4* TileBatch::getTiles(int32_t index) const
+{
+    if (!m_commandVisibleTable.at(index)) {
+        throw std::logic_error("rent() is not being called.");
+    }
+    return m_tileBuffer->getArrayAt(m_commandIndexTable.at(index));
+}
+int32_t TileBatch::getTileSize() const
+{
+    return m_tileBuffer->getArraySize();
+}
+
+void TileBatch::setMatrix(int32_t index, const Math::Matrix& matrix)
+{
+    if (!m_commandVisibleTable.at(index)) {
+        throw std::logic_error("rent() is not being called.");
+    }
+    m_tileBuffer->getMatrixAt(m_commandIndexTable.at(index)) = matrix;
+}
+Math::Matrix TileBatch::getMatrix(int32_t index) const
+{
+    if (!m_commandVisibleTable.at(index)) {
+        throw std::logic_error("rent() is not being called.");
+    }
+    return m_tileBuffer->getMatrixAt(m_commandIndexTable.at(index));
 }
 // internal
 void TileBatch::render(

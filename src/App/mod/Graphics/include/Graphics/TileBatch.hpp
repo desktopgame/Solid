@@ -20,6 +20,13 @@ public:
     int32_t rent();
     void release(int32_t index);
 
+    void setTiles(int32_t index, const Math::Vector4* tiles);
+    const Math::Vector4* getTiles(int32_t index) const;
+    int32_t getTileSize() const;
+
+    void setMatrix(int32_t index, const Math::Matrix& matrix);
+    Math::Matrix getMatrix(int32_t index) const;
+
 #if SOLID_ENABLE_INTERNAL
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
