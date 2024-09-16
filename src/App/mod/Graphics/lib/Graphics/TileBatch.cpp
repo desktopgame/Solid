@@ -6,6 +6,7 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/TileBatch.hpp>
 #include <Math/Vector.hpp>
+#include <Utils/String.hpp>
 #include <vector>
 
 namespace Lib::Graphics {
@@ -16,14 +17,17 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     auto tileBatch = std::shared_ptr<TileBatch>(new TileBatch());
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     // shader
-    tileBatch->m_shader = Shader::compile(R"(
+    std::unordered_map<std::string, std::string> shaderKeywords;
+    shaderKeywords.insert_or_assign("VS_TileDataSize", std::to_string(tileBuffer->getArraySize()));
+
+    tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float4 color : COLOR;
         };
         cbuffer cbuff0 : register(b0)
         {
-            float4 tileData[28];
+            float4 tileData[${VS_TileDataSize}];
             matrix mvpMatrix;
         };
 
@@ -127,7 +131,8 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
             output.color = float4(float(instanceID) / 12.0, 0, 0, 1);
             return output;
-        })",
+        })"),
+                                              shaderKeywords),
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
