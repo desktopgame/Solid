@@ -35,6 +35,7 @@ add_library(
     ./lib/Graphics/FontSprite.cpp
     ./lib/Graphics/FontMetrics.cpp
     ./lib/Graphics/TileBatch.cpp
+    ./lib/Graphics/TileBuffer.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)

@@ -279,7 +279,7 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& size,
 void Renderer::drawTiles()
 {
     if (!m_tileBatch) {
-        m_tileBatch = TileBatch::create();
+        m_tileBatch = TileBatch::create(TileBufferUltraSmall::create(10));
     }
     auto constant = Constant::rent(Constant::Layout::Tile);
     auto modelMatrix = Math::Matrix();

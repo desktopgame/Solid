@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/TileBuffer.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
 
@@ -13,17 +14,10 @@ class Buffer;
 class Constant;
 class TileBatch {
 public:
-    static std::shared_ptr<TileBatch> create();
+    static std::shared_ptr<TileBatch> create(const std::shared_ptr<ITileBuffer> tileBuffer);
     ~TileBatch();
 
 #if SOLID_ENABLE_INTERNAL
-    struct ConstantData {
-    public:
-        explicit ConstantData() = default;
-        std::array<Math::Vector4, 16> tiles; // 4byte * 4 * 16 = 256byte
-        Math::Matrix matrix;
-    };
-
     struct IndirectCommand {
     public:
         explicit IndirectCommand() = default;
@@ -43,10 +37,10 @@ private:
     std::shared_ptr<Buffer> m_indexBuffer;
     std::shared_ptr<Buffer> m_constantBuffer;
     std::shared_ptr<Buffer> m_commandBuffer;
+    std::shared_ptr<ITileBuffer> m_tileBuffer;
     int32_t m_indexLength;
 
 #if SOLID_ENABLE_INTERNAL
-    std::vector<TileBatch::ConstantData> m_constantBufferData;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12CommandSignature> m_commandSignature;

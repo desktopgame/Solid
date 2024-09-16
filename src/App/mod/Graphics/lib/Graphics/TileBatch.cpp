@@ -11,7 +11,7 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<TileBatch> TileBatch::create()
+std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> tileBuffer)
 {
     auto tileBatch = std::shared_ptr<TileBatch>(new TileBatch());
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
@@ -23,7 +23,7 @@ std::shared_ptr<TileBatch> TileBatch::create()
         };
         cbuffer cbuff0 : register(b0)
         {
-            float4 tileData[16];
+            float4 tileData[28];
             matrix mvpMatrix;
         };
 
@@ -245,34 +245,30 @@ std::shared_ptr<TileBatch> TileBatch::create()
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
     // constant buffer
+    tileBatch->m_tileBuffer = tileBuffer;
     tileBatch->m_constantBuffer = Buffer::create();
-    for (int32_t i = 0; i < 10; i++) {
+    for (int32_t i = 0; i < tileBatch->m_tileBuffer->getElementCount(); i++) {
         float fx = static_cast<float>(i) * 2.0f;
-        tileBatch->m_constantBufferData.push_back(ConstantData {});
-        tileBatch->m_constantBufferData.at(i).tiles = {
-            Math::Vector4({ -2.0f, 0, fx, 0 }),
-            Math::Vector4({ -2.0f, 0, fx, 1 }),
-            Math::Vector4({ -2.0f, 0, fx, 2 }),
-            Math::Vector4({ -2.0f, 0, fx, 3 }),
-            Math::Vector4({ -2.0f, 0, fx, 4 }),
-            Math::Vector4({ -2.0f, 0, fx, 5 }),
+        Math::Vector4* tiles = tileBatch->m_tileBuffer->getArrayAt(i);
+        int32_t index = 0;
+        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 0 });
+        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 1 });
+        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 2 });
+        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 3 });
+        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 4 });
+        tiles[index++] = Math::Vector4({ -2.0f, 0, fx, 5 });
 
-            Math::Vector4({ 2.0f, 0, fx, 0 }),
-            Math::Vector4({ 2.0f, 0, fx, 1 }),
-            Math::Vector4({ 2.0f, 0, fx, 2 }),
-            Math::Vector4({ 2.0f, 0, fx, 3 }),
-            Math::Vector4({ 2.0f, 0, fx, 4 }),
-            Math::Vector4({ 2.0f, 0, fx, 5 }),
+        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 0 });
+        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 1 });
+        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 2 });
+        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 3 });
+        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 4 });
+        tiles[index++] = Math::Vector4({ 2.0f, 0, fx, 5 });
 
-            Math::Vector4({ 0, 0, 0, 0 }),
-            Math::Vector4({ 0, 0, 0, 0 }),
-            Math::Vector4({ 0, 0, 0, 0 }),
-            Math::Vector4({ 0, 0, 0, 0 }),
-        };
-        tileBatch->m_constantBufferData.at(i).matrix = Math::Matrix() * Math::Matrix::lookAt(Math::Vector3({ 0, 0.5f, -2 }), Math::Vector3({ 0, 0, 0 }), Math::Vector3({ 0, 1, 0 })) * Math::Matrix::perspective(90.0f, Screen::getAspectRatio(), 0.1f, 100.0f);
+        tileBatch->m_tileBuffer->getMatrixAt(i) = Math::Matrix() * Math::Matrix::lookAt(Math::Vector3({ 0, 0.5f, -2 }), Math::Vector3({ 0, 0, 0 }), Math::Vector3({ 0, 1, 0 })) * Math::Matrix::perspective(90.0f, Screen::getAspectRatio(), 0.1f, 100.0f);
     }
-    tileBatch->m_constantBuffer->allocate(sizeof(ConstantData) * tileBatch->m_constantBufferData.size());
-    tileBatch->m_constantBuffer->update(tileBatch->m_constantBufferData.data());
+    tileBatch->m_constantBuffer->allocate(tileBatch->m_tileBuffer->getElementSize() * tileBatch->m_tileBuffer->getElementCount());
+    tileBatch->m_constantBuffer->update(tileBatch->m_tileBuffer->getElementPtr());
     // command signature
     std::vector<D3D12_INDIRECT_ARGUMENT_DESC> argumentDescs;
     argumentDescs.push_back({});
@@ -293,7 +289,7 @@ std::shared_ptr<TileBatch> TileBatch::create()
     tileBatch->m_commandBuffer = Buffer::create();
     auto constBufAddr = tileBatch->m_constantBuffer->getID3D12Resource()->GetGPUVirtualAddress();
     std::vector<IndirectCommand> commands;
-    for (int32_t i = 0; i < 10; i++) {
+    for (int32_t i = 0; i < tileBatch->m_tileBuffer->getElementCount(); i++) {
         commands.push_back(IndirectCommand {});
         commands.at(i).cbv = constBufAddr;
         commands.at(i).drawArguments.IndexCountPerInstance = 6;
@@ -301,7 +297,7 @@ std::shared_ptr<TileBatch> TileBatch::create()
         commands.at(i).drawArguments.StartIndexLocation = 0;
         commands.at(i).drawArguments.StartInstanceLocation = 0;
 
-        constBufAddr += sizeof(ConstantData);
+        constBufAddr += tileBatch->m_tileBuffer->getElementSize();
     }
     tileBatch->m_commandBuffer->allocate(sizeof(IndirectCommand) * commands.size());
     tileBatch->m_commandBuffer->update(commands.data());
@@ -335,7 +331,7 @@ void TileBatch::render(
     cmdList->IASetIndexBuffer(&ibView);
 
     cmdList->ExecuteIndirect(
-        m_commandSignature.Get(), 10 /* command count */, m_commandBuffer->getID3D12Resource().Get(),
+        m_commandSignature.Get(), m_tileBuffer->getElementCount(), m_commandBuffer->getID3D12Resource().Get(),
         0, nullptr, 0);
 }
 // private
@@ -345,8 +341,8 @@ TileBatch::TileBatch()
     , m_indexBuffer()
     , m_constantBuffer()
     , m_commandBuffer()
+    , m_tileBuffer()
     , m_indexLength()
-    , m_constantBufferData()
     , m_pipelineState()
     , m_rootSignature()
     , m_commandSignature()

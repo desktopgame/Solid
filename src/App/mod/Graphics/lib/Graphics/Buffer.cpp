@@ -1,6 +1,7 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <cassert>
 #include <stdexcept>
 
 namespace Lib::Graphics {
@@ -19,6 +20,7 @@ Buffer::~Buffer()
 
 void Buffer::allocate(size_t size)
 {
+    assert(size > 0);
     D3D12_HEAP_PROPERTIES heapProps = {};
     heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
