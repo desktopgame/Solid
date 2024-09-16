@@ -57,8 +57,6 @@ public:
              * LightDirection = 2
              */
             LightColor,
-
-            Tile
         };
 
         Layout() = default;

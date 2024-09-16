@@ -297,11 +297,6 @@ void Renderer::drawTiles()
     if (!m_tileBatchUltraLarge) {
         m_tileBatchUltraLarge = TileBatch::create(TileBufferUltraLarge::create(10));
     }
-    auto constant = Constant::rent(Constant::Layout::Tile);
-    auto modelMatrix = Math::Matrix();
-    constant->setModelMatrix(modelMatrix);
-    constant->setViewMatrix(getLookAtMatrix());
-    constant->setProjectionMatrix(getPerspectiveMatrix());
     Engine::getInstance()->getDevice()->getSurface()->render(m_tileBatchUltraSmall);
 }
 // private
