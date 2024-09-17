@@ -46,6 +46,7 @@ private:
     int32_t m_indexLength;
     bool m_shouldCompact;
     bool m_shouldCommandCopy;
+    bool m_shouldConstantCopy;
 
 #if SOLID_ENABLE_INTERNAL
     struct IndirectCommand {

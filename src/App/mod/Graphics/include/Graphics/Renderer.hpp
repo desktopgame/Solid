@@ -1,8 +1,10 @@
 #pragma once
 #include <Graphics/Color.hpp>
 #include <Graphics/FontMap.hpp>
+#include <Graphics/TileBuffer.hpp>
 #include <Math/Quaternion.hpp>
 #include <Math/Vector.hpp>
+#include <array>
 #include <memory>
 
 namespace Lib::Graphics {
@@ -53,6 +55,10 @@ public:
     void drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
     void drawBox(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
 
+    int32_t rentTile(TileBufferKind kind);
+    void releaseTile(TileBufferKind kind, int32_t index);
+    void batchTiles(TileBufferKind kind, int32_t index, const Math::Vector4* tiles);
+    void batchMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix);
     void drawTiles();
 
 private:
@@ -74,6 +80,8 @@ private:
     void initPlaneLighting();
     void initBox();
     void initBoxLighting();
+
+    std::shared_ptr<TileBatch> getTileBatch(TileBufferKind kind);
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
     Math::Matrix getOrthoMatrix();
@@ -110,10 +118,6 @@ private:
     Object m_boxObject;
     Object m_boxLightingObject;
 
-    std::shared_ptr<TileBatch> m_tileBatchUltraSmall;
-    std::shared_ptr<TileBatch> m_tileBatchSmall;
-    std::shared_ptr<TileBatch> m_tileBatchMedium;
-    std::shared_ptr<TileBatch> m_tileBatchLarge;
-    std::shared_ptr<TileBatch> m_tileBatchUltraLarge;
+    std::array<std::shared_ptr<TileBatch>, 5> m_tileBatches;
 };
 }

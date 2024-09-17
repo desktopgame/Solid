@@ -47,6 +47,14 @@ private:
     std::vector<Memory> m_memoryVec;
 };
 
+enum class TileBufferKind : int32_t {
+    UltraSmall = 0,
+    Small,
+    Medium,
+    Large,
+    UltraLarge
+};
+
 using TileBufferUltraSmall = TileBufferN<16 + 12>;
 using TileBufferSmall = TileBufferN<64 + 12>;
 using TileBufferMedium = TileBufferN<256 + 12>;

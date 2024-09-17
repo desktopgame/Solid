@@ -255,8 +255,6 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     tileBatch->m_constantBuffer->allocate(tileBatch->m_tileBuffer->getElementSize() * tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_constantBuffer->update(tileBatch->m_tileBuffer->getElementPtr());
 
-    tileBatch->m_commandVisibleTable.resize(tileBuffer->getElementCount());
-    std::fill(tileBatch->m_commandVisibleTable.begin(), tileBatch->m_commandVisibleTable.end(), false);
     // command signature
     std::vector<D3D12_INDIRECT_ARGUMENT_DESC> argumentDescs;
     argumentDescs.push_back({});
@@ -275,6 +273,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     }
     // command buffer
     tileBatch->m_commands.reserve(tileBatch->m_tileBuffer->getElementCount());
+    tileBatch->m_commandVisibleTable.reserve(tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_commandIndexTable.reserve(tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_commandBuffer = Buffer::create();
     auto constBufAddr = tileBatch->m_constantBuffer->getID3D12Resource()->GetGPUVirtualAddress();
@@ -282,10 +281,11 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         tileBatch->m_commands.push_back(IndirectCommand {});
         tileBatch->m_commands.at(i).cbv = constBufAddr;
         tileBatch->m_commands.at(i).drawArguments.IndexCountPerInstance = 6;
-        tileBatch->m_commands.at(i).drawArguments.InstanceCount = 0;
+        tileBatch->m_commands.at(i).drawArguments.InstanceCount = 6;
         tileBatch->m_commands.at(i).drawArguments.StartIndexLocation = 0;
         tileBatch->m_commands.at(i).drawArguments.StartInstanceLocation = 0;
 
+        tileBatch->m_commandVisibleTable.push_back(false);
         tileBatch->m_commandIndexTable.push_back(i);
         constBufAddr += tileBatch->m_tileBuffer->getElementSize();
     }
@@ -302,7 +302,7 @@ int32_t TileBatch::rent()
 {
     for (int32_t i = 0; i < m_commandVisibleTable.size(); i++) {
         if (!m_commandVisibleTable.at(i)) {
-            m_commandVisibleTable.assign(i, true);
+            m_commandVisibleTable.at(i) = true;
             m_shouldCompact = true;
             m_shouldCommandCopy = true;
             return i;
@@ -326,15 +326,16 @@ void TileBatch::setTiles(int32_t index, const Math::Vector4* tiles)
     if (!m_commandVisibleTable.at(index)) {
         throw std::logic_error("rent() is not being called.");
     }
-    Math::Vector4* dst = m_tileBuffer->getArrayAt(m_commandIndexTable.at(index));
+    Math::Vector4* dst = m_tileBuffer->getArrayAt(index);
     ::memcpy(dst, tiles, sizeof(Math::Vector4) * m_tileBuffer->getArraySize());
+    m_shouldConstantCopy = true;
 }
 const Math::Vector4* TileBatch::getTiles(int32_t index) const
 {
     if (!m_commandVisibleTable.at(index)) {
         throw std::logic_error("rent() is not being called.");
     }
-    return m_tileBuffer->getArrayAt(m_commandIndexTable.at(index));
+    return m_tileBuffer->getArrayAt(index);
 }
 int32_t TileBatch::getTileSize() const
 {
@@ -346,14 +347,15 @@ void TileBatch::setMatrix(int32_t index, const Math::Matrix& matrix)
     if (!m_commandVisibleTable.at(index)) {
         throw std::logic_error("rent() is not being called.");
     }
-    m_tileBuffer->getMatrixAt(m_commandIndexTable.at(index)) = matrix;
+    m_tileBuffer->getMatrixAt(index) = matrix;
+    m_shouldConstantCopy = true;
 }
 Math::Matrix TileBatch::getMatrix(int32_t index) const
 {
     if (!m_commandVisibleTable.at(index)) {
         throw std::logic_error("rent() is not being called.");
     }
-    return m_tileBuffer->getMatrixAt(m_commandIndexTable.at(index));
+    return m_tileBuffer->getMatrixAt(index);
 }
 // internal
 void TileBatch::render(
@@ -386,6 +388,10 @@ void TileBatch::render(
         m_commandBuffer->update(m_commands.data());
         m_shouldCommandCopy = false;
     }
+    if (m_shouldConstantCopy) {
+        m_constantBuffer->update(m_tileBuffer->getElementPtr());
+        m_shouldConstantCopy = false;
+    }
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
 
@@ -406,7 +412,7 @@ void TileBatch::render(
     cmdList->IASetIndexBuffer(&ibView);
 
     cmdList->ExecuteIndirect(
-        m_commandSignature.Get(), m_tileBuffer->getElementCount(), m_commandBuffer->getID3D12Resource().Get(),
+        m_commandSignature.Get(), visibleCount, m_commandBuffer->getID3D12Resource().Get(),
         0, nullptr, 0);
 }
 // private
@@ -420,6 +426,9 @@ TileBatch::TileBatch()
     , m_commandVisibleTable()
     , m_commandIndexTable()
     , m_indexLength()
+    , m_shouldCompact()
+    , m_shouldCommandCopy()
+    , m_shouldConstantCopy()
     , m_commands()
     , m_pipelineState()
     , m_rootSignature()

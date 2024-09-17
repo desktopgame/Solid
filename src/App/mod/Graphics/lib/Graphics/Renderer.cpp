@@ -40,11 +40,7 @@ Renderer::Renderer()
     , m_planeLightingObject()
     , m_boxObject()
     , m_boxLightingObject()
-    , m_tileBatchUltraSmall()
-    , m_tileBatchSmall()
-    , m_tileBatchMedium()
-    , m_tileBatchLarge()
-    , m_tileBatchUltraLarge()
+    , m_tileBatches()
 {
 }
 
@@ -280,24 +276,24 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& size,
     }
 }
 
+int32_t Renderer::rentTile(TileBufferKind kind) { return getTileBatch(kind)->rent(); }
+
+void Renderer::releaseTile(TileBufferKind kind, int32_t index) { getTileBatch(kind)->release(index); }
+
+void Renderer::batchTiles(TileBufferKind kind, int32_t index, const Math::Vector4* tiles) { getTileBatch(kind)->setTiles(index, tiles); }
+
+void Renderer::batchMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix)
+{
+    getTileBatch(kind)->setMatrix(index, matrix * getLookAtMatrix() * getPerspectiveMatrix());
+}
+
 void Renderer::drawTiles()
 {
-    if (!m_tileBatchUltraSmall) {
-        m_tileBatchUltraSmall = TileBatch::create(TileBufferUltraSmall::create(10));
+    for (auto tileBatch : m_tileBatches) {
+        if (tileBatch) {
+            Engine::getInstance()->getDevice()->getSurface()->render(tileBatch);
+        }
     }
-    if (!m_tileBatchSmall) {
-        m_tileBatchSmall = TileBatch::create(TileBufferSmall::create(10));
-    }
-    if (!m_tileBatchMedium) {
-        m_tileBatchMedium = TileBatch::create(TileBufferMedium::create(20));
-    }
-    if (!m_tileBatchLarge) {
-        m_tileBatchLarge = TileBatch::create(TileBufferLarge::create(10));
-    }
-    if (!m_tileBatchUltraLarge) {
-        m_tileBatchUltraLarge = TileBatch::create(TileBufferUltraLarge::create(10));
-    }
-    Engine::getInstance()->getDevice()->getSurface()->render(m_tileBatchUltraSmall);
 }
 // private
 void Renderer::initRect()
@@ -910,6 +906,31 @@ void Renderer::initBoxLighting()
     m_boxLightingObject.indexBuffer->update(indices.data());
     m_boxLightingObject.indexLength = indices.size();
     m_boxLightingObject.pso = PipelineStateObject::create(shader, Constant::Layout::LightColor, PrimitiveType::Triangles, 3, true, false);
+}
+
+std::shared_ptr<TileBatch> Renderer::getTileBatch(TileBufferKind kind)
+{
+    int32_t i = static_cast<int32_t>(kind);
+    if (!m_tileBatches.at(i)) {
+        switch (kind) {
+        case TileBufferKind::UltraSmall:
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraSmall::create(100));
+            break;
+        case TileBufferKind::Small:
+            m_tileBatches.at(i) = TileBatch::create(TileBufferSmall::create(100));
+            break;
+        case TileBufferKind::Medium:
+            m_tileBatches.at(i) = TileBatch::create(TileBufferMedium::create(200));
+            break;
+        case TileBufferKind::Large:
+            m_tileBatches.at(i) = TileBatch::create(TileBufferLarge::create(100));
+            break;
+        case TileBufferKind::UltraLarge:
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(1));
+            break;
+        }
+    }
+    return m_tileBatches.at(i);
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant> constant)

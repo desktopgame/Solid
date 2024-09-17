@@ -11,6 +11,7 @@
 #include <fstream>
 #include <imgui.h>
 #include <picojson/picojson.h>
+#include <vector>
 
 using namespace Lib::Graphics;
 using namespace Lib::Math;
@@ -34,11 +35,27 @@ static int appMain(int argc, char* argv[])
     Lib::Graphics::Renderer renderer;
     Lib::Math::Vector3 cameraPosition = Lib::Math::Vector3({ 0, 0, -1 });
     Lib::Math::Vector3 cameraLookAt = Lib::Math::Vector3({ 0, 0, 0 });
+
+    std::vector<Lib::Math::Vector4> tiles;
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 0 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 1 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 2 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 3 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 4 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 5 }));
+
+    int32_t id1 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
+    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id1, tiles.data());
+
+    int32_t id2 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
+    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id2, tiles.data());
+
+    int32_t id3 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
+    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id3, tiles.data());
+
     window->show();
     while (window->peekMessage()) {
         Lib::Input::Gamepad::sync();
-
-        Quaternion rotation = Quaternion::angleAxis(degree, Vector3({ 1, 0, 0 }));
 
         renderer.guiBegin();
         ImGui::Begin("Test", &isGuiOpen);
@@ -51,16 +68,22 @@ static int appMain(int argc, char* argv[])
         renderer.begin();
         renderer.position(cameraPosition);
         renderer.lookAt(cameraLookAt);
+        /*
         renderer.lightEnable();
         renderer.drawBox(Vector3({ 2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
         renderer.lightDisable();
         renderer.drawBox(Vector3({ -2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-
-        renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-        renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-        renderer.drawCircle(Vector2({ 200, 200 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-        renderer.drawSprite(Vector2({ -300, 200 }), Vector2({ 100, 100 }), degree, texture, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
-        renderer.drawSprite(Vector2({ 0, 200 }), Vector2({ 100, 100 }), degree, texture2, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
+        */
+        /*
+                renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+                renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+                renderer.drawCircle(Vector2({ 200, 200 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
+                renderer.drawSprite(Vector2({ -300, 200 }), Vector2({ 100, 100 }), degree, texture, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
+                renderer.drawSprite(Vector2({ 0, 200 }), Vector2({ 100, 100 }), degree, texture2, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
+        */
+        renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id1, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 0, 2 })));
+        renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id2, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 1.5f, 0, 2 })));
+        renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id3, Lib::Math::Matrix::translate(Lib::Math::Vector3({ -1.5f, 0, 2 })));
         renderer.drawTiles();
 
         renderer.textFont(fontMap);
