@@ -12,8 +12,8 @@ public:
         const std::unordered_map<std::string, std::shared_ptr<IScene>>& sceneMap,
         const std::string& firstScene);
 
-    void onUpdate();
-    void onGui();
+    void onUpdate(Graphics::Renderer& renderer);
+    void onGui(Graphics::Renderer& renderer);
     void onDraw(Graphics::Renderer& renderer);
 
 private:

@@ -12,14 +12,14 @@ SceneManager::SceneManager(
 {
 }
 
-void SceneManager::onUpdate()
+void SceneManager::onUpdate(Graphics::Renderer& renderer)
 {
     if (!m_fire) {
         m_fire = true;
         m_sceneMap[m_currentScene]->onEnter();
     }
     std::string nextScene;
-    m_sceneMap[m_currentScene]->onUpdate();
+    m_sceneMap[m_currentScene]->onUpdate(renderer);
     if (m_sceneMap[m_currentScene]->tryTransition(nextScene)) {
         m_sceneMap[m_currentScene]->onExit();
 
@@ -28,10 +28,10 @@ void SceneManager::onUpdate()
     }
 }
 
-void SceneManager::onGui()
+void SceneManager::onGui(Graphics::Renderer& renderer)
 {
 #if _DEBUG
-    m_sceneMap[m_currentScene]->onGui();
+    m_sceneMap[m_currentScene]->onGui(renderer);
 #endif
 }
 
