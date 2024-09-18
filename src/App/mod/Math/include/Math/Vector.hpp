@@ -280,7 +280,7 @@ public:
         return DistanceHelper<N>::compute(a, b);
     }
 
-    operator VectorT<int32_t, N>() const
+    explicit operator VectorT<int32_t, N>() const
     {
         VectorT<int32_t, N> v;
         for (int32_t i = 0; i < N; i++) {
@@ -289,7 +289,7 @@ public:
         return v;
     }
 
-    operator VectorT<float, N>() const
+    explicit operator VectorT<float, N>() const
     {
         VectorT<float, N> v;
         for (int32_t i = 0; i < N; i++) {
