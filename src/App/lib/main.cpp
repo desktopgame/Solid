@@ -45,13 +45,13 @@ static int appMain(int argc, char* argv[])
     tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 15 }));
 
     int32_t id1 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id1, tiles.data(), tiles.size());
+    renderer.batchTileArray(Lib::Graphics::TileBufferKind::Small, id1, tiles.data(), tiles.size());
 
     int32_t id2 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id2, tiles.data(), tiles.size());
+    renderer.batchTileArray(Lib::Graphics::TileBufferKind::Small, id2, tiles.data(), tiles.size());
 
     int32_t id3 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id3, tiles.data(), tiles.size());
+    renderer.batchTileArray(Lib::Graphics::TileBufferKind::Small, id3, tiles.data(), tiles.size());
 
     window->show();
     while (window->peekMessage()) {
@@ -69,9 +69,9 @@ static int appMain(int argc, char* argv[])
         renderer.position(cameraPosition);
         renderer.lookAt(cameraLookAt);
 
-        renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id1, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 0, 2 })));
-        renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id2, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 1.5f, 0, 2 })));
-        renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id3, Lib::Math::Matrix::translate(Lib::Math::Vector3({ -1.5f, 0, 2 })));
+        renderer.batchTileMatrix(Lib::Graphics::TileBufferKind::Small, id1, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 0, 2 })));
+        renderer.batchTileMatrix(Lib::Graphics::TileBufferKind::Small, id2, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 1.5f, 0, 2 })));
+        renderer.batchTileMatrix(Lib::Graphics::TileBufferKind::Small, id3, Lib::Math::Matrix::translate(Lib::Math::Vector3({ -1.5f, 0, 2 })));
         renderer.drawTiles();
 
         renderer.textFont(fontMap);
