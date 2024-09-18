@@ -24,6 +24,10 @@ private:
 
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
+    float m_cameraAngleX;
+    float m_cameraAngleY;
+    float m_cameraMoveSpeed;
+    float m_cameraRotateSpeed;
 
     bool m_tileSubmit;
     int32_t m_tileID;

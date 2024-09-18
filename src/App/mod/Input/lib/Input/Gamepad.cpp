@@ -43,6 +43,7 @@ std::shared_ptr<Gamepad> Gamepad::create(int32_t index)
 Gamepad::Gamepad(int32_t index)
     : m_index(index)
     , m_isEnabled(false)
+    , m_impl(std::shared_ptr<Impl>(new Impl()))
 {
 }
 }
