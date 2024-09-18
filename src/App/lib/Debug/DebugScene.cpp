@@ -9,6 +9,7 @@ DebugScene::DebugScene()
     , m_tileSide()
     , m_tileColor()
     , m_tileData()
+    , m_backTileData()
     , m_cameraPos({ 0, 0, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_cameraAngleX()
@@ -17,6 +18,7 @@ DebugScene::DebugScene()
     , m_cameraRotateSpeed(0.5f)
     , m_tileSubmit()
     , m_tileID(-1)
+    , m_backTileID(-1)
     , m_previewTileID(-1)
 {
 }
@@ -27,6 +29,9 @@ void DebugScene::onEnter(Renderer& renderer)
     if (m_tileID == -1) {
         m_tileID = renderer.rentTile(TileBufferKind::Medium);
     }
+    if (m_backTileID == -1) {
+        m_backTileID = renderer.rentTile(TileBufferKind::Medium);
+    }
     if (m_previewTileID == -1) {
         m_previewTileID = renderer.rentTile(TileBufferKind::UltraSmall);
     }
@@ -35,6 +40,9 @@ void DebugScene::onExit(Renderer& renderer)
 {
     if (m_tileID != -1) {
         renderer.releaseTile(TileBufferKind::Medium, m_tileID);
+    }
+    if (m_backTileID != -1) {
+        renderer.releaseTile(TileBufferKind::Medium, m_backTileID);
     }
     if (m_previewTileID != -1) {
         renderer.releaseTile(TileBufferKind::UltraSmall, m_previewTileID);
@@ -107,6 +115,11 @@ void DebugScene::onGui(Renderer& renderer)
         float w = static_cast<float>((m_tileColor * 10) + m_tileSide);
         m_tileData.push_back(Vector4(m_tilePosition, w));
         renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
+
+        float backW = static_cast<float>((m_tileColor * 10) + TileBatch::s_tileReverseTable.at(m_tileSide));
+        Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
+        m_backTileData.push_back(Vector4(backTilePosition, backW));
+        renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
         m_tileSubmit = true;
     }
     ImGui::End();
@@ -117,8 +130,12 @@ void DebugScene::onDraw(Renderer& renderer)
     renderer.lookAt(m_cameraLookAt);
 
     float previewTileW = static_cast<float>((m_tileColor * 10) + m_tileSide);
-    Vector4 perviewTile(m_tilePosition, previewTileW);
-    renderer.batchTileArray(TileBufferKind::UltraSmall, m_previewTileID, &perviewTile, 1);
+    float previewBackTileW = static_cast<float>((m_tileColor * 10) + TileBatch::s_tileReverseTable.at(m_tileSide));
+    std::array<Vector4, 2> previewTiles {
+        Vector4(m_tilePosition, previewTileW),
+        Vector4(m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide), previewBackTileW),
+    };
+    renderer.batchTileArray(TileBufferKind::UltraSmall, m_previewTileID, previewTiles.data(), 2);
     renderer.drawTiles();
 };
 

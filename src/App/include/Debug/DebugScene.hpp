@@ -21,6 +21,7 @@ private:
     int32_t m_tileSide;
     int32_t m_tileColor;
     std::vector<Vector4> m_tileData;
+    std::vector<Vector4> m_backTileData;
 
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
@@ -31,6 +32,7 @@ private:
 
     bool m_tileSubmit;
     int32_t m_tileID;
+    int32_t m_backTileID;
     int32_t m_previewTileID;
 };
 }

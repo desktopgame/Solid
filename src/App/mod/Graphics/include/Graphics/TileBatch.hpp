@@ -70,6 +70,36 @@ public:
         Math::Matrix(),
     };
 
+    inline static const std::array<Math::Vector3, 6> s_normalVectorTable = {
+        // posY
+        Math::Vector3({ 0, 1, 0 }),
+        // negY
+        Math::Vector3({ 0, -1, 0 }),
+        // posX
+        Math::Vector3({ 1, 0, 0 }),
+        // negX
+        Math::Vector3({ -1, 0, 0 }),
+        // posZ
+        Math::Vector3({ 0, 0, 1 }),
+        // negZ
+        Math::Vector3({ 0, 0, -1 }),
+    };
+
+    inline static const std::array<int32_t, 6> s_tileReverseTable = {
+        // posY
+        1,
+        // negY
+        0,
+        // posX
+        3,
+        // negX
+        2,
+        // posZ
+        5,
+        // negZ
+        4,
+    };
+
     inline static const std::array<Math::Vector3, 64> s_colorTable = {
         Math::Vector3({ 1.0f, 1.0f / 16.0f, 1.0f / 16.0f }),
         Math::Vector3({ 1.0f, 2.0f / 16.0f, 2.0f / 16.0f }),
