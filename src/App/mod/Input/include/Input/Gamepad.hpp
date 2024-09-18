@@ -5,9 +5,6 @@
 namespace Lib::Input {
 class Gamepad {
 public:
-    static void sync();
-    static std::shared_ptr<Gamepad> getGamepad(int32_t index);
-
     enum Button : uint16_t {
         DPadUp = 0x001,
         DPadDown = 0x002,
@@ -34,6 +31,12 @@ public:
     bool isPressed(Button button) const;
     bool isEnabled() const;
 
+#if SOLID_ENABLE_INTERNAL
+    static std::shared_ptr<Gamepad> create(int32_t index);
+
+    void sync();
+#endif
+
 private:
     Gamepad(int32_t index);
 
@@ -41,9 +44,6 @@ private:
     bool m_isEnabled;
 
     class Impl;
-    static std::shared_ptr<Impl> s_impl;
-
-    static std::vector<std::shared_ptr<Gamepad>> s_controllers;
-    inline static constexpr int32_t k_maxCount = 4;
+    std::shared_ptr<Impl> m_impl;
 };
 }

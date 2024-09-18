@@ -15,6 +15,7 @@
 
 using namespace Lib::Graphics;
 using namespace Lib::Math;
+using namespace Lib::Input;
 
 static int appMain(int argc, char* argv[])
 {
@@ -26,6 +27,8 @@ static int appMain(int argc, char* argv[])
     auto surface = device->getSurface();
     auto texture = Texture::create("assets/Sprite.png");
     auto texture2 = Texture::create("assets/ghicon.png");
+
+    auto inputSystem = InputSystem::getInstance()->startup();
 
     auto fontMap = FontFactory::getInstance()->load("assets/NotoSansJP-Regular.ttf");
     fontMap->load(16, u"こんにちわ");
@@ -55,7 +58,7 @@ static int appMain(int argc, char* argv[])
 
     window->show();
     while (window->peekMessage()) {
-        Lib::Input::Gamepad::sync();
+        inputSystem->sync();
 
         renderer.guiBegin();
         ImGui::Begin("Test", &isGuiOpen);
@@ -123,6 +126,7 @@ static int appMain(int argc, char* argv[])
         // Show messages
         device->flushLogEntries();
     }
+    inputSystem->shutdown();
     engine->shutdown();
     return 0;
 }

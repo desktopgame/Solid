@@ -10,6 +10,7 @@ project(
 add_library(
     Lib-Input
     STATIC
+    lib/Input/InputSystem.cpp
     lib/Input/Gamepad.cpp
 )
 lib_target_compile_params(Lib-Input)
