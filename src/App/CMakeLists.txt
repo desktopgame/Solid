@@ -23,14 +23,15 @@ add_subdirectory(./mod/Json)
 add_subdirectory(./mod/Input)
 add_subdirectory(./mod/Math)
 add_subdirectory(./mod/Graphics)
+add_subdirectory(./mod/Scene)
 add_subdirectory(./mod/Utils)
 #
 # Build Options
 #
-set(SOURCES "lib/main.cpp")
 add_executable(
     App
-    ${SOURCES}
+    lib/main.cpp
+    lib/Debug/DebugScene.cpp
 )
 app_target_compile_params(App)
 app_target_link_params(App)
@@ -41,6 +42,7 @@ target_include_directories(
     "${MODS}/Input/include"
     "${MODS}/Graphics/include"
     "${MODS}/Math/include"
+    "${MODS}/Scene/include"
     "${MODS}/Utils/include"
 )
 target_link_libraries(
@@ -50,5 +52,6 @@ target_link_libraries(
     Lib-Input
     Lib-Math
     Lib-Graphics
+    Lib-Scene
     Lib-Utils
 )
