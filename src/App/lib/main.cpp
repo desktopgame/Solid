@@ -24,34 +24,34 @@ static int appMain(int argc, char* argv[])
     auto device = engine->getDevice();
     auto window = engine->getWindow();
     auto surface = device->getSurface();
-    auto texture = Lib::Graphics::Texture::create("assets/Sprite.png");
-    auto texture2 = Lib::Graphics::Texture::create("assets/ghicon.png");
+    auto texture = Texture::create("assets/Sprite.png");
+    auto texture2 = Texture::create("assets/ghicon.png");
 
     auto fontMap = FontFactory::getInstance()->load("assets/NotoSansJP-Regular.ttf");
     fontMap->load(16, u"こんにちわ");
 
     float degree = 0.0f;
     bool isGuiOpen = true;
-    Lib::Graphics::Renderer renderer;
-    Lib::Math::Vector3 cameraPosition = Lib::Math::Vector3({ 0, 0, -1 });
-    Lib::Math::Vector3 cameraLookAt = Lib::Math::Vector3({ 0, 0, 0 });
+    Renderer renderer;
+    Vector3 cameraPosition = Vector3({ 0, 0, -1 });
+    Vector3 cameraLookAt = Vector3({ 0, 0, 0 });
 
-    std::vector<Lib::Math::Vector4> tiles;
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 10 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 11 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 12 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 13 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 14 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 15 }));
+    std::vector<Vector4> tiles;
+    tiles.push_back(Vector4({ 0, 0, 0, 10 }));
+    tiles.push_back(Vector4({ 0, 0, 0, 11 }));
+    tiles.push_back(Vector4({ 0, 0, 0, 12 }));
+    tiles.push_back(Vector4({ 0, 0, 0, 13 }));
+    tiles.push_back(Vector4({ 0, 0, 0, 14 }));
+    tiles.push_back(Vector4({ 0, 0, 0, 15 }));
 
-    int32_t id1 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTileArray(Lib::Graphics::TileBufferKind::Small, id1, tiles.data(), tiles.size());
+    int32_t id1 = renderer.rentTile(TileBufferKind::Small);
+    renderer.batchTileArray(TileBufferKind::Small, id1, tiles.data(), tiles.size());
 
-    int32_t id2 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTileArray(Lib::Graphics::TileBufferKind::Small, id2, tiles.data(), tiles.size());
+    int32_t id2 = renderer.rentTile(TileBufferKind::Small);
+    renderer.batchTileArray(TileBufferKind::Small, id2, tiles.data(), tiles.size());
 
-    int32_t id3 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTileArray(Lib::Graphics::TileBufferKind::Small, id3, tiles.data(), tiles.size());
+    int32_t id3 = renderer.rentTile(TileBufferKind::Small);
+    renderer.batchTileArray(TileBufferKind::Small, id3, tiles.data(), tiles.size());
 
     window->show();
     while (window->peekMessage()) {
@@ -69,9 +69,9 @@ static int appMain(int argc, char* argv[])
         renderer.position(cameraPosition);
         renderer.lookAt(cameraLookAt);
 
-        renderer.batchTileMatrix(Lib::Graphics::TileBufferKind::Small, id1, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 0, 2 })));
-        renderer.batchTileMatrix(Lib::Graphics::TileBufferKind::Small, id2, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 1.5f, 0, 2 })));
-        renderer.batchTileMatrix(Lib::Graphics::TileBufferKind::Small, id3, Lib::Math::Matrix::translate(Lib::Math::Vector3({ -1.5f, 0, 2 })));
+        renderer.batchTileMatrix(TileBufferKind::Small, id1, Matrix::translate(Vector3({ 0, 0, 2 })));
+        renderer.batchTileMatrix(TileBufferKind::Small, id2, Matrix::translate(Vector3({ 1.5f, 0, 2 })));
+        renderer.batchTileMatrix(TileBufferKind::Small, id3, Matrix::translate(Vector3({ -1.5f, 0, 2 })));
         renderer.drawTiles();
 
         renderer.textFont(fontMap);
