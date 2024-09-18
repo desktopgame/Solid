@@ -25,6 +25,10 @@
 			"name": "Json"
 		},
 		{
+			"path": "src/App/mod/Scene",
+			"name": "Scene"
+		},
+		{
 			"path": "src/App/mod/Utils",
 			"name": "Utils"
 		},
