@@ -31,7 +31,7 @@ add_subdirectory(./mod/Utils)
 add_executable(
     App
     lib/main.cpp
-    lib/Debug/DebugScene.cpp
+    lib/Scenes/Debug/DebugScene.cpp
 )
 app_target_compile_params(App)
 app_target_link_params(App)

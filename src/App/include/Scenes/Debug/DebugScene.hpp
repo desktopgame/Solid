@@ -1,7 +1,7 @@
 #pragma once
 #include <library.hpp>
 
-namespace App::Debug {
+namespace App::Scenes::Debug {
 class DebugScene : public IScene {
 public:
     explicit DebugScene();

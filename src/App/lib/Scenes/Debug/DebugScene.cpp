@@ -1,8 +1,8 @@
-#include <Debug/DebugScene.hpp>
+#include <Scenes/Debug/DebugScene.hpp>
 #include <cmath>
 #include <imgui.h>
 
-namespace App::Debug {
+namespace App::Scenes::Debug {
 // public
 DebugScene::DebugScene()
     : m_tilePosition()

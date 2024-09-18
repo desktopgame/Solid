@@ -5,7 +5,8 @@
 #endif
 
 // App
-#include <Debug/DebugScene.hpp>
+#include <Scenes/Debug/DebugScene.hpp>
+using namespace App::Scenes;
 
 // Lib
 #include <library.hpp>
@@ -20,7 +21,7 @@ static int appMain(int argc, char* argv[])
     auto inputSystem = InputSystem::getInstance()->startup();
 
     std::unordered_map<std::string, std::shared_ptr<IScene>> sceneMap;
-    sceneMap.insert_or_assign("Debug", std::make_shared<App::Debug::DebugScene>());
+    sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     SceneManager sceneManager(sceneMap, "Debug");
 
     Renderer renderer;
