@@ -7,15 +7,26 @@ public:
     explicit DebugScene();
     virtual ~DebugScene();
 
-    void onEnter() override;
-    void onExit() override;
+    void onEnter(Renderer& renderer) override;
+    void onExit(Renderer& renderer) override;
 
-    void onUpdate() override;
-    void onGui() override;
+    void onUpdate(Renderer& renderer) override;
+    void onGui(Renderer& renderer) override;
     void onDraw(Renderer& renderer) override;
 
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    Vector3 m_tilePosition;
+    int32_t m_tileSide;
+    int32_t m_tileColor;
+    std::vector<Vector4> m_tileData;
+
+    Vector3 m_cameraPos;
+    Vector3 m_cameraLookAt;
+
+    bool m_tileSubmit;
+    int32_t m_tileID;
+    int32_t m_previewTileID;
 };
 }

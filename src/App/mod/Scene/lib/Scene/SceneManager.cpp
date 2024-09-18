@@ -16,15 +16,15 @@ void SceneManager::onUpdate(Graphics::Renderer& renderer)
 {
     if (!m_fire) {
         m_fire = true;
-        m_sceneMap[m_currentScene]->onEnter();
+        m_sceneMap[m_currentScene]->onEnter(renderer);
     }
     std::string nextScene;
     m_sceneMap[m_currentScene]->onUpdate(renderer);
     if (m_sceneMap[m_currentScene]->tryTransition(nextScene)) {
-        m_sceneMap[m_currentScene]->onExit();
+        m_sceneMap[m_currentScene]->onExit(renderer);
 
         m_currentScene = nextScene;
-        m_sceneMap[m_currentScene]->onEnter();
+        m_sceneMap[m_currentScene]->onEnter(renderer);
     }
 }
 

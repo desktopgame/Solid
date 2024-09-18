@@ -28,10 +28,10 @@ static int appMain(int argc, char* argv[])
     while (window->peekMessage()) {
         inputSystem->sync();
 
-        sceneManager.onUpdate();
+        sceneManager.onUpdate(renderer);
 
         renderer.guiBegin();
-        sceneManager.onGui();
+        sceneManager.onGui(renderer);
         renderer.guiEnd();
 
         renderer.begin();
