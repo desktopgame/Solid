@@ -37,12 +37,12 @@ static int appMain(int argc, char* argv[])
     Lib::Math::Vector3 cameraLookAt = Lib::Math::Vector3({ 0, 0, 0 });
 
     std::vector<Lib::Math::Vector4> tiles;
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 0 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 1 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 2 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 3 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 4 }));
-    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 5 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 10 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 11 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 12 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 13 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 14 }));
+    tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 15 }));
 
     int32_t id1 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
     renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id1, tiles.data(), tiles.size());

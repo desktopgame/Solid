@@ -29,6 +29,12 @@ public:
     void setMatrix(int32_t index, const Math::Matrix& matrix);
     Math::Matrix getMatrix(int32_t index) const;
 
+    void setGlobalViewMatrix(const Math::Matrix& matrix);
+    Math::Matrix getGlobalViewMatrix() const;
+
+    void setGlobalProjectionMatrix(const Math::Matrix& matrix);
+    Math::Matrix getGlobalProjectionMatrix() const;
+
 #if SOLID_ENABLE_INTERNAL
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
@@ -57,7 +63,7 @@ public:
         // posX
         Math::Matrix::rotateY(90.0f),
         // negX
-        Math::Matrix::rotateX(-90.0f),
+        Math::Matrix::rotateY(-90.0f),
         // posZ
         Math::Matrix::rotateY(180.0f),
         // negZ
@@ -179,6 +185,7 @@ private:
     bool m_shouldCompact;
     bool m_shouldCommandCopy;
     bool m_shouldConstantCopy;
+    bool m_shouldCameraCopy;
 
 #if SOLID_ENABLE_INTERNAL
     struct IndirectCommand {

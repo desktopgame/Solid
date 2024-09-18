@@ -55,7 +55,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             matrix tileTranslate = translateMatrixTable[tileRotationID];
             matrix tileTransform = mul(tileTranslate, tileRotation);
             float3 tileOffset = tileData[instanceID].xyz;
-            matrix mvpMatrix = modelMatrix * viewMatrix * projectionMatrix;
+            matrix mvpMatrix = mul(mul(projectionMatrix, viewMatrix), modelMatrix);
             output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
             output.color = float4(colorTable[tileColorID], 1);
             return output;
@@ -333,6 +333,20 @@ Math::Matrix TileBatch::getMatrix(int32_t index) const
     }
     return m_tileBuffer->getMatrixAt(index);
 }
+
+void TileBatch::setGlobalViewMatrix(const Math::Matrix& matrix)
+{
+    m_cameraData.viewMatrix = matrix;
+    m_shouldCameraCopy = true;
+}
+Math::Matrix TileBatch::getGlobalViewMatrix() const { return m_cameraData.viewMatrix; }
+
+void TileBatch::setGlobalProjectionMatrix(const Math::Matrix& matrix)
+{
+    m_cameraData.projectionMatrix = matrix;
+    m_shouldCameraCopy = true;
+}
+Math::Matrix TileBatch::getGlobalProjectionMatrix() const { return m_cameraData.projectionMatrix; }
 // internal
 void TileBatch::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -367,6 +381,10 @@ void TileBatch::render(
     if (m_shouldConstantCopy) {
         m_constantBuffer->update(m_tileBuffer->getElementPtr());
         m_shouldConstantCopy = false;
+    }
+    if (m_shouldCameraCopy) {
+        m_cameraBuffer->update(&m_cameraData);
+        m_shouldCameraCopy = false;
     }
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
@@ -411,6 +429,7 @@ TileBatch::TileBatch()
     , m_shouldCompact()
     , m_shouldCommandCopy()
     , m_shouldConstantCopy()
+    , m_shouldCameraCopy()
     , m_commands()
     , m_pipelineState()
     , m_rootSignature()

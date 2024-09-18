@@ -284,13 +284,15 @@ void Renderer::batchTiles(TileBufferKind kind, int32_t index, const Math::Vector
 
 void Renderer::batchMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix)
 {
-    getTileBatch(kind)->setMatrix(index, matrix * getLookAtMatrix() * getPerspectiveMatrix());
+    getTileBatch(kind)->setMatrix(index, matrix);
 }
 
 void Renderer::drawTiles()
 {
     for (auto tileBatch : m_tileBatches) {
         if (tileBatch) {
+            tileBatch->setGlobalViewMatrix(getLookAtMatrix());
+            tileBatch->setGlobalProjectionMatrix(getPerspectiveMatrix());
             Engine::getInstance()->getDevice()->getSurface()->render(tileBatch);
         }
     }
