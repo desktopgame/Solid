@@ -7,6 +7,7 @@ namespace App::Debug {
 DebugScene::DebugScene()
     : m_tilePosition()
     , m_tileSide()
+    , m_tilePallet()
     , m_tileColor()
     , m_tileData()
     , m_backTileData()
@@ -109,14 +110,15 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::Begin("Edit");
     ImGui::DragFloat3("Pos", m_tilePosition.data());
     ImGui::SliderInt("Side", &m_tileSide, 0, 5);
-    ImGui::SliderInt("Color", &m_tileColor, 0, 63);
+    ImGui::SliderInt("Pallet", &m_tilePallet, 0, 3);
+    ImGui::SliderInt("Color", &m_tileColor, 0, 15);
     ImGui::LabelText("TileCount", "%d", static_cast<int32_t>(m_tileData.size()));
     if (ImGui::Button("Submit")) {
-        float w = static_cast<float>((m_tileColor * 10) + m_tileSide);
+        float w = static_cast<float>(getColorIndex() + m_tileSide);
         m_tileData.push_back(Vector4(m_tilePosition, w));
         renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
 
-        float backW = static_cast<float>((m_tileColor * 10) + TileBatch::s_tileReverseTable.at(m_tileSide));
+        float backW = static_cast<float>(getColorIndex() + TileBatch::s_tileReverseTable.at(m_tileSide));
         Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
         m_backTileData.push_back(Vector4(backTilePosition, backW));
         renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
@@ -129,8 +131,8 @@ void DebugScene::onDraw(Renderer& renderer)
     renderer.position(m_cameraPos);
     renderer.lookAt(m_cameraLookAt);
 
-    float previewTileW = static_cast<float>((m_tileColor * 10) + m_tileSide);
-    float previewBackTileW = static_cast<float>((m_tileColor * 10) + TileBatch::s_tileReverseTable.at(m_tileSide));
+    float previewTileW = static_cast<float>(getColorIndex() + m_tileSide);
+    float previewBackTileW = static_cast<float>(getColorIndex() + TileBatch::s_tileReverseTable.at(m_tileSide));
     std::array<Vector4, 2> previewTiles {
         Vector4(m_tilePosition, previewTileW),
         Vector4(m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide), previewBackTileW),
@@ -143,4 +145,9 @@ bool DebugScene::tryTransition(std::string& outNextScene)
 {
     return false;
 };
+// private
+int32_t DebugScene::getColorIndex() const
+{
+    return ((m_tilePallet * 16) + m_tileColor) * 10;
+}
 }

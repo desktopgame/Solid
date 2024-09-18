@@ -17,8 +17,11 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    int32_t getColorIndex() const;
+
     Vector3 m_tilePosition;
     int32_t m_tileSide;
+    int32_t m_tilePallet;
     int32_t m_tileColor;
     std::vector<Vector4> m_tileData;
     std::vector<Vector4> m_backTileData;

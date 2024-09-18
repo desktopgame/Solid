@@ -34,7 +34,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         {
             matrix viewMatrix;
             matrix projectionMatrix;
-            float padding[32];
+            float4 padding[8];
         };
         cbuffer cbuff2 : register(b2)
         {
@@ -43,7 +43,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         };
         cbuffer cbuff3 : register(b3)
         {
-            float3 colorTable[64];
+            float4 colorTable[64];
         };
 
         Output vsMain(float3 pos : POSITION, uint instanceID : SV_InstanceID) {
@@ -57,7 +57,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             float3 tileOffset = tileData[instanceID].xyz;
             matrix mvpMatrix = mul(mul(projectionMatrix, viewMatrix), modelMatrix);
             output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
-            output.color = float4(colorTable[tileColorID], 1);
+            output.color = colorTable[tileColorID];
             return output;
         })"),
                                               shaderKeywords),
