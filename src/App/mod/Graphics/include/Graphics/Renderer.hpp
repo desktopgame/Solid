@@ -33,10 +33,6 @@ public:
     void depthRange(float zNear, float zFar);
     void fovY(float fovY);
 
-    void lightEnable();
-    void lightDisable();
-    void lightDirection(const Math::Vector3& lightDirection);
-
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
 
@@ -51,9 +47,6 @@ public:
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
     void drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color);
     Math::Vector2 measureText(const std::u16string& label, TextAlignY alignY);
-
-    void drawPlane(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
-    void drawBox(const Math::Vector3& position, const Math::Vector3& size, const Math::Quaternion& rotation, const Color& color);
 
     int32_t rentTile(TileBufferKind kind);
     void releaseTile(TileBufferKind kind, int32_t index);
@@ -76,11 +69,6 @@ private:
     void initSprite();
     void initText();
 
-    void initPlane();
-    void initPlaneLighting();
-    void initBox();
-    void initBoxLighting();
-
     std::shared_ptr<TileBatch> getTileBatch(TileBufferKind kind);
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
@@ -94,9 +82,6 @@ private:
     float m_zNear;
     float m_zFar;
     float m_fovY;
-    // light
-    bool m_lightEnable;
-    Math::Vector3 m_lightDirection;
     // text
     std::shared_ptr<FontMap> m_fontMap;
     int32_t m_fontSize;
@@ -112,11 +97,6 @@ private:
     Object m_circleObject;
     Object m_spriteObject;
     Object m_textObject;
-
-    Object m_planeObject;
-    Object m_planeLightingObject;
-    Object m_boxObject;
-    Object m_boxLightingObject;
 
     std::array<std::shared_ptr<TileBatch>, 5> m_tileBatches;
 };
