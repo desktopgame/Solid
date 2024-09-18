@@ -281,7 +281,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         tileBatch->m_commands.push_back(IndirectCommand {});
         tileBatch->m_commands.at(i).cbv = constBufAddr;
         tileBatch->m_commands.at(i).drawArguments.IndexCountPerInstance = 6;
-        tileBatch->m_commands.at(i).drawArguments.InstanceCount = 6;
+        tileBatch->m_commands.at(i).drawArguments.InstanceCount = 0;
         tileBatch->m_commands.at(i).drawArguments.StartIndexLocation = 0;
         tileBatch->m_commands.at(i).drawArguments.StartInstanceLocation = 0;
 
@@ -329,6 +329,9 @@ void TileBatch::setTiles(int32_t index, const Math::Vector4* tiles, int32_t tile
     Math::Vector4* dst = m_tileBuffer->getArrayAt(index);
     ::memcpy(dst, tiles, sizeof(Math::Vector4) * tileCount);
     m_shouldConstantCopy = true;
+
+    m_commands.at(m_commandIndexTable.at(index)).drawArguments.InstanceCount = tileCount;
+    m_shouldCommandCopy = true;
 }
 const Math::Vector4* TileBatch::getTiles(int32_t index) const
 {
