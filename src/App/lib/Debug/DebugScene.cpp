@@ -113,16 +113,36 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::SliderInt("Pallet", &m_tilePallet, 0, 3);
     ImGui::SliderInt("Color", &m_tileColor, 0, 15);
     ImGui::LabelText("TileCount", "%d", static_cast<int32_t>(m_tileData.size()));
-    if (ImGui::Button("Submit")) {
+    if (ImGui::Button("Remove")) {
+        removeTile(m_tileData, m_tilePosition, m_tileSide);
+        renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
+
+        Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
+        removeTile(m_backTileData, backTilePosition, TileBatch::s_tileReverseTable.at(m_tileSide));
+        renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
+    }
+    if (ImGui::Button("Update")) {
         float w = static_cast<float>(getColorIndex() + m_tileSide);
-        m_tileData.push_back(Vector4(m_tilePosition, w));
+        updateTile(m_tileData, m_tilePosition, m_tileSide, Vector4(m_tilePosition, w));
         renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
 
         float backW = static_cast<float>(getColorIndex() + TileBatch::s_tileReverseTable.at(m_tileSide));
         Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
-        m_backTileData.push_back(Vector4(backTilePosition, backW));
+        updateTile(m_backTileData, backTilePosition, TileBatch::s_tileReverseTable.at(m_tileSide), Vector4(backTilePosition, backW));
         renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
-        m_tileSubmit = true;
+    }
+    if (ImGui::Button("Submit")) {
+        if (!containTile(m_tileData, m_tilePosition, m_tileSide)) {
+            float w = static_cast<float>(getColorIndex() + m_tileSide);
+            m_tileData.push_back(Vector4(m_tilePosition, w));
+            renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
+
+            float backW = static_cast<float>(getColorIndex() + TileBatch::s_tileReverseTable.at(m_tileSide));
+            Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
+            m_backTileData.push_back(Vector4(backTilePosition, backW));
+            renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
+            m_tileSubmit = true;
+        }
     }
     ImGui::End();
 };
@@ -149,5 +169,33 @@ bool DebugScene::tryTransition(std::string& outNextScene)
 int32_t DebugScene::getColorIndex() const
 {
     return ((m_tilePallet * 16) + m_tileColor) * 10;
+}
+
+bool DebugScene::containTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide)
+{
+    auto iter = std::find_if(v.begin(), v.end(), [tilePosition, tileSide](const Vector4& tile) -> bool {
+        return tilePosition == (Vector3)tile && (static_cast<int>(tile.w()) % 10) == tileSide;
+    });
+    return iter != v.end();
+}
+
+void DebugScene::updateTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide, const Vector4& newTile)
+{
+    auto iter = std::find_if(v.begin(), v.end(), [tilePosition, tileSide](const Vector4& tile) -> bool {
+        return tilePosition == (Vector3)tile && (static_cast<int>(tile.w()) % 10) == tileSide;
+    });
+    if (iter != v.end()) {
+        *iter = newTile;
+    }
+}
+
+void DebugScene::removeTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide)
+{
+    auto iter = std::remove_if(v.begin(), v.end(), [tilePosition, tileSide](const Vector4& tile) -> bool {
+        return tilePosition == (Vector3)tile && (static_cast<int>(tile.w()) % 10) == tileSide;
+    });
+    if (iter != v.end()) {
+        v.erase(iter, v.end());
+    }
 }
 }

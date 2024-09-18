@@ -298,6 +298,13 @@ public:
         return v;
     }
 
+    explicit operator VectorT<T, N - 1>() const
+    {
+        std::array<T, N - 1> a;
+        std::copy(components.begin(), components.begin() + (N - 1), a.begin());
+        return VectorT<T, N - 1>(a);
+    }
+
     VectorT<T, N>& operator+=(const VectorT<T, N>& a)
     {
         for (int32_t i = 0; i < N; i++) {

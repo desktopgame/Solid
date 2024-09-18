@@ -18,6 +18,9 @@ public:
 
 private:
     int32_t getColorIndex() const;
+    static bool containTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide);
+    static void updateTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide, const Vector4& newTile);
+    static void removeTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide);
 
     Vector3 m_tilePosition;
     int32_t m_tileSide;
