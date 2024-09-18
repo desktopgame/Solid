@@ -28,108 +28,36 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         cbuffer cbuff0 : register(b0)
         {
             float4 tileData[${VS_TileDataSize}];
-            matrix mvpMatrix;
+            matrix modelMatrix;
         };
-
-        static const matrix rotationTable[6] = {
-            // posY
-            matrix(
-            1, 0, 0, 0,
-            0, cos(radians(-90)), -sin(radians(-90)), 0,
-            0, sin(radians(-90)), cos(radians(-90)), 0,
-            0, 0, 0, 1
-            ),
-            // negY
-            matrix(
-            1, 0, 0, 0,
-            0, cos(radians(90)), -sin(radians(90)), 0,
-            0, sin(radians(90)), cos(radians(90)), 0,
-            0, 0, 0, 1
-            ),
-            // posX
-            matrix(
-            cos(radians(90)), 0, sin(radians(90)), 0,
-            0, 1, 0, 0,
-            -sin(radians(90)), 0, cos(radians(90)), 0,
-            0, 0, 0, 1
-            ),
-            // negX
-            matrix(
-            cos(radians(-90)), 0, sin(radians(-90)), 0,
-            0, 1, 0, 0,
-            -sin(radians(-90)), 0, cos(radians(-90)), 0,
-            0, 0, 0, 1
-            ),
-            // posZ
-            matrix(
-            cos(radians(180)), 0, sin(radians(180)), 0,
-            0, 1, 0, 0,
-            -sin(radians(180)), 0, cos(radians(180)), 0,
-            0, 0, 0, 1
-            ),
-            // negZ
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-            )
+        cbuffer cbuff1 : register(b1)
+        {
+            matrix viewMatrix;
+            matrix projectionMatrix;
+            float padding[32];
         };
-        static const matrix translateTable[6] = {
-            // posY
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0.5, 0, 1
-            ),
-            // negY
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, -0.5, 0, 1
-            ),
-            // posX
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0.5, 0, 0, 1
-            ),
-            // negX
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            -0.5, 0, 0, 1
-            ),
-            // posZ
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0.5, 1
-            ),
-            // negZ
-            matrix(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, -0.5, 1
-            )
+        cbuffer cbuff2 : register(b2)
+        {
+            matrix translateMatrixTable[6];
+            matrix rotationMatrixTable[6];
+        };
+        cbuffer cbuff3 : register(b3)
+        {
+            float3 colorTable[64];
         };
 
         Output vsMain(float3 pos : POSITION, uint instanceID : SV_InstanceID) {
             Output output;
             int tileInfo = int(tileData[instanceID].w);
             int tileRotationID = tileInfo % 10;
-            matrix tileRotation = transpose(rotationTable[tileRotationID]);
-            matrix tileTranslate = transpose(translateTable[tileRotationID]);
+            int tileColorID = tileInfo / 10;
+            matrix tileRotation = rotationMatrixTable[tileRotationID];
+            matrix tileTranslate = translateMatrixTable[tileRotationID];
             matrix tileTransform = mul(tileTranslate, tileRotation);
             float3 tileOffset = tileData[instanceID].xyz;
+            matrix mvpMatrix = modelMatrix * viewMatrix * projectionMatrix;
             output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
-            output.color = float4(float(instanceID) / 12.0, 0, 0, 1);
+            output.color = float4(colorTable[tileColorID], 1);
             return output;
         })"),
                                               shaderKeywords),
@@ -220,6 +148,21 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     rootParam.at(0).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
     rootParam.at(0).Constants.RegisterSpace = 0;
     rootParam.at(0).Constants.ShaderRegister = 0;
+    rootParam.push_back({});
+    rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    rootParam.at(1).Constants.RegisterSpace = 0;
+    rootParam.at(1).Constants.ShaderRegister = 1;
+    rootParam.push_back({});
+    rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    rootParam.at(2).Constants.RegisterSpace = 0;
+    rootParam.at(2).Constants.ShaderRegister = 2;
+    rootParam.push_back({});
+    rootParam.at(3).ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    rootParam.at(3).Constants.RegisterSpace = 0;
+    rootParam.at(3).Constants.ShaderRegister = 3;
 
     D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
     samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
@@ -261,7 +204,16 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     argumentDescs.at(0).Type = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT_BUFFER_VIEW;
     argumentDescs.at(0).ConstantBufferView.RootParameterIndex = 0;
     argumentDescs.push_back({});
-    argumentDescs.at(1).Type = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED;
+    argumentDescs.at(1).Type = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT_BUFFER_VIEW;
+    argumentDescs.at(1).ConstantBufferView.RootParameterIndex = 1;
+    argumentDescs.push_back({});
+    argumentDescs.at(2).Type = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT_BUFFER_VIEW;
+    argumentDescs.at(2).ConstantBufferView.RootParameterIndex = 2;
+    argumentDescs.push_back({});
+    argumentDescs.at(3).Type = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT_BUFFER_VIEW;
+    argumentDescs.at(3).ConstantBufferView.RootParameterIndex = 3;
+    argumentDescs.push_back({});
+    argumentDescs.at(4).Type = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED;
 
     D3D12_COMMAND_SIGNATURE_DESC commandSignatureDesc = {};
     commandSignatureDesc.pArgumentDescs = argumentDescs.data();
@@ -271,15 +223,36 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     if (FAILED(device->CreateCommandSignature(&commandSignatureDesc, tileBatch->m_rootSignature.Get(), IID_PPV_ARGS(&tileBatch->m_commandSignature)))) {
         throw std::runtime_error("failed CreateCommandSignature()");
     }
+    // global buffer
+    tileBatch->m_cameraBuffer = Buffer::create();
+    tileBatch->m_cameraBuffer->allocate(sizeof(CameraData));
+    tileBatch->m_cameraBuffer->update(&tileBatch->m_cameraData);
+
+    tileBatch->m_transformData.translateMatrixTable = s_translateMatrixTable;
+    tileBatch->m_transformData.rotationMatrixTable = s_rotationMatrixTable;
+    tileBatch->m_transformBuffer = Buffer::create();
+    tileBatch->m_transformBuffer->allocate(sizeof(TransformData));
+    tileBatch->m_transformBuffer->update(&tileBatch->m_transformData);
+
+    tileBatch->m_colorData.colorTable = s_colorTable;
+    tileBatch->m_colorBuffer = Buffer::create();
+    tileBatch->m_colorBuffer->allocate(sizeof(ColorData));
+    tileBatch->m_colorBuffer->update(&tileBatch->m_colorData);
     // command buffer
     tileBatch->m_commands.reserve(tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_commandVisibleTable.reserve(tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_commandIndexTable.reserve(tileBatch->m_tileBuffer->getElementCount());
     tileBatch->m_commandBuffer = Buffer::create();
     auto constBufAddr = tileBatch->m_constantBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    auto cameraBufAddr = tileBatch->m_cameraBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    auto transformBufAddr = tileBatch->m_transformBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    auto colorBufAddr = tileBatch->m_colorBuffer->getID3D12Resource()->GetGPUVirtualAddress();
     for (int32_t i = 0; i < tileBatch->m_tileBuffer->getElementCount(); i++) {
         tileBatch->m_commands.push_back(IndirectCommand {});
-        tileBatch->m_commands.at(i).cbv = constBufAddr;
+        tileBatch->m_commands.at(i).instanceBuffer = constBufAddr;
+        tileBatch->m_commands.at(i).cameraBuffer = cameraBufAddr;
+        tileBatch->m_commands.at(i).transformBuffer = transformBufAddr;
+        tileBatch->m_commands.at(i).colorBuffer = colorBufAddr;
         tileBatch->m_commands.at(i).drawArguments.IndexCountPerInstance = 6;
         tileBatch->m_commands.at(i).drawArguments.InstanceCount = 0;
         tileBatch->m_commands.at(i).drawArguments.StartIndexLocation = 0;
@@ -376,7 +349,7 @@ void TileBatch::render(
             if (m_commandVisibleTable.at(i)) {
                 if (cursor != i) {
                     m_commands.at(cursor) = m_commands.at(i);
-                    m_commands.at(cursor).cbv = constBufAddr + (i * m_tileBuffer->getElementSize());
+                    m_commands.at(cursor).instanceBuffer = constBufAddr + (i * m_tileBuffer->getElementSize());
                     m_commandIndexTable.at(i) = cursor;
                 }
                 cursor++;
@@ -428,6 +401,12 @@ TileBatch::TileBatch()
     , m_tileBuffer()
     , m_commandVisibleTable()
     , m_commandIndexTable()
+    , m_cameraData()
+    , m_cameraBuffer()
+    , m_transformData()
+    , m_transformBuffer()
+    , m_colorData()
+    , m_colorBuffer()
     , m_indexLength()
     , m_shouldCompact()
     , m_shouldCommandCopy()
