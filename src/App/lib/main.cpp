@@ -68,19 +68,7 @@ static int appMain(int argc, char* argv[])
         renderer.begin();
         renderer.position(cameraPosition);
         renderer.lookAt(cameraLookAt);
-        /*
-        renderer.lightEnable();
-        renderer.drawBox(Vector3({ 2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-        renderer.lightDisable();
-        renderer.drawBox(Vector3({ -2, 0, 2 }), Vector3({ 1, 1, 1 }), rotation, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-        */
-        /*
-                renderer.drawRect(Vector2({ 400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-                renderer.drawRect(Vector2({ -400, 0 }), Vector2({ 100, 100 }), degree, Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-                renderer.drawCircle(Vector2({ 200, 200 }), Vector2({ 100, 100 }), Color({ 1.0f, 0.0f, 0.0f, 1.0f }));
-                renderer.drawSprite(Vector2({ -300, 200 }), Vector2({ 100, 100 }), degree, texture, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
-                renderer.drawSprite(Vector2({ 0, 200 }), Vector2({ 100, 100 }), degree, texture2, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
-        */
+
         renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id1, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 0, 0, 2 })));
         renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id2, Lib::Math::Matrix::translate(Lib::Math::Vector3({ 1.5f, 0, 2 })));
         renderer.batchMatrix(Lib::Graphics::TileBufferKind::Small, id3, Lib::Math::Matrix::translate(Lib::Math::Vector3({ -1.5f, 0, 2 })));
