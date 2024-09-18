@@ -57,7 +57,7 @@ public:
 
     int32_t rentTile(TileBufferKind kind);
     void releaseTile(TileBufferKind kind, int32_t index);
-    void batchTiles(TileBufferKind kind, int32_t index, const Math::Vector4* tiles);
+    void batchTiles(TileBufferKind kind, int32_t index, const Math::Vector4* tiles, int32_t tileCount);
     void batchMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix);
     void drawTiles();
 

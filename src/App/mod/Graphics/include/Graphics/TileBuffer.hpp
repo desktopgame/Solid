@@ -36,7 +36,7 @@ public:
     inline size_t getArraySize() const override { return N; }
 
     inline const void* getElementPtr() const override { return reinterpret_cast<const void*>(m_memoryVec.data()); }
-    inline size_t getElementSize() const override { return sizeof(TileBufferUltraSmall::Memory); }
+    inline size_t getElementSize() const override { return sizeof(Memory); }
     inline size_t getElementCount() const override { return m_memoryVec.size(); }
 
 private:

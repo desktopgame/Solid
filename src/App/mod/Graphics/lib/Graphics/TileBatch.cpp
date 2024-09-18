@@ -321,13 +321,13 @@ void TileBatch::release(int32_t index)
     m_shouldCommandCopy = true;
 }
 
-void TileBatch::setTiles(int32_t index, const Math::Vector4* tiles)
+void TileBatch::setTiles(int32_t index, const Math::Vector4* tiles, int32_t tileCount)
 {
     if (!m_commandVisibleTable.at(index)) {
         throw std::logic_error("rent() is not being called.");
     }
     Math::Vector4* dst = m_tileBuffer->getArrayAt(index);
-    ::memcpy(dst, tiles, sizeof(Math::Vector4) * m_tileBuffer->getArraySize());
+    ::memcpy(dst, tiles, sizeof(Math::Vector4) * tileCount);
     m_shouldConstantCopy = true;
 }
 const Math::Vector4* TileBatch::getTiles(int32_t index) const

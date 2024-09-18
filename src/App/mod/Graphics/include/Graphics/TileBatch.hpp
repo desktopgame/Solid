@@ -20,7 +20,7 @@ public:
     int32_t rent();
     void release(int32_t index);
 
-    void setTiles(int32_t index, const Math::Vector4* tiles);
+    void setTiles(int32_t index, const Math::Vector4* tiles, int32_t tileCount);
     const Math::Vector4* getTiles(int32_t index) const;
     int32_t getTileSize() const;
 

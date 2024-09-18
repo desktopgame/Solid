@@ -45,13 +45,13 @@ static int appMain(int argc, char* argv[])
     tiles.push_back(Lib::Math::Vector4({ 0, 0, 0, 5 }));
 
     int32_t id1 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id1, tiles.data());
+    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id1, tiles.data(), tiles.size());
 
     int32_t id2 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id2, tiles.data());
+    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id2, tiles.data(), tiles.size());
 
     int32_t id3 = renderer.rentTile(Lib::Graphics::TileBufferKind::Small);
-    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id3, tiles.data());
+    renderer.batchTiles(Lib::Graphics::TileBufferKind::Small, id3, tiles.data(), tiles.size());
 
     window->show();
     while (window->peekMessage()) {

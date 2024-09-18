@@ -280,7 +280,7 @@ int32_t Renderer::rentTile(TileBufferKind kind) { return getTileBatch(kind)->ren
 
 void Renderer::releaseTile(TileBufferKind kind, int32_t index) { getTileBatch(kind)->release(index); }
 
-void Renderer::batchTiles(TileBufferKind kind, int32_t index, const Math::Vector4* tiles) { getTileBatch(kind)->setTiles(index, tiles); }
+void Renderer::batchTiles(TileBufferKind kind, int32_t index, const Math::Vector4* tiles, int32_t tileCount) { getTileBatch(kind)->setTiles(index, tiles, tileCount); }
 
 void Renderer::batchMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix)
 {
