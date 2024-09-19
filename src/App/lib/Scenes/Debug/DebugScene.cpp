@@ -18,6 +18,7 @@ DebugScene::DebugScene()
     , m_cameraAngleY()
     , m_cameraMoveSpeed(0.01f)
     , m_cameraRotateSpeed(0.5f)
+    , m_ioFile()
     , m_tileSubmit()
     , m_tileID(-1)
     , m_backTileID(-1)
@@ -150,6 +151,29 @@ void DebugScene::onGui(Renderer& renderer)
     }
     if (ImGui::Button("Submit")) {
         putTile(renderer);
+    }
+    ImGui::End();
+
+    ImGui::Begin("IO");
+    ImGui::InputText("File", m_ioFile.data(), 16);
+    if (ImGui::Button("Save")) {
+        IO::serializeTile(std::string(m_ioFile.data()), m_tileData);
+    }
+    if (ImGui::Button("Load")) {
+        IO::deserializeTile(std::string(m_ioFile.data()), m_tileData);
+        renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
+
+        m_backTileData.clear();
+        for (const auto& tile : m_tileData) {
+            Vector3 pos = (Vector3)tile;
+            int32_t side = static_cast<int32_t>(tile.w()) / 10;
+            int32_t color = static_cast<int32_t>(tile.w()) % 10;
+
+            Vector3 backPos = pos + TileBatch::s_normalVectorTable.at(side);
+            int32_t backSide = TileBatch::s_tileReverseTable.at(side);
+            m_backTileData.push_back(Vector4(backPos, (color * 10) + backSide));
+        }
+        renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
     }
     ImGui::End();
 };

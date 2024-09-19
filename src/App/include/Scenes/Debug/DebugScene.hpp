@@ -46,6 +46,8 @@ private:
     float m_cameraMoveSpeed;
     float m_cameraRotateSpeed;
 
+    std::array<char, 16> m_ioFile;
+
     bool m_tileSubmit;
     int32_t m_tileID;
     int32_t m_backTileID;
