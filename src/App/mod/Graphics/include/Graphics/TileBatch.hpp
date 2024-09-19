@@ -39,20 +39,23 @@ public:
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 #endif
+    inline static const float s_tileSize = 1.0f;
+
+    inline static const float s_tileHalf = s_tileSize / 2.0f;
 
     inline static const std::array<Math::Matrix, 6> s_translateMatrixTable = {
         // posY
-        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.5f, 0.0f })),
+        Math::Matrix::translate(Math::Vector3({ 0.0f, s_tileHalf, 0.0f })),
         // negY
-        Math::Matrix::translate(Math::Vector3({ 0.0f, -0.5f, 0.0f })),
+        Math::Matrix::translate(Math::Vector3({ 0.0f, -s_tileHalf, 0.0f })),
         // posX
-        Math::Matrix::translate(Math::Vector3({ 0.5f, 0.0f, 0.0f })),
+        Math::Matrix::translate(Math::Vector3({ s_tileHalf, 0.0f, 0.0f })),
         // negX
-        Math::Matrix::translate(Math::Vector3({ -0.5f, 0.0f, 0.0f })),
+        Math::Matrix::translate(Math::Vector3({ -s_tileHalf, 0.0f, 0.0f })),
         // posZ
-        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, 0.5f })),
+        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, s_tileHalf })),
         // negZ
-        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, -0.5f })),
+        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, -s_tileHalf })),
     };
 
     inline static const std::array<Math::Matrix, 6> s_rotationMatrixTable = {
