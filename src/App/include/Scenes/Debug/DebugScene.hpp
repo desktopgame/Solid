@@ -18,6 +18,10 @@ public:
 
 private:
     int32_t getColorIndex() const;
+    void updateTile(Renderer& renderer);
+    void removeTile(Renderer& renderer);
+    void putTile(Renderer& renderer);
+
     static bool containTileAt(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide);
     static void updateTileAt(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide, const Vector4& newTile);
     static void removeTileAt(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide);
