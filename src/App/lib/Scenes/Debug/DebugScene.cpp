@@ -155,7 +155,7 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::End();
 
     ImGui::Begin("IO");
-    ImGui::InputText("File", m_ioFile.data(), 16);
+    ImGui::InputText("File", m_ioFile.data(), 32);
     if (ImGui::Button("Save")) {
         IO::serializeTile(std::string(m_ioFile.data()), m_tileData);
     }
