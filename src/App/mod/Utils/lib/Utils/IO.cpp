@@ -28,39 +28,31 @@ namespace IO {
     {
         dst.clear();
         std::array<float, 4> a;
-
         std::string line;
-        std::stringstream buf;
-        int32_t mode = 0;
-        while (std::getline(input, line)) {
-            if (line == "" || line == "\n") {
-                continue;
-            }
-            int32_t at = 0;
-            for (char c : line) {
-                if (mode == 0) {
-                    if (::isdigit(c) || c == '.') {
-                        buf << c;
-                    } else if (c == ',') {
-                        a.at(at) = std::stof(buf.str());
-                        buf.str("");
-                        buf.clear(std::stringstream::goodbit);
-                        mode = 1;
-                    }
-                } else if (mode == 1) {
-                    if (::isspace(c)) {
-                        // ok
-                    } else if (::isdigit(c)) {
-                        buf << c;
-                        at++;
-                        mode = 0;
-                    }
-                }
-            }
-            assert(at == 3);
-            a.at(at) = std::stof(buf.str());
-            buf.str("");
-            buf.clear(std::stringstream::goodbit);
+        while (!input.eof()) {
+            char tmp;
+
+            input >> a.at(0);
+            input >> std::ws;
+            input >> tmp;
+            input >> std::ws;
+            assert(tmp == ',');
+
+            input >> a.at(1);
+            input >> std::ws;
+            input >> tmp;
+            input >> std::ws;
+            assert(tmp == ',');
+
+            input >> a.at(2);
+            input >> std::ws;
+            input >> tmp;
+            input >> std::ws;
+            assert(tmp == ',');
+
+            input >> a.at(3);
+            input >> std::ws;
+
             dst.push_back(Math::Vector4(a));
         }
     }
