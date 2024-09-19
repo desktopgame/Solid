@@ -33,6 +33,9 @@ namespace IO {
         std::stringstream buf;
         int32_t mode = 0;
         while (std::getline(input, line)) {
+            if (line == "" || line == "\n") {
+                continue;
+            }
             int32_t at = 0;
             for (char c : line) {
                 if (mode == 0) {

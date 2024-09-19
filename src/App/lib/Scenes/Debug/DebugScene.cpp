@@ -166,8 +166,8 @@ void DebugScene::onGui(Renderer& renderer)
         m_backTileData.clear();
         for (const auto& tile : m_tileData) {
             Vector3 pos = (Vector3)tile;
-            int32_t side = static_cast<int32_t>(tile.w()) / 10;
-            int32_t color = static_cast<int32_t>(tile.w()) % 10;
+            int32_t side = static_cast<int32_t>(tile.w()) % 10;
+            int32_t color = static_cast<int32_t>(tile.w()) / 10;
 
             Vector3 backPos = pos + TileBatch::s_normalVectorTable.at(side);
             int32_t backSide = TileBatch::s_tileReverseTable.at(side);
