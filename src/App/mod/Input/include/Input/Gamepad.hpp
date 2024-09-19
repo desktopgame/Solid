@@ -28,6 +28,7 @@ public:
     int16_t getLeftStickY() const;
     int16_t getRightStickX() const;
     int16_t getRightStickY() const;
+    bool isTrigger(Button button) const;
     bool isPressed(Button button) const;
     bool isEnabled() const;
 

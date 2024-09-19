@@ -22,12 +22,18 @@ private:
     static void updateTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide, const Vector4& newTile);
     static void removeTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide);
 
+    enum class Mode : int32_t {
+        Camera = 0,
+        Edit
+    };
+
     Vector3 m_tilePosition;
     int32_t m_tileSide;
     int32_t m_tilePallet;
     int32_t m_tileColor;
     std::vector<Vector4> m_tileData;
     std::vector<Vector4> m_backTileData;
+    Mode m_mode;
 
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;

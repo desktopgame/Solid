@@ -9,6 +9,7 @@ namespace Lib::Input {
 class Gamepad::Impl {
 public:
     explicit Impl() = default;
+    XINPUT_STATE prev;
     XINPUT_STATE stat;
 };
 // public
@@ -18,6 +19,7 @@ int16_t Gamepad::getLeftStickX() const { return static_cast<int16_t>(m_impl->sta
 int16_t Gamepad::getLeftStickY() const { return static_cast<int16_t>(m_impl->stat.Gamepad.sThumbLY); }
 int16_t Gamepad::getRightStickX() const { return static_cast<int16_t>(m_impl->stat.Gamepad.sThumbRX); }
 int16_t Gamepad::getRightStickY() const { return static_cast<int16_t>(m_impl->stat.Gamepad.sThumbRY); }
+bool Gamepad::isTrigger(Button button) const { return (m_impl->prev.Gamepad.wButtons & button) == 0 && (m_impl->stat.Gamepad.wButtons & button) > 0; }
 bool Gamepad::isPressed(Button button) const { return (m_impl->stat.Gamepad.wButtons & button) > 0; }
 bool Gamepad::isEnabled() const { return m_isEnabled; }
 // internal
@@ -26,6 +28,7 @@ void Gamepad::sync()
     if (!m_impl) {
         m_impl = std::make_shared<Impl>();
     }
+    m_impl->prev = m_impl->stat;
     DWORD result = XInputGetState(m_index, &m_impl->stat);
     if (result == ERROR_SUCCESS) {
         m_isEnabled = true;

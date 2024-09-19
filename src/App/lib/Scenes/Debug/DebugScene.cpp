@@ -11,6 +11,7 @@ DebugScene::DebugScene()
     , m_tileColor()
     , m_tileData()
     , m_backTileData()
+    , m_mode(Mode::Camera)
     , m_cameraPos({ 0, 0, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_cameraAngleX()
@@ -63,40 +64,67 @@ void DebugScene::onUpdate(Renderer& renderer)
     float rightStickX = static_cast<float>(controller->getRightStickX()) / 32768.0f;
     float rightStickY = static_cast<float>(controller->getRightStickY()) / 32768.0f;
 
-    if (std::abs(rightStickY) > 0.5f) {
-        m_cameraAngleX += rightStickY * m_cameraRotateSpeed;
-    }
-    if (std::abs(rightStickX) > 0.5f) {
-        m_cameraAngleY += rightStickX * m_cameraRotateSpeed;
-    }
-
-    auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
-    auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
-    auto right = Quaternion::transform(rotation * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
-
     float lt = (static_cast<float>(controller->getLeftTrigger()) / 255.0f);
     float rt = (static_cast<float>(controller->getRightTrigger()) / 255.0f);
-    if (std::abs(lt) > 0.0f) {
-        m_cameraPos += forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
-    } else if (std::abs(rt) > 0.0f) {
-        m_cameraPos -= forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
+
+    bool buttonA = controller->isTrigger(Gamepad::Button::A);
+    bool buttonB = controller->isTrigger(Gamepad::Button::B);
+    bool buttonY = controller->isPressed(Gamepad::Button::Y);
+    bool sholderL = controller->isTrigger(Gamepad::Button::LeftSholder);
+    bool sholderR = controller->isTrigger(Gamepad::Button::RightSholder);
+
+    if (m_mode == Mode::Camera) {
+        if (std::abs(rightStickY) > 0.5f) {
+            m_cameraAngleX += rightStickY * m_cameraRotateSpeed;
+        }
+        if (std::abs(rightStickX) > 0.5f) {
+            m_cameraAngleY += rightStickX * m_cameraRotateSpeed;
+        }
+
+        auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
+        auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
+        auto right = Quaternion::transform(rotation * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
+
+        if (std::abs(lt) > 0.0f) {
+            m_cameraPos += forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
+        } else if (std::abs(rt) > 0.0f) {
+            m_cameraPos -= forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
+        }
+        if (leftStickX > 0.5f) {
+            m_cameraPos += right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
+        } else if (leftStickX < -0.5f) {
+            m_cameraPos -= right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
+        } else if (leftStickY > 0.5f) {
+            m_cameraPos += Vector3({
+                0,
+                m_cameraMoveSpeed,
+            });
+        } else if (leftStickY < -0.5f) {
+            m_cameraPos += Vector3({
+                0,
+                -m_cameraMoveSpeed,
+            });
+        }
+        m_cameraLookAt = m_cameraPos + forward;
+    } else if (m_mode == Mode::Edit) {
+        bool buttonL = controller->isTrigger(Gamepad::Button::B);
+        if (buttonB) {
+            m_tileSide++;
+            if (m_tileSide >= 6) {
+                m_tileSide = 0;
+            }
+        } else if (buttonA) {
+        }
+        if (sholderL) {
+            m_tilePosition -= TileBatch::s_normalVectorTable.at(m_tileSide);
+        }
+        if (sholderR) {
+            m_tilePosition += TileBatch::s_normalVectorTable.at(m_tileSide);
+        }
     }
-    if (leftStickX > 0.5f) {
-        m_cameraPos += right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
-    } else if (leftStickX < -0.5f) {
-        m_cameraPos -= right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
-    } else if (leftStickY > 0.5f) {
-        m_cameraPos += Vector3({
-            0,
-            m_cameraMoveSpeed,
-        });
-    } else if (leftStickY < -0.5f) {
-        m_cameraPos += Vector3({
-            0,
-            -m_cameraMoveSpeed,
-        });
+    if (buttonY && sholderR) {
+        m_mode = m_mode == Mode::Camera ? Mode::Edit : Mode::Camera;
     }
-    m_cameraLookAt = m_cameraPos + forward;
 };
 void DebugScene::onGui(Renderer& renderer)
 {
@@ -113,6 +141,7 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::SliderInt("Pallet", &m_tilePallet, 0, 3);
     ImGui::SliderInt("Color", &m_tileColor, 0, 15);
     ImGui::LabelText("TileCount", "%d", static_cast<int32_t>(m_tileData.size()));
+    ImGui::LabelText("Mode", m_mode == Mode::Camera ? "Camera" : "Edit");
     if (ImGui::Button("Remove")) {
         removeTile(m_tileData, m_tilePosition, m_tileSide);
         renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
