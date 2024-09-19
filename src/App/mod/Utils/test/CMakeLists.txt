@@ -8,6 +8,7 @@ target_include_directories(
     Lib-Utils-Test
     PRIVATE
     "../include"
+    "${MODS}/Math/include"
 )
 target_link_libraries(
     Lib-Utils-Test
