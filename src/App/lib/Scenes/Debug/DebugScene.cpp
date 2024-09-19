@@ -121,6 +121,7 @@ void DebugScene::onUpdate(Renderer& renderer)
         if (sholderR) {
             m_tilePosition += TileBatch::s_normalVectorTable.at(m_tileSide);
         }
+        (void)buttonL;
     }
     if (buttonY && sholderR) {
         m_mode = m_mode == Mode::Camera ? Mode::Edit : Mode::Camera;
@@ -143,25 +144,25 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::LabelText("TileCount", "%d", static_cast<int32_t>(m_tileData.size()));
     ImGui::LabelText("Mode", m_mode == Mode::Camera ? "Camera" : "Edit");
     if (ImGui::Button("Remove")) {
-        removeTile(m_tileData, m_tilePosition, m_tileSide);
+        removeTileAt(m_tileData, m_tilePosition, m_tileSide);
         renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
 
         Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
-        removeTile(m_backTileData, backTilePosition, TileBatch::s_tileReverseTable.at(m_tileSide));
+        removeTileAt(m_backTileData, backTilePosition, TileBatch::s_tileReverseTable.at(m_tileSide));
         renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
     }
     if (ImGui::Button("Update")) {
         float w = static_cast<float>(getColorIndex() + m_tileSide);
-        updateTile(m_tileData, m_tilePosition, m_tileSide, Vector4(m_tilePosition, w));
+        updateTileAt(m_tileData, m_tilePosition, m_tileSide, Vector4(m_tilePosition, w));
         renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
 
         float backW = static_cast<float>(getColorIndex() + TileBatch::s_tileReverseTable.at(m_tileSide));
         Vector3 backTilePosition = m_tilePosition + TileBatch::s_normalVectorTable.at(m_tileSide);
-        updateTile(m_backTileData, backTilePosition, TileBatch::s_tileReverseTable.at(m_tileSide), Vector4(backTilePosition, backW));
+        updateTileAt(m_backTileData, backTilePosition, TileBatch::s_tileReverseTable.at(m_tileSide), Vector4(backTilePosition, backW));
         renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
     }
     if (ImGui::Button("Submit")) {
-        if (!containTile(m_tileData, m_tilePosition, m_tileSide)) {
+        if (!containTileAt(m_tileData, m_tilePosition, m_tileSide)) {
             float w = static_cast<float>(getColorIndex() + m_tileSide);
             m_tileData.push_back(Vector4(m_tilePosition, w));
             renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tileData.data(), m_tileData.size());
@@ -200,7 +201,7 @@ int32_t DebugScene::getColorIndex() const
     return ((m_tilePallet * 16) + m_tileColor) * 10;
 }
 
-bool DebugScene::containTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide)
+bool DebugScene::containTileAt(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide)
 {
     auto iter = std::find_if(v.begin(), v.end(), [tilePosition, tileSide](const Vector4& tile) -> bool {
         return tilePosition == (Vector3)tile && (static_cast<int>(tile.w()) % 10) == tileSide;
@@ -208,7 +209,7 @@ bool DebugScene::containTile(std::vector<Vector4>& v, const Vector3& tilePositio
     return iter != v.end();
 }
 
-void DebugScene::updateTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide, const Vector4& newTile)
+void DebugScene::updateTileAt(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide, const Vector4& newTile)
 {
     auto iter = std::find_if(v.begin(), v.end(), [tilePosition, tileSide](const Vector4& tile) -> bool {
         return tilePosition == (Vector3)tile && (static_cast<int>(tile.w()) % 10) == tileSide;
@@ -218,7 +219,7 @@ void DebugScene::updateTile(std::vector<Vector4>& v, const Vector3& tilePosition
     }
 }
 
-void DebugScene::removeTile(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide)
+void DebugScene::removeTileAt(std::vector<Vector4>& v, const Vector3& tilePosition, int32_t tileSide)
 {
     auto iter = std::remove_if(v.begin(), v.end(), [tilePosition, tileSide](const Vector4& tile) -> bool {
         return tilePosition == (Vector3)tile && (static_cast<int>(tile.w()) % 10) == tileSide;
