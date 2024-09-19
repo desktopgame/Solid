@@ -38,6 +38,9 @@ void DebugScene::onEnter(Renderer& renderer)
     if (m_previewTileID == -1) {
         m_previewTileID = renderer.rentTile(TileBufferKind::UltraSmall);
     }
+
+    std::string defaultFile("assets/model1.csv");
+    std::copy(defaultFile.begin(), defaultFile.end(), m_ioFile.begin());
 };
 void DebugScene::onExit(Renderer& renderer)
 {
