@@ -2,8 +2,7 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Swapchain.hpp>
-#include <Graphics/Window.hpp>
-#include <Windows.h>
+#include <OS/Window.hpp>
 #include <any>
 #include <imgui.h>
 #include <imgui_impl_dx12.h>
@@ -19,7 +18,7 @@ Swapchain::~Swapchain()
 }
 // internal
 std::shared_ptr<Swapchain> Swapchain::create(
-    const std::shared_ptr<Window>& window,
+    const std::shared_ptr<OS::Window>& window,
     const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
     const Microsoft::WRL::ComPtr<ID3D12Device>& device)
 {

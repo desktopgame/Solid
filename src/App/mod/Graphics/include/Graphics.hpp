@@ -19,4 +19,3 @@
 #include <Graphics/TileBuffer.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
-#include <Graphics/Window.hpp>

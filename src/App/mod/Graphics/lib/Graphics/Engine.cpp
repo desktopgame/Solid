@@ -3,8 +3,7 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/FontFactory.hpp>
 #include <Graphics/Screen.hpp>
-#include <Graphics/Window.hpp>
-#include <Windows.h>
+#include <OS/Window.hpp>
 #include <imgui.h>
 #include <stdexcept>
 
@@ -49,7 +48,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-    m_window = Window::create(Screen::getWidth(), Screen::getHeight());
+    m_window = OS::Window::create(Screen::getWidth(), Screen::getHeight());
     m_device = Device::create(m_window);
     return s_instance;
 }
@@ -76,7 +75,7 @@ void Engine::shutdown()
     s_instance = nullptr;
 }
 
-std::shared_ptr<Window> Engine::getWindow() const
+std::shared_ptr<OS::Window> Engine::getWindow() const
 {
     require();
     return m_window;

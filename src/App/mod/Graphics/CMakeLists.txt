@@ -15,7 +15,6 @@ add_library(
     STATIC
     ./lib/Graphics/Device.cpp
     ./lib/Graphics/Engine.cpp
-    ./lib/Graphics/Window.cpp
     ./lib/Graphics/Surface.cpp
     ./lib/Graphics/Shader.cpp
     ./lib/Graphics/Buffer.cpp
@@ -44,6 +43,7 @@ target_include_directories(
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${MODS}/Math/include"
+    "${MODS}/OS/include"
     "${MODS}/Utils/include"
     FREETYPE_INCLUDE_DIRS
     imgui::imgui
@@ -55,6 +55,7 @@ target_link_libraries(
     "dxgi.lib"
     "d3dcompiler.lib"
     Lib-Math
+    Lib-OS
     Lib-Utils
     Microsoft::DirectXTex
     Freetype::Freetype

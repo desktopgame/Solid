@@ -8,8 +8,11 @@
 #include <wrl/client.h>
 #endif
 
-namespace Lib::Graphics {
+namespace Lib::OS {
 class Window;
+}
+
+namespace Lib::Graphics {
 class Surface;
 class Swapchain;
 class Device {
@@ -21,7 +24,7 @@ public:
     std::shared_ptr<Surface> getSurface() const;
 
 #if SOLID_ENABLE_INTERNAL
-    static std::shared_ptr<Device> create(const std::shared_ptr<Window>& window);
+    static std::shared_ptr<Device> create(const std::shared_ptr<OS::Window>& window);
     void destroy();
 
     Microsoft::WRL::ComPtr<ID3D12Device> getID3D12Device() const;

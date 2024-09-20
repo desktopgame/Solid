@@ -12,7 +12,6 @@
 
 namespace Lib::Graphics {
 class Device;
-class Window;
 class Buffer;
 class Constant;
 class Shader;

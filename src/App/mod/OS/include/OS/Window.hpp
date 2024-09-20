@@ -1,13 +1,11 @@
 #pragma once
-#include <Graphics/Engine.hpp>
-#include <Graphics/Window.hpp>
 #include <memory>
 
 #if SOLID_ENABLE_INTERNAL
 #include <Windows.h>
 #endif
 
-namespace Lib::Graphics {
+namespace Lib::OS {
 class Window {
 public:
     ~Window();
