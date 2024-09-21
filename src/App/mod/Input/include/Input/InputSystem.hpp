@@ -3,6 +3,10 @@
 #include <memory>
 #include <mutex>
 
+#if SOLID_ENABLE_INTERNAL
+#include <Windows.h>
+#endif
+
 namespace Lib::OS {
 class Window;
 }
@@ -30,6 +34,10 @@ private:
     static std::mutex s_mutex;
     static std::shared_ptr<InputSystem> s_instance;
     InputSystem();
+
+#if SOLID_ENABLE_INTERNAL
+    void handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+#endif
 
     bool m_started;
     bool m_shutdowned;

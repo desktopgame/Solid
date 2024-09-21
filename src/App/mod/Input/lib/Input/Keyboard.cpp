@@ -1,5 +1,4 @@
 #include <Input/Keyboard.hpp>
-#include <OS/Window.hpp>
 
 namespace Lib::Input {
 // public
@@ -16,11 +15,22 @@ bool Keyboard::isTrigger(KeyCode keyCode) const { return m_prevStat.at((int32_t)
 bool Keyboard::isPressed(KeyCode keyCode) const { return m_prevStat.at((int32_t)keyCode) == ButtonState::Pressed; }
 
 // internal
-std::shared_ptr<Keyboard> Keyboard::create(const std::shared_ptr<OS::Window>& window)
+std::shared_ptr<Keyboard> Keyboard::create()
 {
     auto keyboard = std::shared_ptr<Keyboard>(new Keyboard());
-    window->setCallback(std::bind(&Keyboard::handleEvent, keyboard, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     return keyboard;
+}
+
+void Keyboard::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    switch (msg) {
+    case WM_KEYDOWN:
+        m_currentStat.at((int32_t)keyMap((int32_t)wparam)) = true;
+        break;
+    case WM_KEYUP:
+        m_currentStat.at((int32_t)keyMap((int32_t)wparam)) = false;
+        break;
+    }
 }
 
 void Keyboard::sync()
@@ -47,18 +57,6 @@ void Keyboard::sync()
 // private
 Keyboard::Keyboard()
 {
-}
-
-void Keyboard::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-    switch (msg) {
-    case WM_KEYDOWN:
-        m_currentStat.at((int32_t)keyMap((int32_t)wparam)) = true;
-        break;
-    case WM_KEYUP:
-        m_currentStat.at((int32_t)keyMap((int32_t)wparam)) = false;
-        break;
-    }
 }
 
 KeyCode Keyboard::keyMap(int32_t key)

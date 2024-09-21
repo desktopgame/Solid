@@ -30,7 +30,7 @@ std::shared_ptr<InputSystem> InputSystem::startup(const std::shared_ptr<OS::Wind
         return nullptr;
     }
     m_started = true;
-    s_instance->m_keyboard = Keyboard::create(window);
+    s_instance->m_keyboard = Keyboard::create();
     return s_instance;
 }
 
@@ -76,5 +76,10 @@ InputSystem::InputSystem()
     , m_shutdowned(false)
     , m_gamepads()
 {
+}
+
+void InputSystem::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    m_keyboard->handleEvent(hwnd, msg, wparam, lparam);
 }
 }
