@@ -24,12 +24,18 @@ std::shared_ptr<Keyboard> Keyboard::create()
 void Keyboard::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg) {
-    case WM_KEYDOWN:
-        m_currentStat.at((int32_t)keyMap((int32_t)wparam)) = true;
-        break;
-    case WM_KEYUP:
-        m_currentStat.at((int32_t)keyMap((int32_t)wparam)) = false;
-        break;
+    case WM_KEYDOWN: {
+        int32_t index = (int32_t)keyMap((int32_t)wparam);
+        if (index >= 0) {
+            m_currentStat.at(index) = true;
+        }
+    } break;
+    case WM_KEYUP: {
+        int32_t index = (int32_t)keyMap((int32_t)wparam);
+        if (index >= 0) {
+            m_currentStat.at(index) = false;
+        }
+    } break;
     }
 }
 
