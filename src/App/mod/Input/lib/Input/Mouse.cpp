@@ -1,4 +1,5 @@
 #include <Input/Mouse.hpp>
+#include <OS/Window.hpp>
 
 namespace Lib::Input {
 // public
@@ -13,11 +14,12 @@ ButtonState Mouse::getState(Mouse::Button button) const
 }
 bool Mouse::isTrigger(Mouse::Button button) const { return m_prevStat.at((int32_t)button) == ButtonState::Trigger; }
 bool Mouse::isPressed(Mouse::Button button) const { return m_prevStat.at((int32_t)button) == ButtonState::Pressed; }
-
+Math::IntVector2 Mouse::getPosition() const { return m_position; }
 // internal
-std::shared_ptr<Mouse> Mouse::create()
+std::shared_ptr<Mouse> Mouse::create(const std::shared_ptr<OS::Window>& window)
 {
     auto mouse = std::shared_ptr<Mouse>(new Mouse());
+    mouse->m_window = window;
     return mouse;
 }
 
@@ -42,6 +44,13 @@ void Mouse::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_RBUTTONUP:
         m_currentStat.at((int32_t)Mouse::Button::Right) = false;
         break;
+    }
+    POINT pt;
+    if (GetCursorPos(&pt)) {
+        if (ScreenToClient(m_window->getHWND(), &pt)) {
+            m_position.x() = pt.x;
+            m_position.y() = pt.y;
+        }
     }
 }
 
@@ -68,8 +77,10 @@ void Mouse::sync()
 }
 // private
 Mouse::Mouse()
-    : m_prevStat()
+    : m_position({ 0, 0 })
+    , m_prevStat()
     , m_currentStat()
+    , m_window()
 {
 }
 }

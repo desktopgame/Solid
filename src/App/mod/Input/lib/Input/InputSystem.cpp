@@ -33,7 +33,7 @@ std::shared_ptr<InputSystem> InputSystem::startup(const std::shared_ptr<OS::Wind
     }
     m_started = true;
     s_instance->m_keyboard = Keyboard::create();
-    s_instance->m_mouse = Mouse::create();
+    s_instance->m_mouse = Mouse::create(window);
     window->setCallback(std::bind(&InputSystem::handleEvent, s_instance, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     return s_instance;
 }
