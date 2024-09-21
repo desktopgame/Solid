@@ -18,7 +18,7 @@ static int appMain(int argc, char* argv[])
     auto engine = Engine::getInstance()->startup(argc, argv);
     auto window = engine->getWindow();
 
-    auto inputSystem = InputSystem::getInstance()->startup();
+    auto inputSystem = InputSystem::getInstance()->startup(window);
 
     std::unordered_map<std::string, std::shared_ptr<IScene>> sceneMap;
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
