@@ -7,6 +7,8 @@
 #include <imgui.h>
 #include <stdexcept>
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace Lib::Graphics {
 std::mutex Engine::s_mutex;
 std::shared_ptr<Engine> Engine::s_instance = nullptr;
@@ -48,7 +50,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-    m_window = OS::Window::create(Screen::getWidth(), Screen::getHeight());
+    m_window = OS::Window::create(Screen::getWidth(), Screen::getHeight(), ImGui_ImplWin32_WndProcHandler);
     m_device = Device::create(m_window);
     return s_instance;
 }
