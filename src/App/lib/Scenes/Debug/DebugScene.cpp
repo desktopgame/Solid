@@ -179,6 +179,57 @@ void DebugScene::onGui(Renderer& renderer)
         renderer.batchTileArray(TileBufferKind::Medium, m_backTileID, m_backTileData.data(), m_backTileData.size());
     }
     ImGui::End();
+
+    ImGui::Begin("Input");
+    for (int32_t i = 0; i < (int32_t)KeyCode::Count; i++) {
+        std::string label = "";
+        switch (InputSystem::getInstance()->getKeyboard()->getState((KeyCode)i)) {
+        case ButtonState::None:
+            label = "";
+            break;
+        case ButtonState::Trigger:
+            label = "Trigger";
+            break;
+        case ButtonState::Pressed:
+            label = "Pressed";
+            break;
+        case ButtonState::Released:
+            label = "Released";
+            break;
+        }
+        switch ((KeyCode)i) {
+        case KeyCode::W:
+            ImGui::LabelText("W", "%s", label.c_str());
+            break;
+        case KeyCode::A:
+            ImGui::LabelText("A", "%s", label.c_str());
+            break;
+        case KeyCode::S:
+            ImGui::LabelText("S", "%s", label.c_str());
+            break;
+        case KeyCode::D:
+            ImGui::LabelText("D", "%s", label.c_str());
+            break;
+        case KeyCode::Space:
+            ImGui::LabelText("Space", "%s", label.c_str());
+            break;
+        case KeyCode::ArrowUp:
+            ImGui::LabelText("Up", "%s", label.c_str());
+            break;
+        case KeyCode::ArrowDown:
+            ImGui::LabelText("Down", "%s", label.c_str());
+            break;
+        case KeyCode::ArrowLeft:
+            ImGui::LabelText("Left", "%s", label.c_str());
+            break;
+        case KeyCode::ArrowRight:
+            ImGui::LabelText("Right", "%s", label.c_str());
+            break;
+        default:
+            break;
+        }
+    }
+    ImGui::End();
 };
 void DebugScene::onDraw(Renderer& renderer)
 {
