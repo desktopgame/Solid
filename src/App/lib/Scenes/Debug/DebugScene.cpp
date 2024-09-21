@@ -39,6 +39,22 @@ void DebugScene::onUpdate(Renderer& renderer)
 {
     (void)m_cameraAngleX;
     (void)m_cameraAngleY;
+
+    auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
+    auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
+    auto right = Quaternion::transform(rotation * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
+
+    auto keyboard = InputSystem::getInstance()->getKeyboard();
+    if (keyboard->isPressed(KeyCode::W)) {
+        m_cameraPos += forward * m_cameraMoveSpeed;
+    } else if (keyboard->isPressed(KeyCode::S)) {
+        m_cameraPos -= forward * m_cameraMoveSpeed;
+    } else if (keyboard->isPressed(KeyCode::D)) {
+        m_cameraPos += right * m_cameraMoveSpeed;
+    } else if (keyboard->isPressed(KeyCode::A)) {
+        m_cameraPos -= right * m_cameraMoveSpeed;
+    }
+    m_cameraLookAt = m_cameraPos + forward;
 }
 
 void DebugScene::onGui(Renderer& renderer)
