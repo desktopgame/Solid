@@ -5,8 +5,15 @@ namespace Lib::Input {
 // public
 Keyboard::~Keyboard() { }
 
-bool Keyboard::isTrigger(KeyCode keyCode) const { return m_prevStat.at((int32_t)keyCode) == k_statTrigger; }
-bool Keyboard::isPressed(KeyCode keyCode) const { return m_prevStat.at((int32_t)keyCode) == k_statPressed; }
+ButtonState Keyboard::getState(KeyCode keyCode) const
+{
+    if (isTrigger(keyCode)) {
+        return ButtonState::Trigger;
+    }
+    return isPressed(keyCode) ? ButtonState::Pressed : ButtonState::Released;
+}
+bool Keyboard::isTrigger(KeyCode keyCode) const { return m_prevStat.at((int32_t)keyCode) == ButtonState::Trigger; }
+bool Keyboard::isPressed(KeyCode keyCode) const { return m_prevStat.at((int32_t)keyCode) == ButtonState::Pressed; }
 
 // internal
 std::shared_ptr<Keyboard> Keyboard::create(const std::shared_ptr<OS::Window>& window)
@@ -20,18 +27,18 @@ void Keyboard::sync()
 {
     for (int32_t key = 0; key < (int32_t)KeyCode::Count; key++) {
         switch (m_prevStat.at(key)) {
-        case k_statNone:
-        case k_statReleased:
+        case ButtonState::None:
+        case ButtonState::Released:
             if (m_currentStat.at(key)) {
-                m_prevStat.at(key) = k_statTrigger;
+                m_prevStat.at(key) = ButtonState::Trigger;
             }
             break;
-        case k_statTrigger:
-        case k_statPressed:
+        case ButtonState::Trigger:
+        case ButtonState::Pressed:
             if (m_currentStat.at(key)) {
-                m_prevStat.at(key) = k_statPressed;
+                m_prevStat.at(key) = ButtonState::Pressed;
             } else {
-                m_prevStat.at(key) = k_statReleased;
+                m_prevStat.at(key) = ButtonState::Released;
             }
             break;
         }

@@ -19,6 +19,13 @@ int16_t Gamepad::getLeftStickX() const { return static_cast<int16_t>(m_impl->sta
 int16_t Gamepad::getLeftStickY() const { return static_cast<int16_t>(m_impl->stat.Gamepad.sThumbLY); }
 int16_t Gamepad::getRightStickX() const { return static_cast<int16_t>(m_impl->stat.Gamepad.sThumbRX); }
 int16_t Gamepad::getRightStickY() const { return static_cast<int16_t>(m_impl->stat.Gamepad.sThumbRY); }
+ButtonState Gamepad::getState(Button button) const
+{
+    if (isTrigger(button)) {
+        return ButtonState::Trigger;
+    }
+    return isPressed(button) ? ButtonState::Pressed : ButtonState::Released;
+}
 bool Gamepad::isTrigger(Button button) const { return (m_impl->prev.Gamepad.wButtons & button) == 0 && (m_impl->stat.Gamepad.wButtons & button) > 0; }
 bool Gamepad::isPressed(Button button) const { return (m_impl->stat.Gamepad.wButtons & button) > 0; }
 bool Gamepad::isEnabled() const { return m_isEnabled; }

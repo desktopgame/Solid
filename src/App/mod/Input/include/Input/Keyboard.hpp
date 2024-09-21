@@ -1,4 +1,5 @@
 #pragma once
+#include <Input/ButtonState.hpp>
 #include <array>
 #include <memory>
 
@@ -28,6 +29,7 @@ class Keyboard {
 public:
     ~Keyboard();
 
+    ButtonState getState(KeyCode keyCode) const;
     bool isTrigger(KeyCode keyCode) const;
     bool isPressed(KeyCode keyCode) const;
 
@@ -44,12 +46,8 @@ private:
     void handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
     static KeyCode keyMap(int32_t key);
 #endif
-    inline static const int32_t k_statNone = 0;
-    inline static const int32_t k_statTrigger = 1;
-    inline static const int32_t k_statPressed = 2;
-    inline static const int32_t k_statReleased = 3;
 
-    std::array<int32_t, (int32_t)KeyCode::Count> m_prevStat;
+    std::array<ButtonState, (int32_t)KeyCode::Count> m_prevStat;
     std::array<bool, (int32_t)KeyCode::Count> m_currentStat;
 };
 }
