@@ -28,5 +28,8 @@ private:
     float m_cameraAngleY;
     float m_cameraMoveSpeed;
     float m_cameraRotateSpeed;
+
+    int32_t m_tileID;
+    std::vector<Vector4> m_tiles;
 };
 }

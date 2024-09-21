@@ -15,12 +15,25 @@ DebugScene::DebugScene()
     , m_cameraAngleY()
     , m_cameraMoveSpeed(0.01f)
     , m_cameraRotateSpeed(0.5f)
+    , m_tiles()
 {
+    m_tiles.push_back(Vector4({ 0, 0, 0, 0 }));
+    m_tiles.push_back(Vector4({ 0, 0, 0, 1 }));
+    m_tiles.push_back(Vector4({ 0, 0, 0, 2 }));
+    m_tiles.push_back(Vector4({ 0, 0, 0, 3 }));
+    m_tiles.push_back(Vector4({ 0, 0, 0, 4 }));
+    m_tiles.push_back(Vector4({ 0, 0, 0, 5 }));
 }
 DebugScene::~DebugScene() { }
 
-void DebugScene::onEnter(Renderer& renderer) { }
-void DebugScene::onExit(Renderer& renderer) {};
+void DebugScene::onEnter(Renderer& renderer)
+{
+    m_tileID = renderer.rentTile(TileBufferKind::Medium);
+}
+void DebugScene::onExit(Renderer& renderer)
+{
+    renderer.releaseTile(TileBufferKind::Medium, m_tileID);
+};
 
 void DebugScene::onUpdate(Renderer& renderer)
 {
@@ -49,6 +62,7 @@ void DebugScene::onDraw(Renderer& renderer)
     renderer.position(m_cameraPos);
     renderer.lookAt(m_cameraLookAt);
 
+    renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
     renderer.drawTiles();
 };
 
