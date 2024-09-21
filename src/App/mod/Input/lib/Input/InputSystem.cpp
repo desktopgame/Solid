@@ -1,6 +1,7 @@
 #include <Input/Gamepad.hpp>
 #include <Input/InputSystem.hpp>
 #include <Input/Keyboard.hpp>
+#include <Input/Mouse.hpp>
 #include <stdexcept>
 
 namespace Lib::Input {
@@ -31,6 +32,7 @@ std::shared_ptr<InputSystem> InputSystem::startup(const std::shared_ptr<OS::Wind
     }
     m_started = true;
     s_instance->m_keyboard = Keyboard::create();
+    s_instance->m_mouse = Mouse::create();
     return s_instance;
 }
 
@@ -43,6 +45,7 @@ void InputSystem::sync()
         }
     }
     m_keyboard->sync();
+    m_mouse->sync();
 }
 
 void InputSystem::shutdown()
@@ -70,6 +73,8 @@ std::shared_ptr<Gamepad> InputSystem::getGamepad(int32_t index)
 }
 
 std::shared_ptr<Keyboard> InputSystem::getKeyboard() const { return m_keyboard; }
+
+std::shared_ptr<Mouse> InputSystem::getMosue() const { return m_mouse; }
 // private
 InputSystem::InputSystem()
     : m_started(false)
@@ -81,5 +86,6 @@ InputSystem::InputSystem()
 void InputSystem::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     m_keyboard->handleEvent(hwnd, msg, wparam, lparam);
+    m_mouse->handleEvent(hwnd, msg, wparam, lparam);
 }
 }

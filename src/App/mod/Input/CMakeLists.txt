@@ -13,6 +13,7 @@ add_library(
     lib/Input/InputSystem.cpp
     lib/Input/Gamepad.cpp
     lib/Input/Keyboard.cpp
+    lib/Input/Mouse.cpp
 )
 lib_target_compile_params(Lib-Input)
 lib_target_link_params(Lib-Input)
