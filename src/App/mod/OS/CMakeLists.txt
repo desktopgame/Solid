@@ -11,6 +11,7 @@ add_library(
     Lib-OS
     STATIC
     lib/OS/Window.cpp
+    lib/OS/Cursor.cpp
 )
 lib_target_compile_params(Lib-OS)
 lib_target_link_params(Lib-OS)
