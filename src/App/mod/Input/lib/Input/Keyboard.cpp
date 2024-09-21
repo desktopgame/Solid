@@ -56,6 +56,8 @@ void Keyboard::sync()
 }
 // private
 Keyboard::Keyboard()
+    : m_prevStat()
+    , m_currentStat()
 {
 }
 

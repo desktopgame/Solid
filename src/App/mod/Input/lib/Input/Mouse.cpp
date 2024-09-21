@@ -67,5 +67,9 @@ void Mouse::sync()
     }
 }
 // private
-Mouse::Mouse() { }
+Mouse::Mouse()
+    : m_prevStat()
+    , m_currentStat()
+{
+}
 }
