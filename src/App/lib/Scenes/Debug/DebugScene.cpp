@@ -54,6 +54,11 @@ void DebugScene::onUpdate(Renderer& renderer)
     } else if (keyboard->isPressed(KeyCode::A)) {
         m_cameraPos -= right * m_cameraMoveSpeed;
     }
+    if (keyboard->isPressed(KeyCode::Space)) {
+        m_cameraPos += Vector3({ 0, 1, 0 }) * m_cameraMoveSpeed;
+    } else if (keyboard->isPressed(KeyCode::Shift)) {
+        m_cameraPos -= Vector3({ 0, 1, 0 }) * m_cameraMoveSpeed;
+    }
     m_cameraLookAt = m_cameraPos + forward;
 }
 
