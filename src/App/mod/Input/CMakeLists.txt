@@ -12,6 +12,7 @@ add_library(
     STATIC
     lib/Input/InputSystem.cpp
     lib/Input/Gamepad.cpp
+    lib/Input/Keyboard.cpp
 )
 lib_target_compile_params(Lib-Input)
 lib_target_link_params(Lib-Input)
@@ -19,9 +20,13 @@ target_include_directories(
     Lib-Input
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${MODS}/OS/include"
+    "${MODS}/Math/include"
 )
 target_link_libraries(
     Lib-Input
     PRIVATE
     "xinput.lib"
+    Lib-OS
+    Lib-Math
 )

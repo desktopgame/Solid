@@ -1,5 +1,6 @@
 #include <Input/Gamepad.hpp>
 #include <Input/InputSystem.hpp>
+#include <Input/Keyboard.hpp>
 #include <stdexcept>
 
 namespace Lib::Input {
@@ -22,23 +23,26 @@ void InputSystem::require()
     }
 }
 
-std::shared_ptr<InputSystem> InputSystem::startup()
+std::shared_ptr<InputSystem> InputSystem::startup(const std::shared_ptr<OS::Window>& window)
 {
     // startup runs a only at first call.
     if (m_started) {
         return nullptr;
     }
     m_started = true;
+    s_instance->m_keyboard = Keyboard::create(window);
     return s_instance;
 }
 
 void InputSystem::sync()
 {
+    require();
     for (auto gamepad : m_gamepads) {
         if (gamepad) {
             gamepad->sync();
         }
     }
+    m_keyboard->sync();
 }
 
 void InputSystem::shutdown()
@@ -53,6 +57,7 @@ void InputSystem::shutdown()
     for (int32_t i = 0; i < 4; i++) {
         m_gamepads.at(i) = nullptr;
     }
+    m_keyboard = nullptr;
     s_instance = nullptr;
 }
 
@@ -63,6 +68,8 @@ std::shared_ptr<Gamepad> InputSystem::getGamepad(int32_t index)
     }
     return m_gamepads.at(index);
 }
+
+std::shared_ptr<Keyboard> InputSystem::getKeyboard() const { return m_keyboard; }
 // private
 InputSystem::InputSystem()
     : m_started(false)
