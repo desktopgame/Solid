@@ -229,6 +229,39 @@ void DebugScene::onGui(Renderer& renderer)
             break;
         }
     }
+
+    for (int32_t i = 0; i < (int32_t)Mouse::Button::Count; i++) {
+        std::string label = "";
+        switch (InputSystem::getInstance()->getMosue()->getState((Mouse::Button)i)) {
+        case ButtonState::None:
+            label = "";
+            break;
+        case ButtonState::Trigger:
+            label = "Trigger";
+            break;
+        case ButtonState::Pressed:
+            label = "Pressed";
+            break;
+        case ButtonState::Released:
+            label = "Released";
+            break;
+        }
+        switch ((Mouse::Button)i) {
+        case Mouse::Button::Left:
+            ImGui::LabelText("MouseLeft", "%s", label.c_str());
+            break;
+        case Mouse::Button::Middle:
+            ImGui::LabelText("MouseMiddle", "%s", label.c_str());
+            break;
+        case Mouse::Button::Right:
+            ImGui::LabelText("MouseRight", "%s", label.c_str());
+            break;
+        default:
+            break;
+        }
+    }
+    auto mousePos = InputSystem::getInstance()->getMosue()->getPosition();
+    ImGui::LabelText("MousePos", "%d, %d", mousePos.x(), mousePos.y());
     ImGui::End();
 };
 void DebugScene::onDraw(Renderer& renderer)
