@@ -13,6 +13,8 @@ enum class KeyCode : int32_t {
     A,
     S,
     D,
+    E,
+    Esc,
     Space,
     Shift,
     ArrowUp,

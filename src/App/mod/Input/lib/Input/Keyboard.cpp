@@ -78,6 +78,10 @@ KeyCode Keyboard::keyMap(int32_t key)
         return KeyCode::S;
     case 'D':
         return KeyCode::D;
+    case 'E':
+        return KeyCode::E;
+    case VK_ESCAPE:
+        return KeyCode::Esc;
     case VK_SPACE:
         return KeyCode::Space;
     case VK_SHIFT:
