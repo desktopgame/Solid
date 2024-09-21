@@ -14,6 +14,8 @@ enum class KeyCode : int32_t {
     S,
     D,
     Space,
+    LeftShift,
+    RightShift,
     ArrowUp,
     ArrowDown,
     ArrowLeft,

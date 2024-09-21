@@ -80,6 +80,10 @@ KeyCode Keyboard::keyMap(int32_t key)
         return KeyCode::D;
     case VK_SPACE:
         return KeyCode::Space;
+    case VK_LSHIFT:
+        return KeyCode::LeftShift;
+    case VK_RSHIFT:
+        return KeyCode::RightShift;
     case VK_UP:
         return KeyCode::ArrowUp;
     case VK_DOWN:
