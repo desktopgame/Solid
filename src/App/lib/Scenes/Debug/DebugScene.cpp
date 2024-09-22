@@ -50,13 +50,13 @@ void DebugScene::onUpdate(Renderer& renderer)
     auto mouse = InputSystem::getInstance()->getMosue();
     if (Cursor::isLocked()) {
         if (keyboard->isPressed(KeyCode::W)) {
-            m_cameraPos += forward * m_cameraMoveSpeed;
+            m_cameraPos += forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
         } else if (keyboard->isPressed(KeyCode::S)) {
-            m_cameraPos -= forward * m_cameraMoveSpeed;
+            m_cameraPos -= forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
         } else if (keyboard->isPressed(KeyCode::D)) {
-            m_cameraPos += right * m_cameraMoveSpeed;
+            m_cameraPos += right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
         } else if (keyboard->isPressed(KeyCode::A)) {
-            m_cameraPos -= right * m_cameraMoveSpeed;
+            m_cameraPos -= right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
         }
         if (keyboard->isPressed(KeyCode::Space)) {
             m_cameraPos += Vector3({ 0, 1, 0 }) * m_cameraMoveSpeed;
