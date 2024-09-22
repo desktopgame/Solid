@@ -42,7 +42,6 @@ private:
     explicit Mouse();
 
     Math::IntVector2 m_delta;
-    Math::IntVector2 m_delta2;
     Math::IntVector2 m_prevPos;
     Math::IntVector2 m_currentPos;
     std::array<ButtonState, (int32_t)Button::Count> m_prevStat;
