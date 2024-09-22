@@ -30,7 +30,7 @@ void Window::show()
 bool Window::peekMessage() const
 {
     MSG msg = {};
-    if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -91,6 +91,9 @@ void Window::destroy()
 LRESULT Window::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     if (m_imguiCallback(hwnd, msg, wparam, lparam)) {
+        if (m_userCallback) {
+            m_userCallback(hwnd, msg, wparam, lparam);
+        }
         return true;
     }
     if (m_userCallback) {

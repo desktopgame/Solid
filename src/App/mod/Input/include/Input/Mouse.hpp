@@ -28,6 +28,7 @@ public:
     bool isTrigger(Button button) const;
     bool isPressed(Button button) const;
     Math::IntVector2 getPosition() const;
+    Math::IntVector2 getDelta() const;
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Mouse> create(const std::shared_ptr<OS::Window>& window);
@@ -40,7 +41,10 @@ public:
 private:
     explicit Mouse();
 
-    Math::IntVector2 m_position;
+    Math::IntVector2 m_delta;
+    Math::IntVector2 m_delta2;
+    Math::IntVector2 m_prevPos;
+    Math::IntVector2 m_currentPos;
     std::array<ButtonState, (int32_t)Button::Count> m_prevStat;
     std::array<bool, (int32_t)Button::Count> m_currentStat;
     std::shared_ptr<OS::Window> m_window;
