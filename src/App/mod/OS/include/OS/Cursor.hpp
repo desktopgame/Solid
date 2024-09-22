@@ -3,13 +3,18 @@
 #include <memory>
 
 namespace Lib::OS {
-namespace Cursor {
-    void show();
+class Cursor {
+public:
+    static void show();
 
-    void hide();
+    static void hide();
 
-    void lock(const std::shared_ptr<Window>& window);
+    static void lock(const std::shared_ptr<Window>& window);
 
-    void unlock();
-}
+    static void unlock();
+
+private:
+    Cursor() = delete;
+    ~Cursor() = delete;
+};
 }

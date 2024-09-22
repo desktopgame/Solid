@@ -2,36 +2,35 @@
 #include <Windows.h>
 
 namespace Lib::OS {
-namespace Cursor {
-    void show() { ShowCursor(true); }
 
-    void hide() { ShowCursor(false); }
+void Cursor::show() { ShowCursor(true); }
 
-    void lock(const std::shared_ptr<Window>& window)
-    {
-        RECT rect;
-        GetClientRect(window->getHWND(), &rect);
+void Cursor::hide() { ShowCursor(false); }
 
-        POINT ul;
-        ul.x = rect.left;
-        ul.y = rect.top;
+void Cursor::lock(const std::shared_ptr<Window>& window)
+{
+    RECT rect;
+    GetClientRect(window->getHWND(), &rect);
 
-        POINT lr;
-        lr.x = rect.right;
-        lr.y = rect.bottom;
+    POINT ul;
+    ul.x = rect.left;
+    ul.y = rect.top;
 
-        MapWindowPoints(window->getHWND(), nullptr, &ul, 1);
-        MapWindowPoints(window->getHWND(), nullptr, &lr, 1);
+    POINT lr;
+    lr.x = rect.right;
+    lr.y = rect.bottom;
 
-        rect.left = ul.x;
-        rect.top = ul.y;
+    MapWindowPoints(window->getHWND(), nullptr, &ul, 1);
+    MapWindowPoints(window->getHWND(), nullptr, &lr, 1);
 
-        rect.right = lr.x;
-        rect.bottom = lr.y;
+    rect.left = ul.x;
+    rect.top = ul.y;
 
-        ClipCursor(&rect);
-    }
+    rect.right = lr.x;
+    rect.bottom = lr.y;
 
-    void unlock() { ClipCursor(nullptr); }
+    ClipCursor(&rect);
 }
+
+void Cursor::unlock() { ClipCursor(nullptr); }
 }
