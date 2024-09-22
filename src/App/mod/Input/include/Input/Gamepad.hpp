@@ -1,4 +1,5 @@
 #pragma once
+#include <Input/ButtonState.hpp>
 #include <memory>
 #include <vector>
 
@@ -28,6 +29,7 @@ public:
     int16_t getLeftStickY() const;
     int16_t getRightStickX() const;
     int16_t getRightStickY() const;
+    ButtonState getState(Button button) const;
     bool isTrigger(Button button) const;
     bool isPressed(Button button) const;
     bool isEnabled() const;

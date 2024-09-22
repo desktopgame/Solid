@@ -9,8 +9,11 @@
 #include <wrl/client.h>
 #endif
 
-namespace Lib::Graphics {
+namespace Lib::OS {
 class Window;
+}
+
+namespace Lib::Graphics {
 class Device;
 class Swapchain {
 public:
@@ -18,7 +21,7 @@ public:
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Swapchain> create(
-        const std::shared_ptr<Window>& window,
+        const std::shared_ptr<OS::Window>& window,
         const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
         const Microsoft::WRL::ComPtr<ID3D12Device>& device);
 

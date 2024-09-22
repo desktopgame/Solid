@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 project(
-    Lib-Input
+    Lib-OS
     VERSION 0.0.1
     LANGUAGES CXX
 )
@@ -8,26 +8,21 @@ project(
 # Build Options
 #
 add_library(
-    Lib-Input
+    Lib-OS
     STATIC
-    lib/Input/InputSystem.cpp
-    lib/Input/Gamepad.cpp
-    lib/Input/Keyboard.cpp
-    lib/Input/Mouse.cpp
+    lib/OS/Window.cpp
+    lib/OS/Cursor.cpp
 )
-lib_target_compile_params(Lib-Input)
-lib_target_link_params(Lib-Input)
+lib_target_compile_params(Lib-OS)
+lib_target_link_params(Lib-OS)
 target_include_directories(
-    Lib-Input
+    Lib-OS
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${MODS}/OS/include"
     "${MODS}/Math/include"
 )
 target_link_libraries(
-    Lib-Input
-    PRIVATE
-    "xinput.lib"
     Lib-OS
+    PRIVATE
     Lib-Math
 )

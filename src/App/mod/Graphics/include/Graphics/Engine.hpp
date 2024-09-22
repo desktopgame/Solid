@@ -3,8 +3,11 @@
 #include <mutex>
 #include <thread>
 
-namespace Lib::Graphics {
+namespace Lib::OS {
 class Window;
+}
+
+namespace Lib::Graphics {
 class Device;
 /**
  * @brief Engine class.
@@ -39,7 +42,7 @@ public:
      * @brief Get the Window object
      * @return std::shared_ptr<Window>
      */
-    std::shared_ptr<Window> getWindow() const;
+    std::shared_ptr<OS::Window> getWindow() const;
 
     /**
      * @brief Get the Device object
@@ -54,7 +57,7 @@ private:
 
     bool m_started;
     bool m_shutdowned;
-    std::shared_ptr<Window> m_window;
+    std::shared_ptr<OS::Window> m_window;
     std::shared_ptr<Device> m_device;
 };
 }

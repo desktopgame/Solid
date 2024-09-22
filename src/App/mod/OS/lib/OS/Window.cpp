@@ -1,15 +1,16 @@
-#include <Graphics/Device.hpp>
-#include <Graphics/Window.hpp>
-#include <imgui_internal.h>
+// #include <Graphics/Device.hpp>
+// #include <Graphics/Window.hpp>
+// #include <imgui_internal.h>
+#include <OS/Cursor.hpp>
+#include <OS/Window.hpp>
 #include <tchar.h>
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-namespace Lib::Graphics {
+namespace Lib::OS {
 static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
-        return true;
+    auto window = static_cast<Window*>(GetProp(hwnd, _T("UserPtr")));
+    if (window) {
+        return window->handleEvent(hwnd, msg, wparam, lparam);
     }
     if (msg == WM_DESTROY) {
         PostQuitMessage(0);
@@ -30,7 +31,7 @@ void Window::show()
 bool Window::peekMessage() const
 {
     MSG msg = {};
-    if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -45,7 +46,7 @@ void Window::hide()
     ShowWindow(m_hwnd, SW_HIDE);
 }
 // internal
-std::shared_ptr<Window> Window::create(int32_t width, int32_t height)
+std::shared_ptr<Window> Window::create(int32_t width, int32_t height, const std::function<LRESULT(HWND, UINT, WPARAM, LPARAM)>& imguiCallback)
 {
     auto window = std::shared_ptr<Window>(new Window());
     // create HWND
@@ -73,6 +74,8 @@ std::shared_ptr<Window> Window::create(int32_t width, int32_t height)
         w.hInstance,
         nullptr);
     window->m_hwnd = hwnd;
+    window->m_imguiCallback = imguiCallback;
+    SetProp(hwnd, _T("UserPtr"), window.get());
     return window;
 }
 
@@ -85,6 +88,29 @@ void Window::destroy()
         m_hwnd = nullptr;
     }
 }
+
+LRESULT Window::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    if (Cursor::isVisible()) {
+        if (m_imguiCallback(hwnd, msg, wparam, lparam)) {
+            if (m_userCallback) {
+                m_userCallback(hwnd, msg, wparam, lparam);
+            }
+            return true;
+        }
+    }
+    if (m_userCallback) {
+        m_userCallback(hwnd, msg, wparam, lparam);
+    }
+    if (msg == WM_DESTROY) {
+        PostQuitMessage(0);
+        return 0;
+    }
+    return DefWindowProc(hwnd, msg, wparam, lparam);
+}
+
+void Window::setCallback(const std::function<void(HWND, UINT, WPARAM, LPARAM)>& callback) { m_userCallback = callback; }
+std::function<void(HWND, UINT, WPARAM, LPARAM)> Window::getCallback() const { return m_userCallback; }
 
 HWND Window::getHWND() const
 {

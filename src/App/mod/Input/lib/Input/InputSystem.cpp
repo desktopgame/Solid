@@ -1,5 +1,8 @@
 #include <Input/Gamepad.hpp>
 #include <Input/InputSystem.hpp>
+#include <Input/Keyboard.hpp>
+#include <Input/Mouse.hpp>
+#include <OS/Window.hpp>
 #include <stdexcept>
 
 namespace Lib::Input {
@@ -22,23 +25,29 @@ void InputSystem::require()
     }
 }
 
-std::shared_ptr<InputSystem> InputSystem::startup()
+std::shared_ptr<InputSystem> InputSystem::startup(const std::shared_ptr<OS::Window>& window)
 {
     // startup runs a only at first call.
     if (m_started) {
         return nullptr;
     }
     m_started = true;
+    s_instance->m_keyboard = Keyboard::create();
+    s_instance->m_mouse = Mouse::create(window);
+    window->setCallback(std::bind(&InputSystem::handleEvent, s_instance, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     return s_instance;
 }
 
 void InputSystem::sync()
 {
+    require();
     for (auto gamepad : m_gamepads) {
         if (gamepad) {
             gamepad->sync();
         }
     }
+    m_keyboard->sync();
+    m_mouse->sync();
 }
 
 void InputSystem::shutdown()
@@ -53,6 +62,7 @@ void InputSystem::shutdown()
     for (int32_t i = 0; i < 4; i++) {
         m_gamepads.at(i) = nullptr;
     }
+    m_keyboard = nullptr;
     s_instance = nullptr;
 }
 
@@ -63,11 +73,21 @@ std::shared_ptr<Gamepad> InputSystem::getGamepad(int32_t index)
     }
     return m_gamepads.at(index);
 }
+
+std::shared_ptr<Keyboard> InputSystem::getKeyboard() const { return m_keyboard; }
+
+std::shared_ptr<Mouse> InputSystem::getMosue() const { return m_mouse; }
 // private
 InputSystem::InputSystem()
     : m_started(false)
     , m_shutdowned(false)
     , m_gamepads()
 {
+}
+
+void InputSystem::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    m_keyboard->handleEvent(hwnd, msg, wparam, lparam);
+    m_mouse->handleEvent(hwnd, msg, wparam, lparam);
 }
 }

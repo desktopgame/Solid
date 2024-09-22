@@ -1,7 +1,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Swapchain.hpp>
-#include <Graphics/Window.hpp>
+#include <OS/Window.hpp>
 #include <iostream>
 #include <optional>
 #include <stdexcept>
@@ -42,7 +42,7 @@ std::shared_ptr<Surface> Device::getSurface() const
     return m_surface;
 }
 // internal
-std::shared_ptr<Device> Device::create(const std::shared_ptr<Window>& window)
+std::shared_ptr<Device> Device::create(const std::shared_ptr<OS::Window>& window)
 {
     auto device = std::shared_ptr<Device>(new Device());
     device->m_hwnd = window->getHWND();
