@@ -2,10 +2,22 @@
 #include <Windows.h>
 
 namespace Lib::OS {
+bool Cursor::s_isVisible = true;
+bool Cursor::s_isLocked = false;
 
-void Cursor::show() { ShowCursor(true); }
+void Cursor::show()
+{
+    ShowCursor(true);
+    s_isVisible = true;
+}
 
-void Cursor::hide() { ShowCursor(false); }
+void Cursor::hide()
+{
+    ShowCursor(false);
+    s_isVisible = false;
+}
+
+bool Cursor::isVisible() { return s_isVisible; }
 
 void Cursor::lock(const std::shared_ptr<Window>& window)
 {
@@ -30,7 +42,14 @@ void Cursor::lock(const std::shared_ptr<Window>& window)
     rect.bottom = lr.y;
 
     ClipCursor(&rect);
+    s_isLocked = true;
 }
 
-void Cursor::unlock() { ClipCursor(nullptr); }
+void Cursor::unlock()
+{
+    ClipCursor(nullptr);
+    s_isLocked = false;
+}
+
+bool Cursor::isLocked() { return s_isLocked; }
 }
