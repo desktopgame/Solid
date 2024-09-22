@@ -1,6 +1,7 @@
 // #include <Graphics/Device.hpp>
 // #include <Graphics/Window.hpp>
 // #include <imgui_internal.h>
+#include <OS/Cursor.hpp>
 #include <OS/Window.hpp>
 #include <tchar.h>
 
@@ -90,11 +91,13 @@ void Window::destroy()
 
 LRESULT Window::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    if (m_imguiCallback(hwnd, msg, wparam, lparam)) {
-        if (m_userCallback) {
-            m_userCallback(hwnd, msg, wparam, lparam);
+    if (Cursor::isVisible()) {
+        if (m_imguiCallback(hwnd, msg, wparam, lparam)) {
+            if (m_userCallback) {
+                m_userCallback(hwnd, msg, wparam, lparam);
+            }
+            return true;
         }
-        return true;
     }
     if (m_userCallback) {
         m_userCallback(hwnd, msg, wparam, lparam);
