@@ -32,5 +32,8 @@ private:
 
     int32_t m_tileID;
     std::vector<Vector4> m_tiles;
+
+    int32_t m_hintTileID;
+    std::vector<Vector4> m_hintTiles;
 };
 }
