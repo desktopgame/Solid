@@ -118,6 +118,12 @@ public:
         return a > 0 ? static_cast<T>(1) : static_cast<T>(-1);
     }
 
+    template <typename T>
+    inline static T abs(T a)
+    {
+        return a > 0 ? a : -a;
+    }
+
 private:
     Mathf() = delete;
     ~Mathf() = delete;
