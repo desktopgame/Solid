@@ -1,6 +1,7 @@
 #include <Scenes/Debug/DebugScene.hpp>
 #include <cmath>
 #include <imgui.h>
+#include <optional>
 
 namespace App::Scenes::Debug {
 // public
@@ -93,6 +94,7 @@ void DebugScene::onUpdate(Renderer& renderer)
 
         m_hintTiles.clear();
         auto hitTiles = Raycast::testTiles(m_cameraPos, forward, 10.0f);
+        std::optional<Vector3> optHitPos = std::nullopt;
         for (const auto& hitTile : hitTiles) {
             for (const auto& otherTile : m_tiles) {
                 if (hitTile.position == (Vector3)otherTile) {
@@ -105,6 +107,7 @@ void DebugScene::onUpdate(Renderer& renderer)
                             return placePos == (Vector3)e;
                         }) != m_tiles.end();
                         if (!found) {
+                            optHitPos = hitTile.position;
                             m_hintTiles.push_back(Vector4(placePos, 0 + getColorIndex()));
                             m_hintTiles.push_back(Vector4(placePos, 1 + getColorIndex()));
                             m_hintTiles.push_back(Vector4(placePos, 2 + getColorIndex()));
@@ -125,6 +128,14 @@ void DebugScene::onUpdate(Renderer& renderer)
                 m_tiles.push_back(hintTile);
             }
             renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+        } else if (mouse->isTrigger(Mouse::Button::Right)) {
+            if (m_tiles.size() > 6) {
+                auto iter = std::remove_if(m_tiles.begin(), m_tiles.end(), [optHitPos](const auto& tile) -> bool {
+                    return *optHitPos == (Vector3)tile;
+                });
+                m_tiles.erase(iter, m_tiles.end());
+                renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+            }
         }
     }
 
