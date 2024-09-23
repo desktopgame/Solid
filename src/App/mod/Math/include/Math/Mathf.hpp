@@ -103,6 +103,12 @@ public:
         return diff <= std::numeric_limits<float>::epsilon();
     }
 
+    template <typename T>
+    inline static bool in(T a, T b, T at)
+    {
+        return min(a, b) <= at && at < max(a, b);
+    }
+
 private:
     Mathf() = delete;
     ~Mathf() = delete;
