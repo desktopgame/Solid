@@ -109,6 +109,15 @@ public:
         return min(a, b) <= at && at < max(a, b);
     }
 
+    template <typename T>
+    inline static T sign(T a)
+    {
+        if (equals(a, 0.0f)) {
+            return 0.0f;
+        }
+        return a > 0 ? static_cast<T>(1) : static_cast<T>(-1);
+    }
+
 private:
     Mathf() = delete;
     ~Mathf() = delete;
