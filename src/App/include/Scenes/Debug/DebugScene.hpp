@@ -32,6 +32,7 @@ private:
     float m_cameraMoveSpeed;
     float m_cameraRotateSpeed;
     bool m_cursorVisible;
+    std::array<char, 32> m_ioFile;
 
     int32_t m_tileID;
     std::vector<Vector4> m_tiles;

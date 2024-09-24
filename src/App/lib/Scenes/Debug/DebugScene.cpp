@@ -16,11 +16,14 @@ DebugScene::DebugScene()
     , m_cameraMoveSpeed(0.04f)
     , m_cameraRotateSpeed(0.8f)
     , m_cursorVisible(true)
+    , m_ioFile()
     , m_tileID()
     , m_tiles()
     , m_hintTileID()
     , m_hintTiles()
 {
+    std::string fileName = "assets/model1.csv";
+    std::copy(fileName.begin(), fileName.end(), m_ioFile.begin());
 }
 DebugScene::~DebugScene() { }
 
@@ -136,6 +139,17 @@ void DebugScene::onGui(Renderer& renderer)
     auto delta = InputSystem::getInstance()->getMosue()->getDelta();
     ImGui::LabelText("Pos", "%d, %d", pos.x(), pos.y());
     ImGui::LabelText("Delta", "%d, %d", delta.x(), delta.y());
+    ImGui::End();
+
+    ImGui::Begin("IO");
+    ImGui::InputText("File", m_ioFile.data(), 32);
+    if (ImGui::Button("Save")) {
+        IO::serializeTile(std::string(m_ioFile.data()), m_tiles);
+    }
+    if (ImGui::Button("Load")) {
+        IO::deserializeTile(std::string(m_ioFile.data()), m_tiles);
+        renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+    }
     ImGui::End();
 };
 void DebugScene::onDraw(Renderer& renderer)
