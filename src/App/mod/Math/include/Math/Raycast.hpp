@@ -22,12 +22,12 @@ public:
         float tileHalf = tileSize / 2.0f;
         while (distance < length) {
             Vector3 end = offset + (dir * tileSize);
-            float x1 = alignTile(offset.x());
-            float x2 = alignTile(end.x());
-            float y1 = alignTile(offset.y());
-            float y2 = alignTile(end.y());
-            float z1 = alignTile(offset.z());
-            float z2 = alignTile(end.z());
+            float x1 = alignTile(offset.x(), tileSize);
+            float x2 = alignTile(end.x(), tileSize);
+            float y1 = alignTile(offset.y(), tileSize);
+            float y2 = alignTile(end.y(), tileSize);
+            float z1 = alignTile(offset.z(), tileSize);
+            float z2 = alignTile(end.z(), tileSize);
 
             float minX = Mathf::min(x1, x2);
             float maxX = Mathf::max(x1, x2);
@@ -90,18 +90,20 @@ public:
         return vec;
     }
 
+private:
+    Raycast() = delete;
+    ~Raycast() = delete;
+
     inline static float alignTile(float a, float tileSize = 1.0f)
     {
-        // a = -0.6
-        // tileSize = 0.5
-        float tileHalf = tileSize / 2.0f; // 0.25
-        float d = a / tileSize; // -1
+        float tileHalf = tileSize / 2.0f;
+        float d = a / tileSize;
         if (d > 0.0f) {
             d = ::floorf(d);
         } else {
             d = ::ceilf(d);
         }
-        float m = ::fmodf(a, tileSize); // -0.1
+        float m = ::fmodf(a, tileSize);
 
         if (::fabs(m) < 0.000001f) {
             return a;
@@ -118,9 +120,5 @@ public:
             return (d * tileSize) - tileSize;
         }
     }
-
-private:
-    Raycast() = delete;
-    ~Raycast() = delete;
 };
 }
