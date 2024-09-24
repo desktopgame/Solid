@@ -94,7 +94,7 @@ void DebugScene::onUpdate(Renderer& renderer)
             }
             renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
         } else if (mouse->isTrigger(Mouse::Button::Right)) {
-            if (m_tiles.size() > 6) {
+            if (m_tiles.size() > 6 && optHitPos) {
                 auto iter = std::remove_if(m_tiles.begin(), m_tiles.end(), [optHitPos](const auto& tile) -> bool {
                     return *optHitPos == (Vector3)tile;
                 });
