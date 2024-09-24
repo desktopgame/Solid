@@ -73,17 +73,14 @@ void DebugScene::onUpdate(Renderer& renderer)
         m_cameraLookAt = m_cameraPos + forward;
 
         auto mouseDelta = mouse->getDelta();
-        if (std::abs(mouseDelta.y()) > 0) {
-            m_cameraAngleX -= static_cast<float>(mouseDelta.y()) * m_cameraRotateSpeed;
-        }
+        m_cameraAngleX -= static_cast<float>(mouseDelta.y()) * m_cameraRotateSpeed;
+        m_cameraAngleY += static_cast<float>(mouseDelta.x()) * m_cameraRotateSpeed;
+
         if (m_cameraAngleX <= -90.0f) {
             m_cameraAngleX = -89.0f;
         }
         if (m_cameraAngleX >= 90.0f) {
             m_cameraAngleX = 89.0f;
-        }
-        if (std::abs(mouseDelta.x()) > 0) {
-            m_cameraAngleY += static_cast<float>(mouseDelta.x()) * m_cameraRotateSpeed;
         }
 
         m_hintTiles.clear();
