@@ -1,3 +1,4 @@
+#include <Common/Constants.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <cmath>
 #include <imgui.h>
@@ -178,7 +179,7 @@ int32_t DebugScene::getColorIndex() const
 std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
 {
     m_hintTiles.clear();
-    auto hitTiles = Raycast::testTiles(m_cameraPos, forward, 10.0f);
+    auto hitTiles = Raycast::testTiles(m_cameraPos, forward, 10.0f, Common::Constants::k_tileSize);
     std::optional<Vector3> optHitPos = std::nullopt;
     for (const auto& hitTile : hitTiles) {
         for (const auto& otherTile : m_tiles) {

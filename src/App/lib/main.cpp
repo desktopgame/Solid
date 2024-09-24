@@ -5,7 +5,9 @@
 #endif
 
 // App
+#include <Common/Constants.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
+using namespace App::Common;
 using namespace App::Scenes;
 
 // Lib
@@ -24,7 +26,7 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     SceneManager sceneManager(sceneMap, "Debug");
 
-    Renderer renderer(1.0f);
+    Renderer renderer(Constants::k_tileSize);
     window->show();
     while (window->peekMessage()) {
         inputSystem->sync();
