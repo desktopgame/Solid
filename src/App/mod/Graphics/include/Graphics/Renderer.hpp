@@ -26,7 +26,7 @@ public:
         Bottom
     };
 
-    explicit Renderer();
+    explicit Renderer(float tileSize);
 
     void position(const Math::Vector3& position);
     void lookAt(const Math::Vector3& lookAt);
@@ -98,6 +98,7 @@ private:
     Object m_spriteObject;
     Object m_textObject;
 
+    float m_tileSize;
     std::array<std::shared_ptr<TileBatch>, 5> m_tileBatches;
 };
 }

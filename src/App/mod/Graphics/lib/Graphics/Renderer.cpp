@@ -16,7 +16,7 @@
 
 namespace Lib::Graphics {
 // public
-Renderer::Renderer()
+Renderer::Renderer(float tileSize)
     : m_position({ 0, 0, -1 })
     , m_lookAt({ 0, 0, 0 })
     , m_zNear(0.1f)
@@ -34,6 +34,7 @@ Renderer::Renderer()
     , m_circleObject()
     , m_spriteObject()
     , m_textObject()
+    , m_tileSize(tileSize)
     , m_tileBatches()
 {
 }
@@ -490,19 +491,19 @@ std::shared_ptr<TileBatch> Renderer::getTileBatch(TileBufferKind kind)
     if (!m_tileBatches.at(i)) {
         switch (kind) {
         case TileBufferKind::UltraSmall:
-            m_tileBatches.at(i) = TileBatch::create(1.0f, TileBufferUltraSmall::create(100));
+            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferUltraSmall::create(100));
             break;
         case TileBufferKind::Small:
-            m_tileBatches.at(i) = TileBatch::create(1.0f, TileBufferSmall::create(100));
+            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferSmall::create(100));
             break;
         case TileBufferKind::Medium:
-            m_tileBatches.at(i) = TileBatch::create(1.0f, TileBufferMedium::create(200));
+            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferMedium::create(200));
             break;
         case TileBufferKind::Large:
-            m_tileBatches.at(i) = TileBatch::create(1.0f, TileBufferLarge::create(100));
+            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferLarge::create(100));
             break;
         case TileBufferKind::UltraLarge:
-            m_tileBatches.at(i) = TileBatch::create(1.0f, TileBufferUltraLarge::create(1));
+            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferUltraLarge::create(1));
             break;
         }
     }
