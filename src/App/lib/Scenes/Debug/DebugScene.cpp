@@ -57,6 +57,7 @@ void DebugScene::onUpdate(Renderer& renderer)
 
     auto keyboard = InputSystem::getInstance()->getKeyboard();
     auto mouse = InputSystem::getInstance()->getMosue();
+    std::optional<Vector3> optHitPos = std::nullopt;
     if (Cursor::isLocked()) {
         if (keyboard->isPressed(KeyCode::W)) {
             m_cameraPos += forward * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
@@ -84,10 +85,12 @@ void DebugScene::onUpdate(Renderer& renderer)
         if (m_cameraAngleX >= 90.0f) {
             m_cameraAngleX = 89.0f;
         }
+    }
 
-        auto optHitPos = scanHintTiles(forward);
-        renderer.batchTileArray(TileBufferKind::Medium, m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
+    optHitPos = scanHintTiles(forward);
+    renderer.batchTileArray(TileBufferKind::Medium, m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
 
+    if (Cursor::isLocked()) {
         if (mouse->isTrigger(Mouse::Button::Left)) {
             for (const auto& hintTile : m_hintTiles) {
                 m_tiles.push_back(hintTile);
