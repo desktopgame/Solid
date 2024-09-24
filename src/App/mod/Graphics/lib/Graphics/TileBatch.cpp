@@ -12,15 +12,16 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> tileBuffer)
+std::shared_ptr<TileBatch> TileBatch::create(float tileSize, const std::shared_ptr<ITileBuffer> tileBuffer)
 {
     auto tileBatch = std::shared_ptr<TileBatch>(new TileBatch());
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
     shaderKeywords.insert_or_assign("VS_TileDataSize", std::to_string(tileBuffer->getArraySize()));
-    shaderKeywords.insert_or_assign("VS_TileOffsetScale", std::to_string(s_tileSize));
+    shaderKeywords.insert_or_assign("VS_TileOffsetScale", std::to_string(tileSize));
 
+    tileBatch->m_tileSize = tileSize;
     tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
@@ -75,7 +76,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     // vertex buffer and index buffer
     std::vector<Math::Vector3> vertices;
     std::vector<uint32_t> indices;
-    const float half = s_tileHalf;
+    const float half = tileSize / 2.0f;
     const float left = -half;
     const float right = half;
     const float top = half;
@@ -229,8 +230,8 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     tileBatch->m_cameraBuffer->allocate(sizeof(CameraData));
     tileBatch->m_cameraBuffer->update(&tileBatch->m_cameraData);
 
-    tileBatch->m_transformData.translateMatrixTable = s_translateMatrixTable;
-    tileBatch->m_transformData.rotationMatrixTable = s_rotationMatrixTable;
+    tileBatch->m_transformData.translateMatrixTable = getGlobalTranslateMatrixTable(tileSize);
+    tileBatch->m_transformData.rotationMatrixTable = getGlobalRotationMatrixTable();
     tileBatch->m_transformBuffer = Buffer::create();
     tileBatch->m_transformBuffer->allocate(sizeof(TransformData));
     tileBatch->m_transformBuffer->update(&tileBatch->m_transformData);
@@ -348,6 +349,43 @@ void TileBatch::setGlobalProjectionMatrix(const Math::Matrix& matrix)
     m_shouldCameraCopy = true;
 }
 Math::Matrix TileBatch::getGlobalProjectionMatrix() const { return m_cameraData.projectionMatrix; }
+
+std::array<Math::Matrix, 6> TileBatch::getGlobalTranslateMatrixTable(float tileSize)
+{
+    const float k_tileHalf = tileSize / 2.0f;
+    return {
+        // posY
+        Math::Matrix::translate(Math::Vector3({ 0.0f, k_tileHalf, 0.0f })),
+        // negY
+        Math::Matrix::translate(Math::Vector3({ 0.0f, -k_tileHalf, 0.0f })),
+        // posX
+        Math::Matrix::translate(Math::Vector3({ k_tileHalf, 0.0f, 0.0f })),
+        // negX
+        Math::Matrix::translate(Math::Vector3({ -k_tileHalf, 0.0f, 0.0f })),
+        // posZ
+        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, k_tileHalf })),
+        // negZ
+        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, -k_tileHalf })),
+    };
+}
+
+std::array<Math::Matrix, 6> TileBatch::getGlobalRotationMatrixTable()
+{
+    return {
+        // posY
+        Math::Matrix::rotateX(-90.0f),
+        // negY
+        Math::Matrix::rotateX(90.0f),
+        // posX
+        Math::Matrix::rotateY(90.0f),
+        // negX
+        Math::Matrix::rotateY(-90.0f),
+        // posZ
+        Math::Matrix::rotateY(180.0f),
+        // negZ
+        Math::Matrix(),
+    };
+}
 // internal
 void TileBatch::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)

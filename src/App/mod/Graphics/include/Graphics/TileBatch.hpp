@@ -16,7 +16,7 @@ class Buffer;
 class Constant;
 class TileBatch {
 public:
-    static std::shared_ptr<TileBatch> create(const std::shared_ptr<ITileBuffer> tileBuffer);
+    static std::shared_ptr<TileBatch> create(float tileSize, const std::shared_ptr<ITileBuffer> tileBuffer);
     ~TileBatch();
 
     int32_t rent();
@@ -35,43 +35,14 @@ public:
     void setGlobalProjectionMatrix(const Math::Matrix& matrix);
     Math::Matrix getGlobalProjectionMatrix() const;
 
+    static std::array<Math::Matrix, 6> getGlobalTranslateMatrixTable(float tileSize);
+
+    static std::array<Math::Matrix, 6> getGlobalRotationMatrixTable();
+
 #if SOLID_ENABLE_INTERNAL
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 #endif
-    inline static const float s_tileSize = 1.0f;
-
-    inline static const float s_tileHalf = s_tileSize / 2.0f;
-
-    inline static const std::array<Math::Matrix, 6> s_translateMatrixTable = {
-        // posY
-        Math::Matrix::translate(Math::Vector3({ 0.0f, s_tileHalf, 0.0f })),
-        // negY
-        Math::Matrix::translate(Math::Vector3({ 0.0f, -s_tileHalf, 0.0f })),
-        // posX
-        Math::Matrix::translate(Math::Vector3({ s_tileHalf, 0.0f, 0.0f })),
-        // negX
-        Math::Matrix::translate(Math::Vector3({ -s_tileHalf, 0.0f, 0.0f })),
-        // posZ
-        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, s_tileHalf })),
-        // negZ
-        Math::Matrix::translate(Math::Vector3({ 0.0f, 0.0f, -s_tileHalf })),
-    };
-
-    inline static const std::array<Math::Matrix, 6> s_rotationMatrixTable = {
-        // posY
-        Math::Matrix::rotateX(-90.0f),
-        // negY
-        Math::Matrix::rotateX(90.0f),
-        // posX
-        Math::Matrix::rotateY(90.0f),
-        // negX
-        Math::Matrix::rotateY(-90.0f),
-        // posZ
-        Math::Matrix::rotateY(180.0f),
-        // negZ
-        Math::Matrix(),
-    };
 
     inline static const std::array<Math::Vector3, 6> k_normalVectorTable = {
         // posY
@@ -199,6 +170,7 @@ private:
     };
     static_assert(sizeof(ColorData) % 256 == 0);
 
+    float m_tileSize;
     std::shared_ptr<Shader> m_shader;
     std::shared_ptr<Buffer> m_vertexBuffer;
     std::shared_ptr<Buffer> m_indexBuffer;
