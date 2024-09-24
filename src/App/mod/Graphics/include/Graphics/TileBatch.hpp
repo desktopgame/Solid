@@ -73,7 +73,7 @@ public:
         Math::Matrix(),
     };
 
-    inline static const std::array<Math::Vector3, 6> s_normalVectorTable = {
+    inline static const std::array<Math::Vector3, 6> k_normalVectorTable = {
         // posY
         Math::Vector3({ 0, 1, 0 }),
         // negY
@@ -88,7 +88,7 @@ public:
         Math::Vector3({ 0, 0, -1 }),
     };
 
-    inline static const std::array<int32_t, 6> s_tileReverseTable = {
+    inline static const std::array<int32_t, 6> k_tileReverseTable = {
         // posY
         1,
         // negY
@@ -103,7 +103,7 @@ public:
         4,
     };
 
-    inline static const std::array<Math::Vector4, 64> s_colorTable = {
+    inline static const std::array<Math::Vector4, 64> k_colorTable = {
         // https://lospec.com/palette-list/tag/64
         // Jehkoba64
         Math::Vector4({ 0.0f, 0.0f, 0.0f, 1.0f }),

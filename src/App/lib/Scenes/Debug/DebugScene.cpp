@@ -183,8 +183,8 @@ std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
     for (const auto& hitTile : hitTiles) {
         for (const auto& otherTile : m_tiles) {
             if (hitTile.position == (Vector3)otherTile) {
-                auto iter = std::find(TileBatch::s_normalVectorTable.begin(), TileBatch::s_normalVectorTable.end(), hitTile.normal);
-                int32_t hitSide = std::distance(TileBatch::s_normalVectorTable.begin(), iter);
+                auto iter = std::find(TileBatch::k_normalVectorTable.begin(), TileBatch::k_normalVectorTable.end(), hitTile.normal);
+                int32_t hitSide = std::distance(TileBatch::k_normalVectorTable.begin(), iter);
                 int32_t tileSide = static_cast<int32_t>(otherTile.w()) % 10;
                 if (hitSide == tileSide) {
                     auto placePos = hitTile.position + hitTile.normal;

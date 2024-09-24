@@ -235,7 +235,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     tileBatch->m_transformBuffer->allocate(sizeof(TransformData));
     tileBatch->m_transformBuffer->update(&tileBatch->m_transformData);
 
-    tileBatch->m_colorData.colorTable = s_colorTable;
+    tileBatch->m_colorData.colorTable = k_colorTable;
     tileBatch->m_colorBuffer = Buffer::create();
     tileBatch->m_colorBuffer->allocate(sizeof(ColorData));
     tileBatch->m_colorBuffer->update(&tileBatch->m_colorData);
