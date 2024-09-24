@@ -22,23 +22,23 @@ public:
         float tileHalf = tileSize / 2.0f;
         while (distance < length) {
             Vector3 end = offset + (dir * tileSize);
-            int32_t x1 = static_cast<int32_t>(offset.x());
-            int32_t x2 = static_cast<int32_t>(::roundf(end.x()));
-            int32_t y1 = static_cast<int32_t>(offset.y());
-            int32_t y2 = static_cast<int32_t>(::roundf(end.y()));
-            int32_t z1 = static_cast<int32_t>(offset.z());
-            int32_t z2 = static_cast<int32_t>(::roundf(end.z()));
+            float x1 = alignTile(offset.x());
+            float x2 = alignTile(end.x());
+            float y1 = alignTile(offset.y());
+            float y2 = alignTile(end.y());
+            float z1 = alignTile(offset.z());
+            float z2 = alignTile(end.z());
 
-            int32_t minX = Mathf::min(x1, x2);
-            int32_t maxX = Mathf::max(x1, x2);
-            int32_t minY = Mathf::min(y1, y2);
-            int32_t maxY = Mathf::max(y1, y2);
-            int32_t minZ = Mathf::min(z1, z2);
-            int32_t maxZ = Mathf::max(z1, z2);
+            float minX = Mathf::min(x1, x2);
+            float maxX = Mathf::max(x1, x2);
+            float minY = Mathf::min(y1, y2);
+            float maxY = Mathf::max(y1, y2);
+            float minZ = Mathf::min(z1, z2);
+            float maxZ = Mathf::max(z1, z2);
 
-            for (int32_t x = minX; x <= maxX; x++) {
-                for (int32_t y = minY; y <= maxY; y++) {
-                    for (int32_t z = minZ; z <= maxZ; z++) {
+            for (float x = minX; x <= maxX; x += tileSize) {
+                for (float y = minY; y <= maxY; y += tileSize) {
+                    for (float z = minZ; z <= maxZ; z += tileSize) {
                         float fx = static_cast<float>(x);
                         float fy = static_cast<float>(y);
                         float fz = static_cast<float>(z);
@@ -88,6 +88,35 @@ public:
             distance += tileSize;
         }
         return vec;
+    }
+
+    inline static float alignTile(float a, float tileSize = 1.0f)
+    {
+        // a = -0.6
+        // tileSize = 0.5
+        float tileHalf = tileSize / 2.0f; // 0.25
+        float d = a / tileSize; // -1
+        if (d > 0.0f) {
+            d = ::floorf(d);
+        } else {
+            d = ::ceilf(d);
+        }
+        float m = ::fmodf(a, tileSize); // -0.1
+
+        if (::fabs(m) < 0.000001f) {
+            return a;
+        }
+        if (m > 0.0f) {
+            if (m < tileHalf) {
+                return d * tileSize;
+            }
+            return (d * tileSize) + tileSize;
+        } else {
+            if (::fabs(m) < tileHalf) {
+                return d * tileSize;
+            }
+            return (d * tileSize) - tileSize;
+        }
     }
 
 private:
