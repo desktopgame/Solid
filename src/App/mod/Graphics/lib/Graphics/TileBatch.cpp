@@ -12,7 +12,7 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<TileBatch> TileBatch::create(float tileSize, const std::shared_ptr<ITileBuffer> tileBuffer)
+std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize)
 {
     auto tileBatch = std::shared_ptr<TileBatch>(new TileBatch());
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();

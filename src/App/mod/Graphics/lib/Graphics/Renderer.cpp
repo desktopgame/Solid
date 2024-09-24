@@ -491,19 +491,19 @@ std::shared_ptr<TileBatch> Renderer::getTileBatch(TileBufferKind kind)
     if (!m_tileBatches.at(i)) {
         switch (kind) {
         case TileBufferKind::UltraSmall:
-            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferUltraSmall::create(100));
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraSmall::create(100), m_tileSize);
             break;
         case TileBufferKind::Small:
-            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferSmall::create(100));
+            m_tileBatches.at(i) = TileBatch::create(TileBufferSmall::create(100), m_tileSize);
             break;
         case TileBufferKind::Medium:
-            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferMedium::create(200));
+            m_tileBatches.at(i) = TileBatch::create(TileBufferMedium::create(200), m_tileSize);
             break;
         case TileBufferKind::Large:
-            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferLarge::create(100));
+            m_tileBatches.at(i) = TileBatch::create(TileBufferLarge::create(100), m_tileSize);
             break;
         case TileBufferKind::UltraLarge:
-            m_tileBatches.at(i) = TileBatch::create(m_tileSize, TileBufferUltraLarge::create(1));
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(1), m_tileSize);
             break;
         }
     }

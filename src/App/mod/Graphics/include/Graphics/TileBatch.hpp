@@ -16,7 +16,7 @@ class Buffer;
 class Constant;
 class TileBatch {
 public:
-    static std::shared_ptr<TileBatch> create(float tileSize, const std::shared_ptr<ITileBuffer> tileBuffer);
+    static std::shared_ptr<TileBatch> create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize = 1.0f);
     ~TileBatch();
 
     int32_t rent();
