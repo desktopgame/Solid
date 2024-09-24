@@ -48,15 +48,10 @@ void Mouse::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
     }
     POINT pt;
-    POINT save;
     if (GetCursorPos(&pt)) {
-        save = pt;
         if (ScreenToClient(m_window->getHWND(), &pt)) {
             m_currentPos.x() = pt.x;
             m_currentPos.y() = pt.y;
-        }
-        if (OS::Cursor::isLocked()) {
-            SetCursorPos(save.x, save.y);
         }
     }
 }
@@ -83,6 +78,15 @@ void Mouse::sync()
     }
     m_delta = m_currentPos - m_prevPos;
     m_prevPos = m_currentPos;
+
+    OS::Cursor::reset();
+    POINT pt;
+    if (GetCursorPos(&pt)) {
+        if (ScreenToClient(m_window->getHWND(), &pt)) {
+            m_prevPos.x() = pt.x;
+            m_prevPos.y() = pt.y;
+        }
+    }
 }
 // private
 Mouse::Mouse()
