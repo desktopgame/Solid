@@ -188,7 +188,7 @@ std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
                 int32_t hitSide = std::distance(TileBatch::k_normalVectorTable.begin(), iter);
                 int32_t tileSide = static_cast<int32_t>(otherTile.w()) % 10;
                 if (hitSide == tileSide) {
-                    auto placePos = hitTile.position + hitTile.normal;
+                    auto placePos = hitTile.position + (hitTile.normal * Vector3({ Common::Constants::k_tileSize, Common::Constants::k_tileSize, Common::Constants::k_tileSize }));
                     bool found = std::find_if(m_tiles.begin(), m_tiles.end(), [placePos](const auto& e) -> bool {
                         return placePos == (Vector3)e;
                     }) != m_tiles.end();

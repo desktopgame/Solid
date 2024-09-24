@@ -19,7 +19,6 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
     shaderKeywords.insert_or_assign("VS_TileDataSize", std::to_string(tileBuffer->getArraySize()));
-    shaderKeywords.insert_or_assign("VS_TileOffsetScale", std::to_string(tileSize));
 
     tileBatch->m_tileSize = tileSize;
     tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
@@ -56,7 +55,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             matrix tileRotation = rotationMatrixTable[tileRotationID];
             matrix tileTranslate = translateMatrixTable[tileRotationID];
             matrix tileTransform = mul(tileTranslate, tileRotation);
-            float3 tileOffset = tileData[instanceID].xyz * ${VS_TileOffsetScale};
+            float3 tileOffset = tileData[instanceID].xyz;
             matrix mvpMatrix = mul(mul(projectionMatrix, viewMatrix), modelMatrix);
             output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
             output.color = colorTable[tileColorID];
