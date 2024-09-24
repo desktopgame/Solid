@@ -76,20 +76,14 @@ void DebugScene::onUpdate(Renderer& renderer)
         if (std::abs(mouseDelta.y()) > 0) {
             m_cameraAngleX -= static_cast<float>(mouseDelta.y()) * m_cameraRotateSpeed;
         }
-        if (m_cameraAngleX <= -180.0f) {
-            m_cameraAngleX = -179.0f;
+        if (m_cameraAngleX <= -90.0f) {
+            m_cameraAngleX = -89.0f;
         }
-        if (m_cameraAngleX >= 180.0f) {
-            m_cameraAngleX = 179.0f;
+        if (m_cameraAngleX >= 90.0f) {
+            m_cameraAngleX = 89.0f;
         }
         if (std::abs(mouseDelta.x()) > 0) {
             m_cameraAngleY += static_cast<float>(mouseDelta.x()) * m_cameraRotateSpeed;
-        }
-        if (m_cameraAngleY <= -180.0f) {
-            m_cameraAngleY = -179.0f;
-        }
-        if (m_cameraAngleY >= 180.0f) {
-            m_cameraAngleY = 179.0f;
         }
 
         m_hintTiles.clear();
@@ -156,6 +150,8 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::Begin("Camera");
     ImGui::DragFloat3("Pos", m_cameraPos.data());
     ImGui::DragFloat3("LookAt", m_cameraLookAt.data());
+    ImGui::DragFloat("AngleX", &m_cameraAngleX);
+    ImGui::DragFloat("AngleY", &m_cameraAngleY);
     ImGui::DragFloat("MoveSpeed", &m_cameraMoveSpeed, 0.01f);
     ImGui::DragFloat("RotationSpeed", &m_cameraRotateSpeed, 0.01f);
     ImGui::End();
