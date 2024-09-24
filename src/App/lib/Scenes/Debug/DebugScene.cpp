@@ -1,7 +1,6 @@
 #include <Scenes/Debug/DebugScene.hpp>
 #include <cmath>
 #include <imgui.h>
-#include <optional>
 
 namespace App::Scenes::Debug {
 // public
@@ -14,7 +13,7 @@ DebugScene::DebugScene()
     , m_cameraLookAt({ 0, 0, 0 })
     , m_cameraAngleX()
     , m_cameraAngleY()
-    , m_cameraMoveSpeed(0.01f)
+    , m_cameraMoveSpeed(0.04f)
     , m_cameraRotateSpeed(0.8f)
     , m_cursorVisible(true)
     , m_tileID()
@@ -83,37 +82,9 @@ void DebugScene::onUpdate(Renderer& renderer)
             m_cameraAngleX = 89.0f;
         }
 
-        m_hintTiles.clear();
-        auto hitTiles = Raycast::testTiles(m_cameraPos, forward, 10.0f);
-        std::optional<Vector3> optHitPos = std::nullopt;
-        for (const auto& hitTile : hitTiles) {
-            for (const auto& otherTile : m_tiles) {
-                if (hitTile.position == (Vector3)otherTile) {
-                    auto iter = std::find(TileBatch::s_normalVectorTable.begin(), TileBatch::s_normalVectorTable.end(), hitTile.normal);
-                    int32_t hitSide = std::distance(TileBatch::s_normalVectorTable.begin(), iter);
-                    int32_t tileSide = static_cast<int32_t>(otherTile.w()) % 10;
-                    if (hitSide == tileSide) {
-                        auto placePos = hitTile.position + hitTile.normal;
-                        bool found = std::find_if(m_tiles.begin(), m_tiles.end(), [placePos](const auto& e) -> bool {
-                            return placePos == (Vector3)e;
-                        }) != m_tiles.end();
-                        if (!found) {
-                            optHitPos = hitTile.position;
-                            m_hintTiles.push_back(Vector4(placePos, 0 + getColorIndex()));
-                            m_hintTiles.push_back(Vector4(placePos, 1 + getColorIndex()));
-                            m_hintTiles.push_back(Vector4(placePos, 2 + getColorIndex()));
-                            m_hintTiles.push_back(Vector4(placePos, 3 + getColorIndex()));
-                            m_hintTiles.push_back(Vector4(placePos, 4 + getColorIndex()));
-                            m_hintTiles.push_back(Vector4(placePos, 5 + getColorIndex()));
-                            renderer.batchTileArray(TileBufferKind::Medium, m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
-                            goto exit;
-                        }
-                    }
-                }
-            }
-        }
-    exit: {
-    }
+        auto optHitPos = scanHintTiles(forward);
+        renderer.batchTileArray(TileBufferKind::Medium, m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
+
         if (mouse->isTrigger(Mouse::Button::Left)) {
             for (const auto& hintTile : m_hintTiles) {
                 m_tiles.push_back(hintTile);
@@ -185,5 +156,40 @@ bool DebugScene::tryTransition(std::string& outNextScene)
 int32_t DebugScene::getColorIndex() const
 {
     return ((m_tilePallet * 16) + m_tileColor) * 10;
+}
+
+std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
+{
+    m_hintTiles.clear();
+    auto hitTiles = Raycast::testTiles(m_cameraPos, forward, 10.0f);
+    std::optional<Vector3> optHitPos = std::nullopt;
+    for (const auto& hitTile : hitTiles) {
+        for (const auto& otherTile : m_tiles) {
+            if (hitTile.position == (Vector3)otherTile) {
+                auto iter = std::find(TileBatch::s_normalVectorTable.begin(), TileBatch::s_normalVectorTable.end(), hitTile.normal);
+                int32_t hitSide = std::distance(TileBatch::s_normalVectorTable.begin(), iter);
+                int32_t tileSide = static_cast<int32_t>(otherTile.w()) % 10;
+                if (hitSide == tileSide) {
+                    auto placePos = hitTile.position + hitTile.normal;
+                    bool found = std::find_if(m_tiles.begin(), m_tiles.end(), [placePos](const auto& e) -> bool {
+                        return placePos == (Vector3)e;
+                    }) != m_tiles.end();
+                    if (!found) {
+                        optHitPos = hitTile.position;
+                        m_hintTiles.push_back(Vector4(placePos, 0 + getColorIndex()));
+                        m_hintTiles.push_back(Vector4(placePos, 1 + getColorIndex()));
+                        m_hintTiles.push_back(Vector4(placePos, 2 + getColorIndex()));
+                        m_hintTiles.push_back(Vector4(placePos, 3 + getColorIndex()));
+                        m_hintTiles.push_back(Vector4(placePos, 4 + getColorIndex()));
+                        m_hintTiles.push_back(Vector4(placePos, 5 + getColorIndex()));
+                        goto exit;
+                    }
+                }
+            }
+        }
+    }
+exit: {
+}
+    return optHitPos;
 }
 }

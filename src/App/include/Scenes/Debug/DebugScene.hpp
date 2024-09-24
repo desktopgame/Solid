@@ -1,5 +1,6 @@
 #pragma once
 #include <library.hpp>
+#include <optional>
 
 namespace App::Scenes::Debug {
 class DebugScene : public IScene {
@@ -18,6 +19,8 @@ public:
 
 private:
     int32_t getColorIndex() const;
+    std::optional<Vector3> scanHintTiles(Vector3 forward);
+
     Vector3 m_tilePosition;
     int32_t m_tileSide;
     int32_t m_tilePallet;
