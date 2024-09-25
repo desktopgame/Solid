@@ -152,10 +152,10 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::Begin("IO");
     ImGui::InputText("File", m_ioFile.data(), 32);
     if (ImGui::Button("Save")) {
-        IO::serializeTile(std::string(m_ioFile.data()), m_tiles);
+        IO::serializeTile(std::string(m_ioFile.data()), m_tiles, Common::Constants::k_tileSize);
     }
     if (ImGui::Button("Load")) {
-        IO::deserializeTile(std::string(m_ioFile.data()), m_tiles);
+        IO::deserializeTile(std::string(m_ioFile.data()), m_tiles, Common::Constants::k_tileSize);
         renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
     }
     ImGui::End();
