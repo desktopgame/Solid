@@ -39,43 +39,40 @@ public:
             for (float x = minX; x <= maxX; x += tileSize) {
                 for (float y = minY; y <= maxY; y += tileSize) {
                     for (float z = minZ; z <= maxZ; z += tileSize) {
-                        float fx = static_cast<float>(x);
-                        float fy = static_cast<float>(y);
-                        float fz = static_cast<float>(z);
                         HitTile hitTile;
-                        hitTile.position = Vector3({ fx, fy, fz });
+                        hitTile.position = Vector3({ x, y, z });
 
-                        Vector3 faceTop = Vector3({ fx, fy + tileHalf, fz });
+                        Vector3 faceTop = Vector3({ x, y + tileHalf, z });
                         if (offset.y() > faceTop.y() && faceTop.y() > end.y()) {
                             hitTile.normal = Vector3({ 0, 1, 0 });
                             vec.push_back(hitTile);
                         }
 
-                        Vector3 faceBottom = Vector3({ fx, fy - tileHalf, fz });
+                        Vector3 faceBottom = Vector3({ x, y - tileHalf, z });
                         if (offset.y() < faceBottom.y() && faceBottom.y() < end.y()) {
                             hitTile.normal = Vector3({ 0, -1, 0 });
                             vec.push_back(hitTile);
                         }
 
-                        Vector3 faceLeft = Vector3({ fx - tileHalf, fy, fz });
+                        Vector3 faceLeft = Vector3({ x - tileHalf, y, z });
                         if (offset.x() < faceLeft.x() && faceLeft.x() < end.x()) {
                             hitTile.normal = Vector3({ -1, 0, 0 });
                             vec.push_back(hitTile);
                         }
 
-                        Vector3 faceRight = Vector3({ fx + tileHalf, fy, fz });
+                        Vector3 faceRight = Vector3({ x + tileHalf, y, z });
                         if (offset.x() > faceRight.x() && faceRight.x() > end.x()) {
                             hitTile.normal = Vector3({ 1, 0, 0 });
                             vec.push_back(hitTile);
                         }
 
-                        Vector3 faceForward = Vector3({ fx, fy, fz + tileHalf });
+                        Vector3 faceForward = Vector3({ x, y, z + tileHalf });
                         if (offset.z() > faceForward.z() && faceForward.z() > end.z()) {
                             hitTile.normal = Vector3({ 0, 0, 1 });
                             vec.push_back(hitTile);
                         }
 
-                        Vector3 faceBackward = Vector3({ fx, fy, fz - tileHalf });
+                        Vector3 faceBackward = Vector3({ x, y, z - tileHalf });
                         if (offset.z() < faceBackward.z() && faceBackward.z() < end.z()) {
                             hitTile.normal = Vector3({ 0, 0, -1 });
                             vec.push_back(hitTile);
