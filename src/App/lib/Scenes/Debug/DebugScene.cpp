@@ -30,7 +30,7 @@ DebugScene::~DebugScene() { }
 
 void DebugScene::onEnter(Renderer& renderer)
 {
-    m_tileID = renderer.rentTile(TileBufferKind::Medium);
+    m_tileID = renderer.rentTile(TileBufferKind::UltraLarge);
     m_hintTileID = renderer.rentTile(TileBufferKind::Medium);
 
     m_tiles.push_back(Vector4({ 0, 0, 0, 0 }));
@@ -39,11 +39,11 @@ void DebugScene::onEnter(Renderer& renderer)
     m_tiles.push_back(Vector4({ 0, 0, 0, 3 }));
     m_tiles.push_back(Vector4({ 0, 0, 0, 4 }));
     m_tiles.push_back(Vector4({ 0, 0, 0, 5 }));
-    renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+    renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
 }
 void DebugScene::onExit(Renderer& renderer)
 {
-    renderer.releaseTile(TileBufferKind::Medium, m_tileID);
+    renderer.releaseTile(TileBufferKind::UltraLarge, m_tileID);
     renderer.releaseTile(TileBufferKind::Medium, m_hintTileID);
 };
 
@@ -97,7 +97,7 @@ void DebugScene::onUpdate(Renderer& renderer)
                 m_tiles.push_back(hintTile);
             }
             compactTiles();
-            renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+            renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
         } else if (mouse->isTrigger(Mouse::Button::Right)) {
             if (m_tiles.size() > 6 && optHitPos) {
                 auto iter = std::remove_if(m_tiles.begin(), m_tiles.end(), [optHitPos](const auto& tile) -> bool {
@@ -106,7 +106,7 @@ void DebugScene::onUpdate(Renderer& renderer)
                 m_tiles.erase(iter, m_tiles.end());
                 restoreTiles(*optHitPos);
 
-                renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+                renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
             }
         }
     }
@@ -156,7 +156,7 @@ void DebugScene::onGui(Renderer& renderer)
     }
     if (ImGui::Button("Load")) {
         IO::deserializeTile(std::string(m_ioFile.data()), m_tiles);
-        renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
+        renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
     }
     ImGui::End();
 };
