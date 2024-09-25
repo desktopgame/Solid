@@ -46,6 +46,8 @@ private:
     Math::IntVector2 m_currentPos;
     std::array<ButtonState, (int32_t)Button::Count> m_prevStat;
     std::array<bool, (int32_t)Button::Count> m_currentStat;
+    bool m_isCursorLocked;
+
     std::shared_ptr<OS::Window> m_window;
 };
 }

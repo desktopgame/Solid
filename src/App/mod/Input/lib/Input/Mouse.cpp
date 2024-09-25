@@ -85,8 +85,14 @@ void Mouse::sync()
         if (ScreenToClient(m_window->getHWND(), &pt)) {
             m_prevPos.x() = pt.x;
             m_prevPos.y() = pt.y;
+
+            if (!m_isCursorLocked && OS::Cursor::isLocked()) {
+                m_currentPos = m_prevPos;
+                m_delta = Math::IntVector2({ 0, 0 });
+            }
         }
     }
+    m_isCursorLocked = OS::Cursor::isLocked();
 }
 // private
 Mouse::Mouse()
@@ -95,6 +101,7 @@ Mouse::Mouse()
     , m_currentPos({ 0, 0 })
     , m_prevStat()
     , m_currentStat()
+    , m_isCursorLocked(false)
     , m_window()
 {
 }
