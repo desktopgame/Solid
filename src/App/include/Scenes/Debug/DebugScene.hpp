@@ -20,6 +20,7 @@ public:
 private:
     int32_t getColorIndex() const;
     void compactTiles();
+    void restoreTiles(const Vector3& center);
     std::optional<Vector3> scanHintTiles(Vector3 forward);
 
     Vector3 m_tilePosition;

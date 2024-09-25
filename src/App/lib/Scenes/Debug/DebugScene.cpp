@@ -104,26 +104,8 @@ void DebugScene::onUpdate(Renderer& renderer)
                     return *optHitPos == (Vector3)tile;
                 });
                 m_tiles.erase(iter, m_tiles.end());
+                restoreTiles(*optHitPos);
 
-                for (const auto& normal : TileBatch::k_normalVectorTable) {
-                    auto sidePos = *optHitPos + (normal * Vector3({ Common::Constants::k_tileSize, Common::Constants::k_tileSize, Common::Constants::k_tileSize }));
-
-                    std::vector<Vector4> missingVec;
-                    for (int32_t side = 0; side < 6; side++) {
-                        auto iter = std::find_if(m_tiles.begin(), m_tiles.end(), [sidePos, side](const auto& otherTile) -> bool {
-                            int32_t w = static_cast<int32_t>(otherTile.w());
-                            return (Vector3)otherTile == sidePos && side == (w % 10);
-                        });
-                        if (iter == m_tiles.end()) {
-                            missingVec.push_back(Vector4(sidePos, side));
-                        }
-                    }
-                    if (missingVec.size() != 6) {
-                        for (const auto& missingTile : missingVec) {
-                            m_tiles.push_back(missingTile);
-                        }
-                    }
-                }
                 renderer.batchTileArray(TileBufferKind::Medium, m_tileID, m_tiles.data(), m_tiles.size());
             }
         }
@@ -220,6 +202,29 @@ void DebugScene::compactTiles()
         return tile.w() < 0.0f;
     });
     m_tiles.erase(iter, m_tiles.end());
+}
+
+void DebugScene::restoreTiles(const Vector3& center)
+{
+    for (const auto& normal : TileBatch::k_normalVectorTable) {
+        auto sidePos = center + (normal * Vector3({ Common::Constants::k_tileSize, Common::Constants::k_tileSize, Common::Constants::k_tileSize }));
+
+        std::vector<Vector4> missingVec;
+        for (int32_t side = 0; side < 6; side++) {
+            auto iter = std::find_if(m_tiles.begin(), m_tiles.end(), [sidePos, side](const auto& otherTile) -> bool {
+                int32_t w = static_cast<int32_t>(otherTile.w());
+                return (Vector3)otherTile == sidePos && side == (w % 10);
+            });
+            if (iter == m_tiles.end()) {
+                missingVec.push_back(Vector4(sidePos, side));
+            }
+        }
+        if (missingVec.size() != 6) {
+            for (const auto& missingTile : missingVec) {
+                m_tiles.push_back(missingTile);
+            }
+        }
+    }
 }
 
 std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
