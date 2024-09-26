@@ -76,7 +76,7 @@ std::shared_ptr<Gamepad> InputSystem::getGamepad(int32_t index)
 
 std::shared_ptr<Keyboard> InputSystem::getKeyboard() const { return m_keyboard; }
 
-std::shared_ptr<Mouse> InputSystem::getMosue() const { return m_mouse; }
+std::shared_ptr<Mouse> InputSystem::getMouse() const { return m_mouse; }
 // private
 InputSystem::InputSystem()
     : m_started(false)

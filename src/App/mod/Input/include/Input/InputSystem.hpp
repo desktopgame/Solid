@@ -31,7 +31,7 @@ public:
 
     std::shared_ptr<Keyboard> getKeyboard() const;
 
-    std::shared_ptr<Mouse> getMosue() const;
+    std::shared_ptr<Mouse> getMouse() const;
 
 private:
     static std::mutex s_mutex;

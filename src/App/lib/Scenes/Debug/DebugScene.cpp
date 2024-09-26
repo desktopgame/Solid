@@ -57,7 +57,7 @@ void DebugScene::onUpdate(Renderer& renderer)
     auto right = Quaternion::transform(rotation * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
 
     auto keyboard = InputSystem::getInstance()->getKeyboard();
-    auto mouse = InputSystem::getInstance()->getMosue();
+    auto mouse = InputSystem::getInstance()->getMouse();
     std::optional<Vector3> optHitPos = std::nullopt;
     if (Cursor::isLocked()) {
         if (keyboard->isPressed(KeyCode::W)) {
@@ -143,8 +143,8 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::End();
 
     ImGui::Begin("Cursor");
-    auto pos = InputSystem::getInstance()->getMosue()->getPosition();
-    auto delta = InputSystem::getInstance()->getMosue()->getDelta();
+    auto pos = InputSystem::getInstance()->getMouse()->getPosition();
+    auto delta = InputSystem::getInstance()->getMouse()->getDelta();
     ImGui::LabelText("Pos", "%d, %d", pos.x(), pos.y());
     ImGui::LabelText("Delta", "%d, %d", delta.x(), delta.y());
     ImGui::End();
