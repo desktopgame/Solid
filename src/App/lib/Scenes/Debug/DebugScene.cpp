@@ -160,6 +160,7 @@ void DebugScene::onGui(Renderer& renderer)
     }
     if (ImGui::Button("Load")) {
         IO::deserializeTile(std::string(m_ioFile.data()), m_tiles, Common::Constants::k_tileSize);
+        compactTiles();
         renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
     }
     ImGui::End();
