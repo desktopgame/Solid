@@ -22,6 +22,7 @@ DebugScene::DebugScene()
     , m_tiles()
     , m_hintTileID()
     , m_hintTiles()
+    , m_hintTileBatch()
 {
     std::string fileName = "assets/model1.csv";
     std::copy(fileName.begin(), fileName.end(), m_ioFile.begin());
@@ -30,8 +31,11 @@ DebugScene::~DebugScene() { }
 
 void DebugScene::onEnter(Renderer& renderer)
 {
+    if (!m_hintTileBatch) {
+        m_hintTileBatch = TileBatch::create(TileBufferUltraSmall::create(1), Common::Constants::k_tileSize, TileBatch::Style::WireframeWithCross);
+    }
     m_tileID = renderer.rentTile(TileBufferKind::UltraLarge);
-    m_hintTileID = renderer.rentTile(TileBufferKind::Medium);
+    m_hintTileID = m_hintTileBatch->rent();
 
     m_tiles.push_back(Vector4({ 0, 0, 0, 0 }));
     m_tiles.push_back(Vector4({ 0, 0, 0, 1 }));
@@ -44,7 +48,7 @@ void DebugScene::onEnter(Renderer& renderer)
 void DebugScene::onExit(Renderer& renderer)
 {
     renderer.releaseTile(TileBufferKind::UltraLarge, m_tileID);
-    renderer.releaseTile(TileBufferKind::Medium, m_hintTileID);
+    m_hintTileBatch->release(m_hintTileID);
 };
 
 void DebugScene::onUpdate(Renderer& renderer)
@@ -89,11 +93,11 @@ void DebugScene::onUpdate(Renderer& renderer)
     }
 
     optHitPos = scanHintTiles(forward);
-    renderer.batchTileArray(TileBufferKind::Medium, m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
+    m_hintTileBatch->setTiles(m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
 
     if (Cursor::isLocked()) {
         if (mouse->isTrigger(Mouse::Button::Left)) {
-            for (const auto& hintTile : m_hintTiles) {
+            for (const auto& hintTile : m_placeTiles) {
                 m_tiles.push_back(hintTile);
             }
             compactTiles();
@@ -167,6 +171,10 @@ void DebugScene::onDraw(Renderer& renderer)
 
     renderer.drawTiles();
 
+    m_hintTileBatch->setGlobalViewMatrix(renderer.getLookAtMatrix());
+    m_hintTileBatch->setGlobalProjectionMatrix(renderer.getPerspectiveMatrix());
+    Engine::getInstance()->getDevice()->getSurface()->render(m_hintTileBatch);
+
     renderer.drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
 };
 
@@ -230,6 +238,8 @@ void DebugScene::restoreTiles(const Vector3& center)
 std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
 {
     m_hintTiles.clear();
+    m_placeTiles.clear();
+
     auto hitTiles = Raycast::testTiles(m_cameraPos, forward, 10.0f, Common::Constants::k_tileSize);
     std::optional<Vector3> optHitPos = std::nullopt;
     for (const auto& hitTile : hitTiles) {
@@ -245,12 +255,15 @@ std::optional<Vector3> DebugScene::scanHintTiles(Vector3 forward)
                     }) != m_tiles.end();
                     if (!found) {
                         optHitPos = hitTile.position;
-                        m_hintTiles.push_back(Vector4(placePos, 0 + getColorIndex()));
-                        m_hintTiles.push_back(Vector4(placePos, 1 + getColorIndex()));
-                        m_hintTiles.push_back(Vector4(placePos, 2 + getColorIndex()));
-                        m_hintTiles.push_back(Vector4(placePos, 3 + getColorIndex()));
-                        m_hintTiles.push_back(Vector4(placePos, 4 + getColorIndex()));
-                        m_hintTiles.push_back(Vector4(placePos, 5 + getColorIndex()));
+                        m_placeTiles.push_back(Vector4(placePos, 0 + getColorIndex()));
+                        m_placeTiles.push_back(Vector4(placePos, 1 + getColorIndex()));
+                        m_placeTiles.push_back(Vector4(placePos, 2 + getColorIndex()));
+                        m_placeTiles.push_back(Vector4(placePos, 3 + getColorIndex()));
+                        m_placeTiles.push_back(Vector4(placePos, 4 + getColorIndex()));
+                        m_placeTiles.push_back(Vector4(placePos, 5 + getColorIndex()));
+
+                        auto hintPos = hitTile.position + (hitTile.normal * (Common::Constants::k_tileSize / 10.0f));
+                        m_hintTiles.push_back(Vector4(hintPos, 630 + hitSide));
                         goto exit;
                     }
                 }

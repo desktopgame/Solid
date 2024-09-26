@@ -226,6 +226,38 @@ void Renderer::drawTiles()
         }
     }
 }
+
+Math::Matrix Renderer::getOrthoMatrix()
+{
+    if (m_dirtyOrthoMatrix) {
+        m_dirtyOrthoMatrix = false;
+        m_orthoMatrix = Math::Matrix::ortho(
+            static_cast<float>(Screen::getWidth()),
+            static_cast<float>(Screen::getHeight()));
+    }
+    return m_orthoMatrix;
+}
+
+Math::Matrix Renderer::getLookAtMatrix()
+{
+    if (m_dirtyViewMatrix) {
+        m_dirtyViewMatrix = false;
+        m_viewMatrix = Math::Matrix::lookAt(m_position, m_lookAt, Math::Vector3({ 0, 1, 0 }));
+    }
+    return m_viewMatrix;
+}
+
+Math::Matrix Renderer::getPerspectiveMatrix()
+{
+    if (m_dirtyProjectionMatrix) {
+        m_dirtyProjectionMatrix = false;
+        m_projectionMatrix = Math::Matrix::perspective(m_fovY,
+            static_cast<float>(Screen::getWidth()) / static_cast<float>(Screen::getHeight()),
+            m_zNear,
+            m_zFar);
+    }
+    return m_projectionMatrix;
+}
 // private
 void Renderer::initRect()
 {
@@ -518,37 +550,5 @@ void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant
         object.vertexBuffer,
         object.indexBuffer,
         object.indexLength);
-}
-
-Math::Matrix Renderer::getOrthoMatrix()
-{
-    if (m_dirtyOrthoMatrix) {
-        m_dirtyOrthoMatrix = false;
-        m_orthoMatrix = Math::Matrix::ortho(
-            static_cast<float>(Screen::getWidth()),
-            static_cast<float>(Screen::getHeight()));
-    }
-    return m_orthoMatrix;
-}
-
-Math::Matrix Renderer::getLookAtMatrix()
-{
-    if (m_dirtyViewMatrix) {
-        m_dirtyViewMatrix = false;
-        m_viewMatrix = Math::Matrix::lookAt(m_position, m_lookAt, Math::Vector3({ 0, 1, 0 }));
-    }
-    return m_viewMatrix;
-}
-
-Math::Matrix Renderer::getPerspectiveMatrix()
-{
-    if (m_dirtyProjectionMatrix) {
-        m_dirtyProjectionMatrix = false;
-        m_projectionMatrix = Math::Matrix::perspective(m_fovY,
-            static_cast<float>(Screen::getWidth()) / static_cast<float>(Screen::getHeight()),
-            m_zNear,
-            m_zFar);
-    }
-    return m_projectionMatrix;
 }
 }

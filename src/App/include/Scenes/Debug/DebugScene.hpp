@@ -1,5 +1,6 @@
 #pragma once
 #include <library.hpp>
+#include <memory>
 #include <optional>
 
 namespace App::Scenes::Debug {
@@ -41,5 +42,7 @@ private:
 
     int32_t m_hintTileID;
     std::vector<Vector4> m_hintTiles;
+    std::vector<Vector4> m_placeTiles;
+    std::shared_ptr<TileBatch> m_hintTileBatch;
 };
 }

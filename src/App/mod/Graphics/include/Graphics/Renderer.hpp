@@ -54,6 +54,10 @@ public:
     void batchTileMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix);
     void drawTiles();
 
+    Math::Matrix getOrthoMatrix();
+    Math::Matrix getLookAtMatrix();
+    Math::Matrix getPerspectiveMatrix();
+
 private:
     class Object {
     public:
@@ -72,9 +76,6 @@ private:
     std::shared_ptr<TileBatch> getTileBatch(TileBufferKind kind);
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
-    Math::Matrix getOrthoMatrix();
-    Math::Matrix getLookAtMatrix();
-    Math::Matrix getPerspectiveMatrix();
 
     // camera
     Math::Vector3 m_position;
