@@ -59,5 +59,5 @@ using TileBufferUltraSmall = TileBufferN<16 + 12>;
 using TileBufferSmall = TileBufferN<64 + 12>;
 using TileBufferMedium = TileBufferN<256 + 12>;
 using TileBufferLarge = TileBufferN<1024 + 12>;
-using TileBufferUltraLarge = TileBufferN<2048 + 12>;
+using TileBufferUltraLarge = TileBufferN<4064 + 12>;
 }
