@@ -449,7 +449,8 @@ void TileBatch::render(
 }
 // private
 TileBatch::TileBatch()
-    : m_shader()
+    : m_tileSize()
+    , m_shader()
     , m_vertexBuffer()
     , m_indexBuffer()
     , m_constantBuffer()
