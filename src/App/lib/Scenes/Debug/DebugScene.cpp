@@ -96,13 +96,13 @@ void DebugScene::onUpdate(Renderer& renderer)
     m_hintTileBatch->setTiles(m_hintTileID, m_hintTiles.data(), m_hintTiles.size());
 
     if (Cursor::isLocked()) {
-        if (mouse->isTrigger(Mouse::Button::Left)) {
+        if (mouse->isTrigger(Mouse::Button::Right)) {
             for (const auto& hintTile : m_placeTiles) {
                 m_tiles.push_back(hintTile);
             }
             compactTiles();
             renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
-        } else if (mouse->isTrigger(Mouse::Button::Right)) {
+        } else if (mouse->isTrigger(Mouse::Button::Left)) {
             if (m_tiles.size() > 6 && optHitPos) {
                 auto iter = std::remove_if(m_tiles.begin(), m_tiles.end(), [optHitPos](const auto& tile) -> bool {
                     return *optHitPos == (Vector3)tile;
