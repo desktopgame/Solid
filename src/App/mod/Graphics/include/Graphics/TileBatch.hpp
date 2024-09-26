@@ -16,7 +16,14 @@ class Buffer;
 class Constant;
 class TileBatch {
 public:
-    static std::shared_ptr<TileBatch> create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize = 1.0f);
+    enum class Style {
+        Solid = 0,
+        Wireframe,
+        WireframeWithCross,
+    };
+
+    static std::shared_ptr<TileBatch>
+    create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize = 1.0f, Style style = Style::Solid);
     ~TileBatch();
 
     int32_t rent();
@@ -171,6 +178,7 @@ private:
     static_assert(sizeof(ColorData) % 256 == 0);
 
     float m_tileSize;
+    Style m_style;
     std::shared_ptr<Shader> m_shader;
     std::shared_ptr<Buffer> m_vertexBuffer;
     std::shared_ptr<Buffer> m_indexBuffer;

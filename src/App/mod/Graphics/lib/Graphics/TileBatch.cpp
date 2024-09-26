@@ -12,7 +12,7 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize)
+std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize, Style style)
 {
     auto tileBatch = std::shared_ptr<TileBatch>(new TileBatch());
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
@@ -21,6 +21,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     shaderKeywords.insert_or_assign("VS_TileDataSize", std::to_string(tileBuffer->getArraySize()));
 
     tileBatch->m_tileSize = tileSize;
+    tileBatch->m_style = style;
     tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
@@ -87,12 +88,31 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     tileBatch->m_vertexBuffer = Buffer::create();
     tileBatch->m_vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
     tileBatch->m_vertexBuffer->update(vertices.data());
-    indices.emplace_back(0);
-    indices.emplace_back(1);
-    indices.emplace_back(2);
-    indices.emplace_back(2);
-    indices.emplace_back(1);
-    indices.emplace_back(3);
+    if (style == Style::Solid) {
+        indices.emplace_back(0);
+        indices.emplace_back(1);
+        indices.emplace_back(2);
+        indices.emplace_back(2);
+        indices.emplace_back(1);
+        indices.emplace_back(3);
+    } else {
+        indices.emplace_back(0);
+        indices.emplace_back(1);
+
+        indices.emplace_back(0);
+        indices.emplace_back(2);
+
+        indices.emplace_back(1);
+        indices.emplace_back(3);
+
+        indices.emplace_back(3);
+        indices.emplace_back(2);
+
+        if (style == Style::WireframeWithCross) {
+            indices.emplace_back(2);
+            indices.emplace_back(1);
+        }
+    }
     tileBatch->m_indexBuffer = Buffer::create();
     tileBatch->m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     tileBatch->m_indexBuffer->update(indices.data());
@@ -254,7 +274,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         tileBatch->m_commands.at(i).cameraBuffer = cameraBufAddr;
         tileBatch->m_commands.at(i).transformBuffer = transformBufAddr;
         tileBatch->m_commands.at(i).colorBuffer = colorBufAddr;
-        tileBatch->m_commands.at(i).drawArguments.IndexCountPerInstance = 6;
+        tileBatch->m_commands.at(i).drawArguments.IndexCountPerInstance = indices.size();
         tileBatch->m_commands.at(i).drawArguments.InstanceCount = 0;
         tileBatch->m_commands.at(i).drawArguments.StartIndexLocation = 0;
         tileBatch->m_commands.at(i).drawArguments.StartInstanceLocation = 0;
@@ -429,7 +449,8 @@ void TileBatch::render(
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
 
-    cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    bool isWireframe = m_style == Style::Wireframe || m_style == Style::WireframeWithCross;
+    cmdList->IASetPrimitiveTopology(isWireframe ? D3D_PRIMITIVE_TOPOLOGY_LINELIST : D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
     vbView.BufferLocation = m_vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
