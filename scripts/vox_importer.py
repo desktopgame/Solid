@@ -165,17 +165,18 @@ def main():
                     pallet.append((r / 255, g / 255, b / 255, a / 255))
             else:
                 fp.seek(chunk_size, 1)
-        
+
+        sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
+        real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
+
         for v in voxels:
-            color = pallet[v[3] - 1]
+            real_color = real[v[3] - 1]
 
             high_score = 999999
             selected = -1
             for i in range(0, len(SOLID_COLOR_TABLE)):
-                solid_color = SOLID_COLOR_TABLE[i]
-                color_a = colour.XYZ_to_Lab(colour.sRGB_to_XYZ(solid_color[0:3]))
-                color_b = colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3]))
-                score = colour.difference.delta_E_CIE2000(color_a, color_b)
+                sample_color = sample[i]
+                score = colour.difference.delta_E_CIE2000(sample_color, real_color)
 
                 if score < high_score:
                     high_score = score
