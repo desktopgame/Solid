@@ -146,14 +146,17 @@ def main():
                 count = struct.unpack('i', fp.read(4))[0]
                 for _ in range(0, count):
                     voxel = struct.unpack('cccc', fp.read(4))
-                    vx = int.from_bytes(voxel[0], 'little')
-                    vz = int.from_bytes(voxel[1], 'little')
-                    vy = int.from_bytes(voxel[2], 'little')
-                    vc = int.from_bytes(voxel[3], 'little')
+                    vx = int(voxel[0][0])
+                    vz = int(voxel[1][0])
+                    vy = int(voxel[2][0])
+                    vc = int(voxel[3][0])
                     voxels.append((vx, vy, vz, vc))
                     assert size_x >= 0
                     assert size_y >= 0
                     assert size_z >= 0
+                    assert vx >= 0
+                    assert vy >= 0
+                    assert vz >= 0
                     bitmap[coord2index(vx, vy, vz)] = True
             elif label == 'RGBA':
                 for _ in range(0, 256):
