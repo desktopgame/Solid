@@ -1,6 +1,10 @@
 # usage: python scripts\vox_importer.py sample.vox | clip
 import sys
+import math
 import struct
+
+# see: https://pypi.org/project/bitarray/
+from bitarray import bitarray
 
 # see: TileBatch.hpp
 SOLID_COLOR_TABLE = [
@@ -72,6 +76,23 @@ SOLID_COLOR_TABLE = [
     (0.9490196078431372, 0.9490196078431372, 0.8549019607843137, 1.0),
 ]
 
+# see: TileBatch.hpp
+SOLID_NORMAL_TABLE = [
+    # posY
+    (0, 1, 0),
+    # negY
+    (0, -1, 0),
+    # posX
+    (1, 0, 0),
+    # negX
+    (-1, 0, 0),
+    # posZ
+    (0, 0, 1),
+    # negZ
+    (0, 0, -1),
+]
+
+
 def main():
     if (len(sys.argv) <= 1):
         return
@@ -82,6 +103,29 @@ def main():
         pallet = []
         voxels = []
 
+        size_x: int = -1
+        size_y: int = -1
+        size_z: int = -1
+        bitmap: bitarray = None
+
+        def coord2index(x: int, y: int, z: int) -> int:
+            nonlocal size_x
+            nonlocal size_y
+            nonlocal size_z
+            return (z * size_x * size_y) + (y * size_x) + x
+
+        def bit_at(x: int, y: int, z: int) -> bool:
+            nonlocal size_x
+            nonlocal size_y
+            nonlocal size_z
+            if x < 0 or x >= size_x:
+                return False
+            if y < 0 or y >= size_y:
+                return False
+            if z < 0 or z >= size_z:
+                return False
+            return bitmap[coord2index(x, y, z)]
+
         while fp.read(1):
             fp.seek(-1, 1)
 
@@ -91,18 +135,23 @@ def main():
 
             if label == 'SIZE':
                 size_x = struct.unpack('i', fp.read(4))[0]
-                size_y = struct.unpack('i', fp.read(4))[0]
                 size_z = struct.unpack('i', fp.read(4))[0]
+                size_y = struct.unpack('i', fp.read(4))[0]
+                bitmap = bitarray(size_x * size_y * size_z)
                 # print([size_x, size_y, size_z])
             elif label == 'XYZI':
                 count = struct.unpack('i', fp.read(4))[0]
                 for _ in range(0, count):
                     voxel = struct.unpack('cccc', fp.read(4))
                     vx = int.from_bytes(voxel[0], 'little')
-                    vy = int.from_bytes(voxel[1], 'little')
-                    vz = int.from_bytes(voxel[2], 'little')
+                    vz = int.from_bytes(voxel[1], 'little')
+                    vy = int.from_bytes(voxel[2], 'little')
                     vc = int.from_bytes(voxel[3], 'little')
                     voxels.append((vx, vy, vz, vc))
+                    assert size_x >= 0
+                    assert size_y >= 0
+                    assert size_z >= 0
+                    bitmap[coord2index(vx, vy, vz)] = True
             elif label == 'RGBA':
                 for _ in range(0, 256):
                     color = struct.unpack('cccc', fp.read(4))
@@ -130,12 +179,12 @@ def main():
                     high_score = score
                     selected = index
                 index += 1
-            print(f'{v[0]},{v[2]},{v[1]},{(selected*10)+0}')
-            print(f'{v[0]},{v[2]},{v[1]},{(selected*10)+1}')
-            print(f'{v[0]},{v[2]},{v[1]},{(selected*10)+2}')
-            print(f'{v[0]},{v[2]},{v[1]},{(selected*10)+3}')
-            print(f'{v[0]},{v[2]},{v[1]},{(selected*10)+4}')
-            print(f'{v[0]},{v[2]},{v[1]},{(selected*10)+5}')
+
+            for i in range(0, len(SOLID_NORMAL_TABLE)):
+                normal = SOLID_NORMAL_TABLE[i]
+                hiddenSide = bit_at(v[0] + normal[0], v[1] + normal[1], v[2] + normal[2])
+                if not hiddenSide:
+                    print(f'{v[0]},{v[1]},{v[2]},{(selected*10)+i}')
 
 
 if __name__ == '__main__':
