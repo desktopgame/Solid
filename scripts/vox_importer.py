@@ -3,6 +3,9 @@ import sys
 import math
 import struct
 
+# see: https://pypi.org/project/colour-science/
+import colour
+
 # see: https://pypi.org/project/bitarray/
 from bitarray import bitarray
 
@@ -155,27 +158,26 @@ def main():
             elif label == 'RGBA':
                 for _ in range(0, 256):
                     color = struct.unpack('cccc', fp.read(4))
-                    r = int.from_bytes(color[0], 'little')
-                    g = int.from_bytes(color[0], 'little')
-                    b = int.from_bytes(color[2], 'little')
-                    a = int.from_bytes(color[3], 'little')
-                    pallet.append((r, g, b, a))
+                    r = color[0][0]
+                    g = color[1][0]
+                    b = color[2][0]
+                    a = color[3][0]
+                    pallet.append((r / 255, g / 255, b / 255, a / 255))
             else:
                 fp.seek(chunk_size, 1)
         
         for v in voxels:
-            color = pallet[v[3]]
+            color = pallet[v[3] - 1]
 
-            high_score = -1
+            high_score = 999999
             selected = -1
             index = 0
             for solid_color in SOLID_COLOR_TABLE:
-                score_r = 1.0 - abs(solid_color[0] - (color[0] / 255))
-                score_g = 1.0 - abs(solid_color[1] - (color[1] / 255))
-                score_b = 1.0 - abs(solid_color[2] - (color[2] / 255))
-                score = score_r + score_g + score_b
+                color_a = colour.XYZ_to_Lab(colour.sRGB_to_XYZ(solid_color[0:3]))
+                color_b = colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3]))
+                score = colour.difference.delta_E_CIE2000(color_a, color_b)
 
-                if score > high_score:
+                if score < high_score:
                     high_score = score
                     selected = index
                 index += 1
