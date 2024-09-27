@@ -171,19 +171,24 @@ def main():
 
         sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
         real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
+        cache = [-1 for i in range(0, len(pallet))]
 
         for v in voxels:
             real_color = real[v[3] - 1]
 
             high_score = 999999
             selected = -1
-            for i in range(0, len(SOLID_COLOR_TABLE)):
-                sample_color = sample[i]
-                score = colour.difference.delta_E_CIE2000(sample_color, real_color)
+            if cache[v[3] - 1] == -1:
+                for i in range(0, len(SOLID_COLOR_TABLE)):
+                    sample_color = sample[i]
+                    score = colour.difference.delta_E_CIE2000(sample_color, real_color)
 
-                if score < high_score:
-                    high_score = score
-                    selected = i
+                    if score < high_score:
+                        high_score = score
+                        selected = i
+                cache[v[3] - 1] = selected
+            else:
+                selected = cache[v[3] - 1]
 
             for i in range(0, len(SOLID_NORMAL_TABLE)):
                 normal = SOLID_NORMAL_TABLE[i]
