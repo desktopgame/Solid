@@ -171,16 +171,15 @@ def main():
 
             high_score = 999999
             selected = -1
-            index = 0
-            for solid_color in SOLID_COLOR_TABLE:
+            for i in range(0, len(SOLID_COLOR_TABLE)):
+                solid_color = SOLID_COLOR_TABLE[i]
                 color_a = colour.XYZ_to_Lab(colour.sRGB_to_XYZ(solid_color[0:3]))
                 color_b = colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3]))
                 score = colour.difference.delta_E_CIE2000(color_a, color_b)
 
                 if score < high_score:
                     high_score = score
-                    selected = index
-                index += 1
+                    selected = i
 
             for i in range(0, len(SOLID_NORMAL_TABLE)):
                 normal = SOLID_NORMAL_TABLE[i]
