@@ -6,7 +6,7 @@
 namespace App::Scenes::Game {
 // public
 GameScene::GameScene()
-    : m_cameraPos({ 0, 10, -1 })
+    : m_cameraPos({ 0, 3, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_tileIDs()
     , m_tiles()
@@ -50,14 +50,15 @@ void GameScene::onExit(Renderer& renderer)
     }
     m_tileIDs.clear();
     m_tiles.clear();
-};
+}
 
 void GameScene::onUpdate(Renderer& renderer)
 {
 }
 
-void GameScene::onGui(Renderer& renderer) {
-};
+void GameScene::onGui(Renderer& renderer)
+{
+}
 
 void GameScene::onDraw(Renderer& renderer)
 {
@@ -65,11 +66,11 @@ void GameScene::onDraw(Renderer& renderer)
     renderer.lookAt(m_cameraLookAt);
 
     renderer.drawTiles();
-};
+}
 
 bool GameScene::tryTransition(std::string& outNextScene)
 {
     return false;
-};
+}
 // private
 }

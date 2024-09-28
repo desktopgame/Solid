@@ -53,7 +53,7 @@ void DebugScene::onExit(Renderer& renderer)
 {
     renderer.releaseTile(TileBufferKind::UltraLarge, m_tileID);
     m_hintTileBatch->release(m_hintTileID);
-};
+}
 
 void DebugScene::onUpdate(Renderer& renderer)
 {
@@ -171,7 +171,7 @@ void DebugScene::onGui(Renderer& renderer)
         renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
     }
     ImGui::End();
-};
+}
 void DebugScene::onDraw(Renderer& renderer)
 {
     renderer.position(m_cameraPos);
@@ -184,7 +184,7 @@ void DebugScene::onDraw(Renderer& renderer)
     Engine::getInstance()->getDevice()->getSurface()->render(m_hintTileBatch);
 
     renderer.drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
-};
+}
 
 bool DebugScene::tryTransition(std::string& outNextScene)
 {
@@ -192,7 +192,7 @@ bool DebugScene::tryTransition(std::string& outNextScene)
         outNextScene = "Game";
     }
     return m_editCompleted;
-};
+}
 // private
 int32_t DebugScene::getColorIndex() const
 {
