@@ -18,6 +18,7 @@ DebugScene::DebugScene()
     , m_cameraRotateSpeed(0.8f)
     , m_cursorVisible(true)
     , m_ioFile()
+    , m_editCompleted()
     , m_tileID()
     , m_tiles()
     , m_hintTileID()
@@ -37,12 +38,15 @@ void DebugScene::onEnter(Renderer& renderer)
     m_tileID = renderer.rentTile(TileBufferKind::UltraLarge);
     m_hintTileID = m_hintTileBatch->rent();
 
-    m_tiles.push_back(Vector4({ 0, 0, 0, 0 }));
-    m_tiles.push_back(Vector4({ 0, 0, 0, 1 }));
-    m_tiles.push_back(Vector4({ 0, 0, 0, 2 }));
-    m_tiles.push_back(Vector4({ 0, 0, 0, 3 }));
-    m_tiles.push_back(Vector4({ 0, 0, 0, 4 }));
-    m_tiles.push_back(Vector4({ 0, 0, 0, 5 }));
+    if (m_tiles.size() == 0) {
+        m_tiles.push_back(Vector4({ 0, 0, 0, 0 }));
+        m_tiles.push_back(Vector4({ 0, 0, 0, 1 }));
+        m_tiles.push_back(Vector4({ 0, 0, 0, 2 }));
+        m_tiles.push_back(Vector4({ 0, 0, 0, 3 }));
+        m_tiles.push_back(Vector4({ 0, 0, 0, 4 }));
+        m_tiles.push_back(Vector4({ 0, 0, 0, 5 }));
+    }
+    m_editCompleted = false;
     renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
 }
 void DebugScene::onExit(Renderer& renderer)
@@ -144,6 +148,9 @@ void DebugScene::onGui(Renderer& renderer)
     ImGui::SliderInt("Pallet", &m_tilePallet, 0, 3);
     ImGui::SliderInt("Color", &m_tileColor, 0, 15);
     ImGui::LabelText("TileCount", "%d", static_cast<int32_t>(m_tiles.size()));
+    if (ImGui::Button("Exit")) {
+        m_editCompleted = true;
+    }
     ImGui::End();
 
     ImGui::Begin("Cursor");
@@ -181,7 +188,10 @@ void DebugScene::onDraw(Renderer& renderer)
 
 bool DebugScene::tryTransition(std::string& outNextScene)
 {
-    return false;
+    if (m_editCompleted) {
+        outNextScene = "Game";
+    }
+    return m_editCompleted;
 };
 // private
 int32_t DebugScene::getColorIndex() const

@@ -33,6 +33,7 @@ add_executable(
     App
     lib/main.cpp
     lib/Scenes/Debug/DebugScene.cpp
+    lib/Scenes/Game/GameScene.cpp
 )
 app_target_compile_params(App)
 app_target_link_params(App)
