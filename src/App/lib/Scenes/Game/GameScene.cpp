@@ -33,8 +33,6 @@ void GameScene::onEnter(Renderer& renderer)
     }
 
     int32_t index = 0;
-    int32_t tilesLen = static_cast<int32_t>(m_tiles.size());
-    (void)tilesLen;
     while (index < m_tiles.size()) {
         int32_t length = Mathf::min(static_cast<int32_t>(m_tiles.size() - index), 4064 + 12);
         int32_t tileID = renderer.rentTile(TileBufferKind::UltraLarge);
