@@ -157,7 +157,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     rtBlendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
     psoDesc.BlendState.RenderTarget[0] = rtBlendDesc;
     psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    psoDesc.PrimitiveTopologyType = style == Style::Solid ? D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE : D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDesc.SampleDesc.Count = 1;
