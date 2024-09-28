@@ -19,5 +19,10 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    Vector3 m_cameraPos;
+    Vector3 m_cameraLookAt;
+
+    std::vector<int32_t> m_tileIDs;
+    std::vector<Vector4> m_tiles;
 };
 }

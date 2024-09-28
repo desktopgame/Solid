@@ -535,7 +535,7 @@ std::shared_ptr<TileBatch> Renderer::getTileBatch(TileBufferKind kind)
             m_tileBatches.at(i) = TileBatch::create(TileBufferLarge::create(100), m_tileSize);
             break;
         case TileBufferKind::UltraLarge:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(1), m_tileSize);
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(100), m_tileSize);
             break;
         }
     }
