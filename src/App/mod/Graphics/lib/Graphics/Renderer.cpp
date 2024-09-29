@@ -33,27 +33,6 @@ void Renderer::textFont(const std::shared_ptr<FontMap>& fontMap) { m_fontMap = f
 
 void Renderer::textFontSize(int32_t fontSize) { m_fontSize = fontSize; }
 
-void Renderer::guiBegin()
-{
-    Engine::getInstance()->getDevice()->getSurface()->guiBegin();
-}
-
-void Renderer::guiEnd()
-{
-    Engine::getInstance()->getDevice()->getSurface()->guiEnd();
-}
-
-void Renderer::begin()
-{
-    Engine::getInstance()->getDevice()->getSurface()->begin();
-}
-
-void Renderer::end()
-{
-    Engine::getInstance()->getDevice()->getSurface()->end();
-    Constant::release();
-}
-
 void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
 {
     initRect();

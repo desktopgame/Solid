@@ -20,6 +20,7 @@ static int appMain(int argc, char* argv[])
 
     auto engine = Engine::getInstance()->startup(argc, argv);
     auto window = engine->getWindow();
+    auto surface = engine->getDevice()->getSurface();
 
     auto inputSystem = InputSystem::getInstance()->startup(window);
 
@@ -35,13 +36,13 @@ static int appMain(int argc, char* argv[])
 
         sceneManager.onUpdate(renderer);
 
-        renderer.guiBegin();
+        surface->guiBegin();
         sceneManager.onGui(renderer);
-        renderer.guiEnd();
+        surface->guiEnd();
 
-        renderer.begin();
+        surface->begin();
         sceneManager.onDraw(renderer);
-        renderer.end();
+        surface->end();
     }
     inputSystem->shutdown();
     engine->shutdown();

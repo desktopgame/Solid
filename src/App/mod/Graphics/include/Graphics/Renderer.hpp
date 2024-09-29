@@ -31,12 +31,6 @@ public:
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
 
-    void guiBegin();
-    void guiEnd();
-
-    void begin();
-    void end();
-
     void drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color);
     void drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color);
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
