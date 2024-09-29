@@ -21,6 +21,7 @@ add_library(
     ./lib/Graphics/Texture.cpp
     ./lib/Graphics/Screen.cpp
     ./lib/Graphics/Renderer.cpp
+    ./lib/Graphics/Camera.cpp
     ./lib/Graphics/Constant.cpp
     ./lib/Graphics/VertexTexCoord2D.cpp
     ./lib/Graphics/VertexTexCoord3D.cpp

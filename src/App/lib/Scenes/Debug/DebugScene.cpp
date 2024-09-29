@@ -174,13 +174,13 @@ void DebugScene::onGui(Renderer& renderer)
 }
 void DebugScene::onDraw(Renderer& renderer)
 {
-    renderer.position(m_cameraPos);
-    renderer.lookAt(m_cameraLookAt);
+    Camera::position(m_cameraPos);
+    Camera::lookAt(m_cameraLookAt);
 
     renderer.drawTiles();
 
-    m_hintTileBatch->setGlobalViewMatrix(renderer.getLookAtMatrix());
-    m_hintTileBatch->setGlobalProjectionMatrix(renderer.getPerspectiveMatrix());
+    m_hintTileBatch->setGlobalViewMatrix(Camera::getLookAtMatrix());
+    m_hintTileBatch->setGlobalProjectionMatrix(Camera::getPerspectiveMatrix());
     Engine::getInstance()->getDevice()->getSurface()->render(m_hintTileBatch);
 
     renderer.drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));

@@ -62,8 +62,8 @@ void GameScene::onGui(Renderer& renderer)
 
 void GameScene::onDraw(Renderer& renderer)
 {
-    renderer.position(m_cameraPos);
-    renderer.lookAt(m_cameraLookAt);
+    Camera::position(m_cameraPos);
+    Camera::lookAt(m_cameraLookAt);
 
     renderer.drawTiles();
 }

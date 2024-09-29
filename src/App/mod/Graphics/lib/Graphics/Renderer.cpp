@@ -1,4 +1,5 @@
 #include <Graphics/Buffer.hpp>
+#include <Graphics/Camera.hpp>
 #include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
@@ -17,19 +18,8 @@
 namespace Lib::Graphics {
 // public
 Renderer::Renderer(float tileSize)
-    : m_position({ 0, 0, -1 })
-    , m_lookAt({ 0, 0, 0 })
-    , m_zNear(0.1f)
-    , m_zFar(100.0f)
-    , m_fovY(90.0f)
-    , m_fontMap()
+    : m_fontMap()
     , m_fontSize(16)
-    , m_dirtyOrthoMatrix(true)
-    , m_dirtyViewMatrix(true)
-    , m_dirtyProjectionMatrix(true)
-    , m_orthoMatrix()
-    , m_viewMatrix()
-    , m_projectionMatrix()
     , m_rectObject()
     , m_circleObject()
     , m_spriteObject()
@@ -37,31 +27,6 @@ Renderer::Renderer(float tileSize)
     , m_tileSize(tileSize)
     , m_tileBatches()
 {
-}
-
-void Renderer::position(const Math::Vector3& position)
-{
-    m_position = position;
-    m_dirtyViewMatrix = true;
-}
-
-void Renderer::lookAt(const Math::Vector3& lookAt)
-{
-    m_lookAt = lookAt;
-    m_dirtyViewMatrix = true;
-}
-
-void Renderer::depthRange(float zNear, float zFar)
-{
-    m_zNear = zNear;
-    m_zFar = zFar;
-    m_dirtyProjectionMatrix = true;
-}
-
-void Renderer::fovY(float fovY)
-{
-    m_fovY = fovY;
-    m_dirtyProjectionMatrix = true;
 }
 
 void Renderer::textFont(const std::shared_ptr<FontMap>& fontMap) { m_fontMap = fontMap; }
@@ -99,7 +64,7 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
         Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
     constant->setViewMatrix(Math::Matrix());
-    constant->setProjectionMatrix(getOrthoMatrix());
+    constant->setProjectionMatrix(Camera::getOrthoMatrix());
     constant->setColor(color);
     renderObject(m_rectObject, constant);
 }
@@ -114,7 +79,7 @@ void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& si
         Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
     constant->setViewMatrix(Math::Matrix());
-    constant->setProjectionMatrix(getOrthoMatrix());
+    constant->setProjectionMatrix(Camera::getOrthoMatrix());
     constant->setColor(color);
     renderObject(m_circleObject, constant);
 }
@@ -129,7 +94,7 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
         Math::Matrix::scale(Math::Vector3(size, 1.0f)));
     constant->setModelMatrix(modelMatrix);
     constant->setViewMatrix(Math::Matrix());
-    constant->setProjectionMatrix(getOrthoMatrix());
+    constant->setProjectionMatrix(Camera::getOrthoMatrix());
     constant->setColor(color);
     constant->setTexture(texture);
     renderObject(m_spriteObject, constant);
@@ -176,7 +141,7 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
             Math::Matrix::scale(Math::Vector3({ static_cast<float>(fontSprite->metrics.size.x()), static_cast<float>(fontSprite->metrics.size.y()), 1.0f })));
         constant->setModelMatrix(modelMatrix);
         constant->setViewMatrix(Math::Matrix());
-        constant->setProjectionMatrix(getOrthoMatrix());
+        constant->setProjectionMatrix(Camera::getOrthoMatrix());
         constant->setColor(color);
         constant->setTexture(fontSprite->texture);
         renderObject(m_textObject, constant);
@@ -220,43 +185,11 @@ void Renderer::drawTiles()
 {
     for (auto tileBatch : m_tileBatches) {
         if (tileBatch) {
-            tileBatch->setGlobalViewMatrix(getLookAtMatrix());
-            tileBatch->setGlobalProjectionMatrix(getPerspectiveMatrix());
+            tileBatch->setGlobalViewMatrix(Camera::getLookAtMatrix());
+            tileBatch->setGlobalProjectionMatrix(Camera::getPerspectiveMatrix());
             Engine::getInstance()->getDevice()->getSurface()->render(tileBatch);
         }
     }
-}
-
-Math::Matrix Renderer::getOrthoMatrix()
-{
-    if (m_dirtyOrthoMatrix) {
-        m_dirtyOrthoMatrix = false;
-        m_orthoMatrix = Math::Matrix::ortho(
-            static_cast<float>(Screen::getWidth()),
-            static_cast<float>(Screen::getHeight()));
-    }
-    return m_orthoMatrix;
-}
-
-Math::Matrix Renderer::getLookAtMatrix()
-{
-    if (m_dirtyViewMatrix) {
-        m_dirtyViewMatrix = false;
-        m_viewMatrix = Math::Matrix::lookAt(m_position, m_lookAt, Math::Vector3({ 0, 1, 0 }));
-    }
-    return m_viewMatrix;
-}
-
-Math::Matrix Renderer::getPerspectiveMatrix()
-{
-    if (m_dirtyProjectionMatrix) {
-        m_dirtyProjectionMatrix = false;
-        m_projectionMatrix = Math::Matrix::perspective(m_fovY,
-            static_cast<float>(Screen::getWidth()) / static_cast<float>(Screen::getHeight()),
-            m_zNear,
-            m_zFar);
-    }
-    return m_projectionMatrix;
 }
 // private
 void Renderer::initRect()

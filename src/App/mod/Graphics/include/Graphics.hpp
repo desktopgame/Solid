@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphics/Buffer.hpp>
+#include <Graphics/Camera.hpp>
 #include <Graphics/Color.hpp>
 #include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>

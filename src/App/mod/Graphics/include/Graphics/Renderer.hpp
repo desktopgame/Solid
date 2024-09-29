@@ -28,11 +28,6 @@ public:
 
     explicit Renderer(float tileSize);
 
-    void position(const Math::Vector3& position);
-    void lookAt(const Math::Vector3& lookAt);
-    void depthRange(float zNear, float zFar);
-    void fovY(float fovY);
-
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
 
@@ -54,10 +49,6 @@ public:
     void batchTileMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix);
     void drawTiles();
 
-    Math::Matrix getOrthoMatrix();
-    Math::Matrix getLookAtMatrix();
-    Math::Matrix getPerspectiveMatrix();
-
 private:
     class Object {
     public:
@@ -77,22 +68,9 @@ private:
 
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
 
-    // camera
-    Math::Vector3 m_position;
-    Math::Vector3 m_lookAt;
-    float m_zNear;
-    float m_zFar;
-    float m_fovY;
     // text
     std::shared_ptr<FontMap> m_fontMap;
     int32_t m_fontSize;
-
-    bool m_dirtyOrthoMatrix;
-    bool m_dirtyViewMatrix;
-    bool m_dirtyProjectionMatrix;
-    Math::Matrix m_orthoMatrix;
-    Math::Matrix m_viewMatrix;
-    Math::Matrix m_projectionMatrix;
 
     Object m_rectObject;
     Object m_circleObject;
