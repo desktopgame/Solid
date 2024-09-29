@@ -10,7 +10,7 @@ GameScene::GameScene()
     , m_tileRenderer()
     , m_cameraPos({ 0, 3, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
-    , m_tileIDs()
+    , m_tileTicket()
     , m_tiles()
 {
 }
@@ -41,16 +41,13 @@ void GameScene::onEnter()
         }
     }
 
-    TileTicket tt = m_tileRenderer->rentTileTicket(m_tiles.size());
-    tt.batchTileArray(m_tiles.data());
+    m_tileTicket = m_tileRenderer->rentTileTicket(m_tiles.size());
+    m_tileTicket->batchTileArray(m_tiles.data());
 }
 
 void GameScene::onExit()
 {
-    for (const auto& tileID : m_tileIDs) {
-        m_tileRenderer->releaseTile(TileBufferKind::UltraLarge, tileID);
-    }
-    m_tileIDs.clear();
+    m_tileRenderer->releaseTileTicket(m_tileTicket);
     m_tiles.clear();
 }
 

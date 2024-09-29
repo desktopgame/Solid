@@ -24,7 +24,7 @@ private:
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
 
-    std::vector<int32_t> m_tileIDs;
+    std::shared_ptr<TileTicket> m_tileTicket;
     std::vector<Vector4> m_tiles;
 };
 }

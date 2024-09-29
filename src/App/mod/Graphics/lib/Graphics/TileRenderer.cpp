@@ -72,11 +72,11 @@ int32_t TileRenderer::rentTile(TileBufferKind kind) { return getTileBatch(kind)-
 
 void TileRenderer::releaseTile(TileBufferKind kind, int32_t index) { getTileBatch(kind)->release(index); }
 
-TileTicket TileRenderer::rentTileTicket(int32_t tileCount)
+std::shared_ptr<TileTicket> TileRenderer::rentTileTicket(int32_t tileCount)
 {
     std::array<int32_t, 5> spaceTable;
     if (!countSpace(tileCount, spaceTable.data())) {
-        return TileTicket(*this, {}, 0);
+        return nullptr;
     }
     std::vector<std::pair<TileBufferKind, int32_t>> entries;
     for (int32_t i = 0; i < 5; i++) {
@@ -86,12 +86,12 @@ TileTicket TileRenderer::rentTileTicket(int32_t tileCount)
             entries.push_back({ kind, id });
         }
     }
-    return TileTicket(*this, entries, tileCount);
+    return std::make_shared<TileTicket>(*this, entries, tileCount);
 }
 
-void TileRenderer::releaseTileTicket(const TileTicket& tileTicket)
+void TileRenderer::releaseTileTicket(const std::shared_ptr<TileTicket>& tileTicket)
 {
-    for (const auto& entry : tileTicket.entries) {
+    for (const auto& entry : tileTicket->entries) {
         releaseTile(entry.first, entry.second);
     }
 }
