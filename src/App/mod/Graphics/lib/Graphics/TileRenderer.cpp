@@ -3,8 +3,64 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/TileRenderer.hpp>
+#include <Math/Mathf.hpp>
+#include <cassert>
 
 namespace Lib::Graphics {
+// TileTicket
+TileTicket::TileTicket(
+    TileRenderer& renderer,
+    const std::vector<std::pair<TileBufferKind, int32_t>>& entries,
+    int32_t tileCount)
+    : renderer(renderer)
+    , entries(entries)
+    , tileCount(tileCount)
+{
+}
+
+void TileTicket::batchTileArray(const Math::Vector4* tiles)
+{
+    int32_t count = tileCount;
+    int32_t offset = 0;
+    for (const auto& entry : entries) {
+        int32_t space = 0;
+        switch (entry.first) {
+        case TileBufferKind::UltraSmall:
+            space = TileBufferUltraSmall::ArraySize;
+            break;
+        case TileBufferKind::Small:
+            space = TileBufferSmall::ArraySize;
+            break;
+        case TileBufferKind::Medium:
+            space = TileBufferMedium::ArraySize;
+            break;
+        case TileBufferKind::Large:
+            space = TileBufferLarge::ArraySize;
+            break;
+        case TileBufferKind::UltraLarge:
+            space = TileBufferUltraLarge::ArraySize;
+            break;
+        }
+
+        if ((count - space) >= 0) {
+            renderer.batchTileArray(entry.first, entry.second, tiles + offset, space);
+            count -= space;
+            offset += space;
+        } else {
+            assert(count > 0);
+            renderer.batchTileArray(entry.first, entry.second, tiles + offset, count);
+            offset = tileCount;
+            count = 0;
+        }
+    }
+}
+
+void TileTicket::batchTileMatrix(const Math::Matrix& matrix)
+{
+    for (const auto& entry : entries) {
+        renderer.batchTileMatrix(entry.first, entry.second, matrix);
+    }
+}
 // public
 TileRenderer::TileRenderer(float tileSize)
     : m_tileSize(tileSize)
@@ -15,6 +71,121 @@ TileRenderer::TileRenderer(float tileSize)
 int32_t TileRenderer::rentTile(TileBufferKind kind) { return getTileBatch(kind)->rent(); }
 
 void TileRenderer::releaseTile(TileBufferKind kind, int32_t index) { getTileBatch(kind)->release(index); }
+
+TileTicket TileRenderer::rentTileTicket(int32_t tileCount)
+{
+    std::array<int32_t, 5> spaceTable;
+    if (!countSpace(tileCount, spaceTable.data())) {
+        return TileTicket(*this, {}, 0);
+    }
+    std::vector<std::pair<TileBufferKind, int32_t>> entries;
+    for (int32_t i = 0; i < 5; i++) {
+        TileBufferKind kind = static_cast<TileBufferKind>(i);
+        for (int32_t j = 0; j < spaceTable.at(i); j++) {
+            int32_t id = rentTile(kind);
+            entries.push_back({ kind, id });
+        }
+    }
+    return TileTicket(*this, entries, tileCount);
+}
+
+void TileRenderer::releaseTileTicket(const TileTicket& tileTicket)
+{
+    for (const auto& entry : tileTicket.entries) {
+        releaseTile(entry.first, entry.second);
+    }
+}
+
+bool TileRenderer::countSpace(int32_t tileCount, int32_t array[5])
+{
+    std::array<int32_t, 5> spaceTable;
+    std::fill(spaceTable.begin(), spaceTable.end(), 0);
+    for (int32_t i = 0; i < 5; i++) {
+        TileBufferKind kind = static_cast<TileBufferKind>(i);
+        spaceTable.at(i) = getTileBatch(kind)->countSpace();
+    }
+
+    if (array != nullptr) {
+        for (int32_t i = 0; i < 5; i++) {
+            array[i] = 0;
+        }
+    }
+
+    for (int32_t i = 4; i >= 0; i--) {
+        TileBufferKind kind = static_cast<TileBufferKind>(i);
+        int32_t space = 0;
+        switch (kind) {
+        case TileBufferKind::UltraSmall:
+            space = TileBufferUltraSmall::ArraySize;
+            break;
+        case TileBufferKind::Small:
+            space = TileBufferSmall::ArraySize;
+            break;
+        case TileBufferKind::Medium:
+            space = TileBufferMedium::ArraySize;
+            break;
+        case TileBufferKind::Large:
+            space = TileBufferLarge::ArraySize;
+            break;
+        case TileBufferKind::UltraLarge:
+            space = TileBufferUltraLarge::ArraySize;
+            break;
+        }
+
+        while (tileCount > space) {
+            if (spaceTable.at(i) == 0) {
+                break;
+            }
+            if (tileCount <= 0) {
+                break;
+            }
+            tileCount -= space;
+            spaceTable.at(i) -= 1;
+
+            if (array != nullptr) {
+                array[i] += 1;
+            }
+        }
+    }
+
+    for (int32_t i = 0; i < 5; i++) {
+        TileBufferKind kind = static_cast<TileBufferKind>(i);
+        int32_t space = 0;
+        switch (kind) {
+        case TileBufferKind::UltraSmall:
+            space = TileBufferUltraSmall::ArraySize;
+            break;
+        case TileBufferKind::Small:
+            space = TileBufferSmall::ArraySize;
+            break;
+        case TileBufferKind::Medium:
+            space = TileBufferMedium::ArraySize;
+            break;
+        case TileBufferKind::Large:
+            space = TileBufferLarge::ArraySize;
+            break;
+        case TileBufferKind::UltraLarge:
+            space = TileBufferUltraLarge::ArraySize;
+            break;
+        }
+
+        while (tileCount < space) {
+            if (spaceTable.at(i) == 0) {
+                break;
+            }
+            if (tileCount <= 0) {
+                break;
+            }
+            tileCount -= space;
+            spaceTable.at(i) -= 1;
+
+            if (array != nullptr) {
+                array[i] += 1;
+            }
+        }
+    }
+    return tileCount <= 0;
+}
 
 void TileRenderer::batchTileArray(TileBufferKind kind, int32_t index, const Math::Vector4* tiles, int32_t tileCount) { getTileBatch(kind)->setTiles(index, tiles, tileCount); }
 

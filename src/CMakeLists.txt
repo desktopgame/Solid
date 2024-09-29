@@ -12,12 +12,13 @@ project(
 # Common Variables
 #
 set(SOLID_DEBUG_DEFINE
+    NOMINMAX
     SOLID_DEBUG _DEBUG
     _LIBCPP_HAS_NO_ASAN # https://stackoverflow.com/questions/38723374/why-does-xcode-define-libcpp-has-no-asan-when-creating-an-address-sanitized-bui
     $<$<CONFIG:Debug>: _ITERATOR_DEBUG_LEVEL=2>
     $<$<CONFIG:Release>: _ITERATOR_DEBUG_LEVEL=0>
 )
-set(SOLID_RELEASE_DEFINE SOLID_NDEBUG)
+set(SOLID_RELEASE_DEFINE NOMINMAX SOLID_NDEBUG)
 set(SOLID_DEBUG_COMPILE
     $<$<BOOL:${MSVC}>: /utf-8>
     $<$<NOT:$<BOOL:${MSVC}>>: -O0 -g -Wall -Werror>

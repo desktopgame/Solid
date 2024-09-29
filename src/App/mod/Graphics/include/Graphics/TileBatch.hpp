@@ -28,6 +28,8 @@ public:
 
     int32_t rent();
     void release(int32_t index);
+    int32_t countSpace() const;
+    bool hasSpace() const;
 
     void setTiles(int32_t index, const Math::Vector4* tiles, int32_t tileCount);
     const Math::Vector4* getTiles(int32_t index) const;

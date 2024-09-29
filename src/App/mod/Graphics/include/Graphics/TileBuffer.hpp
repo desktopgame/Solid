@@ -26,6 +26,7 @@ public:
         std::array<Math::Vector4, N> tiles;
         Math::Matrix matrix;
     };
+    inline static constexpr int32_t ArraySize = N;
     static_assert(sizeof(Memory) % 256 == 0, "not aligned to 256 bytes");
 
     inline static std::shared_ptr<TileBufferN<N>> create(int32_t elementCount) { return std::shared_ptr<TileBufferN>(new TileBufferN(elementCount)); }

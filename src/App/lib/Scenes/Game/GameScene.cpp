@@ -41,15 +41,8 @@ void GameScene::onEnter()
         }
     }
 
-    int32_t index = 0;
-    while (index < m_tiles.size()) {
-        int32_t length = Mathf::min(static_cast<int32_t>(m_tiles.size() - index), 4064 + 12);
-        int32_t tileID = m_tileRenderer->rentTile(TileBufferKind::UltraLarge);
-        m_tileIDs.push_back(tileID);
-        m_tileRenderer->batchTileArray(TileBufferKind::UltraLarge, tileID, m_tiles.data() + index, length);
-
-        index += length;
-    }
+    TileTicket tt = m_tileRenderer->rentTileTicket(m_tiles.size());
+    tt.batchTileArray(m_tiles.data());
 }
 
 void GameScene::onExit()

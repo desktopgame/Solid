@@ -315,10 +315,28 @@ void TileBatch::release(int32_t index)
     m_shouldCommandCopy = true;
 }
 
+int32_t TileBatch::countSpace() const
+{
+    return std::count(m_commandVisibleTable.begin(), m_commandVisibleTable.end(), false);
+}
+
+bool TileBatch::hasSpace() const
+{
+    for (bool commandVisible : m_commandVisibleTable) {
+        if (!commandVisible) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void TileBatch::setTiles(int32_t index, const Math::Vector4* tiles, int32_t tileCount)
 {
     if (!m_commandVisibleTable.at(index)) {
         throw std::logic_error("rent() is not being called.");
+    }
+    if (tileCount < 0) {
+        throw std::logic_error("count should be positive.");
     }
     Math::Vector4* dst = m_tileBuffer->getArrayAt(index);
     ::memcpy(dst, tiles, sizeof(Math::Vector4) * tileCount);
