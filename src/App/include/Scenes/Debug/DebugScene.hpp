@@ -9,12 +9,12 @@ public:
     explicit DebugScene();
     virtual ~DebugScene();
 
-    void onEnter(Renderer& renderer) override;
-    void onExit(Renderer& renderer) override;
+    void onEnter() override;
+    void onExit() override;
 
-    void onUpdate(Renderer& renderer) override;
-    void onGui(Renderer& renderer) override;
-    void onDraw(Renderer& renderer) override;
+    void onUpdate() override;
+    void onGui() override;
+    void onDraw() override;
 
     bool tryTransition(std::string& outNextScene) override;
 
@@ -24,6 +24,7 @@ private:
     void restoreTiles(const Vector3& center);
     std::optional<Vector3> scanHintTiles(Vector3 forward);
 
+    std::shared_ptr<Renderer> m_renderer;
     Vector3 m_tilePosition;
     int32_t m_tileSide;
     int32_t m_tilePallet;

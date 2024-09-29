@@ -9,16 +9,17 @@ public:
     explicit GameScene();
     virtual ~GameScene();
 
-    void onEnter(Renderer& renderer) override;
-    void onExit(Renderer& renderer) override;
+    void onEnter() override;
+    void onExit() override;
 
-    void onUpdate(Renderer& renderer) override;
-    void onGui(Renderer& renderer) override;
-    void onDraw(Renderer& renderer) override;
+    void onUpdate() override;
+    void onGui() override;
+    void onDraw() override;
 
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    std::shared_ptr<Renderer> m_renderer;
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
 

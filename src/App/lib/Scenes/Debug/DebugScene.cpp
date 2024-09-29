@@ -6,7 +6,8 @@
 namespace App::Scenes::Debug {
 // public
 DebugScene::DebugScene()
-    : m_tilePosition()
+    : m_renderer()
+    , m_tilePosition()
     , m_tileSide()
     , m_tilePallet()
     , m_tileColor()
@@ -30,12 +31,15 @@ DebugScene::DebugScene()
 }
 DebugScene::~DebugScene() { }
 
-void DebugScene::onEnter(Renderer& renderer)
+void DebugScene::onEnter()
 {
+    if (!m_renderer) {
+        m_renderer = std::make_shared<Renderer>(Common::Constants::k_tileSize);
+    }
     if (!m_hintTileBatch) {
         m_hintTileBatch = TileBatch::create(TileBufferUltraSmall::create(1), Common::Constants::k_tileSize, TileBatch::Style::WireframeWithCross);
     }
-    m_tileID = renderer.rentTile(TileBufferKind::UltraLarge);
+    m_tileID = m_renderer->rentTile(TileBufferKind::UltraLarge);
     m_hintTileID = m_hintTileBatch->rent();
 
     if (m_tiles.size() == 0) {
@@ -47,15 +51,15 @@ void DebugScene::onEnter(Renderer& renderer)
         m_tiles.push_back(Vector4({ 0, 0, 0, 5 }));
     }
     m_editCompleted = false;
-    renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
+    m_renderer->batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
 }
-void DebugScene::onExit(Renderer& renderer)
+void DebugScene::onExit()
 {
-    renderer.releaseTile(TileBufferKind::UltraLarge, m_tileID);
+    m_renderer->releaseTile(TileBufferKind::UltraLarge, m_tileID);
     m_hintTileBatch->release(m_hintTileID);
 }
 
-void DebugScene::onUpdate(Renderer& renderer)
+void DebugScene::onUpdate()
 {
     (void)m_cameraAngleX;
     (void)m_cameraAngleY;
@@ -105,7 +109,7 @@ void DebugScene::onUpdate(Renderer& renderer)
                 m_tiles.push_back(hintTile);
             }
             compactTiles();
-            renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
+            m_renderer->batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
         } else if (mouse->isTrigger(Mouse::Button::Left)) {
             if (m_tiles.size() > 6 && optHitPos) {
                 auto iter = std::remove_if(m_tiles.begin(), m_tiles.end(), [optHitPos](const auto& tile) -> bool {
@@ -114,7 +118,7 @@ void DebugScene::onUpdate(Renderer& renderer)
                 m_tiles.erase(iter, m_tiles.end());
                 restoreTiles(*optHitPos);
 
-                renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
+                m_renderer->batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
             }
         }
     }
@@ -131,7 +135,7 @@ void DebugScene::onUpdate(Renderer& renderer)
     }
 }
 
-void DebugScene::onGui(Renderer& renderer)
+void DebugScene::onGui()
 {
     ImGui::Begin("Camera");
     ImGui::DragFloat3("Pos", m_cameraPos.data());
@@ -168,22 +172,22 @@ void DebugScene::onGui(Renderer& renderer)
     if (ImGui::Button("Load")) {
         IO::deserializeTile(std::string(m_ioFile.data()), m_tiles, Common::Constants::k_tileSize);
         compactTiles();
-        renderer.batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
+        m_renderer->batchTileArray(TileBufferKind::UltraLarge, m_tileID, m_tiles.data(), m_tiles.size());
     }
     ImGui::End();
 }
-void DebugScene::onDraw(Renderer& renderer)
+void DebugScene::onDraw()
 {
     Camera::position(m_cameraPos);
     Camera::lookAt(m_cameraLookAt);
 
-    renderer.drawTiles();
+    m_renderer->drawTiles();
 
     m_hintTileBatch->setGlobalViewMatrix(Camera::getLookAtMatrix());
     m_hintTileBatch->setGlobalProjectionMatrix(Camera::getPerspectiveMatrix());
     Engine::getInstance()->getDevice()->getSurface()->render(m_hintTileBatch);
 
-    renderer.drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
+    m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
 }
 
 bool DebugScene::tryTransition(std::string& outNextScene)

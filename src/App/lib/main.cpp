@@ -34,14 +34,14 @@ static int appMain(int argc, char* argv[])
     while (window->peekMessage()) {
         inputSystem->sync();
 
-        sceneManager.onUpdate(renderer);
+        sceneManager.onUpdate();
 
         surface->guiBegin();
-        sceneManager.onGui(renderer);
+        sceneManager.onGui();
         surface->guiEnd();
 
         surface->begin();
-        sceneManager.onDraw(renderer);
+        sceneManager.onDraw();
         surface->end();
     }
     inputSystem->shutdown();

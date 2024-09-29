@@ -6,7 +6,8 @@
 namespace App::Scenes::Game {
 // public
 GameScene::GameScene()
-    : m_cameraPos({ 0, 3, -1 })
+    : m_renderer()
+    , m_cameraPos({ 0, 3, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_tileIDs()
     , m_tiles()
@@ -14,8 +15,12 @@ GameScene::GameScene()
 }
 GameScene::~GameScene() { }
 
-void GameScene::onEnter(Renderer& renderer)
+void GameScene::onEnter()
 {
+    if (!m_renderer) {
+        m_renderer = std::make_shared<Renderer>(Common::Constants::k_tileSize);
+    }
+
     int32_t color = 0;
     int32_t size = 100;
     for (int32_t i = -size; i < size; i++) {
@@ -35,37 +40,37 @@ void GameScene::onEnter(Renderer& renderer)
     int32_t index = 0;
     while (index < m_tiles.size()) {
         int32_t length = Mathf::min(static_cast<int32_t>(m_tiles.size() - index), 4064 + 12);
-        int32_t tileID = renderer.rentTile(TileBufferKind::UltraLarge);
+        int32_t tileID = m_renderer->rentTile(TileBufferKind::UltraLarge);
         m_tileIDs.push_back(tileID);
-        renderer.batchTileArray(TileBufferKind::UltraLarge, tileID, m_tiles.data() + index, length);
+        m_renderer->batchTileArray(TileBufferKind::UltraLarge, tileID, m_tiles.data() + index, length);
 
         index += length;
     }
 }
 
-void GameScene::onExit(Renderer& renderer)
+void GameScene::onExit()
 {
     for (const auto& tileID : m_tileIDs) {
-        renderer.releaseTile(TileBufferKind::UltraLarge, tileID);
+        m_renderer->releaseTile(TileBufferKind::UltraLarge, tileID);
     }
     m_tileIDs.clear();
     m_tiles.clear();
 }
 
-void GameScene::onUpdate(Renderer& renderer)
+void GameScene::onUpdate()
 {
 }
 
-void GameScene::onGui(Renderer& renderer)
+void GameScene::onGui()
 {
 }
 
-void GameScene::onDraw(Renderer& renderer)
+void GameScene::onDraw()
 {
     Camera::position(m_cameraPos);
     Camera::lookAt(m_cameraLookAt);
 
-    renderer.drawTiles();
+    m_renderer->drawTiles();
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)
