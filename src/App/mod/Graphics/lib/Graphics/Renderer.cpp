@@ -17,15 +17,13 @@
 
 namespace Lib::Graphics {
 // public
-Renderer::Renderer(float tileSize)
+Renderer::Renderer()
     : m_fontMap()
     , m_fontSize(16)
     , m_rectObject()
     , m_circleObject()
     , m_spriteObject()
     , m_textObject()
-    , m_tileSize(tileSize)
-    , m_tileBatches()
 {
 }
 
@@ -149,27 +147,6 @@ Math::Vector2 Renderer::measureText(const std::u16string& label, TextAlignY alig
     return offset;
 }
 
-int32_t Renderer::rentTile(TileBufferKind kind) { return getTileBatch(kind)->rent(); }
-
-void Renderer::releaseTile(TileBufferKind kind, int32_t index) { getTileBatch(kind)->release(index); }
-
-void Renderer::batchTileArray(TileBufferKind kind, int32_t index, const Math::Vector4* tiles, int32_t tileCount) { getTileBatch(kind)->setTiles(index, tiles, tileCount); }
-
-void Renderer::batchTileMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix)
-{
-    getTileBatch(kind)->setMatrix(index, matrix);
-}
-
-void Renderer::drawTiles()
-{
-    for (auto tileBatch : m_tileBatches) {
-        if (tileBatch) {
-            tileBatch->setGlobalViewMatrix(Camera::getLookAtMatrix());
-            tileBatch->setGlobalProjectionMatrix(Camera::getPerspectiveMatrix());
-            Engine::getInstance()->getDevice()->getSurface()->render(tileBatch);
-        }
-    }
-}
 // private
 void Renderer::initRect()
 {
@@ -427,31 +404,6 @@ void Renderer::initText()
     m_textObject.indexBuffer->update(indices.data());
     m_textObject.indexLength = indices.size();
     m_textObject.pso = PipelineStateObject::create(shader, Constant::Layout::TextureAndColor, PrimitiveType::Triangles, 2, false, true);
-}
-
-std::shared_ptr<TileBatch> Renderer::getTileBatch(TileBufferKind kind)
-{
-    int32_t i = static_cast<int32_t>(kind);
-    if (!m_tileBatches.at(i)) {
-        switch (kind) {
-        case TileBufferKind::UltraSmall:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraSmall::create(100), m_tileSize);
-            break;
-        case TileBufferKind::Small:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferSmall::create(100), m_tileSize);
-            break;
-        case TileBufferKind::Medium:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferMedium::create(200), m_tileSize);
-            break;
-        case TileBufferKind::Large:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferLarge::create(100), m_tileSize);
-            break;
-        case TileBufferKind::UltraLarge:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(100), m_tileSize);
-            break;
-        }
-    }
-    return m_tileBatches.at(i);
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<Constant> constant)

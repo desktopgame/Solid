@@ -18,5 +18,6 @@
 #include <Graphics/Texture.hpp>
 #include <Graphics/TileBatch.hpp>
 #include <Graphics/TileBuffer.hpp>
+#include <Graphics/TileRenderer.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>

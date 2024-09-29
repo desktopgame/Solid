@@ -29,7 +29,6 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     SceneManager sceneManager(sceneMap, "Debug");
 
-    Renderer renderer(Constants::k_tileSize);
     window->show();
     while (window->peekMessage()) {
         inputSystem->sync();

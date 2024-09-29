@@ -20,6 +20,7 @@ public:
 
 private:
     std::shared_ptr<Renderer> m_renderer;
+    std::shared_ptr<TileRenderer> m_tileRenderer;
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
 

@@ -26,7 +26,7 @@ public:
         Bottom
     };
 
-    explicit Renderer(float tileSize);
+    explicit Renderer();
 
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
@@ -36,12 +36,6 @@ public:
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
     void drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color);
     Math::Vector2 measureText(const std::u16string& label, TextAlignY alignY);
-
-    int32_t rentTile(TileBufferKind kind);
-    void releaseTile(TileBufferKind kind, int32_t index);
-    void batchTileArray(TileBufferKind kind, int32_t index, const Math::Vector4* tiles, int32_t tileCount);
-    void batchTileMatrix(TileBufferKind kind, int32_t index, const Math::Matrix& matrix);
-    void drawTiles();
 
 private:
     class Object {
@@ -58,8 +52,6 @@ private:
     void initSprite();
     void initText();
 
-    std::shared_ptr<TileBatch> getTileBatch(TileBufferKind kind);
-
     void renderObject(const Object& object, const std::shared_ptr<Constant> constant);
 
     // text
@@ -70,8 +62,5 @@ private:
     Object m_circleObject;
     Object m_spriteObject;
     Object m_textObject;
-
-    float m_tileSize;
-    std::array<std::shared_ptr<TileBatch>, 5> m_tileBatches;
 };
 }
