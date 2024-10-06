@@ -2,12 +2,15 @@
 import sys
 import math
 import struct
+import io
 
 # see: https://pypi.org/project/colour-science/
 import colour
 
 # see: https://pypi.org/project/bitarray/
 from bitarray import bitarray
+
+import mylib
 
 # see: TileBatch.hpp
 SOLID_COLOR_TABLE = [
@@ -96,105 +99,109 @@ SOLID_NORMAL_TABLE = [
 ]
 
 
+def proc(fp: io.BufferedReader, ofp: io.TextIOWrapper):
+    assert struct.unpack('4s', fp.read(4))[0].decode() == 'VOX '
+    struct.unpack('i', fp.read(4))
+
+    pallet = []
+    voxels = []
+
+    size_x: int = -1
+    size_y: int = -1
+    size_z: int = -1
+    bitmap: bitarray = None
+
+    def coord2index(x: int, y: int, z: int) -> int:
+        nonlocal size_x
+        nonlocal size_y
+        nonlocal size_z
+        return (z * size_x * size_y) + (y * size_x) + x
+
+    def bit_at(x: int, y: int, z: int) -> bool:
+        nonlocal size_x
+        nonlocal size_y
+        nonlocal size_z
+        if x < 0 or x >= size_x:
+            return False
+        if y < 0 or y >= size_y:
+            return False
+        if z < 0 or z >= size_z:
+            return False
+        return bitmap[coord2index(x, y, z)]
+
+    while fp.read(1):
+        fp.seek(-1, 1)
+
+        label = struct.unpack('4s', fp.read(4))[0].decode()
+        chunk_size = struct.unpack('i', fp.read(4))[0]
+        child_size = struct.unpack('i', fp.read(4))[0]
+
+        if label == 'SIZE':
+            size_x = struct.unpack('i', fp.read(4))[0]
+            size_z = struct.unpack('i', fp.read(4))[0]
+            size_y = struct.unpack('i', fp.read(4))[0]
+            bitmap = bitarray(size_x * size_y * size_z)
+            # print([size_x, size_y, size_z])
+        elif label == 'XYZI':
+            count = struct.unpack('i', fp.read(4))[0]
+            for _ in range(0, count):
+                voxel = struct.unpack('cccc', fp.read(4))
+                vx = int(voxel[0][0])
+                vz = int(voxel[1][0])
+                vy = int(voxel[2][0])
+                vc = int(voxel[3][0])
+                voxels.append((vx, vy, vz, vc))
+                assert size_x >= 0
+                assert size_y >= 0
+                assert size_z >= 0
+                assert vx >= 0
+                assert vy >= 0
+                assert vz >= 0
+                bitmap[coord2index(vx, vy, vz)] = True
+        elif label == 'RGBA':
+            for _ in range(0, 256):
+                color = struct.unpack('cccc', fp.read(4))
+                r = color[0][0]
+                g = color[1][0]
+                b = color[2][0]
+                a = color[3][0]
+                pallet.append((r / 255, g / 255, b / 255, a / 255))
+        else:
+            fp.seek(chunk_size, 1)
+
+    sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
+    real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
+    cache = [-1 for i in range(0, len(pallet))]
+
+    for v in voxels:
+        real_color = real[v[3] - 1]
+
+        high_score = 999999
+        selected = -1
+        if cache[v[3] - 1] == -1:
+            for i in range(0, len(SOLID_COLOR_TABLE)):
+                sample_color = sample[i]
+                score = colour.difference.delta_E_CIE2000(sample_color, real_color)
+
+                if score < high_score:
+                    high_score = score
+                    selected = i
+            cache[v[3] - 1] = selected
+        else:
+            selected = cache[v[3] - 1]
+
+        for i in range(0, len(SOLID_NORMAL_TABLE)):
+            normal = SOLID_NORMAL_TABLE[i]
+            hiddenSide = bit_at(v[0] + normal[0], v[1] + normal[1], v[2] + normal[2])
+            if not hiddenSide:
+                ofp.write(f'{v[0]},{v[1]},{v[2]},{(selected*10)+i}\n')
+
+
 def main():
-    if (len(sys.argv) <= 1):
-        return
-    with open(sys.argv[1], mode='rb') as fp:
-        assert struct.unpack('4s', fp.read(4))[0].decode() == 'VOX '
-        struct.unpack('i', fp.read(4))
-
-        pallet = []
-        voxels = []
-
-        size_x: int = -1
-        size_y: int = -1
-        size_z: int = -1
-        bitmap: bitarray = None
-
-        def coord2index(x: int, y: int, z: int) -> int:
-            nonlocal size_x
-            nonlocal size_y
-            nonlocal size_z
-            return (z * size_x * size_y) + (y * size_x) + x
-
-        def bit_at(x: int, y: int, z: int) -> bool:
-            nonlocal size_x
-            nonlocal size_y
-            nonlocal size_z
-            if x < 0 or x >= size_x:
-                return False
-            if y < 0 or y >= size_y:
-                return False
-            if z < 0 or z >= size_z:
-                return False
-            return bitmap[coord2index(x, y, z)]
-
-        while fp.read(1):
-            fp.seek(-1, 1)
-
-            label = struct.unpack('4s', fp.read(4))[0].decode()
-            chunk_size = struct.unpack('i', fp.read(4))[0]
-            child_size = struct.unpack('i', fp.read(4))[0]
-
-            if label == 'SIZE':
-                size_x = struct.unpack('i', fp.read(4))[0]
-                size_z = struct.unpack('i', fp.read(4))[0]
-                size_y = struct.unpack('i', fp.read(4))[0]
-                bitmap = bitarray(size_x * size_y * size_z)
-                # print([size_x, size_y, size_z])
-            elif label == 'XYZI':
-                count = struct.unpack('i', fp.read(4))[0]
-                for _ in range(0, count):
-                    voxel = struct.unpack('cccc', fp.read(4))
-                    vx = int(voxel[0][0])
-                    vz = int(voxel[1][0])
-                    vy = int(voxel[2][0])
-                    vc = int(voxel[3][0])
-                    voxels.append((vx, vy, vz, vc))
-                    assert size_x >= 0
-                    assert size_y >= 0
-                    assert size_z >= 0
-                    assert vx >= 0
-                    assert vy >= 0
-                    assert vz >= 0
-                    bitmap[coord2index(vx, vy, vz)] = True
-            elif label == 'RGBA':
-                for _ in range(0, 256):
-                    color = struct.unpack('cccc', fp.read(4))
-                    r = color[0][0]
-                    g = color[1][0]
-                    b = color[2][0]
-                    a = color[3][0]
-                    pallet.append((r / 255, g / 255, b / 255, a / 255))
-            else:
-                fp.seek(chunk_size, 1)
-
-        sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
-        real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
-        cache = [-1 for i in range(0, len(pallet))]
-
-        for v in voxels:
-            real_color = real[v[3] - 1]
-
-            high_score = 999999
-            selected = -1
-            if cache[v[3] - 1] == -1:
-                for i in range(0, len(SOLID_COLOR_TABLE)):
-                    sample_color = sample[i]
-                    score = colour.difference.delta_E_CIE2000(sample_color, real_color)
-
-                    if score < high_score:
-                        high_score = score
-                        selected = i
-                cache[v[3] - 1] = selected
-            else:
-                selected = cache[v[3] - 1]
-
-            for i in range(0, len(SOLID_NORMAL_TABLE)):
-                normal = SOLID_NORMAL_TABLE[i]
-                hiddenSide = bit_at(v[0] + normal[0], v[1] + normal[1], v[2] + normal[2])
-                if not hiddenSide:
-                    print(f'{v[0]},{v[1]},{v[2]},{(selected*10)+i}')
+    for i, o in mylib.resolve_import_files('.vox'):
+        with open(i, 'rb') as ifp:
+            with open(o, 'w', encoding='UTF-8') as ofp:
+                proc(ifp, ofp)
 
 
 if __name__ == '__main__':
