@@ -23,6 +23,10 @@ private:
     std::shared_ptr<TileRenderer> m_tileRenderer;
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
+    float m_cameraAngleX;
+    float m_cameraAngleY;
+    float m_cameraMoveSpeed;
+    float m_cameraRotateSpeed;
 
     std::shared_ptr<TileTicket> m_tileTicket;
     std::vector<Vector4> m_tiles;
