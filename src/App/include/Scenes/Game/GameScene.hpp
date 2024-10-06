@@ -19,7 +19,7 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
-    static inline const float k_tileSize = 10.0f;
+    static inline const float k_tileSize = 5.0f;
 
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<TileRenderer> m_tileRenderer;

@@ -29,21 +29,7 @@ void GameScene::onEnter()
         m_tileRenderer = std::make_shared<TileRenderer>(k_tileSize);
     }
 
-    int32_t color = 0;
-    int32_t size = 100;
-    for (int32_t i = -size; i < size; i++) {
-        for (int32_t j = -size; j < size; j++) {
-            float x = static_cast<float>(j) * k_tileSize;
-            float z = static_cast<float>(i) * k_tileSize;
-            Vector4 v = Vector4({ x, 0.0f, z, static_cast<float>(color + 0) });
-            m_tiles.push_back(v);
-
-            color += 10;
-            if (color >= 640) {
-                color = 0;
-            }
-        }
-    }
+    IO::deserializeTile("assets\\Stages\\stage_base.csv", m_tiles, k_tileSize);
 
     m_tileTicket = m_tileRenderer->rentTileTicket(m_tiles.size());
     m_tileTicket->batchTileArray(m_tiles.data());
