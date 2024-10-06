@@ -99,9 +99,9 @@ SOLID_NORMAL_TABLE = [
 ]
 
 
-def proc(fp: io.BufferedReader, ofp: io.TextIOWrapper):
-    assert struct.unpack('4s', fp.read(4))[0].decode() == 'VOX '
-    struct.unpack('i', fp.read(4))
+def proc(ifp: io.BufferedReader, ofp: io.TextIOWrapper):
+    assert struct.unpack('4s', ifp.read(4))[0].decode() == 'VOX '
+    struct.unpack('i', ifp.read(4))
 
     pallet = []
     voxels = []
@@ -129,23 +129,23 @@ def proc(fp: io.BufferedReader, ofp: io.TextIOWrapper):
             return False
         return bitmap[coord2index(x, y, z)]
 
-    while fp.read(1):
-        fp.seek(-1, 1)
+    while ifp.read(1):
+        ifp.seek(-1, 1)
 
-        label = struct.unpack('4s', fp.read(4))[0].decode()
-        chunk_size = struct.unpack('i', fp.read(4))[0]
-        child_size = struct.unpack('i', fp.read(4))[0]
+        label = struct.unpack('4s', ifp.read(4))[0].decode()
+        chunk_size = struct.unpack('i', ifp.read(4))[0]
+        child_size = struct.unpack('i', ifp.read(4))[0]
 
         if label == 'SIZE':
-            size_x = struct.unpack('i', fp.read(4))[0]
-            size_z = struct.unpack('i', fp.read(4))[0]
-            size_y = struct.unpack('i', fp.read(4))[0]
+            size_x = struct.unpack('i', ifp.read(4))[0]
+            size_z = struct.unpack('i', ifp.read(4))[0]
+            size_y = struct.unpack('i', ifp.read(4))[0]
             bitmap = bitarray(size_x * size_y * size_z)
             # print([size_x, size_y, size_z])
         elif label == 'XYZI':
-            count = struct.unpack('i', fp.read(4))[0]
+            count = struct.unpack('i', ifp.read(4))[0]
             for _ in range(0, count):
-                voxel = struct.unpack('cccc', fp.read(4))
+                voxel = struct.unpack('cccc', ifp.read(4))
                 vx = int(voxel[0][0])
                 vz = int(voxel[1][0])
                 vy = int(voxel[2][0])
@@ -160,14 +160,14 @@ def proc(fp: io.BufferedReader, ofp: io.TextIOWrapper):
                 bitmap[coord2index(vx, vy, vz)] = True
         elif label == 'RGBA':
             for _ in range(0, 256):
-                color = struct.unpack('cccc', fp.read(4))
+                color = struct.unpack('cccc', ifp.read(4))
                 r = color[0][0]
                 g = color[1][0]
                 b = color[2][0]
                 a = color[3][0]
                 pallet.append((r / 255, g / 255, b / 255, a / 255))
         else:
-            fp.seek(chunk_size, 1)
+            ifp.seek(chunk_size, 1)
 
     sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
     real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
