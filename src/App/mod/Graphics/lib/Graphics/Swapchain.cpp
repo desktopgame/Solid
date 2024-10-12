@@ -203,6 +203,7 @@ void Swapchain::swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& co
     if (m_renderGui) {
         commandList->SetDescriptorHeaps(1, m_imguiDescriptorHeap.GetAddressOf());
         ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
+        m_renderGui = false;
     }
 
     uint32_t backBufferIndex = m_swapchain->GetCurrentBackBufferIndex();
