@@ -57,8 +57,20 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             matrix tileTranslate = translateMatrixTable[tileRotationID];
             matrix tileTransform = mul(tileTranslate, tileRotation);
             float3 tileOffset = tileData[instanceID].xyz;
-            matrix mvpMatrix = mul(mul(projectionMatrix, viewMatrix), modelMatrix);
-            output.svpos = mul(mvpMatrix, float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1));
+
+            float4 tmp = float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1);
+
+            // メッシュのつなぎ目（gap, seamsなどと呼ばれる）が描画されないための対策
+            // 隙間なくタイルを敷き詰めているつもりでも、
+            // 浮動小数点数演算の誤差によってタイルの間に隙間が生じることがある。
+            // これを抑えるために、小数点第二位以下を切り捨てる。
+            tmp = round(tmp * 100.0f) / 100.0f;
+
+            tmp = mul(modelMatrix, tmp);
+            tmp = mul(viewMatrix, tmp);
+            tmp = mul(projectionMatrix, tmp);
+
+            output.svpos = tmp;
             output.color = colorTable[tileColorID];
             return output;
         })"),
