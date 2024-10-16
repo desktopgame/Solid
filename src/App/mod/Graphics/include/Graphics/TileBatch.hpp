@@ -169,6 +169,8 @@ private:
         explicit TransformData() = default;
         std::array<Math::Matrix, 6> translateMatrixTable;
         std::array<Math::Matrix, 6> rotationMatrixTable;
+        std::array<Math::Vector3, 6> normalVectorTable;
+        std::array<float, 46> padding;
     };
     static_assert(sizeof(TransformData) % 256 == 0);
 
