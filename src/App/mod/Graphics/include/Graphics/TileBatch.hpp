@@ -223,6 +223,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12CommandSignature> m_commandSignature;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
 #endif
 };
 }

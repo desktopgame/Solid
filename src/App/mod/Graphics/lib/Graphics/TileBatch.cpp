@@ -345,6 +345,30 @@ std::shared_ptr<TileBatch> TileBatch::create(
     }
     tileBatch->m_commandBuffer->allocate(sizeof(IndirectCommand) * tileBatch->m_commands.size());
     tileBatch->m_commandBuffer->update(tileBatch->m_commands.data());
+
+    //
+    // Descriptor Heap
+    //
+
+    D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
+    descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    descHeapDesc.NodeMask = 0;
+    descHeapDesc.NumDescriptors = 1;
+    descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+
+    if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&tileBatch->m_descriptorHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+
+    D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = tileBatch->m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = Texture::encodeFormat(normalTexture->getFormat());
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(normalTexture->getID3D12Resource());
+    device->CreateShaderResourceView(texBuff.Get(), &srvDesc, heapHandle);
     return tileBatch;
 }
 
@@ -524,6 +548,10 @@ void TileBatch::render(
     }
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    cmdList->SetDescriptorHeaps(1, m_descriptorHeap.GetAddressOf());
+    cmdList->SetGraphicsRootDescriptorTable(4, heapHandle);
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
 
