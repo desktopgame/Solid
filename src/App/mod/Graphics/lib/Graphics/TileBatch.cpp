@@ -50,7 +50,9 @@ std::shared_ptr<TileBatch> TileBatch::create(
             matrix translateMatrixTable[6];
             matrix rotationMatrixTable[6];
             float3 normalVectorTable[6];
-            float padding2[46];
+            float3 tangentVectorTable[6];
+            float3 binormalVectorTable[6];
+            float padding2[10];
         };
         cbuffer cbuff3 : register(b3)
         {
@@ -314,6 +316,8 @@ std::shared_ptr<TileBatch> TileBatch::create(
     tileBatch->m_transformData.translateMatrixTable = getGlobalTranslateMatrixTable(tileSize);
     tileBatch->m_transformData.rotationMatrixTable = getGlobalRotationMatrixTable();
     tileBatch->m_transformData.normalVectorTable = k_normalVectorTable;
+    tileBatch->m_transformData.tangentVectorTable = k_tangentVectorTable;
+    tileBatch->m_transformData.binormalVectorTable = k_binormalVectorTable;
     tileBatch->m_transformBuffer = Buffer::create();
     tileBatch->m_transformBuffer->allocate(sizeof(TransformData));
     tileBatch->m_transformBuffer->update(&tileBatch->m_transformData);

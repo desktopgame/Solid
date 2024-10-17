@@ -73,6 +73,36 @@ public:
         Math::Vector3({ 0, 0, -1 }),
     };
 
+    inline static const std::array<Math::Vector3, 6> k_tangentVectorTable = {
+        // posY
+        Math::Vector3({ 1, 0, 0 }),
+        // negY
+        Math::Vector3({ -1, 0, 0 }),
+        // posX
+        Math::Vector3({ 0, 0, -1 }),
+        // negX
+        Math::Vector3({ 0, 0, 1 }),
+        // posZ
+        Math::Vector3({ 1, 0, 0 }),
+        // negZ
+        Math::Vector3({ -1, 0, 0 }),
+    };
+
+    inline static const std::array<Math::Vector3, 6> k_binormalVectorTable = {
+        // posY
+        Math::Vector3({ 0, 0, 1 }),
+        // negY
+        Math::Vector3({ 0, 0, -1 }),
+        // posX
+        Math::Vector3({ 0, -1, 0 }),
+        // negX
+        Math::Vector3({ 0, 1, 0 }),
+        // posZ
+        Math::Vector3({ 1, 0, 0 }),
+        // negZ
+        Math::Vector3({ -1, 0, 0 }),
+    };
+
     inline static const std::array<int32_t, 6> k_tileReverseTable = {
         // posY
         1,
@@ -175,7 +205,9 @@ private:
         std::array<Math::Matrix, 6> translateMatrixTable;
         std::array<Math::Matrix, 6> rotationMatrixTable;
         std::array<Math::Vector3, 6> normalVectorTable;
-        std::array<float, 46> padding;
+        std::array<Math::Vector3, 6> tangentVectorTable;
+        std::array<Math::Vector3, 6> binormalVectorTable;
+        std::array<float, 10> padding;
     };
     static_assert(sizeof(TransformData) % 256 == 0);
 
