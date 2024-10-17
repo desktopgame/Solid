@@ -2,6 +2,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Surface.hpp>
+#include <Graphics/Texture.hpp>
 #include <Graphics/TileRenderer.hpp>
 #include <Math/Mathf.hpp>
 #include <cassert>
@@ -209,21 +210,22 @@ std::shared_ptr<TileBatch> TileRenderer::getTileBatch(TileBufferKind kind)
 {
     int32_t i = static_cast<int32_t>(kind);
     if (!m_tileBatches.at(i)) {
+        auto tex = Texture::create("./assets/ghicon.png");
         switch (kind) {
         case TileBufferKind::UltraSmall:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraSmall::create(100), m_tileSize);
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraSmall::create(100), tex, m_tileSize);
             break;
         case TileBufferKind::Small:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferSmall::create(100), m_tileSize);
+            m_tileBatches.at(i) = TileBatch::create(TileBufferSmall::create(100), tex, m_tileSize);
             break;
         case TileBufferKind::Medium:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferMedium::create(200), m_tileSize);
+            m_tileBatches.at(i) = TileBatch::create(TileBufferMedium::create(200), tex, m_tileSize);
             break;
         case TileBufferKind::Large:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferLarge::create(100), m_tileSize);
+            m_tileBatches.at(i) = TileBatch::create(TileBufferLarge::create(100), tex, m_tileSize);
             break;
         case TileBufferKind::UltraLarge:
-            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(100), m_tileSize);
+            m_tileBatches.at(i) = TileBatch::create(TileBufferUltraLarge::create(100), tex, m_tileSize);
             break;
         }
     }

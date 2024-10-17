@@ -14,6 +14,7 @@ namespace Lib::Graphics {
 class Shader;
 class Buffer;
 class Constant;
+class Texture;
 class TileBatch {
 public:
     enum class Style {
@@ -23,7 +24,11 @@ public:
     };
 
     static std::shared_ptr<TileBatch>
-    create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize = 1.0f, Style style = Style::Solid);
+    create(
+        const std::shared_ptr<ITileBuffer>& tileBuffer,
+        const std::shared_ptr<Texture>& normalTexture,
+        float tileSize = 1.0f,
+        Style style = Style::Solid);
     ~TileBatch();
 
     int32_t rent();

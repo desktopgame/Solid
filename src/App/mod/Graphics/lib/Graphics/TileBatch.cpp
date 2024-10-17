@@ -4,6 +4,7 @@
 #include <Graphics/Engine.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
+#include <Graphics/Texture.hpp>
 #include <Graphics/TileBatch.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
@@ -13,7 +14,11 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> tileBuffer, float tileSize, Style style)
+std::shared_ptr<TileBatch> TileBatch::create(
+    const std::shared_ptr<ITileBuffer>& tileBuffer,
+    const std::shared_ptr<Texture>& normalTexture,
+    float tileSize,
+    Style style)
 {
     auto tileBatch = std::shared_ptr<TileBatch>(new TileBatch());
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();

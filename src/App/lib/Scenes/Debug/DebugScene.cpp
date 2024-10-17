@@ -41,7 +41,8 @@ void DebugScene::onEnter()
         m_tileRenderer = std::make_shared<TileRenderer>(Common::Constants::k_tileSize);
     }
     if (!m_hintTileBatch) {
-        m_hintTileBatch = TileBatch::create(TileBufferUltraSmall::create(1), Common::Constants::k_tileSize, TileBatch::Style::WireframeWithCross);
+        auto tex = Texture::create("./assets/ghicon.png");
+        m_hintTileBatch = TileBatch::create(TileBufferUltraSmall::create(1), tex, Common::Constants::k_tileSize, TileBatch::Style::WireframeWithCross);
     }
     m_tileID = m_tileRenderer->rentTile(TileBufferKind::UltraLarge);
     m_hintTileID = m_hintTileBatch->rent();
