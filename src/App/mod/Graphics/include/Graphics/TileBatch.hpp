@@ -202,6 +202,7 @@ private:
     std::shared_ptr<Buffer> m_transformBuffer;
     ColorData m_colorData;
     std::shared_ptr<Buffer> m_colorBuffer;
+    std::shared_ptr<Texture> m_normalTexture;
     int32_t m_indexLength;
     bool m_shouldCompact;
     bool m_shouldCommandCopy;

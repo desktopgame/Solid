@@ -372,6 +372,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
     auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(normalTexture->getID3D12Resource());
     device->CreateShaderResourceView(texBuff.Get(), &srvDesc, heapHandle);
+    tileBatch->m_normalTexture = normalTexture;
     return tileBatch;
 }
 
@@ -594,6 +595,7 @@ TileBatch::TileBatch()
     , m_transformBuffer()
     , m_colorData()
     , m_colorBuffer()
+    , m_normalTexture()
     , m_indexLength()
     , m_shouldCompact()
     , m_shouldCommandCopy()
