@@ -5,6 +5,7 @@
 #include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/TileBatch.hpp>
+#include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
 #include <Utils/String.hpp>
 #include <vector>
@@ -50,7 +51,7 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             float4 colorTable[64];
         };
 
-        Output vsMain(float3 pos : POSITION, uint instanceID : SV_InstanceID) {
+        Output vsMain(float3 pos : POSITION, float2 uv : TEXCOORD, uint instanceID : SV_InstanceID) {
             Output output;
             int tileInfo = int(tileData[instanceID].w);
             int tileRotationID = tileInfo % 10;
@@ -88,19 +89,19 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
         })",
         "psMain");
     // vertex buffer and index buffer
-    std::vector<Math::Vector3> vertices;
+    std::vector<VertexTexCoord3D> vertices;
     std::vector<uint32_t> indices;
     const float half = tileSize / 2.0f;
     const float left = -half;
     const float right = half;
     const float top = half;
     const float bottom = -half;
-    vertices.emplace_back(Math::Vector3({ left, bottom, 0 }));
-    vertices.emplace_back(Math::Vector3({ left, top, 0 }));
-    vertices.emplace_back(Math::Vector3({ right, bottom, 0 }));
-    vertices.emplace_back(Math::Vector3({ right, top, 0 }));
+    vertices.push_back(VertexTexCoord3D(Math::Vector3({ left, bottom, 0 }), Math::Vector2({ 0.0f, 1.0f })));
+    vertices.push_back(VertexTexCoord3D(Math::Vector3({ left, top, 0 }), Math::Vector2({ 0.0f, 0.0f })));
+    vertices.push_back(VertexTexCoord3D(Math::Vector3({ right, bottom, 0 }), Math::Vector2({ 1.0f, 1.0f })));
+    vertices.push_back(VertexTexCoord3D(Math::Vector3({ right, top, 0 }), Math::Vector2({ 1.0f, 0.0f })));
     tileBatch->m_vertexBuffer = Buffer::create();
-    tileBatch->m_vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+    tileBatch->m_vertexBuffer->allocate(sizeof(VertexTexCoord3D) * vertices.size());
     tileBatch->m_vertexBuffer->update(vertices.data());
     if (style == Style::Solid) {
         indices.emplace_back(0);
@@ -136,6 +137,10 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
     inputLayout.push_back(
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+            D3D12_APPEND_ALIGNED_ELEMENT,
+            D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+    inputLayout.push_back(
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
             D3D12_APPEND_ALIGNED_ELEMENT,
             D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
@@ -488,7 +493,7 @@ void TileBatch::render(
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
     vbView.BufferLocation = m_vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
     vbView.SizeInBytes = m_vertexBuffer->getSize();
-    vbView.StrideInBytes = static_cast<UINT>(sizeof(Math::Vector3));
+    vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord3D));
     cmdList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
