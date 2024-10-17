@@ -84,6 +84,9 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
             float4 color : COLOR;
         };
 
+        Texture2D<float4> tex : register(t0);
+        SamplerState smp : register(s0);
+
         float4 psMain(Output input) : SV_TARGET {
             return input.color;
         })",
@@ -181,6 +184,33 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
+    std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
+    descTableRange.push_back({});
+    descTableRange.at(0).NumDescriptors = 1;
+    descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(0).BaseShaderRegister = 0;
+    descTableRange.at(0).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(1).NumDescriptors = 1;
+    descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(1).BaseShaderRegister = 1;
+    descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(2).NumDescriptors = 1;
+    descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(2).BaseShaderRegister = 2;
+    descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(3).NumDescriptors = 1;
+    descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(3).BaseShaderRegister = 3;
+    descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(4).NumDescriptors = 1;
+    descTableRange.at(4).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    descTableRange.at(4).BaseShaderRegister = 0;
+    descTableRange.at(4).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
     // root signature
     std::vector<D3D12_ROOT_PARAMETER> rootParam;
     rootParam.push_back({});
@@ -203,6 +233,11 @@ std::shared_ptr<TileBatch> TileBatch::create(const std::shared_ptr<ITileBuffer> 
     rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
     rootParam.at(3).Constants.RegisterSpace = 0;
     rootParam.at(3).Constants.ShaderRegister = 3;
+    rootParam.push_back({});
+    rootParam.at(4).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    rootParam.at(4).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    rootParam.at(4).DescriptorTable.pDescriptorRanges = &descTableRange.at(4);
+    rootParam.at(4).DescriptorTable.NumDescriptorRanges = 1;
 
     D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
     samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
