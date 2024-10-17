@@ -33,6 +33,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 svpos : SV_POSITION;
             float2 uv : TEXCOORD;
             float4 color : COLOR;
+        	float3 lightTangentDirect : TEXCOORD3;
         };
         cbuffer cbuff0 : register(b0)
         {
@@ -59,6 +60,15 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 colorTable[64];
         };
 
+        matrix InvTangentMatrix(
+        	float3 tangent,
+        	float3 binormal,
+        	float3 normal )
+        {
+        	matrix mat = matrix(float4(tangent, 0.0f ), float4(binormal, 0.0f), float4(normal, 0.0f), float4(0.0f, 0.0f, 0.0f, 1.0f));
+            return transpose(mat);
+        }
+
         Output vsMain(float3 pos : POSITION, float2 uv : TEXCOORD, uint instanceID : SV_InstanceID) {
             Output output;
             int tileInfo = int(tileData[instanceID].w);
@@ -84,6 +94,13 @@ std::shared_ptr<TileBatch> TileBatch::create(
             output.svpos = tmp;
             output.color = colorTable[tileColorID];
             output.uv = uv;
+
+            float3 normal = normalVectorTable[tileRotationID];
+            float3 tangent = tangentVectorTable[tileRotationID];
+            float3 binormal = binormalVectorTable[tileRotationID];
+            matrix invTangentMat = InvTangentMatrix(normalize(tangent), normalize(binormal), normalize(normal));
+            output.lightTangentDirect = mul(invTangentMat, float4(-normalize(float3(0.0f, 1.0f, 1.0f)), 1.0f));
+
             return output;
         })"),
                                               shaderKeywords),
@@ -92,13 +109,22 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 svpos : SV_POSITION;
             float2 uv : TEXCOORD;
             float4 color : COLOR;
+        	float3 lightTangentDirect : TEXCOORD3;
         };
 
         Texture2D<float4> tex : register(t0);
         SamplerState smp : register(s0);
 
         float4 psMain(Output input) : SV_TARGET {
-            return float4(tex.Sample(smp, input.uv));
+            float3 normalColor = tex.Sample(smp, input.uv).xyz;
+            float3 normalVec   = 2.0f * normalColor - 1.0f;
+            normalVec = normalize(normalVec);
+
+            float3 bright = dot(normalize(input.lightTangentDirect), normalVec);
+            bright = max(0.0f, bright);
+            bright = ((bright * 0.1f) + 0.9f);
+
+            return float4(bright * input.color.xyz, input.color.w);
         })",
         "psMain");
     // vertex buffer and index buffer
