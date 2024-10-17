@@ -31,6 +31,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
     tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
+            float2 uv : TEXCOORD;
             float4 color : COLOR;
         };
         cbuffer cbuff0 : register(b0)
@@ -80,12 +81,14 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
             output.svpos = tmp;
             output.color = colorTable[tileColorID];
+            output.uv = uv;
             return output;
         })"),
                                               shaderKeywords),
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
+            float2 uv : TEXCOORD;
             float4 color : COLOR;
         };
 
@@ -93,7 +96,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         SamplerState smp : register(s0);
 
         float4 psMain(Output input) : SV_TARGET {
-            return input.color;
+            return float4(tex.Sample(smp, input.uv));
         })",
         "psMain");
     // vertex buffer and index buffer
