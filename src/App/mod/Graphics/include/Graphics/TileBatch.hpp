@@ -75,32 +75,32 @@ public:
 
     inline static const std::array<Math::Vector3, 6> k_tangentVectorTable = {
         // posY
-        Math::Vector3({ 1, 0, 0 }),
+        Math::Vector3({ 0, 0, 1 }),
         // negY
-        Math::Vector3({ -1, 0, 0 }),
+        Math::Vector3({ 0, 0, 1 }),
         // posX
-        Math::Vector3({ 0, 0, -1 }),
+        Math::Vector3({ 0, 0, 1 }),
         // negX
         Math::Vector3({ 0, 0, 1 }),
         // posZ
-        Math::Vector3({ 1, 0, 0 }),
+        Math::Vector3({ -1, 0, 0 }),
         // negZ
         Math::Vector3({ -1, 0, 0 }),
     };
 
     inline static const std::array<Math::Vector3, 6> k_binormalVectorTable = {
         // posY
-        Math::Vector3({ 0, 0, 1 }),
+        Math::Vector3({ -1, 0, 0 }),
         // negY
-        Math::Vector3({ 0, 0, -1 }),
+        Math::Vector3({ -1, 0, 0 }),
         // posX
-        Math::Vector3({ 0, -1, 0 }),
+        Math::Vector3({ 0, 1, 0 }),
         // negX
         Math::Vector3({ 0, 1, 0 }),
         // posZ
-        Math::Vector3({ 1, 0, 0 }),
+        Math::Vector3({ 0, -1, 0 }),
         // negZ
-        Math::Vector3({ -1, 0, 0 }),
+        Math::Vector3({ 0, -1, 0 }),
     };
 
     inline static const std::array<int32_t, 6> k_tileReverseTable = {

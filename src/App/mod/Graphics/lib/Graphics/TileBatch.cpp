@@ -99,7 +99,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float3 tangent = tangentVectorTable[tileRotationID];
             float3 binormal = binormalVectorTable[tileRotationID];
             matrix invTangentMat = InvTangentMatrix(normalize(tangent), normalize(binormal), normalize(normal));
-            output.lightTangentDirect = mul(invTangentMat, float4(-normalize(float3(0.0f, 1.0f, 1.0f)), 1.0f));
+            output.lightTangentDirect = mul(invTangentMat, float4(-normalize(float3(1.0f, 0.0f, 0.0f)), 1.0f));
 
             return output;
         })"),
@@ -120,9 +120,9 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float3 normalVec   = 2.0f * normalColor - 1.0f;
             normalVec = normalize(normalVec);
 
-            float3 bright = dot(normalize(input.lightTangentDirect), normalVec);
+            float bright = dot(normalize(input.lightTangentDirect), normalVec);
             bright = max(0.0f, bright);
-            bright = ((bright * 0.1f) + 0.9f);
+            bright = ((bright * 0.5f) + 0.5f);
 
             return float4(bright * input.color.xyz, input.color.w);
         })",
