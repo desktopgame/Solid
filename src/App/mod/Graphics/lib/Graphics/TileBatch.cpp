@@ -32,6 +32,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 uv : TEXCOORD;
+            float3 normal : NORMAL;
             float4 color : COLOR;
         	float3 lightTangentDirect : TEXCOORD3;
         };
@@ -58,6 +59,21 @@ std::shared_ptr<TileBatch> TileBatch::create(
         cbuffer cbuff3 : register(b3)
         {
             float4 colorTable[64];
+        };
+
+        static const float3 quatTable[6] = {
+            // posY ok
+            float3(0, -1, 0),
+            // negY
+            float3(0, 1, 0),
+            // posX ok
+            float3(1, 0, 0),
+            // negX
+            float3(-1, 0, 0),
+            // posZ ok
+            float3(0, 0, 1),
+            // negZ
+            float3(0, 0, -1)
         };
 
         matrix InvTangentMatrix(
@@ -96,6 +112,8 @@ std::shared_ptr<TileBatch> TileBatch::create(
             output.uv = uv;
 
             float3 normal = normalVectorTable[tileRotationID];
+            output.normal = quatTable[tileRotationID];
+
             float3 tangent = tangentVectorTable[tileRotationID];
             float3 binormal = binormalVectorTable[tileRotationID];
             matrix invTangentMat = InvTangentMatrix(normalize(tangent), normalize(binormal), normalize(normal));
@@ -108,6 +126,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 uv : TEXCOORD;
+            float3 normal : NORMAL;
             float4 color : COLOR;
         	float3 lightTangentDirect : TEXCOORD3;
         };
@@ -115,15 +134,62 @@ std::shared_ptr<TileBatch> TileBatch::create(
         Texture2D<float4> tex : register(t0);
         SamplerState smp : register(s0);
 
+        float4 quatConj(float4 quat)
+        {
+            return float4(quat.xyz * -1, quat.w);
+        }
+
+        float4 quatMult(float4 quat1, float4 quat2)
+        {
+            float3 vec1 = quat1.xyz;
+            float3 vec2 = quat2.xyz;
+            float3 qvec = (vec2 * quat1.w) + (vec1 * quat2.w) + cross(vec1, vec2);
+            float4 qret = float4(0, 0, 0, 0);
+            qret.x = qvec.x;
+            qret.y = qvec.y;
+            qret.z = qvec.z;
+            qret.w = (quat1.w * quat2.w) - dot(vec1, vec2);
+            return qret;
+        }
+
+        float3 quatTransform(float4 quat, float3 vec)
+        {
+            float4 vq = float4(vec, 0);
+            float4 q2 = quatConj(quat);
+            float4 qr = quatMult(quatMult(quat, vq), q2);
+            return qr.xyz;
+        }
+
+        float4 quatNew(float3 axis, float degree)
+        {
+            float sinv = sin(radians(degree / 2.0f));
+            float cosv = cos(radians(degree / 2.0f));
+
+            float4 q = float4(0, 0, 0, 0);
+            q.x = axis.x * sinv;
+            q.y = axis.y * sinv;
+            q.z = axis.z * sinv;
+            q.w = cosv;
+            return q;
+        }
+
         float4 psMain(Output input) : SV_TARGET {
             float3 normalColor = tex.Sample(smp, input.uv).xyz;
             float3 normalVec   = 2.0f * normalColor - 1.0f;
             normalVec = normalize(normalVec);
 
-            float bright = dot(normalize(input.lightTangentDirect), normalVec);
-            bright = max(0.0f, bright);
-            bright = ((bright * 0.5f) + 0.5f);
+            float4 quat = quatNew(input.normal, 90.0f);
+            normalVec = quatTransform(quat, normalVec);
+            normalVec = normalize(normalVec);
 
+            float bright = dot(normalize(float3(1, 1, 0)), normalVec);
+            bright = max(0.0f, bright);
+            bright = ((bright * 0.3f) + 0.7f);
+
+            float3 vecColor = normalVec.xyz + float3(1, 1, 1);
+            vecColor *= 0.5;
+
+            // return float4(vecColor, input.color.w);
             return float4(bright * input.color.xyz, input.color.w);
         })",
         "psMain");
