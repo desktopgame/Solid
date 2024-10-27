@@ -34,7 +34,6 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float2 texCoord : TEXCOORD;
             float3 axis : NORMAL;
             float4 color : COLOR;
-        	float3 lightTangentDirect : TEXCOORD3;
         };
         cbuffer cbuff0 : register(b0)
         {
@@ -52,9 +51,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             matrix translateMatrixTable[6];
             matrix rotationMatrixTable[6];
             float3 normalVectorTable[6];
-            float3 tangentVectorTable[6];
-            float3 binormalVectorTable[6];
-            float padding2[10];
+            float padding2[46];
         };
         cbuffer cbuff3 : register(b3)
         {
@@ -113,12 +110,6 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
             float3 normal = normalVectorTable[tileRotationID];
             output.axis = axisTable[tileRotationID];
-
-            float3 tangent = tangentVectorTable[tileRotationID];
-            float3 binormal = binormalVectorTable[tileRotationID];
-            matrix invTangentMat = InvTangentMatrix(normalize(tangent), normalize(binormal), normalize(normal));
-            output.lightTangentDirect = mul(invTangentMat, float4(-normalize(float3(1.0f, 0.0f, 0.0f)), 1.0f));
-
             return output;
         })"),
                                               shaderKeywords),
@@ -128,7 +119,6 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float2 texCoord : TEXCOORD;
             float3 axis : NORMAL;
             float4 color : COLOR;
-        	float3 lightTangentDirect : TEXCOORD3;
         };
 
         Texture2D<float4> tex : register(t0);
@@ -408,8 +398,6 @@ std::shared_ptr<TileBatch> TileBatch::create(
     tileBatch->m_transformData.translateMatrixTable = getGlobalTranslateMatrixTable(tileSize);
     tileBatch->m_transformData.rotationMatrixTable = getGlobalRotationMatrixTable();
     tileBatch->m_transformData.normalVectorTable = k_normalVectorTable;
-    tileBatch->m_transformData.tangentVectorTable = k_tangentVectorTable;
-    tileBatch->m_transformData.binormalVectorTable = k_binormalVectorTable;
     tileBatch->m_transformBuffer = Buffer::create();
     tileBatch->m_transformBuffer->allocate(sizeof(TransformData));
     tileBatch->m_transformBuffer->update(&tileBatch->m_transformData);
