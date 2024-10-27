@@ -141,7 +141,7 @@ void Swapchain::guiRender()
 void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     uint32_t backBufferIndex = m_swapchain->GetCurrentBackBufferIndex();
-    auto nativeDevice = Engine::getInstance()->getDevice()->getID3D12Device();
+    auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
     // Barrier
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -153,7 +153,7 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     commandList->ResourceBarrier(1, &barrier);
 
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_rtvHeaps->GetCPUDescriptorHandleForHeapStart();
-    rtvHandle.ptr += backBufferIndex * nativeDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    rtvHandle.ptr += backBufferIndex * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
     commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
