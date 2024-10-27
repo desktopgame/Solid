@@ -63,8 +63,9 @@ void TileTicket::batchTileMatrix(const Math::Matrix& matrix)
     }
 }
 // public
-TileRenderer::TileRenderer(float tileSize)
-    : m_tileSize(tileSize)
+TileRenderer::TileRenderer(const std::shared_ptr<Texture>& normalTexture, float tileSize)
+    : m_normalTexture(normalTexture)
+    , m_tileSize(tileSize)
     , m_tileBatches()
 {
 }
@@ -210,7 +211,7 @@ std::shared_ptr<TileBatch> TileRenderer::getTileBatch(TileBufferKind kind)
 {
     int32_t i = static_cast<int32_t>(kind);
     if (!m_tileBatches.at(i)) {
-        auto tex = Texture::create("./assets/tileNormal2.png");
+        auto tex = m_normalTexture;
         switch (kind) {
         case TileBufferKind::UltraSmall:
             m_tileBatches.at(i) = TileBatch::create(TileBufferUltraSmall::create(100), tex, m_tileSize);

@@ -9,6 +9,7 @@
 
 namespace Lib::Graphics {
 class TileRenderer;
+class Texture;
 class TileTicket {
 public:
     explicit TileTicket(
@@ -26,7 +27,7 @@ public:
 
 class TileRenderer {
 public:
-    explicit TileRenderer(float tileSize);
+    explicit TileRenderer(const std::shared_ptr<Texture>& normalTexture, float tileSize);
 
     int32_t rentTile(TileBufferKind kind);
     void releaseTile(TileBufferKind kind, int32_t index);
@@ -42,6 +43,7 @@ public:
 private:
     std::shared_ptr<TileBatch> getTileBatch(TileBufferKind kind);
 
+    std::shared_ptr<Texture> m_normalTexture;
     float m_tileSize;
     std::array<std::shared_ptr<TileBatch>, 5> m_tileBatches;
 };

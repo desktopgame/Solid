@@ -37,11 +37,11 @@ void DebugScene::onEnter()
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
+    auto tex = Texture::create("./assets/tileNormal2.png");
     if (!m_tileRenderer) {
-        m_tileRenderer = std::make_shared<TileRenderer>(Common::Constants::k_tileSize);
+        m_tileRenderer = std::make_shared<TileRenderer>(tex, Common::Constants::k_tileSize);
     }
     if (!m_hintTileBatch) {
-        auto tex = Texture::create("./assets/tileNormal2.png");
         m_hintTileBatch = TileBatch::create(TileBufferUltraSmall::create(1), tex, Common::Constants::k_tileSize, TileBatch::Style::WireframeWithCross);
     }
     m_tileID = m_tileRenderer->rentTile(TileBufferKind::UltraLarge);

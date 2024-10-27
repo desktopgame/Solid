@@ -26,7 +26,8 @@ void GameScene::onEnter()
         m_renderer = std::make_shared<Renderer>();
     }
     if (!m_tileRenderer) {
-        m_tileRenderer = std::make_shared<TileRenderer>(k_tileSize);
+        auto tex = Texture::create("./assets/tileNormal2.png");
+        m_tileRenderer = std::make_shared<TileRenderer>(tex, k_tileSize);
     }
 
     IO::deserializeTile("assets\\Stages\\stage_base.csv", m_tiles, k_tileSize);
