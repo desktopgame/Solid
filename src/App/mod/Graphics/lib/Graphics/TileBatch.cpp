@@ -31,7 +31,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
     tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
-            float2 uv : TEXCOORD;
+            float2 texCoord : TEXCOORD;
             float3 normal : NORMAL;
             float4 color : COLOR;
         	float3 lightTangentDirect : TEXCOORD3;
@@ -85,7 +85,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             return transpose(mat);
         }
 
-        Output vsMain(float3 pos : POSITION, float2 uv : TEXCOORD, uint instanceID : SV_InstanceID) {
+        Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, uint instanceID : SV_InstanceID) {
             Output output;
             int tileInfo = int(tileData[instanceID].w);
             int tileRotationID = tileInfo % 10;
@@ -109,7 +109,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
             output.svpos = tmp;
             output.color = colorTable[tileColorID];
-            output.uv = uv;
+            output.texCoord = texCoord;
 
             float3 normal = normalVectorTable[tileRotationID];
             output.normal = quatTable[tileRotationID];
@@ -125,7 +125,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
-            float2 uv : TEXCOORD;
+            float2 texCoord : TEXCOORD;
             float3 normal : NORMAL;
             float4 color : COLOR;
         	float3 lightTangentDirect : TEXCOORD3;
@@ -174,7 +174,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         }
 
         float4 psMain(Output input) : SV_TARGET {
-            float3 normalColor = tex.Sample(smp, input.uv).xyz;
+            float3 normalColor = tex.Sample(smp, input.texCoord).xyz;
             float3 normalVec   = 2.0f * normalColor - 1.0f;
             normalVec = normalize(normalVec);
 
