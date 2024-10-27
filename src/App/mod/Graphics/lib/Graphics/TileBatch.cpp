@@ -73,15 +73,6 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float3(0, 0, -1)
         };
 
-        matrix InvTangentMatrix(
-        	float3 tangent,
-        	float3 binormal,
-        	float3 normal )
-        {
-        	matrix mat = matrix(float4(tangent, 0.0f ), float4(binormal, 0.0f), float4(normal, 0.0f), float4(0.0f, 0.0f, 0.0f, 1.0f));
-            return transpose(mat);
-        }
-
         Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, uint instanceID : SV_InstanceID) {
             Output output;
             int tileInfo = int(tileData[instanceID].w);
