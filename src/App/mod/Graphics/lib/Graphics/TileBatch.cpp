@@ -32,7 +32,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
-            float3 normal : NORMAL;
+            float3 axis : NORMAL;
             float4 color : COLOR;
         	float3 lightTangentDirect : TEXCOORD3;
         };
@@ -112,7 +112,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             output.texCoord = texCoord;
 
             float3 normal = normalVectorTable[tileRotationID];
-            output.normal = quatTable[tileRotationID];
+            output.axis = quatTable[tileRotationID];
 
             float3 tangent = tangentVectorTable[tileRotationID];
             float3 binormal = binormalVectorTable[tileRotationID];
@@ -126,7 +126,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
-            float3 normal : NORMAL;
+            float3 axis : NORMAL;
             float4 color : COLOR;
         	float3 lightTangentDirect : TEXCOORD3;
         };
@@ -178,7 +178,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float3 normalVec   = 2.0f * normalColor - 1.0f;
             normalVec = normalize(normalVec);
 
-            float4 quat = quatNew(input.normal, 90.0f);
+            float4 quat = quatNew(input.axis, 90.0f);
             normalVec = quatTransform(quat, normalVec);
             normalVec = normalize(normalVec);
 
