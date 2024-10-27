@@ -61,16 +61,16 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 colorTable[64];
         };
 
-        static const float3 quatTable[6] = {
-            // posY ok
+        static const float3 axisTable[6] = {
+            // posY
             float3(0, -1, 0),
             // negY
             float3(0, 1, 0),
-            // posX ok
+            // posX
             float3(1, 0, 0),
             // negX
             float3(-1, 0, 0),
-            // posZ ok
+            // posZ
             float3(0, 0, 1),
             // negZ
             float3(0, 0, -1)
@@ -112,7 +112,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             output.texCoord = texCoord;
 
             float3 normal = normalVectorTable[tileRotationID];
-            output.axis = quatTable[tileRotationID];
+            output.axis = axisTable[tileRotationID];
 
             float3 tangent = tangentVectorTable[tileRotationID];
             float3 binormal = binormalVectorTable[tileRotationID];
