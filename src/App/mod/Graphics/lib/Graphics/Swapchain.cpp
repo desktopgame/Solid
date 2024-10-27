@@ -56,14 +56,12 @@ std::shared_ptr<Swapchain> Swapchain::create(
     heapDesc.NodeMask = 0;
     heapDesc.NumDescriptors = 2;
     heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    ComPtr<ID3D12DescriptorHeap> rtvHeaps = nullptr;
-    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps)))) {
+    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&swapchain->m_rtvHeaps)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
-    swapchain->m_rtvHeaps = rtvHeaps;
     // RenderTargetView
     std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
-    D3D12_CPU_DESCRIPTOR_HANDLE handle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = swapchain->m_rtvHeaps->GetCPUDescriptorHandleForHeapStart();
     for (uint32_t i = 0; i < swapchainDesc.BufferCount; i++) {
         if (FAILED(swapchain->m_swapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
             throw std::runtime_error("failed GetBuffer()");
