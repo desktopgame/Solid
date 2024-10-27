@@ -184,7 +184,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
             float bright = dot(normalize(float3(1, 1, 0)), normalVec);
             bright = max(0.0f, bright);
-            bright = ((bright * 0.3f) + 0.7f);
+            bright = ((bright * 0.5f) + 0.5f);
 
             float3 vecColor = normalVec.xyz + float3(1, 1, 1);
             vecColor *= 0.5;
