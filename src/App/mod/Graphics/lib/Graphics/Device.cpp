@@ -54,16 +54,14 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<OS::Window>& window
     }
 #endif
     // Factory
-    ComPtr<IDXGIFactory6> dxgiFactory = nullptr;
     UINT flags = DXGI_CREATE_FACTORY_DEBUG;
-    if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&dxgiFactory)))) {
+    if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&device->m_dxgiFactory)))) {
         throw std::runtime_error("failed CreateDXGIFactory2()");
     }
-    device->m_dxgiFactory = dxgiFactory;
     // Adapter
     std::vector<ComPtr<IDXGIAdapter>> adapters;
     ComPtr<IDXGIAdapter> mainAdapter = nullptr;
-    for (uint32_t i = 0; dxgiFactory->EnumAdapters(i, &mainAdapter) != DXGI_ERROR_NOT_FOUND; i++) {
+    for (uint32_t i = 0; device->m_dxgiFactory->EnumAdapters(i, &mainAdapter) != DXGI_ERROR_NOT_FOUND; i++) {
         adapters.emplace_back(mainAdapter);
     }
     if (adapters.empty()) {
@@ -79,9 +77,8 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<OS::Window>& window
         D3D_FEATURE_LEVEL_12_1,
         D3D_FEATURE_LEVEL_12_0,
     };
-    ComPtr<ID3D12Device> nativeDevice = nullptr;
     for (D3D_FEATURE_LEVEL level : levels) {
-        HRESULT deviceStatus = D3D12CreateDevice(mainAdapter.Get(), level, IID_PPV_ARGS(&nativeDevice));
+        HRESULT deviceStatus = D3D12CreateDevice(mainAdapter.Get(), level, IID_PPV_ARGS(&device->m_device));
         if (SUCCEEDED(deviceStatus)) {
             useLevel = level;
             break;
@@ -90,17 +87,14 @@ std::shared_ptr<Device> Device::create(const std::shared_ptr<OS::Window>& window
     if (!useLevel) {
         throw std::runtime_error("failed D3D12CreateDevice()");
     }
-    device->m_device = nativeDevice;
     // InfoQueue
 #if _DEBUG
-    ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
-    if (FAILED(nativeDevice->QueryInterface(__uuidof(ID3D12InfoQueue), &infoQueue))) {
+    if (FAILED(device->m_device->QueryInterface(__uuidof(ID3D12InfoQueue), &device->m_infoQueue))) {
         throw std::runtime_error("failed ID3D12InfoQueue()");
     }
-    device->m_infoQueue = infoQueue;
 #endif
     // Swapchain
-    device->m_swapchain = Swapchain::create(window, device->m_dxgiFactory, nativeDevice);
+    device->m_swapchain = Swapchain::create(window, device->m_dxgiFactory, device->m_device);
     // Surface
     device->m_surface = Surface::create(device, device->m_swapchain);
     return device;

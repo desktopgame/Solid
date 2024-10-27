@@ -23,21 +23,17 @@ std::shared_ptr<Swapchain> Swapchain::create(
     const Microsoft::WRL::ComPtr<ID3D12Device>& device)
 {
     HWND hwnd = window->getHWND();
-    auto nativeDevice = device;
     auto swapchain = std::shared_ptr<Swapchain>(new Swapchain());
     // CommandQueue
-    ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
     D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
     commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     commandQueueDesc.NodeMask = 0;
     commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
     commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    if (FAILED(nativeDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue)))) {
+    if (FAILED(device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&swapchain->m_commandQueue)))) {
         throw std::runtime_error("failed CreateCommandQueue()");
     }
-    swapchain->m_commandQueue = commandQueue;
     // Swapchain
-    ComPtr<IDXGISwapChain4> nativeSwapchain = nullptr;
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
     swapchainDesc.Width = Screen::getWidth();
     swapchainDesc.Height = Screen::getHeight();
@@ -51,10 +47,9 @@ std::shared_ptr<Swapchain> Swapchain::create(
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
     swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)nativeSwapchain.ReleaseAndGetAddressOf()))) {
+    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(swapchain->m_commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)swapchain->m_swapchain.ReleaseAndGetAddressOf()))) {
         throw std::runtime_error("failed CreateSwapChainForHwnd()");
     }
-    swapchain->m_swapchain = nativeSwapchain;
     // DescriptorHeap
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
     heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -62,7 +57,7 @@ std::shared_ptr<Swapchain> Swapchain::create(
     heapDesc.NumDescriptors = 2;
     heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     ComPtr<ID3D12DescriptorHeap> rtvHeaps = nullptr;
-    if (FAILED(nativeDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps)))) {
+    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
     swapchain->m_rtvHeaps = rtvHeaps;
@@ -70,11 +65,11 @@ std::shared_ptr<Swapchain> Swapchain::create(
     std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
     D3D12_CPU_DESCRIPTOR_HANDLE handle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
     for (uint32_t i = 0; i < swapchainDesc.BufferCount; i++) {
-        if (FAILED(nativeSwapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
+        if (FAILED(swapchain->m_swapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
             throw std::runtime_error("failed GetBuffer()");
         }
-        nativeDevice->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
-        handle.ptr += nativeDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        device->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
+        handle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
     swapchain->m_renderTargetViews = renderTargetViews;
     // DepthBuffer
@@ -93,48 +88,40 @@ std::shared_ptr<Swapchain> Swapchain::create(
     D3D12_CLEAR_VALUE depthClearValue = {};
     depthClearValue.DepthStencil.Depth = 1.0f;
     depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;
-    ComPtr<ID3D12Resource> depthBuffer = nullptr;
-    if (FAILED(nativeDevice->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&depthBuffer)))) {
+    if (FAILED(device->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&swapchain->m_depthBuffer)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
-    depthBuffer->SetName(L"DepthBuffer");
-    swapchain->m_depthBuffer = depthBuffer;
+    swapchain->m_depthBuffer->SetName(L"DepthBuffer");
     // DepthStencilViewHeap
     D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
     dsvHeapDesc.NumDescriptors = 1;
     dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-    ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
-    if (FAILED(nativeDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&swapchain->m_depthStencilViewHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
-    swapchain->m_depthStencilViewHeap = dsvHeap;
     // DepthBufferView
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
     dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-    device->CreateDepthStencilView(depthBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
+    device->CreateDepthStencilView(swapchain->m_depthBuffer.Get(), &dsvDesc, swapchain->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
     // Fence
-    ComPtr<ID3D12Fence> fence = nullptr;
-    if (FAILED(nativeDevice->CreateFence(swapchain->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)))) {
+    if (FAILED(device->CreateFence(swapchain->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&swapchain->m_fence)))) {
         throw std::runtime_error("failed CreateFence()");
     }
-    swapchain->m_fence = fence;
     // ImGui
-    ComPtr<ID3D12DescriptorHeap> imguiDescriptorHeap;
     D3D12_DESCRIPTOR_HEAP_DESC imguiDescriptorHeapDesc = {};
     imguiDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     imguiDescriptorHeapDesc.NumDescriptors = 1;
     imguiDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    if (FAILED(nativeDevice->CreateDescriptorHeap(&imguiDescriptorHeapDesc, IID_PPV_ARGS(&imguiDescriptorHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&imguiDescriptorHeapDesc, IID_PPV_ARGS(&swapchain->m_imguiDescriptorHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
-    swapchain->m_imguiDescriptorHeap = imguiDescriptorHeap;
     ImGui_ImplWin32_Init(hwnd);
-    ImGui_ImplDX12_Init(nativeDevice.Get(), 3,
-        DXGI_FORMAT_R8G8B8A8_UNORM, imguiDescriptorHeap.Get(),
-        imguiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-        imguiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+    ImGui_ImplDX12_Init(device.Get(), 3,
+        DXGI_FORMAT_R8G8B8A8_UNORM, swapchain->m_imguiDescriptorHeap.Get(),
+        swapchain->m_imguiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+        swapchain->m_imguiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
     return swapchain;
 }
 

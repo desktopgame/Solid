@@ -67,20 +67,16 @@ std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
     const std::shared_ptr<Swapchain>& swapchain)
 {
-    auto nativeDevice = device->getID3D12Device();
+    auto d3d12Device = device->getID3D12Device();
     auto surface = std::shared_ptr<Surface>(new Surface());
     // CommandAllocator
-    ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
-    if (FAILED(nativeDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator)))) {
+    if (FAILED(d3d12Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&surface->m_commandAllocator)))) {
         throw std::runtime_error("failed CreateCommandAllocator()");
     }
-    surface->m_commandAllocator = commandAllocator;
     // CommandList
-    ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
-    if (FAILED(nativeDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)))) {
+    if (FAILED(d3d12Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, surface->m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&surface->m_commandList)))) {
         throw std::runtime_error("failed CreateCommandList()");
     }
-    surface->m_commandList = commandList;
     surface->m_swapchain = swapchain;
     return surface;
 }
