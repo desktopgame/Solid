@@ -29,8 +29,6 @@ public:
     void guiRender();
 
     void clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    void writeRT(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    void readRT(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
@@ -50,8 +48,6 @@ private:
     Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapchain;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_renderTargetViewHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_renderTargetViews;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_gHeap;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gTextures;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;

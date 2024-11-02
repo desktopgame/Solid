@@ -58,6 +58,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D12InfoQueue> m_infoQueue;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_gHeap;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gTextures;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
 #endif
 };
