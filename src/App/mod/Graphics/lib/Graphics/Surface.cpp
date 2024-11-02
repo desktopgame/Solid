@@ -31,7 +31,6 @@ void Surface::guiEnd()
 
 void Surface::begin3D()
 {
-    /*
     auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
     // Barrier
     D3D12_RESOURCE_BARRIER barriers[3] = {};
@@ -80,12 +79,10 @@ void Surface::begin3D()
         scissorRect.bottom = scissorRect.top + Screen::getHeight();
     }
     m_commandList->RSSetScissorRects(3, scissorRects);
-    */
 }
 
 void Surface::end3D()
 {
-    /*
     // Barrier
     D3D12_RESOURCE_BARRIER barriers[3] = {};
     for (int32_t i = 0; i < 3; i++) {
@@ -98,7 +95,6 @@ void Surface::end3D()
         barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
     }
     m_commandList->ResourceBarrier(3, barriers);
-    */
 }
 
 void Surface::begin2D()
@@ -197,6 +193,39 @@ std::shared_ptr<Surface> Surface::create(
         d3d12Device->CreateRenderTargetView(gTexture.Get(), &gRtvDesc, gHandle);
         gHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
+    // DepthBuffer
+    D3D12_RESOURCE_DESC depthResDesc = {};
+    depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    depthResDesc.Width = Screen::getWidth();
+    depthResDesc.Height = Screen::getHeight();
+    depthResDesc.DepthOrArraySize = 1;
+    depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthResDesc.SampleDesc.Count = 1;
+    depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+    D3D12_HEAP_PROPERTIES depthHeapProps = {};
+    depthHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+    depthHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    depthHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    D3D12_CLEAR_VALUE depthClearValue = {};
+    depthClearValue.DepthStencil.Depth = 1.0f;
+    depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+    if (FAILED(d3d12Device->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&surface->m_depthBuffer)))) {
+        throw std::runtime_error("failed CreateCommittedResource()");
+    }
+    surface->m_depthBuffer->SetName(L"DepthBuffer");
+    // DepthStencilViewHeap
+    D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+    dsvHeapDesc.NumDescriptors = 1;
+    dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+    if (FAILED(d3d12Device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&surface->m_depthStencilViewHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    // DepthBufferView
+    D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+    dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+    d3d12Device->CreateDepthStencilView(surface->m_depthBuffer.Get(), &dsvDesc, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
     surface->m_swapchain = swapchain;
     return surface;
 }
@@ -215,6 +244,8 @@ Surface::Surface()
     , m_commandList()
     , m_gHeap()
     , m_gTextures(3)
+    , m_depthBuffer()
+    , m_depthStencilViewHeap()
     , m_fence()
 {
 }

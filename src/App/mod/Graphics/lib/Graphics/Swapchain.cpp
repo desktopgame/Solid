@@ -70,39 +70,6 @@ std::shared_ptr<Swapchain> Swapchain::create(
         handle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
     swapchain->m_renderTargetViews = renderTargetViews;
-    // DepthBuffer
-    D3D12_RESOURCE_DESC depthResDesc = {};
-    depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    depthResDesc.Width = Screen::getWidth();
-    depthResDesc.Height = Screen::getHeight();
-    depthResDesc.DepthOrArraySize = 1;
-    depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;
-    depthResDesc.SampleDesc.Count = 1;
-    depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-    D3D12_HEAP_PROPERTIES depthHeapProps = {};
-    depthHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
-    depthHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-    depthHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-    D3D12_CLEAR_VALUE depthClearValue = {};
-    depthClearValue.DepthStencil.Depth = 1.0f;
-    depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;
-    if (FAILED(device->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&swapchain->m_depthBuffer)))) {
-        throw std::runtime_error("failed CreateCommittedResource()");
-    }
-    swapchain->m_depthBuffer->SetName(L"DepthBuffer");
-    // DepthStencilViewHeap
-    D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
-    dsvHeapDesc.NumDescriptors = 1;
-    dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-    if (FAILED(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&swapchain->m_depthStencilViewHeap)))) {
-        throw std::runtime_error("failed CreateDescriptorHeap()");
-    }
-    // DepthBufferView
-    D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
-    dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-    dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-    device->CreateDepthStencilView(swapchain->m_depthBuffer.Get(), &dsvDesc, swapchain->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
     // Fence
     if (FAILED(device->CreateFence(swapchain->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&swapchain->m_fence)))) {
         throw std::runtime_error("failed CreateFence()");
@@ -152,12 +119,10 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
 
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
     rtvHandle.ptr += backBufferIndex * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
-    commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+    commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
 
     float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
     commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-    commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
     // viewport
     D3D12_VIEWPORT viewport = {};
@@ -234,8 +199,6 @@ Swapchain::Swapchain()
     , m_renderTargetViewHeap()
     , m_renderTargetViews()
     , m_fence()
-    , m_depthBuffer()
-    , m_depthStencilViewHeap()
     , m_imguiDescriptorHeap()
 {
 }

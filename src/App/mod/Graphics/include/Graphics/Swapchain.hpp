@@ -49,8 +49,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_renderTargetViewHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_renderTargetViews;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_imguiDescriptorHeap;
 #endif
 };
