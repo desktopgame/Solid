@@ -38,6 +38,7 @@ add_library(
     ./lib/Graphics/TileBuffer.cpp
     ./lib/Graphics/TileRenderer.cpp
     ./lib/Graphics/GlobalLight.cpp
+    ./lib/Graphics/PointLight.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)
