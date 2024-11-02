@@ -56,12 +56,12 @@ std::shared_ptr<Swapchain> Swapchain::create(
     heapDesc.NodeMask = 0;
     heapDesc.NumDescriptors = 2;
     heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&swapchain->m_rtvHeaps)))) {
+    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&swapchain->m_renderTargetViewHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
     // RenderTargetView
     std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
-    D3D12_CPU_DESCRIPTOR_HANDLE handle = swapchain->m_rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = swapchain->m_renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
     for (uint32_t i = 0; i < swapchainDesc.BufferCount; i++) {
         if (FAILED(swapchain->m_swapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
             throw std::runtime_error("failed GetBuffer()");
@@ -150,7 +150,7 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
     commandList->ResourceBarrier(1, &barrier);
 
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
     rtvHandle.ptr += backBufferIndex * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
     commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
@@ -231,7 +231,7 @@ Swapchain::Swapchain()
     , m_renderGui()
     , m_commandQueue()
     , m_swapchain()
-    , m_rtvHeaps()
+    , m_renderTargetViewHeap()
     , m_renderTargetViews()
     , m_fence()
     , m_depthBuffer()

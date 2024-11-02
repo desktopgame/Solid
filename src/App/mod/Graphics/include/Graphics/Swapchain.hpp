@@ -46,7 +46,7 @@ private:
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
     Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapchain;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeaps;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_renderTargetViewHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_renderTargetViews;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
