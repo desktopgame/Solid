@@ -110,6 +110,7 @@ void GameScene::onDraw3D()
 
 void GameScene::onDraw2D()
 {
+    Engine::getInstance()->getDevice()->getSurface()->globalLight();
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)

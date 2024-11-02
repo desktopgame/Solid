@@ -18,6 +18,7 @@ class Shader;
 class Swapchain;
 class PipelineStateObject;
 class TileBatch;
+class GlobalLight;
 class Surface {
 public:
     ~Surface();
@@ -41,6 +42,8 @@ public:
     void render(
         const std::shared_ptr<TileBatch>& tileBatch);
 
+    void globalLight();
+
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
         const std::shared_ptr<Device>& device,
@@ -52,6 +55,7 @@ private:
     Surface();
 
     std::shared_ptr<Swapchain> m_swapchain;
+    std::shared_ptr<GlobalLight> m_globalLight;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;

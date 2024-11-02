@@ -1,5 +1,6 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
+#include <Graphics/GlobalLight.hpp>
 #include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
@@ -130,6 +131,11 @@ void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
 {
     tileBatch->render(m_commandList);
 }
+
+void Surface::globalLight()
+{
+    m_globalLight->draw(m_commandList);
+}
 // internal
 std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
@@ -157,7 +163,7 @@ std::shared_ptr<Surface> Surface::create(
     D3D12_CPU_DESCRIPTOR_HANDLE gHandle = surface->m_gHeap->GetCPUDescriptorHandleForHeapStart();
     for (int32_t i = 0; i < 3; i++) {
         D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         clearValue.Color[0] = 0.0f;
         clearValue.Color[1] = 0.0f;
         clearValue.Color[2] = 0.0f;
@@ -170,7 +176,7 @@ std::shared_ptr<Surface> Surface::create(
         texHeapProps.CreationNodeMask = 0;
         texHeapProps.VisibleNodeMask = 0;
         D3D12_RESOURCE_DESC texResDesc = {};
-        texResDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        texResDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         texResDesc.Width = Screen::getWidth();
         texResDesc.Height = Screen::getHeight();
         texResDesc.DepthOrArraySize = 1;
@@ -226,6 +232,9 @@ std::shared_ptr<Surface> Surface::create(
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
     d3d12Device->CreateDepthStencilView(surface->m_depthBuffer.Get(), &dsvDesc, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    // GlobalLight
+    surface->m_globalLight = GlobalLight::create(d3d12Device, surface->m_gTextures);
+
     surface->m_swapchain = swapchain;
     return surface;
 }
@@ -238,6 +247,7 @@ void Surface::destroy()
 // private
 Surface::Surface()
     : m_swapchain()
+    , m_globalLight()
     , m_dxgiFactory()
     , m_infoQueue()
     , m_commandAllocator()
