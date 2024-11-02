@@ -92,7 +92,12 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             float4 positionCol = positionTex.Sample(positionSmp, input.texCoord);
             float4 normalCol = normalTex.Sample(normalSmp, input.texCoord);
             float4 colorCol = colorTex.Sample(colorSmp, input.texCoord);
-            return positionCol;
+
+            float bright = dot(normalize(float3(1, 1, 0)), normalCol.xyz);
+            bright = max(0.0f, bright);
+            bright = ((bright * 0.5f) + 0.5f);
+
+            return float4(colorCol.xyz * bright, colorCol.w);
         })",
         "psMain");
     globalLight->m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
