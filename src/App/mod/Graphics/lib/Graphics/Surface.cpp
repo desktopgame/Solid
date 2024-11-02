@@ -29,12 +29,22 @@ void Surface::guiEnd()
     m_swapchain->guiRender();
 }
 
-void Surface::begin()
+void Surface::begin3D()
+{
+    m_swapchain->writeRT(m_commandList);
+}
+
+void Surface::end3D()
+{
+    m_swapchain->readRT(m_commandList);
+}
+
+void Surface::begin2D()
 {
     m_swapchain->clear(m_commandList);
 }
 
-void Surface::end()
+void Surface::end2D()
 {
     m_swapchain->swap(m_commandList);
     m_commandList->Close();

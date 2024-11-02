@@ -25,8 +25,11 @@ public:
     void guiBegin();
     void guiEnd();
 
-    void begin();
-    void end();
+    void begin3D();
+    void end3D();
+
+    void begin2D();
+    void end2D();
 
     void render(
         const std::shared_ptr<PipelineStateObject>& pso,

@@ -39,10 +39,13 @@ static int appMain(int argc, char* argv[])
         sceneManager.onGui();
         surface->guiEnd();
 
-        surface->begin();
+        surface->begin3D();
         sceneManager.onDraw3D();
+        surface->end3D();
+
+        surface->begin2D();
         sceneManager.onDraw2D();
-        surface->end();
+        surface->end2D();
     }
     inputSystem->shutdown();
     engine->shutdown();
