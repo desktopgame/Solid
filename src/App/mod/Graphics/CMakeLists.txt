@@ -37,6 +37,7 @@ add_library(
     ./lib/Graphics/TileBatch.cpp
     ./lib/Graphics/TileBuffer.cpp
     ./lib/Graphics/TileRenderer.cpp
+    ./lib/Graphics/GlobalLight.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)
