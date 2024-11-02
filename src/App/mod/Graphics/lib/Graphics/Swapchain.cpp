@@ -225,6 +225,74 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     commandList->RSSetScissorRects(1, &scissorRect);
 }
 
+void Swapchain::writeRT(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+{
+    auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
+    // Barrier
+    D3D12_RESOURCE_BARRIER barriers[3] = {};
+    for (int32_t i = 0; i < 3; i++) {
+        D3D12_RESOURCE_BARRIER& barrier = barriers[i];
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Transition.pResource = m_gTextures.at(i).Get();
+        barrier.Transition.Subresource = 0;
+        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    }
+    commandList->ResourceBarrier(3, barriers);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_gHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+    commandList->OMSetRenderTargets(3, &rtvHandle, true, &dsvHandle);
+
+    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    for (int32_t i = 0; i < 3; i++) {
+        commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+        rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    }
+
+    commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+    // viewport
+    D3D12_VIEWPORT viewports[3] = {};
+    for (int32_t i = 0; i < 3; i++) {
+        D3D12_VIEWPORT& viewport = viewports[i];
+        viewport.Width = Screen::getWidth();
+        viewport.Height = Screen::getHeight();
+        viewport.TopLeftX = 0;
+        viewport.TopLeftY = 0;
+        viewport.MaxDepth = 1.0f;
+        viewport.MinDepth = 0.0f;
+    }
+    commandList->RSSetViewports(3, viewports);
+    // scissor
+    D3D12_RECT scissorRects[3] = {};
+    for (int32_t i = 0; i < 3; i++) {
+        D3D12_RECT& scissorRect = scissorRects[i];
+        scissorRect.top = 0;
+        scissorRect.left = 0;
+        scissorRect.right = scissorRect.left + Screen::getWidth();
+        scissorRect.bottom = scissorRect.top + Screen::getHeight();
+    }
+    commandList->RSSetScissorRects(3, scissorRects);
+}
+
+void Swapchain::readRT(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+{
+    // Barrier
+    D3D12_RESOURCE_BARRIER barriers[3] = {};
+    for (int32_t i = 0; i < 3; i++) {
+        D3D12_RESOURCE_BARRIER& barrier = barriers[i];
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Transition.pResource = m_gTextures.at(i).Get();
+        barrier.Transition.Subresource = 0;
+        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    }
+    commandList->ResourceBarrier(3, barriers);
+}
+
 void Swapchain::execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     ID3D12CommandList* cmdLists[] = { commandList.Get() };

@@ -29,6 +29,8 @@ public:
     void guiRender();
 
     void clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void writeRT(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void readRT(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
