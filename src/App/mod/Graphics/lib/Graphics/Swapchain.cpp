@@ -107,6 +107,54 @@ std::shared_ptr<Swapchain> Swapchain::create(
     if (FAILED(device->CreateFence(swapchain->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&swapchain->m_fence)))) {
         throw std::runtime_error("failed CreateFence()");
     }
+    // GBuffer
+    D3D12_DESCRIPTOR_HEAP_DESC gHeapDesc = {};
+    gHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    gHeapDesc.NodeMask = 0;
+    gHeapDesc.NumDescriptors = 3;
+    gHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    if (FAILED(device->CreateDescriptorHeap(&gHeapDesc, IID_PPV_ARGS(&swapchain->m_gHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    D3D12_CPU_DESCRIPTOR_HANDLE gHandle = swapchain->m_gHeap->GetCPUDescriptorHandleForHeapStart();
+    for (int32_t i = 0; i < 3; i++) {
+        D3D12_CLEAR_VALUE clearValue = {};
+        clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        clearValue.Color[0] = 0.0f;
+        clearValue.Color[1] = 0.0f;
+        clearValue.Color[2] = 0.0f;
+        clearValue.Color[3] = 0.0f;
+
+        D3D12_HEAP_PROPERTIES texHeapProps = {};
+        texHeapProps.Type = D3D12_HEAP_TYPE_CUSTOM;
+        texHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+        texHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+        texHeapProps.CreationNodeMask = 0;
+        texHeapProps.VisibleNodeMask = 0;
+        D3D12_RESOURCE_DESC texResDesc = {};
+        texResDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        texResDesc.Width = Screen::getWidth();
+        texResDesc.Height = Screen::getHeight();
+        texResDesc.DepthOrArraySize = 1;
+        texResDesc.SampleDesc.Count = 1;
+        texResDesc.SampleDesc.Quality = 0;
+        texResDesc.MipLevels = 1;
+        texResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+        texResDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+        texResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+        ComPtr<ID3D12Resource>& gTexture = swapchain->m_gTextures.at(i);
+        if (FAILED(device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&gTexture)))) {
+            throw std::runtime_error("failed CreateCommittedResource()");
+        }
+
+        D3D12_RENDER_TARGET_VIEW_DESC gRtvDesc = {};
+        gRtvDesc.Texture2D.MipSlice = 0;
+        gRtvDesc.Texture2D.PlaneSlice = 0;
+        gRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+        device->CreateRenderTargetView(gTexture.Get(), &gRtvDesc, gHandle);
+        gHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    }
     // ImGui
     D3D12_DESCRIPTOR_HEAP_DESC imguiDescriptorHeapDesc = {};
     imguiDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -233,6 +281,8 @@ Swapchain::Swapchain()
     , m_swapchain()
     , m_renderTargetViewHeap()
     , m_renderTargetViews()
+    , m_gHeap()
+    , m_gTextures(3)
     , m_fence()
     , m_depthBuffer()
     , m_depthStencilViewHeap()
