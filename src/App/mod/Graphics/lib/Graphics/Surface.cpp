@@ -2,6 +2,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/PipelineStateObject.hpp>
+#include <Graphics/PointLight.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Swapchain.hpp>
@@ -136,6 +137,11 @@ void Surface::globalLight()
 {
     m_globalLight->draw(m_commandList);
 }
+
+void Surface::pointLight()
+{
+    m_pointLight->draw(m_commandList);
+}
 // internal
 std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Device>& device,
@@ -234,6 +240,8 @@ std::shared_ptr<Surface> Surface::create(
     d3d12Device->CreateDepthStencilView(surface->m_depthBuffer.Get(), &dsvDesc, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
     // GlobalLight
     surface->m_globalLight = GlobalLight::create(d3d12Device, surface->m_gTextures);
+    // PointLight
+    surface->m_pointLight = PointLight::create(d3d12Device, surface->m_gTextures);
 
     surface->m_swapchain = swapchain;
     return surface;
@@ -248,6 +256,7 @@ void Surface::destroy()
 Surface::Surface()
     : m_swapchain()
     , m_globalLight()
+    , m_pointLight()
     , m_dxgiFactory()
     , m_infoQueue()
     , m_commandAllocator()
