@@ -111,7 +111,12 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float3 axis : NORMAL;
             float4 color : COLOR;
         };
-
+        struct PSOutput
+        {
+            float4 outPosition : SV_Target;
+            float4 outNormal : SV_Target1;
+            float4 outColor : SV_Target2;
+        };
         Texture2D<float4> tex : register(t0);
         SamplerState smp : register(s0);
 
@@ -154,7 +159,8 @@ std::shared_ptr<TileBatch> TileBatch::create(
             return q;
         }
 
-        float4 psMain(Output input) : SV_TARGET {
+        PSOutput psMain(Output input) {
+            PSOutput output;
             float3 normalColor = tex.Sample(smp, input.texCoord).xyz;
             float3 normalVec   = 2.0f * normalColor - 1.0f;
             normalVec = normalize(normalVec);
@@ -171,7 +177,10 @@ std::shared_ptr<TileBatch> TileBatch::create(
             vecColor *= 0.5;
 
             // return float4(vecColor, input.color.w);
-            return float4(bright * input.color.xyz, input.color.w);
+            output.outPosition = input.svpos;
+            output.outNormal = float4(normalVec, 1);
+            output.outColor = input.color;
+            return output;
         })",
         "psMain");
     // vertex buffer and index buffer
@@ -261,10 +270,14 @@ std::shared_ptr<TileBatch> TileBatch::create(
     rtBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
     rtBlendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
     psoDesc.BlendState.RenderTarget[0] = rtBlendDesc;
+    psoDesc.BlendState.RenderTarget[1] = rtBlendDesc;
+    psoDesc.BlendState.RenderTarget[2] = rtBlendDesc;
     psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
     psoDesc.PrimitiveTopologyType = style == Style::Solid ? D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE : D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-    psoDesc.NumRenderTargets = 1;
-    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    psoDesc.NumRenderTargets = 3;
+    psoDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    psoDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    psoDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
     std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
