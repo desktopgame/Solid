@@ -181,7 +181,7 @@ void DebugScene::onGui()
     }
     ImGui::End();
 }
-void DebugScene::onDraw()
+void DebugScene::onDraw3D()
 {
     Camera::position(m_cameraPos);
     Camera::lookAt(m_cameraLookAt);
@@ -191,7 +191,10 @@ void DebugScene::onDraw()
     m_hintTileBatch->setGlobalViewMatrix(Camera::getLookAtMatrix());
     m_hintTileBatch->setGlobalProjectionMatrix(Camera::getPerspectiveMatrix());
     Engine::getInstance()->getDevice()->getSurface()->render(m_hintTileBatch);
+}
 
+void DebugScene::onDraw2D()
+{
     m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
 }
 

@@ -40,7 +40,8 @@ static int appMain(int argc, char* argv[])
         surface->guiEnd();
 
         surface->begin();
-        sceneManager.onDraw();
+        sceneManager.onDraw3D();
+        sceneManager.onDraw2D();
         surface->end();
     }
     inputSystem->shutdown();

@@ -14,7 +14,8 @@ public:
 
     void onUpdate() override;
     void onGui() override;
-    void onDraw() override;
+    void onDraw3D() override;
+    void onDraw2D() override;
 
     bool tryTransition(std::string& outNextScene) override;
 

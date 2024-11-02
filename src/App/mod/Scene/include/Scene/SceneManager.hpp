@@ -14,7 +14,8 @@ public:
 
     void onUpdate();
     void onGui();
-    void onDraw();
+    void onDraw3D();
+    void onDraw2D();
 
 private:
     std::unordered_map<std::string, std::shared_ptr<IScene>> m_sceneMap;

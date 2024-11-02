@@ -35,8 +35,13 @@ void SceneManager::onGui()
 #endif
 }
 
-void SceneManager::onDraw()
+void SceneManager::onDraw3D()
 {
-    m_sceneMap[m_currentScene]->onDraw();
+    m_sceneMap[m_currentScene]->onDraw3D();
+}
+
+void SceneManager::onDraw2D()
+{
+    m_sceneMap[m_currentScene]->onDraw2D();
 }
 }

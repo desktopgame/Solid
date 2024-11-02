@@ -100,12 +100,16 @@ void GameScene::onGui()
 {
 }
 
-void GameScene::onDraw()
+void GameScene::onDraw3D()
 {
     Camera::position(m_cameraPos);
     Camera::lookAt(m_cameraLookAt);
 
     m_tileRenderer->drawTiles();
+}
+
+void GameScene::onDraw2D()
+{
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)
