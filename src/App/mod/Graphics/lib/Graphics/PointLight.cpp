@@ -16,7 +16,9 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
         if (FAILED(m_modelMatrixBuffer->Map(0, nullptr, (void**)&outData))) {
             throw std::runtime_error("failed Map()");
         }
-        Math::Matrix mat = Math::Matrix::translate(Math::Vector3({ 8 * 5, 5, 8 * 5 }));
+        float scale = 20.0f / 10.0f;
+        Math::Matrix mat = Math::Matrix::translate(Math::Vector3({ 8 * 5, 10, 8 * 5 }));
+        mat = Math::Matrix::scale(Math::Vector3({ scale, scale, scale })) * mat;
         ::memcpy(outData, mat.data(), sizeof(Math::Matrix));
         m_modelMatrixBuffer->Unmap(0, nullptr);
     }
@@ -128,7 +130,7 @@ std::shared_ptr<PointLight> PointLight::create(
             float4 positionCol = positionTex.Sample(positionSmp, coord);
             float4 normalCol = normalTex.Sample(normalSmp, coord);
             float4 colorCol = colorTex.Sample(colorSmp, coord);
-            float3 uPointLightPos = float3(8 * 5, 5, 8 * 5);
+            float3 uPointLightPos = float3(8 * 5, 10, 8 * 5);
 
             float3 N = normalize(normalCol.xyz);
             float3 L = normalize(uPointLightPos - positionCol.xyz);
@@ -141,8 +143,8 @@ std::shared_ptr<PointLight> PointLight::create(
                 float dist = distance(uPointLightPos, positionCol.xyz);
                 // Use smoothstep to compute value in range [0,1]
                 // between inner/outer radius
-                float intensity = smoothstep(10 * 5/* uPointLight.mInnerRadius */,
-                                            20 * 5/* uPointLight.mOuterRadius */, dist);
+                float intensity = smoothstep(5/* uPointLight.mInnerRadius */,
+                                            20/* uPointLight.mOuterRadius */, dist);
                 // The diffuse color of the light depends on intensity
                 float3 DiffuseColor = lerp(float3(1, 1, 1),
                                         float3(0.0, 0.0, 0.0), intensity);
