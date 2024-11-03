@@ -100,7 +100,7 @@ std::shared_ptr<PipelineStateObject> PipelineStateObject::create(
     psoDesc.DepthStencilState.DepthEnable = pso->m_vertexComponent == 3;
     psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-    psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+    psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     // blend
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;

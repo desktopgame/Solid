@@ -212,7 +212,7 @@ std::shared_ptr<Surface> Surface::create(
     depthResDesc.Width = Screen::getWidth();
     depthResDesc.Height = Screen::getHeight();
     depthResDesc.DepthOrArraySize = 1;
-    depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthResDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthResDesc.SampleDesc.Count = 1;
     depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
     D3D12_HEAP_PROPERTIES depthHeapProps = {};
@@ -221,7 +221,7 @@ std::shared_ptr<Surface> Surface::create(
     depthHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
     D3D12_CLEAR_VALUE depthClearValue = {};
     depthClearValue.DepthStencil.Depth = 1.0f;
-    depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+    depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     if (FAILED(d3d12Device->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&surface->m_depthBuffer)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
@@ -235,7 +235,7 @@ std::shared_ptr<Surface> Surface::create(
     }
     // DepthBufferView
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
     d3d12Device->CreateDepthStencilView(surface->m_depthBuffer.Get(), &dsvDesc, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());

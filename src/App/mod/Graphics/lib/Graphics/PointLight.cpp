@@ -252,7 +252,7 @@ std::shared_ptr<PointLight> PointLight::create(
     psoDesc.DepthStencilState.DepthEnable = true;
     psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-    psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+    psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     // blend
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
