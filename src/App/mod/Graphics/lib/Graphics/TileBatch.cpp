@@ -182,7 +182,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
             // return float4(vecColor, input.color.w);
             output.outPosition = input.mmpos;
-            output.outNormal = float4(normalVec, 1);
+            output.outNormal = float4(vecColor, 1);
             output.outColor = input.color;
             return output;
         })",
