@@ -103,7 +103,7 @@ void Swapchain::guiRender()
     ImGui::Render();
 }
 
-void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle)
 {
     uint32_t backBufferIndex = m_swapchain->GetCurrentBackBufferIndex();
     auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
@@ -119,7 +119,7 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
 
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
     rtvHandle.ptr += backBufferIndex * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+    commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
     float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
     commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);

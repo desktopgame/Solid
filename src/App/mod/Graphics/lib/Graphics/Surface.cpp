@@ -101,7 +101,7 @@ void Surface::end3D()
 
 void Surface::begin2D()
 {
-    m_swapchain->clear(m_commandList);
+    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void Surface::end2D()
@@ -202,7 +202,8 @@ std::shared_ptr<Surface> Surface::create(
         gRtvDesc.Texture2D.MipSlice = 0;
         gRtvDesc.Texture2D.PlaneSlice = 0;
         gRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-        d3d12Device->CreateRenderTargetView(gTexture.Get(), &gRtvDesc, gHandle);
+        gRtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        d3d12Device->CreateRenderTargetView(gTexture.Get(), nullptr, gHandle);
         gHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
     // DepthBuffer

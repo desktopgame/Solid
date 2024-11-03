@@ -31,6 +31,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
     tileBatch->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
+            float4 mmpos : POSITION;
             float2 texCoord : TEXCOORD;
             float3 axis : NORMAL;
             float4 color : COLOR;
@@ -92,6 +93,8 @@ std::shared_ptr<TileBatch> TileBatch::create(
             tmp = round(tmp * 100.0f) / 100.0f;
 
             tmp = mul(modelMatrix, tmp);
+            output.mmpos = tmp;
+
             tmp = mul(viewMatrix, tmp);
             tmp = mul(projectionMatrix, tmp);
 
@@ -107,13 +110,14 @@ std::shared_ptr<TileBatch> TileBatch::create(
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
+            float4 mmpos : POSITION;
             float2 texCoord : TEXCOORD;
             float3 axis : NORMAL;
             float4 color : COLOR;
         };
         struct PSOutput
         {
-            float4 outPosition : SV_Target;
+            float4 outPosition : SV_Target0;
             float4 outNormal : SV_Target1;
             float4 outColor : SV_Target2;
         };
@@ -177,7 +181,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             vecColor *= 0.5;
 
             // return float4(vecColor, input.color.w);
-            output.outPosition = input.svpos;
+            output.outPosition = input.mmpos;
             output.outNormal = float4(normalVec, 1);
             output.outColor = input.color;
             return output;

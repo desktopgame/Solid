@@ -16,7 +16,7 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
         if (FAILED(m_modelMatrixBuffer->Map(0, nullptr, (void**)&outData))) {
             throw std::runtime_error("failed Map()");
         }
-        Math::Matrix mat;
+        Math::Matrix mat = Math::Matrix::translate(Math::Vector3({ 8 * 5, 5, 8 * 5 }));
         ::memcpy(outData, mat.data(), sizeof(Math::Matrix));
         m_modelMatrixBuffer->Unmap(0, nullptr);
     }
@@ -119,29 +119,38 @@ std::shared_ptr<PointLight> PointLight::create(
         SamplerState colorSmp : register(s2);
 
         float4 psMain(Output input) : SV_TARGET {
-            float2 coord = input.svpos.xy / float2(800, 600);
+            float svx = input.svpos.x / 800.0;
+            float svy = input.svpos.y / 600.0;
+            float2 coord = float2(
+                svx, // ((svx + 1.0) * 0.5),
+                svy // 1.0 - ((svy + 1.0) * 0.5)
+            );
             float4 positionCol = positionTex.Sample(positionSmp, coord);
             float4 normalCol = normalTex.Sample(normalSmp, coord);
             float4 colorCol = colorTex.Sample(colorSmp, coord);
-            float3 uPointLightPos = float3(8, 0, 8);
+            float3 uPointLightPos = float3(8 * 5, 5, 8 * 5);
 
-            float3 N = normalize(normalCol);
+            float3 N = normalize(normalCol.xyz);
             float3 L = normalize(uPointLightPos - positionCol.xyz);
             float3 Phong = float3(0, 0, 0);
             float NdotL = dot(N, L);
-            if (NdotL > 0) {
+
+            if (NdotL > 0)
+            {
                 // Get the distance between the light and the world pos
                 float dist = distance(uPointLightPos, positionCol.xyz);
                 // Use smoothstep to compute value in range [0,1]
                 // between inner/outer radius
-                float intensity = smoothstep(1/* uPointLight.mInnerRadius */,
-                                            1/* uPointLight.mOuterRadius */, dist);
+                float intensity = smoothstep(10 * 5/* uPointLight.mInnerRadius */,
+                                            20 * 5/* uPointLight.mOuterRadius */, dist);
                 // The diffuse color of the light depends on intensity
                 float3 DiffuseColor = lerp(float3(1, 1, 1),
                                         float3(0.0, 0.0, 0.0), intensity);
                 Phong = DiffuseColor * NdotL;
             }
-
+            // return float4(input.svpos.xy, 0, 1);
+            // return float4(coord, 0, 1);
+            // return float4(colorCol.xyz, 1);
             return float4(colorCol.xyz * Phong, 1.0);
         })",
         "psMain");
@@ -149,7 +158,7 @@ std::shared_ptr<PointLight> PointLight::create(
     // vertex buffer and index buffer
     std::vector<Math::Vector3> vertices;
     std::vector<uint32_t> indices;
-    generateSphere(1, 1, 1, vertices, indices);
+    generateSphere(10, 10, 10, vertices, indices);
     globalLight->m_vertexLength = static_cast<int32_t>(vertices.size());
     globalLight->m_indexLength = static_cast<int32_t>(indices.size());
     // const float half = 1.0f;
@@ -238,8 +247,8 @@ std::shared_ptr<PointLight> PointLight::create(
     psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     psoDesc.RasterizerState.DepthClipEnable = true;
     // depth
-    psoDesc.DepthStencilState.DepthEnable = false;
-    psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+    psoDesc.DepthStencilState.DepthEnable = true;
+    psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
     psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
     // blend
@@ -251,11 +260,11 @@ std::shared_ptr<PointLight> PointLight::create(
     rtBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     rtBlendDesc.BlendEnable = true;
     rtBlendDesc.LogicOpEnable = false;
-    rtBlendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-    rtBlendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+    rtBlendDesc.SrcBlend = D3D12_BLEND_ONE;
+    rtBlendDesc.DestBlend = D3D12_BLEND_ONE;
     rtBlendDesc.BlendOp = D3D12_BLEND_OP_ADD;
     rtBlendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-    rtBlendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+    rtBlendDesc.DestBlendAlpha = D3D12_BLEND_ONE;
     rtBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
     rtBlendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
     psoDesc.BlendState.RenderTarget[0] = rtBlendDesc;
