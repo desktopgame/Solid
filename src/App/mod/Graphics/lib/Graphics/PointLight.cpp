@@ -615,7 +615,7 @@ std::shared_ptr<PointLight> PointLight::create(
             float3 N = normalize(normalCol.xyz);
             float3 L = normalize(uPointLightPos - positionCol.xyz);
             float3 Phong = float3(0, 0, 0);
-            float NdotL = dot(N, L);
+            float NdotL = (dot(N, L) + 1) * 0.5;
 
             if (NdotL > 0)
             {
