@@ -99,6 +99,8 @@ void Surface::end3D()
         barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
     }
     m_commandList->ResourceBarrier(3, barriers);
+
+    m_commandList->OMSetStencilRef(2);
 }
 
 void Surface::begin2D()
