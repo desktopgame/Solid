@@ -195,7 +195,8 @@ std::shared_ptr<PointLight> PointLight::create(
             // return float4(input.svpos.xy, 0, 1);
             // return float4(coord, 0, 1);
             // return float4(colorCol.xyz, 1);
-            return float4(colorCol.xyz * Phong, 1.0);
+            // return float4(colorCol.xyz * Phong, 1.0);
+            return float4(0, 0, 0, 1);
         })",
             "psMain");
         globalLight->m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
