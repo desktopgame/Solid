@@ -104,6 +104,7 @@ void GameScene::onDraw3D()
 {
     Camera::position(m_cameraPos);
     Camera::lookAt(m_cameraLookAt);
+    Camera::depthRange(0.1f, 1000.0f);
 
     m_tileRenderer->drawTiles();
 }
