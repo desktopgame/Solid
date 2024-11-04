@@ -57,7 +57,8 @@ void Surface::begin3D()
         rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
 
-    m_commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+    D3D12_CLEAR_FLAGS clearDepthFlags = D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL;
+    m_commandList->ClearDepthStencilView(dsvHandle, clearDepthFlags, 1.0f, 0, 0, nullptr);
 
     // viewport
     D3D12_VIEWPORT viewports[3] = {};
