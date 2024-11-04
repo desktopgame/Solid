@@ -29,6 +29,7 @@ private:
     static void generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices);
 
     std::shared_ptr<Shader> m_shader;
+    std::shared_ptr<Shader> m_scrShader;
     int32_t m_vertexLength;
     int32_t m_indexLength;
 
@@ -41,6 +42,12 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> m_modelMatrixBuffer;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_viewMatrixBuffer;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_projectionMatrixBuffer;
+
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_scrPipelineState;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_scrRootSignature;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_scrDescriptorHeap;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_scrVertexBuffer;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_scrIndexBuffer;
 #endif
 };
 }
