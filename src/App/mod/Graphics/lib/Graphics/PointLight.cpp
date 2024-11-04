@@ -600,10 +600,39 @@ std::shared_ptr<PointLight> PointLight::create(
         SamplerState colorSmp : register(s2);
 
         float4 psMain(Output input) : SV_TARGET {
-            float4 positionCol = positionTex.Sample(positionSmp, input.texCoord);
-            float4 normalCol = normalTex.Sample(normalSmp, input.texCoord);
-            float4 colorCol = colorTex.Sample(colorSmp, input.texCoord);
-            return float4(1, 0, 0, 1);
+            float svx = input.texCoord.x;
+            float svy = input.texCoord.y;
+            float2 coord = float2(
+                svx, // ((svx + 1.0) * 0.5),
+                svy // 1.0 - ((svy + 1.0) * 0.5)
+            );
+            float4 positionCol = positionTex.Sample(positionSmp, coord);
+            float4 normalCol = normalTex.Sample(normalSmp, coord);
+            float4 colorCol = colorTex.Sample(colorSmp, coord);
+            float3 uPointLightPos = float3(8 * 5, 10, 8 * 5);
+
+            float3 N = normalize(normalCol.xyz);
+            float3 L = normalize(uPointLightPos - positionCol.xyz);
+            float3 Phong = float3(0, 0, 0);
+            float NdotL = dot(N, L);
+
+            if (NdotL > 0)
+            {
+                // Get the distance between the light and the world pos
+                float dist = distance(uPointLightPos, positionCol.xyz);
+                // Use smoothstep to compute value in range [0,1]
+                // between inner/outer radius
+                float intensity = smoothstep(5/* uPointLight.mInnerRadius */,
+                                            20/* uPointLight.mOuterRadius */, dist);
+                // The diffuse color of the light depends on intensity
+                float3 DiffuseColor = lerp(float3(1, 1, 1),
+                                        float3(0.0, 0.0, 0.0), intensity);
+                Phong = DiffuseColor * NdotL;
+            }
+            // return float4(input.svpos.xy, 0, 1);
+            // return float4(coord, 0, 1);
+            // return float4(colorCol.xyz, 1);
+            return float4(colorCol.xyz * Phong, 1.0);
         })",
             "psMain");
         globalLight->m_scrShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
@@ -729,11 +758,11 @@ std::shared_ptr<PointLight> PointLight::create(
         rtBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
         rtBlendDesc.BlendEnable = true;
         rtBlendDesc.LogicOpEnable = false;
-        rtBlendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-        rtBlendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+        rtBlendDesc.SrcBlend = D3D12_BLEND_ONE;
+        rtBlendDesc.DestBlend = D3D12_BLEND_ONE;
         rtBlendDesc.BlendOp = D3D12_BLEND_OP_ADD;
         rtBlendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-        rtBlendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+        rtBlendDesc.DestBlendAlpha = D3D12_BLEND_ONE;
         rtBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
         rtBlendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
         psoDesc.BlendState.RenderTarget[0] = rtBlendDesc;
@@ -741,6 +770,7 @@ std::shared_ptr<PointLight> PointLight::create(
         psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
         psoDesc.NumRenderTargets = 1;
         psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+        psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
         psoDesc.SampleDesc.Count = 1;
         psoDesc.SampleDesc.Quality = 0;
         // root signature
