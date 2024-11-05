@@ -1,7 +1,8 @@
 #pragma once
+#include <Math/Vector.hpp>
 #include <memory>
 #include <vector>
-#include <Math/Vector.hpp>
+
 
 #if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>

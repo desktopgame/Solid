@@ -16,7 +16,7 @@ void GlobalLight::clear()
 
 void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir)
 {
-    if(m_drawLight) {
+    if (m_drawLight) {
         throw std::logic_error("light limit.");
     }
     {
