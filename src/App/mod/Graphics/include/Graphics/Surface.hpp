@@ -43,8 +43,8 @@ public:
     void render(
         const std::shared_ptr<TileBatch>& tileBatch);
 
-    void globalLight();
-    void pointLight();
+    void effectGlobalLight2D();
+    void effectPointLight2D();
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(

@@ -137,12 +137,12 @@ void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
     tileBatch->render(m_commandList);
 }
 
-void Surface::globalLight()
+void Surface::effectGlobalLight2D()
 {
     m_globalLight->draw(m_commandList);
 }
 
-void Surface::pointLight()
+void Surface::effectPointLight2D()
 {
     m_pointLight->draw(m_commandList);
 }
