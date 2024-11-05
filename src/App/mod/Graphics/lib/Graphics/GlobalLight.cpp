@@ -4,6 +4,7 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Utils/String.hpp>
+#include <stdexcept>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
@@ -13,8 +14,21 @@ void GlobalLight::clear()
     m_drawLight = false;
 }
 
-void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir)
 {
+    if(m_drawLight) {
+        throw std::logic_error("light limit.");
+    }
+    {
+        void* outData;
+        if (FAILED(m_constantBuffer->Map(0, nullptr, (void**)&outData))) {
+            throw std::runtime_error("failed Map()");
+        }
+        m_constantData.direction = dir;
+        ::memcpy(outData, &m_constantData, sizeof(GlobalLight::Constant));
+        m_constantBuffer->Unmap(0, nullptr);
+    }
+
     commandList->SetPipelineState(m_pipelineState.Get());
     commandList->SetGraphicsRootSignature(m_rootSignature.Get());
 
@@ -28,6 +42,7 @@ void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
         commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
         heapHandle.ptr += incrementSize;
     }
+    commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
@@ -84,6 +99,8 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             float2 texCoord : TEXCOORD;
         };
 
+        cbuffer cbuff0 : register(b0) { float3 direction; }
+
         Texture2D<float4> positionTex : register(t0);
         SamplerState positionSmp : register(s0);
 
@@ -98,7 +115,7 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             float4 normalCol = normalTex.Sample(normalSmp, input.texCoord);
             float4 colorCol = colorTex.Sample(colorSmp, input.texCoord);
 
-            float bright = dot(normalize(float3(1, 1, 0)), normalCol.xyz);
+            float bright = dot(normalize(direction), normalCol.xyz);
             bright = max(0.0f, bright);
             bright = ((bright * 0.5f) + 0.5f);
 
@@ -237,6 +254,11 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
     descTableRange.at(2).BaseShaderRegister = 2;
     descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+    descTableRange.push_back({});
+    descTableRange.at(3).NumDescriptors = 1;
+    descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+    descTableRange.at(3).BaseShaderRegister = 0;
+    descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
     std::vector<D3D12_ROOT_PARAMETER> rootParam;
     rootParam.push_back({});
@@ -254,6 +276,11 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
     rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
     rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+    rootParam.push_back({});
+    rootParam.at(3).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
+    rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
     D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
     for (int32_t i = 0; i < 3; i++) {
@@ -291,10 +318,42 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     // Descriptor Heap
     //
 
+    D3D12_HEAP_PROPERTIES cbHeapProps = {};
+    cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+    cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    cbHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    D3D12_RESOURCE_DESC cbResDesc = {};
+    cbResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    cbResDesc.Width = sizeof(GlobalLight::Constant);
+    cbResDesc.Height = 1;
+    cbResDesc.DepthOrArraySize = 1;
+    cbResDesc.MipLevels = 1;
+    cbResDesc.Format = DXGI_FORMAT_UNKNOWN;
+    cbResDesc.SampleDesc.Count = 1;
+    cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    if (FAILED(device->CreateCommittedResource(
+            &cbHeapProps,
+            D3D12_HEAP_FLAG_NONE,
+            &cbResDesc,
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            nullptr,
+            IID_PPV_ARGS(&globalLight->m_constantBuffer)))) {
+        throw std::runtime_error("failed CreateCommittedResource()");
+    }
+    {
+        void* outData;
+        if (FAILED(globalLight->m_constantBuffer->Map(0, nullptr, (void**)&outData))) {
+            throw std::runtime_error("failed Map()");
+        }
+        ::memcpy(outData, &globalLight->m_constantData, sizeof(GlobalLight::Constant));
+        globalLight->m_constantBuffer->Unmap(0, nullptr);
+    }
+
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
-    descHeapDesc.NumDescriptors = 3;
+    descHeapDesc.NumDescriptors = 3 + 1;
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
     if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&globalLight->m_descriptorHeap)))) {
@@ -313,6 +372,12 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
         heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     }
 
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
+    cbvColorDesc.BufferLocation = globalLight->m_constantBuffer->GetGPUVirtualAddress();
+    cbvColorDesc.SizeInBytes = sizeof(GlobalLight::Constant);
+    device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+    heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
     return globalLight;
 }
 
@@ -323,11 +388,13 @@ void GlobalLight::destroy()
 GlobalLight::GlobalLight()
     : m_shader()
     , m_drawLight()
+    , m_constantData()
     , m_pipelineState()
     , m_rootSignature()
     , m_descriptorHeap()
     , m_vertexBuffer()
     , m_indexBuffer()
+    , m_constantBuffer()
 {
 }
 }

@@ -111,7 +111,7 @@ void GameScene::onDraw3D()
 
 void GameScene::onDraw2D()
 {
-    Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D();
+    Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D(Vector3::normalized(Vector3({1, 1, 0})));
     Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D();
 }
 

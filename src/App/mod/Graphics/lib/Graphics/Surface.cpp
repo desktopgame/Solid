@@ -140,9 +140,9 @@ void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
     tileBatch->render(m_commandList);
 }
 
-void Surface::effectGlobalLight2D()
+void Surface::effectGlobalLight2D(const Math::Vector3& dir)
 {
-    m_globalLight->draw(m_commandList);
+    m_globalLight->draw(m_commandList, dir);
 }
 
 void Surface::effectPointLight2D()

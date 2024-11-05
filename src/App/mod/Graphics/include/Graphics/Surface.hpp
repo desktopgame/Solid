@@ -3,6 +3,7 @@
 #include <Graphics/PrimitiveType.hpp>
 #include <memory>
 #include <vector>
+#include <Math/Vector.hpp>
 
 #if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
@@ -43,7 +44,7 @@ public:
     void render(
         const std::shared_ptr<TileBatch>& tileBatch);
 
-    void effectGlobalLight2D();
+    void effectGlobalLight2D(const Math::Vector3& dir);
     void effectPointLight2D();
 
 #if SOLID_ENABLE_INTERNAL
