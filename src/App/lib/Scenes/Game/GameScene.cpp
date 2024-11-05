@@ -14,7 +14,7 @@ GameScene::GameScene()
     , m_cameraAngleY()
     , m_cameraMoveSpeed(0.4f)
     , m_cameraRotateSpeed(0.8f)
-    , m_globalLightDir({1, 1, 0})
+    , m_globalLightDir({ 1, 1, 0 })
     , m_tileTicket()
     , m_tiles()
 {
