@@ -204,8 +204,6 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
     D3D12_RENDER_TARGET_BLEND_DESC rtBlendDesc = {};
-    rtBlendDesc.BlendEnable = false;
-    rtBlendDesc.LogicOpEnable = false;
     rtBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     rtBlendDesc.BlendEnable = true;
     rtBlendDesc.LogicOpEnable = false;
