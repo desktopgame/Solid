@@ -83,6 +83,9 @@ void Surface::begin3D()
         scissorRect.bottom = scissorRect.top + Screen::getHeight();
     }
     m_commandList->RSSetScissorRects(3, scissorRects);
+
+    // clear
+    m_globalLight->clear();
 }
 
 void Surface::end3D()

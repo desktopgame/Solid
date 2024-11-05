@@ -8,6 +8,11 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // internal
+void GlobalLight::clear()
+{
+    m_drawLight = false;
+}
+
 void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     commandList->SetPipelineState(m_pipelineState.Get());
@@ -317,6 +322,7 @@ void GlobalLight::destroy()
 // private
 GlobalLight::GlobalLight()
     : m_shader()
+    , m_drawLight()
     , m_pipelineState()
     , m_rootSignature()
     , m_descriptorHeap()

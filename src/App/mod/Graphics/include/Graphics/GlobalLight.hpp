@@ -15,6 +15,7 @@ class Buffer;
 class GlobalLight {
 public:
 #if SOLID_ENABLE_INTERNAL
+    void clear();
     void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
     static std::shared_ptr<GlobalLight> create(
@@ -27,6 +28,7 @@ private:
     GlobalLight();
 
     std::shared_ptr<Shader> m_shader;
+    bool m_drawLight;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
