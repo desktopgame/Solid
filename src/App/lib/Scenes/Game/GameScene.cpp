@@ -14,6 +14,7 @@ GameScene::GameScene()
     , m_cameraAngleY()
     , m_cameraMoveSpeed(0.4f)
     , m_cameraRotateSpeed(0.8f)
+    , m_globalLightDir({1, 1, 0})
     , m_tileTicket()
     , m_tiles()
 {
@@ -98,6 +99,9 @@ void GameScene::onUpdate()
 
 void GameScene::onGui()
 {
+    ImGui::Begin("Light");
+    ImGui::DragFloat3("GlobalLight", m_globalLightDir.data(), 0.001f, -1.0f, 1.0f);
+    ImGui::End();
 }
 
 void GameScene::onDraw3D()
@@ -111,7 +115,7 @@ void GameScene::onDraw3D()
 
 void GameScene::onDraw2D()
 {
-    Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D(Vector3::normalized(Vector3({1, 1, 0})));
+    Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D(Vector3::normalized(m_globalLightDir));
     Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D();
 }
 

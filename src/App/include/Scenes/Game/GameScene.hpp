@@ -31,6 +31,8 @@ private:
     float m_cameraMoveSpeed;
     float m_cameraRotateSpeed;
 
+    Vector3 m_globalLightDir;
+
     std::shared_ptr<TileTicket> m_tileTicket;
     std::vector<Vector4> m_tiles;
 };
