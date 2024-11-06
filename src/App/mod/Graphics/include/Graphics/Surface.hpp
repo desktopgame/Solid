@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 
-
 #if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
