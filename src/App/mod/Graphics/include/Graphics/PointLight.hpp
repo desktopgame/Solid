@@ -15,6 +15,8 @@ class Shader;
 class Buffer;
 class PointLight {
 public:
+    static inline constexpr int32_t k_maxCount = 50;
+
 #if SOLID_ENABLE_INTERNAL
     void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 

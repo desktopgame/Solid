@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 
-
 #if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -16,6 +15,8 @@ class Shader;
 class Buffer;
 class GlobalLight {
 public:
+    static inline constexpr int32_t k_maxCount = 1;
+
 #if SOLID_ENABLE_INTERNAL
     void clear();
     void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir);
