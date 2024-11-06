@@ -33,7 +33,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 svpos : SV_POSITION;
             float4 mmpos : POSITION;
             float2 texCoord : TEXCOORD;
-            float3 axis : NORMAL;
+            float4 axis : NORMAL;
             float4 color : COLOR;
         };
         cbuffer cbuff0 : register(b0)
@@ -59,19 +59,19 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 colorTable[64];
         };
 
-        static const float3 axisTable[6] = {
+        static const float4 axisTable[6] = {
             // posY
-            float3(0, -1, 0),
+            float4(-1, 0, 0, 90),
             // negY
-            float3(0, 1, 0),
+            float4(1, 0, 0, 90),
             // posX
-            float3(1, 0, 0),
+            float4(0, 1, 0, 90),
             // negX
-            float3(-1, 0, 0),
+            float4(0, -1, 0, 90),
             // posZ
-            float3(0, 0, 1),
+            float4(0, 0, 1, 0),
             // negZ
-            float3(0, 0, -1)
+            float4(0, 1, 0, 180)
         };
 
         Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, uint instanceID : SV_InstanceID) {
@@ -112,7 +112,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float4 svpos : SV_POSITION;
             float4 mmpos : POSITION;
             float2 texCoord : TEXCOORD;
-            float3 axis : NORMAL;
+            float4 axis : NORMAL;
             float4 color : COLOR;
         };
         struct PSOutput
@@ -169,7 +169,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
             float3 normalVec   = 2.0f * normalColor - 1.0f;
             normalVec = normalize(normalVec);
 
-            float4 quat = quatNew(input.axis, 90.0f);
+            float4 quat = quatNew(input.axis.xyz, input.axis.w);
             normalVec = quatTransform(quat, normalVec);
             normalVec = normalize(normalVec);
 
@@ -182,7 +182,7 @@ std::shared_ptr<TileBatch> TileBatch::create(
 
             // return float4(vecColor, input.color.w);
             output.outPosition = input.mmpos;
-            output.outNormal = float4(vecColor, 1);
+            output.outNormal = float4(normalVec, 1);
             output.outColor = input.color;
             return output;
         })",
