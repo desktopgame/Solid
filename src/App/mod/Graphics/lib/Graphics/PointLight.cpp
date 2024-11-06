@@ -681,9 +681,6 @@ std::shared_ptr<PointLight> PointLight::create(
             ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
             globalLight->m_scrVertexBuffer->Unmap(0, nullptr);
         }
-        // effectGlobalLight2D->m_vertexBuffer = Buffer::create();
-        // effectGlobalLight2D->m_vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
-        // effectGlobalLight2D->m_vertexBuffer->update(vertices.data());
         indices.emplace_back(0);
         indices.emplace_back(1);
         indices.emplace_back(2);
@@ -722,9 +719,6 @@ std::shared_ptr<PointLight> PointLight::create(
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
             globalLight->m_scrIndexBuffer->Unmap(0, nullptr);
         }
-        // effectGlobalLight2D->m_indexBuffer = Buffer::create();
-        // effectGlobalLight2D->m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
-        // effectGlobalLight2D->m_indexBuffer->update(indices.data());
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
         psoDesc.RasterizerState.MultisampleEnable = false;
