@@ -850,6 +850,23 @@ void PointLight::initialize(
 
 void PointLight::destroy()
 {
+    s_shader = nullptr;
+    s_scrShader = nullptr;
+    s_constantVec.clear();
+
+    s_pipelineState = nullptr;
+    s_rootSignature = nullptr;
+    s_descriptorHeap = nullptr;
+    s_vertexBuffer = nullptr;
+    s_indexBuffer = nullptr;
+    s_constantBuffer = nullptr;
+
+    s_scrPipelineState = nullptr;
+    s_scrRootSignature = nullptr;
+    s_scrDescriptorHeap = nullptr;
+    s_scrVertexBuffer = nullptr;
+    s_scrIndexBuffer = nullptr;
+    s_scrConstantBuffer = nullptr;
 }
 // private
 void PointLight::generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices)

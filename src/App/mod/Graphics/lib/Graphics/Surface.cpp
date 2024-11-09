@@ -249,6 +249,8 @@ std::shared_ptr<Surface> Surface::create(
 
 void Surface::destroy()
 {
+    GlobalLight::destroy();
+    PointLight::destroy();
     m_swapchain->destroy();
     m_swapchain = nullptr;
 }
