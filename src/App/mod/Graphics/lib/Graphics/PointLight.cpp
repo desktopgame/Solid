@@ -49,7 +49,7 @@ void PointLight::setCount(int32_t count)
 // internal
 void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
-    if (s_count == 0) {
+    if (s_count == 0 || !s_enabled) {
         return;
     }
     for (int32_t s_currentLightIndex = 0; s_currentLightIndex < s_count; s_currentLightIndex++) {
