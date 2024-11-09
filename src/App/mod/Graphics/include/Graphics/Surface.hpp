@@ -57,7 +57,6 @@ private:
     Surface();
 
     std::shared_ptr<Swapchain> m_swapchain;
-    std::shared_ptr<PointLight> m_pointLight;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;

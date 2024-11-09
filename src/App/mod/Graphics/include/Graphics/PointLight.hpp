@@ -19,13 +19,13 @@ public:
     static inline constexpr int32_t k_maxCount = 50;
 
 #if SOLID_ENABLE_INTERNAL
-    void clear();
-    void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& position, float innerRadius, float outerRadius);
+    static void clear();
+    static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& position, float innerRadius, float outerRadius);
 
-    static std::shared_ptr<PointLight> create(
+    static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
         const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures);
-    void destroy();
+    static void destroy();
 #endif
 
 private:
@@ -47,29 +47,29 @@ private:
     };
     static_assert(sizeof(Constant2) == 256);
 
-    PointLight();
+    PointLight() = delete;
     static void generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices);
 
-    std::shared_ptr<Shader> m_shader;
-    std::shared_ptr<Shader> m_scrShader;
-    int32_t m_vertexLength;
-    int32_t m_indexLength;
-    int32_t m_currentLightIndex;
+    static std::shared_ptr<Shader> s_shader;
+    static std::shared_ptr<Shader> s_scrShader;
+    static int32_t s_vertexLength;
+    static int32_t s_indexLength;
+    static int32_t s_currentLightIndex;
 
 #if SOLID_ENABLE_INTERNAL
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_indexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
 
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_scrPipelineState;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_scrRootSignature;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_scrDescriptorHeap;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_scrVertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_scrIndexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_scrConstantBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_scrPipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_scrRootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_scrDescriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_scrVertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_scrIndexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_scrConstantBuffer;
 #endif
 };
 }

@@ -85,7 +85,7 @@ void Surface::begin3D()
     m_commandList->RSSetScissorRects(3, scissorRects);
 
     // clear
-    m_pointLight->clear();
+    PointLight::clear();
 }
 
 void Surface::end3D()
@@ -145,7 +145,7 @@ void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
 
 void Surface::effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius)
 {
-    m_pointLight->draw(m_commandList, position, innerRadius, outerRadius);
+    PointLight::draw(m_commandList, position, innerRadius, outerRadius);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(
@@ -248,7 +248,7 @@ std::shared_ptr<Surface> Surface::create(
     // GlobalLight
     GlobalLight::initialize(d3d12Device, surface->m_gTextures);
     // PointLight
-    surface->m_pointLight = PointLight::create(d3d12Device, surface->m_gTextures);
+    PointLight::initialize(d3d12Device, surface->m_gTextures);
 
     surface->m_swapchain = swapchain;
     return surface;
@@ -262,7 +262,6 @@ void Surface::destroy()
 // private
 Surface::Surface()
     : m_swapchain()
-    , m_pointLight()
     , m_dxgiFactory()
     , m_infoQueue()
     , m_commandAllocator()
