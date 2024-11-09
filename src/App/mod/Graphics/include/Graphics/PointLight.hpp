@@ -21,7 +21,7 @@ public:
     static void enable();
     static void disable();
     static void set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius);
-    static void setCount(int32_t max);
+    static void setCount(int32_t count);
 
 #if SOLID_ENABLE_INTERNAL
     static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
