@@ -157,50 +157,8 @@ std::shared_ptr<PointLight> PointLight::create(
         struct Output {
             float4 svpos : SV_POSITION;
         };
-
-        Texture2D<float4> positionTex : register(t0);
-        SamplerState positionSmp : register(s0);
-
-        Texture2D<float4> normalTex : register(t1);
-        SamplerState normalSmp : register(s1);
-
-        Texture2D<float4> colorTex : register(t2);
-        SamplerState colorSmp : register(s2);
-
+\
         float4 psMain(Output input) : SV_TARGET {
-            float svx = input.svpos.x / 800.0;
-            float svy = input.svpos.y / 600.0;
-            float2 coord = float2(
-                svx, // ((svx + 1.0) * 0.5),
-                svy // 1.0 - ((svy + 1.0) * 0.5)
-            );
-            float4 positionCol = positionTex.Sample(positionSmp, coord);
-            float4 normalCol = normalTex.Sample(normalSmp, coord);
-            float4 colorCol = colorTex.Sample(colorSmp, coord);
-            float3 uPointLightPos = float3(8 * 5, 10, 8 * 5);
-
-            float3 N = normalize(normalCol.xyz);
-            float3 L = normalize(uPointLightPos - positionCol.xyz);
-            float3 Phong = float3(0, 0, 0);
-            float NdotL = dot(N, L);
-
-            if (NdotL > 0)
-            {
-                // Get the distance between the light and the world pos
-                float dist = distance(uPointLightPos, positionCol.xyz);
-                // Use smoothstep to compute value in range [0,1]
-                // between inner/outer radius
-                float intensity = smoothstep(5/* uPointLight.mInnerRadius */,
-                                            20/* uPointLight.mOuterRadius */, dist);
-                // The diffuse color of the light depends on intensity
-                float3 DiffuseColor = lerp(float3(1, 1, 1),
-                                        float3(0.0, 0.0, 0.0), intensity);
-                Phong = DiffuseColor * NdotL;
-            }
-            // return float4(input.svpos.xy, 0, 1);
-            // return float4(coord, 0, 1);
-            // return float4(colorCol.xyz, 1);
-            // return float4(colorCol.xyz * Phong, 1.0);
             return float4(0, 0, 0, 1);
         })",
             "psMain");
