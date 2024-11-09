@@ -18,6 +18,7 @@ public:
     static inline constexpr int32_t k_maxCount = 50;
 
 #if SOLID_ENABLE_INTERNAL
+    void clear();
     void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
     static std::shared_ptr<PointLight> create(
@@ -34,6 +35,7 @@ private:
     std::shared_ptr<Shader> m_scrShader;
     int32_t m_vertexLength;
     int32_t m_indexLength;
+    int32_t m_currentLightIndex;
 
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;

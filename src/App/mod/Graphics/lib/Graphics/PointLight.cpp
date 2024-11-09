@@ -10,6 +10,11 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // internal
+void PointLight::clear()
+{
+    m_currentLightIndex = 0;
+}
+
 void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     {
@@ -871,6 +876,7 @@ PointLight::PointLight()
     , m_scrShader()
     , m_vertexLength()
     , m_indexLength()
+    , m_currentLightIndex()
     , m_pipelineState()
     , m_rootSignature()
     , m_descriptorHeap()

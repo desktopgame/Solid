@@ -86,6 +86,7 @@ void Surface::begin3D()
 
     // clear
     m_globalLight->clear();
+    m_pointLight->clear();
 }
 
 void Surface::end3D()
