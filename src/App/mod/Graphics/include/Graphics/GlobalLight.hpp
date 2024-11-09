@@ -37,17 +37,17 @@ private:
 
     GlobalLight() = delete;
 
-    static std::shared_ptr<Shader> m_shader;
-    static bool m_drawLight;
-    static Constant m_constantData;
+    static std::shared_ptr<Shader> s_shader;
+    static bool s_drawLight;
+    static Constant s_constantData;
 
 #if SOLID_ENABLE_INTERNAL
-    static Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
-    static Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> m_indexBuffer;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
 #endif
 };
 }
