@@ -5,6 +5,14 @@ project(
     LANGUAGES CXX
 )
 #
+# Embed Program
+#
+execute_process(
+    COMMAND powershell -File Embed.ps1
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_FILE ./include/Graphics/Program.hpp
+)
+#
 # Build Options
 #
 find_package(directxtex CONFIG REQUIRED)
