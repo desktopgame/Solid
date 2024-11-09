@@ -111,11 +111,13 @@ void GameScene::onDraw3D()
     Camera::depthRange(0.1f, 1000.0f);
 
     m_tileRenderer->drawTiles();
+
+    GlobalLight::enable();
+    GlobalLight::set(Vector3::normalized(m_globalLightDir));
 }
 
 void GameScene::onDraw2D()
 {
-    Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D(Vector3::normalized(m_globalLightDir));
     Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 40, 10, 40 }), 10, 20);
     Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 60, 10, 20 }), 10, 20);
     Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 20, 10, 20 }), 10, 20);

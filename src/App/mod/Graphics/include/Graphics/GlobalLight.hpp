@@ -17,9 +17,12 @@ class GlobalLight {
 public:
     static inline constexpr int32_t k_maxCount = 1;
 
+    static void enable();
+    static void disable();
+    static void set(const Math::Vector3& dir);
+
 #if SOLID_ENABLE_INTERNAL
-    static void clear();
-    static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir);
+    static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
     static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
@@ -38,7 +41,8 @@ private:
     GlobalLight() = delete;
 
     static std::shared_ptr<Shader> s_shader;
-    static bool s_drawLight;
+    static bool s_enabled;
+    static Math::Vector3 s_dir;
     static Constant s_constantData;
 
 #if SOLID_ENABLE_INTERNAL

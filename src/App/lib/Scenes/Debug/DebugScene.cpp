@@ -191,11 +191,13 @@ void DebugScene::onDraw3D()
     m_hintTileBatch->setGlobalViewMatrix(Camera::getLookAtMatrix());
     m_hintTileBatch->setGlobalProjectionMatrix(Camera::getPerspectiveMatrix());
     Engine::getInstance()->getDevice()->getSurface()->render(m_hintTileBatch);
+
+    GlobalLight::enable();
+    GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
 }
 
 void DebugScene::onDraw2D()
 {
-    Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D(Vector3::normalized(Vector3({ 1, 1, 0 })));
     m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
 }
 

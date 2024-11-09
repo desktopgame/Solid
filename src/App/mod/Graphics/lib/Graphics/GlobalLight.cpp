@@ -10,7 +10,8 @@ namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 
 std::shared_ptr<Shader> GlobalLight::s_shader;
-bool GlobalLight::s_drawLight;
+bool GlobalLight::s_enabled;
+Math::Vector3 GlobalLight::s_dir;
 GlobalLight::Constant GlobalLight::s_constantData;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> GlobalLight::s_pipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> GlobalLight::s_rootSignature;
@@ -18,23 +19,22 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GlobalLight::s_descriptorHeap;
 Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::s_vertexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::s_indexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::s_constantBuffer;
+// public
+void GlobalLight::enable() { s_enabled = true; }
+void GlobalLight::disable() { s_enabled = false; }
+void GlobalLight::set(const Math::Vector3& dir) { s_dir = dir; }
 // internal
-void GlobalLight::clear()
+void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
-    s_drawLight = false;
-}
-
-void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir)
-{
-    if (s_drawLight) {
-        throw std::logic_error("light limit.");
+    if (!s_enabled) {
+        return;
     }
     {
         void* outData;
         if (FAILED(s_constantBuffer->Map(0, nullptr, (void**)&outData))) {
             throw std::runtime_error("failed Map()");
         }
-        s_constantData.direction = dir;
+        s_constantData.direction = s_dir;
         ::memcpy(outData, &s_constantData, sizeof(GlobalLight::Constant));
         s_constantBuffer->Unmap(0, nullptr);
     }
@@ -101,8 +101,8 @@ void GlobalLight::initialize(
             output.texCoord = texCoord;
             return output;
         })"),
-                                                          shaderKeywords),
-                               "vsMain", R"(
+                                   shaderKeywords),
+        "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -130,7 +130,7 @@ void GlobalLight::initialize(
 
             return float4(colorCol.xyz * bright, colorCol.w);
         })",
-                               "psMain");
+        "psMain");
     s_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;

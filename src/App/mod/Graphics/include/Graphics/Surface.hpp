@@ -44,7 +44,6 @@ public:
     void render(
         const std::shared_ptr<TileBatch>& tileBatch);
 
-    void effectGlobalLight2D(const Math::Vector3& dir);
     void effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius);
 
 #if SOLID_ENABLE_INTERNAL

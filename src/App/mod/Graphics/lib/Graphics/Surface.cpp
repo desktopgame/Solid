@@ -85,7 +85,6 @@ void Surface::begin3D()
     m_commandList->RSSetScissorRects(3, scissorRects);
 
     // clear
-    GlobalLight::clear();
     m_pointLight->clear();
 }
 
@@ -110,6 +109,9 @@ void Surface::end3D()
 void Surface::begin2D()
 {
     m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+
+    // light
+    GlobalLight::draw(m_commandList);
 }
 
 void Surface::end2D()
@@ -139,11 +141,6 @@ void Surface::render(
 void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
 {
     tileBatch->render(m_commandList);
-}
-
-void Surface::effectGlobalLight2D(const Math::Vector3& dir)
-{
-    GlobalLight::draw(m_commandList, dir);
 }
 
 void Surface::effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius)
