@@ -210,9 +210,6 @@ std::shared_ptr<PointLight> PointLight::create(
             ::memcpy(outData, vertices.data(), sizeof(Math::Vector3) * globalLight->m_vertexLength);
             globalLight->m_vertexBuffer->Unmap(0, nullptr);
         }
-        // effectGlobalLight2D->m_vertexBuffer = Buffer::create();
-        // effectGlobalLight2D->m_vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
-        // effectGlobalLight2D->m_vertexBuffer->update(vertices.data());
 
         D3D12_HEAP_PROPERTIES ibHeapProps = {};
         ibHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -245,9 +242,6 @@ std::shared_ptr<PointLight> PointLight::create(
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * globalLight->m_indexLength);
             globalLight->m_indexBuffer->Unmap(0, nullptr);
         }
-        // effectGlobalLight2D->m_indexBuffer = Buffer::create();
-        // effectGlobalLight2D->m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
-        // effectGlobalLight2D->m_indexBuffer->update(indices.data());
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
         psoDesc.RasterizerState.MultisampleEnable = false;
