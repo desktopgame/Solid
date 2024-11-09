@@ -6,6 +6,7 @@
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Math/Matrix.hpp>
 #include <Utils/String.hpp>
+#include <stdexcept>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
@@ -17,6 +18,9 @@ void PointLight::clear()
 
 void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& position, float innerRadius, float outerRadius)
 {
+    if (m_currentLightIndex >= k_maxCount) {
+        throw std::logic_error("light limit.");
+    }
     {
 
         {
