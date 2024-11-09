@@ -116,7 +116,7 @@ void GameScene::onDraw3D()
 void GameScene::onDraw2D()
 {
     Engine::getInstance()->getDevice()->getSurface()->effectGlobalLight2D(Vector3::normalized(m_globalLightDir));
-    Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D();
+    Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 40, 10, 40 }), 10, 20);
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)

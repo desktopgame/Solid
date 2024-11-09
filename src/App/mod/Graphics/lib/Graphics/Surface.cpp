@@ -146,9 +146,9 @@ void Surface::effectGlobalLight2D(const Math::Vector3& dir)
     m_globalLight->draw(m_commandList, dir);
 }
 
-void Surface::effectPointLight2D()
+void Surface::effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius)
 {
-    m_pointLight->draw(m_commandList);
+    m_pointLight->draw(m_commandList, position, innerRadius, outerRadius);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(

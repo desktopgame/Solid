@@ -15,38 +15,26 @@ void PointLight::clear()
     m_currentLightIndex = 0;
 }
 
-void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& position, float innerRadius, float outerRadius)
 {
     {
 
         {
+            D3D12_RANGE range = {};
+            range.Begin = sizeof(PointLight::Constant1) * m_currentLightIndex;
+            range.End = sizeof(PointLight::Constant1) * (m_currentLightIndex + 1);
+
             void* outData;
-            if (FAILED(m_modelMatrixBuffer->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(m_constantBuffer->Map(0, &range, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
-            float scale = 20.0f / 10.0f;
-            Math::Matrix mat = Math::Matrix::translate(Math::Vector3({ 8 * 5, 10, 8 * 5 }));
-            mat = Math::Matrix::scale(Math::Vector3({ scale, scale, scale })) * mat;
-            ::memcpy(outData, mat.data(), sizeof(Math::Matrix));
-            m_modelMatrixBuffer->Unmap(0, nullptr);
-        }
-        {
-            void* outData;
-            if (FAILED(m_viewMatrixBuffer->Map(0, nullptr, (void**)&outData))) {
-                throw std::runtime_error("failed Map()");
-            }
-            Math::Matrix mat = Camera::getLookAtMatrix();
-            ::memcpy(outData, mat.data(), sizeof(Math::Matrix));
-            m_viewMatrixBuffer->Unmap(0, nullptr);
-        }
-        {
-            void* outData;
-            if (FAILED(m_projectionMatrixBuffer->Map(0, nullptr, (void**)&outData))) {
-                throw std::runtime_error("failed Map()");
-            }
-            Math::Matrix mat = Camera::getPerspectiveMatrix();
-            ::memcpy(outData, mat.data(), sizeof(Math::Matrix));
-            m_projectionMatrixBuffer->Unmap(0, nullptr);
+            PointLight::Constant1 c1;
+            c1.modelMatrix = Math::Matrix::translate(position);
+            c1.modelMatrix = Math::Matrix::scale(Math::Vector3({ outerRadius, outerRadius, outerRadius })) * c1.modelMatrix;
+            c1.viewMatrix = Camera::getLookAtMatrix();
+            c1.projectionMatrix = Camera::getPerspectiveMatrix();
+            ::memcpy(outData, &c1, sizeof(PointLight::Constant1));
+            m_constantBuffer->Unmap(0, &range);
         }
         commandList->SetPipelineState(m_pipelineState.Get());
         commandList->SetGraphicsRootSignature(m_rootSignature.Get());
@@ -57,10 +45,13 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
         D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
         commandList->SetDescriptorHeaps(1, m_descriptorHeap.GetAddressOf());
 
-        for (int32_t i = 0; i < 6; i++) {
+        for (int32_t i = 0; i < 3; i++) {
             commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
             heapHandle.ptr += incrementSize;
         }
+        heapHandle.ptr += (m_currentLightIndex * incrementSize);
+        commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
+
         commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         D3D12_VERTEX_BUFFER_VIEW vbView = {};
@@ -83,6 +74,22 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     //
 
     {
+        {
+            D3D12_RANGE range = {};
+            range.Begin = sizeof(PointLight::Constant2) * m_currentLightIndex;
+            range.End = sizeof(PointLight::Constant2) * (m_currentLightIndex + 1);
+
+            void* outData;
+            if (FAILED(m_scrConstantBuffer->Map(0, &range, (void**)&outData))) {
+                throw std::runtime_error("failed Map()");
+            }
+            PointLight::Constant2 c2;
+            c2.position = position;
+            c2.innerRadius = innerRadius;
+            c2.outerRadius = outerRadius;
+            ::memcpy(outData, &c2, sizeof(PointLight::Constant2));
+            m_scrConstantBuffer->Unmap(0, &range);
+        }
 
         commandList->SetPipelineState(m_scrPipelineState.Get());
         commandList->SetGraphicsRootSignature(m_scrRootSignature.Get());
@@ -97,6 +104,9 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
             commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
             heapHandle.ptr += incrementSize;
         }
+        heapHandle.ptr += (m_currentLightIndex * incrementSize);
+        commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
+
         commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         D3D12_VERTEX_BUFFER_VIEW vbView = {};
@@ -113,6 +123,8 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
 
         commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
+
+    m_currentLightIndex++;
 }
 
 std::shared_ptr<PointLight> PointLight::create(
@@ -141,9 +153,12 @@ std::shared_ptr<PointLight> PointLight::create(
         struct Output {
             float4 svpos : SV_POSITION;
         };
-        cbuffer cbuff0 : register(b0) { matrix modelMatrix; }
-        cbuffer cbuff1 : register(b1) { matrix viewMatrix; }
-        cbuffer cbuff2 : register(b2) { matrix projectionMatrix; }
+        cbuffer cbuff0 : register(b0) {
+            matrix modelMatrix;
+            matrix viewMatrix;
+            matrix projectionMatrix;
+            float padding[16];
+        }
 
         Output vsMain(float3 pos : POSITION) {
             Output output;
@@ -157,7 +172,7 @@ std::shared_ptr<PointLight> PointLight::create(
         struct Output {
             float4 svpos : SV_POSITION;
         };
-\
+
         float4 psMain(Output input) : SV_TARGET {
             return float4(0, 0, 0, 1);
         })",
@@ -166,7 +181,7 @@ std::shared_ptr<PointLight> PointLight::create(
         // vertex buffer and index buffer
         std::vector<Math::Vector3> vertices;
         std::vector<uint32_t> indices;
-        generateSphere(10, 10, 10, vertices, indices);
+        generateSphere(1, 10, 10, vertices, indices);
         globalLight->m_vertexLength = static_cast<int32_t>(vertices.size());
         globalLight->m_indexLength = static_cast<int32_t>(indices.size());
         // const float half = 1.0f;
@@ -311,16 +326,6 @@ std::shared_ptr<PointLight> PointLight::create(
         descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
         descTableRange.at(3).BaseShaderRegister = 0;
         descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-        descTableRange.push_back({});
-        descTableRange.at(4).NumDescriptors = 1;
-        descTableRange.at(4).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-        descTableRange.at(4).BaseShaderRegister = 1;
-        descTableRange.at(4).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-        descTableRange.push_back({});
-        descTableRange.at(5).NumDescriptors = 1;
-        descTableRange.at(5).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-        descTableRange.at(5).BaseShaderRegister = 2;
-        descTableRange.at(5).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
         std::vector<D3D12_ROOT_PARAMETER> rootParam;
         rootParam.push_back({});
@@ -343,16 +348,6 @@ std::shared_ptr<PointLight> PointLight::create(
         rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
         rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
         rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
-        rootParam.push_back({});
-        rootParam.at(4).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-        rootParam.at(4).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-        rootParam.at(4).DescriptorTable.pDescriptorRanges = &descTableRange.at(4);
-        rootParam.at(4).DescriptorTable.NumDescriptorRanges = 1;
-        rootParam.push_back({});
-        rootParam.at(5).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-        rootParam.at(5).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-        rootParam.at(5).DescriptorTable.pDescriptorRanges = &descTableRange.at(5);
-        rootParam.at(5).DescriptorTable.NumDescriptorRanges = 1;
 
         D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
         for (int32_t i = 0; i < 3; i++) {
@@ -393,7 +388,7 @@ std::shared_ptr<PointLight> PointLight::create(
         D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
         descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         descHeapDesc.NodeMask = 0;
-        descHeapDesc.NumDescriptors = 6;
+        descHeapDesc.NumDescriptors = 3 + k_maxCount;
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
         if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&globalLight->m_descriptorHeap)))) {
@@ -412,103 +407,42 @@ std::shared_ptr<PointLight> PointLight::create(
             heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         }
         //
-        // ModelMatrix
+        // Constant1
         //
 
-        D3D12_HEAP_PROPERTIES modelMatHeapProps = {};
-        modelMatHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-        modelMatHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-        modelMatHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-        D3D12_RESOURCE_DESC modelMatResDesc = {};
-        modelMatResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-        modelMatResDesc.Width = 256;
-        modelMatResDesc.Height = 1;
-        modelMatResDesc.DepthOrArraySize = 1;
-        modelMatResDesc.MipLevels = 1;
-        modelMatResDesc.Format = DXGI_FORMAT_UNKNOWN;
-        modelMatResDesc.SampleDesc.Count = 1;
-        modelMatResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        modelMatResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+        D3D12_HEAP_PROPERTIES cbHeapProps = {};
+        cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+        cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+        cbHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+        D3D12_RESOURCE_DESC cbResDesc = {};
+        cbResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+        cbResDesc.Width = sizeof(PointLight::Constant1) * k_maxCount;
+        cbResDesc.Height = 1;
+        cbResDesc.DepthOrArraySize = 1;
+        cbResDesc.MipLevels = 1;
+        cbResDesc.Format = DXGI_FORMAT_UNKNOWN;
+        cbResDesc.SampleDesc.Count = 1;
+        cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+        cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
         if (FAILED(device->CreateCommittedResource(
-                &modelMatHeapProps,
+                &cbHeapProps,
                 D3D12_HEAP_FLAG_NONE,
-                &modelMatResDesc,
+                &cbResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&globalLight->m_modelMatrixBuffer)))) {
+                IID_PPV_ARGS(&globalLight->m_constantBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
-        D3D12_CONSTANT_BUFFER_VIEW_DESC modelCbvDesc = {};
-        modelCbvDesc.BufferLocation = globalLight->m_modelMatrixBuffer->GetGPUVirtualAddress();
-        modelCbvDesc.SizeInBytes = 256;
 
-        device->CreateConstantBufferView(&modelCbvDesc, heapHandle);
-        heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        //
-        // ViewMatrix
-        //
+        for (int32_t i = 0; i < k_maxCount; i++) {
+            D3D12_CONSTANT_BUFFER_VIEW_DESC modelCbvDesc = {};
+            int32_t offset = sizeof(PointLight::Constant1) * i;
+            modelCbvDesc.BufferLocation = globalLight->m_constantBuffer->GetGPUVirtualAddress() + offset;
+            modelCbvDesc.SizeInBytes = sizeof(PointLight::Constant1);
 
-        D3D12_HEAP_PROPERTIES viewMatHeapProps = {};
-        viewMatHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-        viewMatHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-        viewMatHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-        D3D12_RESOURCE_DESC viewMatResDesc = {};
-        viewMatResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-        viewMatResDesc.Width = 256;
-        viewMatResDesc.Height = 1;
-        viewMatResDesc.DepthOrArraySize = 1;
-        viewMatResDesc.MipLevels = 1;
-        viewMatResDesc.Format = DXGI_FORMAT_UNKNOWN;
-        viewMatResDesc.SampleDesc.Count = 1;
-        viewMatResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        viewMatResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-        if (FAILED(device->CreateCommittedResource(
-                &viewMatHeapProps,
-                D3D12_HEAP_FLAG_NONE,
-                &viewMatResDesc,
-                D3D12_RESOURCE_STATE_GENERIC_READ,
-                nullptr,
-                IID_PPV_ARGS(&globalLight->m_viewMatrixBuffer)))) {
-            throw std::runtime_error("failed CreateCommittedResource()");
+            device->CreateConstantBufferView(&modelCbvDesc, heapHandle);
+            heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         }
-        D3D12_CONSTANT_BUFFER_VIEW_DESC viewCbvDesc = {};
-        viewCbvDesc.BufferLocation = globalLight->m_viewMatrixBuffer->GetGPUVirtualAddress();
-        viewCbvDesc.SizeInBytes = 256;
-
-        device->CreateConstantBufferView(&viewCbvDesc, heapHandle);
-        heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        //
-        // ProjectionMatrix
-        //
-
-        D3D12_HEAP_PROPERTIES projMatHeapProps = {};
-        projMatHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-        projMatHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-        projMatHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-        D3D12_RESOURCE_DESC projMatResDesc = {};
-        projMatResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-        projMatResDesc.Width = 256;
-        projMatResDesc.Height = 1;
-        projMatResDesc.DepthOrArraySize = 1;
-        projMatResDesc.MipLevels = 1;
-        projMatResDesc.Format = DXGI_FORMAT_UNKNOWN;
-        projMatResDesc.SampleDesc.Count = 1;
-        projMatResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        projMatResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-        if (FAILED(device->CreateCommittedResource(
-                &projMatHeapProps,
-                D3D12_HEAP_FLAG_NONE,
-                &projMatResDesc,
-                D3D12_RESOURCE_STATE_GENERIC_READ,
-                nullptr,
-                IID_PPV_ARGS(&globalLight->m_projectionMatrixBuffer)))) {
-            throw std::runtime_error("failed CreateCommittedResource()");
-        }
-        D3D12_CONSTANT_BUFFER_VIEW_DESC projCbvDesc = {};
-        projCbvDesc.BufferLocation = globalLight->m_projectionMatrixBuffer->GetGPUVirtualAddress();
-        projCbvDesc.SizeInBytes = 256;
-        device->CreateConstantBufferView(&projCbvDesc, heapHandle);
-        heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     }
     {
 
@@ -546,6 +480,13 @@ std::shared_ptr<PointLight> PointLight::create(
             float2 texCoord : TEXCOORD;
         };
 
+        cbuffer cbuff0 : register(b0) {
+            float3 position;
+            float innerRadius;
+            float outerRadius;
+            float padding[59];
+        }
+
         Texture2D<float4> positionTex : register(t0);
         SamplerState positionSmp : register(s0);
 
@@ -565,7 +506,7 @@ std::shared_ptr<PointLight> PointLight::create(
             float4 positionCol = positionTex.Sample(positionSmp, coord);
             float4 normalCol = normalTex.Sample(normalSmp, coord);
             float4 colorCol = colorTex.Sample(colorSmp, coord);
-            float3 uPointLightPos = float3(8 * 5, 10, 8 * 5);
+            float3 uPointLightPos = position;
 
             float3 N = normalize(normalCol.xyz);
             float3 L = normalize(uPointLightPos - positionCol.xyz);
@@ -580,8 +521,8 @@ std::shared_ptr<PointLight> PointLight::create(
                 float dist = distance(uPointLightPos, positionCol.xyz);
                 // Use smoothstep to compute value in range [0,1]
                 // between inner/outer radius
-                float intensity = smoothstep(5/* uPointLight.mInnerRadius */,
-                                            20/* uPointLight.mOuterRadius */, dist);
+                float intensity = smoothstep(innerRadius/* uPointLight.mInnerRadius */,
+                                            outerRadius/* uPointLight.mOuterRadius */, dist);
                 // The diffuse color of the light depends on intensity
                 float3 DiffuseColor = lerp(float3(1, 1, 1),
                                         float3(0.0, 0.0, 0.0), intensity);
@@ -740,6 +681,11 @@ std::shared_ptr<PointLight> PointLight::create(
         descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
         descTableRange.at(2).BaseShaderRegister = 2;
         descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        descTableRange.push_back({});
+        descTableRange.at(3).NumDescriptors = 1;
+        descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+        descTableRange.at(3).BaseShaderRegister = 0;
+        descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
         std::vector<D3D12_ROOT_PARAMETER> rootParam;
         rootParam.push_back({});
@@ -757,6 +703,11 @@ std::shared_ptr<PointLight> PointLight::create(
         rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
         rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
         rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
+        rootParam.push_back({});
+        rootParam.at(3).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+        rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+        rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
+        rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
         D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
         for (int32_t i = 0; i < 3; i++) {
@@ -797,7 +748,7 @@ std::shared_ptr<PointLight> PointLight::create(
         D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
         descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         descHeapDesc.NodeMask = 0;
-        descHeapDesc.NumDescriptors = 3;
+        descHeapDesc.NumDescriptors = 3 + k_maxCount;
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
         if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&globalLight->m_scrDescriptorHeap)))) {
@@ -813,6 +764,44 @@ std::shared_ptr<PointLight> PointLight::create(
 
         for (int32_t i = 0; i < static_cast<int32_t>(gTextures.size()); i++) {
             device->CreateShaderResourceView(gTextures.at(i).Get(), &srvDesc, heapHandle);
+            heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        }
+
+        //
+        // Constant2
+        //
+
+        D3D12_HEAP_PROPERTIES cbHeapProps = {};
+        cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+        cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+        cbHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+        D3D12_RESOURCE_DESC cbResDesc = {};
+        cbResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+        cbResDesc.Width = sizeof(PointLight::Constant2) * k_maxCount;
+        cbResDesc.Height = 1;
+        cbResDesc.DepthOrArraySize = 1;
+        cbResDesc.MipLevels = 1;
+        cbResDesc.Format = DXGI_FORMAT_UNKNOWN;
+        cbResDesc.SampleDesc.Count = 1;
+        cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+        cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+        if (FAILED(device->CreateCommittedResource(
+                &cbHeapProps,
+                D3D12_HEAP_FLAG_NONE,
+                &cbResDesc,
+                D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&globalLight->m_scrConstantBuffer)))) {
+            throw std::runtime_error("failed CreateCommittedResource()");
+        }
+
+        for (int32_t i = 0; i < k_maxCount; i++) {
+            D3D12_CONSTANT_BUFFER_VIEW_DESC modelCbvDesc = {};
+            int32_t offset = sizeof(PointLight::Constant2) * i;
+            modelCbvDesc.BufferLocation = globalLight->m_scrConstantBuffer->GetGPUVirtualAddress() + offset;
+            modelCbvDesc.SizeInBytes = sizeof(PointLight::Constant2);
+
+            device->CreateConstantBufferView(&modelCbvDesc, heapHandle);
             heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         }
     }
@@ -834,12 +823,13 @@ PointLight::PointLight()
     , m_descriptorHeap()
     , m_vertexBuffer()
     , m_indexBuffer()
-    , m_modelMatrixBuffer()
-    , m_viewMatrixBuffer()
-    , m_projectionMatrixBuffer()
+    , m_constantBuffer()
     , m_scrPipelineState()
     , m_scrRootSignature()
     , m_scrDescriptorHeap()
+    , m_scrVertexBuffer()
+    , m_scrIndexBuffer()
+    , m_scrConstantBuffer()
 {
 }
 void PointLight::generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices)
