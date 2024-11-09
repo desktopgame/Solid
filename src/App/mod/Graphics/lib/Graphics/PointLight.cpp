@@ -157,7 +157,7 @@ std::shared_ptr<PointLight> PointLight::create(
             matrix modelMatrix;
             matrix viewMatrix;
             matrix projectionMatrix;
-            float padding[16];
+            float4 padding[4];
         }
 
         Output vsMain(float3 pos : POSITION) {
@@ -484,7 +484,8 @@ std::shared_ptr<PointLight> PointLight::create(
             float3 position;
             float innerRadius;
             float outerRadius;
-            float padding[59];
+            float3 padding1;
+            float4 padding2[14];
         }
 
         Texture2D<float4> positionTex : register(t0);
