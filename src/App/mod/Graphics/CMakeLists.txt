@@ -7,10 +7,13 @@ project(
 #
 # Embed Program
 #
-execute_process(
-    COMMAND powershell -File Embed.ps1
+add_custom_command(
+    OUTPUT ./include/Graphics/Program.hpp
+    COMMAND powershell -File Embed.ps1 > ./include/Graphics/Program.hpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    OUTPUT_FILE ./include/Graphics/Program.hpp
+)
+add_custom_target(Embed ALL
+    DEPENDS ./include/Graphics/Program.hpp
 )
 #
 # Build Options
