@@ -52,8 +52,8 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     if (s_count == 0 || !s_enabled) {
         return;
     }
-    for (int32_t s_currentLightIndex = 0; s_currentLightIndex < s_count; s_currentLightIndex++) {
-        auto& constant = s_constantVec.at(s_currentLightIndex);
+    for (int32_t lightIndex = 0; lightIndex < s_count; lightIndex++) {
+        auto& constant = s_constantVec.at(lightIndex);
         Math::Vector3 position = constant.position;
         float innerRadius = constant.innerRadius;
         float outerRadius = constant.outerRadius;
@@ -62,8 +62,8 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
 
             {
                 D3D12_RANGE range = {};
-                range.Begin = sizeof(PointLight::Constant1) * s_currentLightIndex;
-                range.End = sizeof(PointLight::Constant1) * (s_currentLightIndex + 1);
+                range.Begin = sizeof(PointLight::Constant1) * lightIndex;
+                range.End = sizeof(PointLight::Constant1) * (lightIndex + 1);
 
                 void* outData;
                 if (FAILED(s_constantBuffer->Map(0, &range, (void**)&outData))) {
@@ -75,7 +75,7 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
                 c1.viewMatrix = Camera::getLookAtMatrix();
                 c1.projectionMatrix = Camera::getPerspectiveMatrix();
 
-                ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant1) * s_currentLightIndex), &c1, sizeof(PointLight::Constant1));
+                ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant1) * lightIndex), &c1, sizeof(PointLight::Constant1));
                 s_constantBuffer->Unmap(0, &range);
             }
             commandList->SetPipelineState(s_pipelineState.Get());
@@ -91,7 +91,7 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
                 commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
                 heapHandle.ptr += incrementSize;
             }
-            heapHandle.ptr += (s_currentLightIndex * incrementSize);
+            heapHandle.ptr += (lightIndex * incrementSize);
             commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
 
             commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -118,8 +118,8 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
         {
             {
                 D3D12_RANGE range = {};
-                range.Begin = sizeof(PointLight::Constant2) * s_currentLightIndex;
-                range.End = sizeof(PointLight::Constant2) * (s_currentLightIndex + 1);
+                range.Begin = sizeof(PointLight::Constant2) * lightIndex;
+                range.End = sizeof(PointLight::Constant2) * (lightIndex + 1);
 
                 void* outData;
                 if (FAILED(s_scrConstantBuffer->Map(0, &range, (void**)&outData))) {
@@ -129,7 +129,7 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
                 c2.position = position;
                 c2.innerRadius = innerRadius;
                 c2.outerRadius = outerRadius;
-                ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant2) * s_currentLightIndex), &c2, sizeof(PointLight::Constant2));
+                ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant2) * lightIndex), &c2, sizeof(PointLight::Constant2));
                 s_scrConstantBuffer->Unmap(0, &range);
             }
 
@@ -146,7 +146,7 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
                 commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
                 heapHandle.ptr += incrementSize;
             }
-            heapHandle.ptr += (s_currentLightIndex * incrementSize);
+            heapHandle.ptr += (lightIndex * incrementSize);
             commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
 
             commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
