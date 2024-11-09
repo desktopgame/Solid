@@ -33,7 +33,8 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
             c1.modelMatrix = Math::Matrix::scale(Math::Vector3({ outerRadius, outerRadius, outerRadius })) * c1.modelMatrix;
             c1.viewMatrix = Camera::getLookAtMatrix();
             c1.projectionMatrix = Camera::getPerspectiveMatrix();
-            ::memcpy(outData, &c1, sizeof(PointLight::Constant1));
+
+            ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant1) * m_currentLightIndex), &c1, sizeof(PointLight::Constant1));
             m_constantBuffer->Unmap(0, &range);
         }
         commandList->SetPipelineState(m_pipelineState.Get());
@@ -87,7 +88,7 @@ void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
             c2.position = position;
             c2.innerRadius = innerRadius;
             c2.outerRadius = outerRadius;
-            ::memcpy(outData, &c2, sizeof(PointLight::Constant2));
+            ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant2) * m_currentLightIndex), &c2, sizeof(PointLight::Constant2));
             m_scrConstantBuffer->Unmap(0, &range);
         }
 
