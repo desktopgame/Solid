@@ -15,7 +15,9 @@ std::shared_ptr<Shader> PointLight::s_shader;
 std::shared_ptr<Shader> PointLight::s_scrShader;
 int32_t PointLight::s_vertexLength;
 int32_t PointLight::s_indexLength;
-int32_t PointLight::s_currentLightIndex;
+bool PointLight::s_enabled;
+std::vector<PointLight::Constant2> PointLight::s_constantVec(PointLight::k_maxCount);
+int32_t PointLight::s_count;
 
 Microsoft::WRL::ComPtr<ID3D12PipelineState> PointLight::s_pipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> PointLight::s_rootSignature;
@@ -30,126 +32,140 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> PointLight::s_scrDescriptorHeap;
 Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_scrVertexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_scrIndexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_scrConstantBuffer;
-// internal
-void PointLight::clear()
+// public
+void PointLight::enable() { s_enabled = true; }
+void PointLight::disable() { s_enabled = false; }
+void PointLight::set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius)
 {
-    s_currentLightIndex = 0;
+    auto& constant = s_constantVec.at(index);
+    constant.position = position;
+    constant.innerRadius = innerRadius;
+    constant.outerRadius = outerRadius;
 }
-
-void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& position, float innerRadius, float outerRadius)
+void PointLight::setCount(int32_t count)
 {
-    if (s_currentLightIndex >= k_maxCount) {
-        throw std::logic_error("light limit.");
+    s_count = count;
+}
+// internal
+void PointLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+{
+    if (s_count == 0) {
+        return;
     }
-    {
+    for (int32_t s_currentLightIndex = 0; s_currentLightIndex < s_count; s_currentLightIndex++) {
+        auto& constant = s_constantVec.at(s_currentLightIndex);
+        Math::Vector3 position = constant.position;
+        float innerRadius = constant.innerRadius;
+        float outerRadius = constant.outerRadius;
 
         {
-            D3D12_RANGE range = {};
-            range.Begin = sizeof(PointLight::Constant1) * s_currentLightIndex;
-            range.End = sizeof(PointLight::Constant1) * (s_currentLightIndex + 1);
 
-            void* outData;
-            if (FAILED(s_constantBuffer->Map(0, &range, (void**)&outData))) {
-                throw std::runtime_error("failed Map()");
+            {
+                D3D12_RANGE range = {};
+                range.Begin = sizeof(PointLight::Constant1) * s_currentLightIndex;
+                range.End = sizeof(PointLight::Constant1) * (s_currentLightIndex + 1);
+
+                void* outData;
+                if (FAILED(s_constantBuffer->Map(0, &range, (void**)&outData))) {
+                    throw std::runtime_error("failed Map()");
+                }
+                PointLight::Constant1 c1;
+                c1.modelMatrix = Math::Matrix::translate(position);
+                c1.modelMatrix = Math::Matrix::scale(Math::Vector3({ outerRadius, outerRadius, outerRadius })) * c1.modelMatrix;
+                c1.viewMatrix = Camera::getLookAtMatrix();
+                c1.projectionMatrix = Camera::getPerspectiveMatrix();
+
+                ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant1) * s_currentLightIndex), &c1, sizeof(PointLight::Constant1));
+                s_constantBuffer->Unmap(0, &range);
             }
-            PointLight::Constant1 c1;
-            c1.modelMatrix = Math::Matrix::translate(position);
-            c1.modelMatrix = Math::Matrix::scale(Math::Vector3({ outerRadius, outerRadius, outerRadius })) * c1.modelMatrix;
-            c1.viewMatrix = Camera::getLookAtMatrix();
-            c1.projectionMatrix = Camera::getPerspectiveMatrix();
+            commandList->SetPipelineState(s_pipelineState.Get());
+            commandList->SetGraphicsRootSignature(s_rootSignature.Get());
 
-            ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant1) * s_currentLightIndex), &c1, sizeof(PointLight::Constant1));
-            s_constantBuffer->Unmap(0, &range);
+            auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+            uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+            D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+            commandList->SetDescriptorHeaps(1, s_descriptorHeap.GetAddressOf());
+
+            for (int32_t i = 0; i < 3; i++) {
+                commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
+                heapHandle.ptr += incrementSize;
+            }
+            heapHandle.ptr += (s_currentLightIndex * incrementSize);
+            commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
+
+            commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            D3D12_VERTEX_BUFFER_VIEW vbView = {};
+            vbView.BufferLocation = s_vertexBuffer->GetGPUVirtualAddress();
+            vbView.SizeInBytes = sizeof(Math::Vector3) * s_vertexLength;
+            vbView.StrideInBytes = static_cast<UINT>(sizeof(Math::Vector3));
+            commandList->IASetVertexBuffers(0, 1, &vbView);
+
+            D3D12_INDEX_BUFFER_VIEW ibView = {};
+            ibView.BufferLocation = s_indexBuffer->GetGPUVirtualAddress();
+            ibView.Format = DXGI_FORMAT_R32_UINT;
+            ibView.SizeInBytes = sizeof(uint32_t) * s_indexLength;
+            commandList->IASetIndexBuffer(&ibView);
+
+            commandList->DrawIndexedInstanced(s_indexLength, 1, 0, 0, 0);
         }
-        commandList->SetPipelineState(s_pipelineState.Get());
-        commandList->SetGraphicsRootSignature(s_rootSignature.Get());
 
-        auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-        uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        //
+        // Stencil
+        //
 
-        D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-        commandList->SetDescriptorHeaps(1, s_descriptorHeap.GetAddressOf());
-
-        for (int32_t i = 0; i < 3; i++) {
-            commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
-            heapHandle.ptr += incrementSize;
-        }
-        heapHandle.ptr += (s_currentLightIndex * incrementSize);
-        commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
-
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        D3D12_VERTEX_BUFFER_VIEW vbView = {};
-        vbView.BufferLocation = s_vertexBuffer->GetGPUVirtualAddress();
-        vbView.SizeInBytes = sizeof(Math::Vector3) * s_vertexLength;
-        vbView.StrideInBytes = static_cast<UINT>(sizeof(Math::Vector3));
-        commandList->IASetVertexBuffers(0, 1, &vbView);
-
-        D3D12_INDEX_BUFFER_VIEW ibView = {};
-        ibView.BufferLocation = s_indexBuffer->GetGPUVirtualAddress();
-        ibView.Format = DXGI_FORMAT_R32_UINT;
-        ibView.SizeInBytes = sizeof(uint32_t) * s_indexLength;
-        commandList->IASetIndexBuffer(&ibView);
-
-        commandList->DrawIndexedInstanced(s_indexLength, 1, 0, 0, 0);
-    }
-
-    //
-    // Stencil
-    //
-
-    {
         {
-            D3D12_RANGE range = {};
-            range.Begin = sizeof(PointLight::Constant2) * s_currentLightIndex;
-            range.End = sizeof(PointLight::Constant2) * (s_currentLightIndex + 1);
+            {
+                D3D12_RANGE range = {};
+                range.Begin = sizeof(PointLight::Constant2) * s_currentLightIndex;
+                range.End = sizeof(PointLight::Constant2) * (s_currentLightIndex + 1);
 
-            void* outData;
-            if (FAILED(s_scrConstantBuffer->Map(0, &range, (void**)&outData))) {
-                throw std::runtime_error("failed Map()");
+                void* outData;
+                if (FAILED(s_scrConstantBuffer->Map(0, &range, (void**)&outData))) {
+                    throw std::runtime_error("failed Map()");
+                }
+                PointLight::Constant2 c2;
+                c2.position = position;
+                c2.innerRadius = innerRadius;
+                c2.outerRadius = outerRadius;
+                ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant2) * s_currentLightIndex), &c2, sizeof(PointLight::Constant2));
+                s_scrConstantBuffer->Unmap(0, &range);
             }
-            PointLight::Constant2 c2;
-            c2.position = position;
-            c2.innerRadius = innerRadius;
-            c2.outerRadius = outerRadius;
-            ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant2) * s_currentLightIndex), &c2, sizeof(PointLight::Constant2));
-            s_scrConstantBuffer->Unmap(0, &range);
+
+            commandList->SetPipelineState(s_scrPipelineState.Get());
+            commandList->SetGraphicsRootSignature(s_scrRootSignature.Get());
+
+            auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+            uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+            D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_scrDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+            commandList->SetDescriptorHeaps(1, s_scrDescriptorHeap.GetAddressOf());
+
+            for (int32_t i = 0; i < 3; i++) {
+                commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
+                heapHandle.ptr += incrementSize;
+            }
+            heapHandle.ptr += (s_currentLightIndex * incrementSize);
+            commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
+
+            commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            D3D12_VERTEX_BUFFER_VIEW vbView = {};
+            vbView.BufferLocation = s_scrVertexBuffer->GetGPUVirtualAddress();
+            vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
+            vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
+            commandList->IASetVertexBuffers(0, 1, &vbView);
+
+            D3D12_INDEX_BUFFER_VIEW ibView = {};
+            ibView.BufferLocation = s_scrIndexBuffer->GetGPUVirtualAddress();
+            ibView.Format = DXGI_FORMAT_R32_UINT;
+            ibView.SizeInBytes = sizeof(uint32_t) * 6;
+            commandList->IASetIndexBuffer(&ibView);
+
+            commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
         }
-
-        commandList->SetPipelineState(s_scrPipelineState.Get());
-        commandList->SetGraphicsRootSignature(s_scrRootSignature.Get());
-
-        auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-        uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-        D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_scrDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
-        commandList->SetDescriptorHeaps(1, s_scrDescriptorHeap.GetAddressOf());
-
-        for (int32_t i = 0; i < 3; i++) {
-            commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
-            heapHandle.ptr += incrementSize;
-        }
-        heapHandle.ptr += (s_currentLightIndex * incrementSize);
-        commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
-
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        D3D12_VERTEX_BUFFER_VIEW vbView = {};
-        vbView.BufferLocation = s_scrVertexBuffer->GetGPUVirtualAddress();
-        vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
-        vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
-        commandList->IASetVertexBuffers(0, 1, &vbView);
-
-        D3D12_INDEX_BUFFER_VIEW ibView = {};
-        ibView.BufferLocation = s_scrIndexBuffer->GetGPUVirtualAddress();
-        ibView.Format = DXGI_FORMAT_R32_UINT;
-        ibView.SizeInBytes = sizeof(uint32_t) * 6;
-        commandList->IASetIndexBuffer(&ibView);
-
-        commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
-
-    s_currentLightIndex++;
 }
 
 void PointLight::initialize(
@@ -191,8 +207,8 @@ void PointLight::initialize(
             output.svpos = mul(projectionMatrix, output.svpos);
             return output;
         })"),
-                                                              shaderKeywords),
-                                   "vsMain", R"(
+                                       shaderKeywords),
+            "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
         };
@@ -200,7 +216,7 @@ void PointLight::initialize(
         float4 psMain(Output input) : SV_TARGET {
             return float4(0, 0, 0, 1);
         })",
-                                   "psMain");
+            "psMain");
         s_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // vertex buffer and index buffer
         std::vector<Math::Vector3> vertices;
@@ -497,8 +513,8 @@ void PointLight::initialize(
             output.texCoord = texCoord;
             return output;
         })"),
-                                                                 shaderKeywords),
-                                      "vsMain", R"(
+                                          shaderKeywords),
+            "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -558,7 +574,7 @@ void PointLight::initialize(
             // return float4(colorCol.xyz, 1);
             return float4(colorCol.xyz * Phong, 1.0);
         })",
-                                      "psMain");
+            "psMain");
         s_scrShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // vertex buffer and index buffer
         std::vector<VertexTexCoord2D> vertices;

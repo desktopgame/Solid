@@ -114,13 +114,16 @@ void GameScene::onDraw3D()
 
     GlobalLight::enable();
     GlobalLight::set(Vector3::normalized(m_globalLightDir));
+
+    PointLight::enable();
+    PointLight::setCount(3);
+    PointLight::set(0, Vector3({ 40, 10, 40 }), 10, 20);
+    PointLight::set(1, Vector3({ 60, 10, 20 }), 10, 20);
+    PointLight::set(2, Vector3({ 20, 10, 20 }), 10, 20);
 }
 
 void GameScene::onDraw2D()
 {
-    Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 40, 10, 40 }), 10, 20);
-    Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 60, 10, 20 }), 10, 20);
-    Engine::getInstance()->getDevice()->getSurface()->effectPointLight2D(Vector3({ 20, 10, 20 }), 10, 20);
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)

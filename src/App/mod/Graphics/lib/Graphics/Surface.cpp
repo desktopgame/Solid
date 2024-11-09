@@ -83,9 +83,6 @@ void Surface::begin3D()
         scissorRect.bottom = scissorRect.top + Screen::getHeight();
     }
     m_commandList->RSSetScissorRects(3, scissorRects);
-
-    // clear
-    PointLight::clear();
 }
 
 void Surface::end3D()
@@ -112,6 +109,7 @@ void Surface::begin2D()
 
     // light
     GlobalLight::draw(m_commandList);
+    PointLight::draw(m_commandList);
 }
 
 void Surface::end2D()
@@ -141,11 +139,6 @@ void Surface::render(
 void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
 {
     tileBatch->render(m_commandList);
-}
-
-void Surface::effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius)
-{
-    PointLight::draw(m_commandList, position, innerRadius, outerRadius);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(

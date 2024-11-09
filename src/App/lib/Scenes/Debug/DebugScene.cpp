@@ -194,6 +194,8 @@ void DebugScene::onDraw3D()
 
     GlobalLight::enable();
     GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
+
+    PointLight::disable();
 }
 
 void DebugScene::onDraw2D()

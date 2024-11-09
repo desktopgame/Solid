@@ -44,8 +44,6 @@ public:
     void render(
         const std::shared_ptr<TileBatch>& tileBatch);
 
-    void effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius);
-
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
         const std::shared_ptr<Device>& device,

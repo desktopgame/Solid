@@ -18,9 +18,13 @@ class PointLight {
 public:
     static inline constexpr int32_t k_maxCount = 50;
 
+    static void enable();
+    static void disable();
+    static void set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius);
+    static void setCount(int32_t max);
+
 #if SOLID_ENABLE_INTERNAL
-    static void clear();
-    static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& position, float innerRadius, float outerRadius);
+    static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
     static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
@@ -54,7 +58,9 @@ private:
     static std::shared_ptr<Shader> s_scrShader;
     static int32_t s_vertexLength;
     static int32_t s_indexLength;
-    static int32_t s_currentLightIndex;
+    static bool s_enabled;
+    static std::vector<Constant2> s_constantVec;
+    static int32_t s_count;
 
 #if SOLID_ENABLE_INTERNAL
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
