@@ -8,6 +8,16 @@
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
+
+std::shared_ptr<Shader> GlobalLight::m_shader;
+bool GlobalLight::m_drawLight;
+GlobalLight::Constant GlobalLight::m_constantData;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> GlobalLight::m_pipelineState;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> GlobalLight::m_rootSignature;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GlobalLight::m_descriptorHeap;
+Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::m_vertexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::m_indexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::m_constantBuffer;
 // internal
 void GlobalLight::clear()
 {
@@ -60,11 +70,10 @@ void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
     commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-std::shared_ptr<GlobalLight> GlobalLight::create(
+void GlobalLight::initialize(
     const Microsoft::WRL::ComPtr<ID3D12Device>& device,
     const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures)
 {
-    auto globalLight = std::shared_ptr<GlobalLight>(new GlobalLight());
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
     // input layout
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
@@ -80,7 +89,7 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
-    globalLight->m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
+    m_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -92,7 +101,7 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             output.texCoord = texCoord;
             return output;
         })"),
-                                                shaderKeywords),
+                                   shaderKeywords),
         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
@@ -122,7 +131,7 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             return float4(colorCol.xyz * bright, colorCol.w);
         })",
         "psMain");
-    globalLight->m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+    m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
@@ -156,16 +165,16 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             &vResDesc,
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
-            IID_PPV_ARGS(&globalLight->m_vertexBuffer)))) {
+            IID_PPV_ARGS(&m_vertexBuffer)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
     {
         void* outData;
-        if (FAILED(globalLight->m_vertexBuffer->Map(0, nullptr, (void**)&outData))) {
+        if (FAILED(m_vertexBuffer->Map(0, nullptr, (void**)&outData))) {
             throw std::runtime_error("failed Map()");
         }
         ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
-        globalLight->m_vertexBuffer->Unmap(0, nullptr);
+        m_vertexBuffer->Unmap(0, nullptr);
     }
     indices.emplace_back(0);
     indices.emplace_back(1);
@@ -194,16 +203,16 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             &ibResDesc,
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
-            IID_PPV_ARGS(&globalLight->m_indexBuffer)))) {
+            IID_PPV_ARGS(&m_indexBuffer)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
     {
         void* outData;
-        if (FAILED(globalLight->m_indexBuffer->Map(0, nullptr, (void**)&outData))) {
+        if (FAILED(m_indexBuffer->Map(0, nullptr, (void**)&outData))) {
             throw std::runtime_error("failed Map()");
         }
         ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
-        globalLight->m_indexBuffer->Unmap(0, nullptr);
+        m_indexBuffer->Unmap(0, nullptr);
     }
     // rasterize
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -307,11 +316,11 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
         throw std::runtime_error("failed D3D12SerializeRootSignature()");
     }
-    if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&globalLight->m_rootSignature)))) {
+    if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)))) {
         throw std::runtime_error("failed CreateRootSignature()");
     }
-    psoDesc.pRootSignature = globalLight->m_rootSignature.Get();
-    if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&globalLight->m_pipelineState)))) {
+    psoDesc.pRootSignature = m_rootSignature.Get();
+    if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
     //
@@ -338,16 +347,16 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
             &cbResDesc,
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
-            IID_PPV_ARGS(&globalLight->m_constantBuffer)))) {
+            IID_PPV_ARGS(&m_constantBuffer)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
     {
         void* outData;
-        if (FAILED(globalLight->m_constantBuffer->Map(0, nullptr, (void**)&outData))) {
+        if (FAILED(m_constantBuffer->Map(0, nullptr, (void**)&outData))) {
             throw std::runtime_error("failed Map()");
         }
-        ::memcpy(outData, &globalLight->m_constantData, sizeof(GlobalLight::Constant));
-        globalLight->m_constantBuffer->Unmap(0, nullptr);
+        ::memcpy(outData, &m_constantData, sizeof(GlobalLight::Constant));
+        m_constantBuffer->Unmap(0, nullptr);
     }
 
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
@@ -356,11 +365,11 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     descHeapDesc.NumDescriptors = 3 + 1;
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-    if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&globalLight->m_descriptorHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
 
-    D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = globalLight->m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -373,28 +382,19 @@ std::shared_ptr<GlobalLight> GlobalLight::create(
     }
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-    cbvColorDesc.BufferLocation = globalLight->m_constantBuffer->GetGPUVirtualAddress();
+    cbvColorDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
     cbvColorDesc.SizeInBytes = sizeof(GlobalLight::Constant);
     device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
     heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-    return globalLight;
 }
 
 void GlobalLight::destroy()
 {
-}
-// private
-GlobalLight::GlobalLight()
-    : m_shader()
-    , m_drawLight()
-    , m_constantData()
-    , m_pipelineState()
-    , m_rootSignature()
-    , m_descriptorHeap()
-    , m_vertexBuffer()
-    , m_indexBuffer()
-    , m_constantBuffer()
-{
+    m_shader = nullptr;
+    m_pipelineState = nullptr;
+    m_descriptorHeap = nullptr;
+    m_vertexBuffer = nullptr;
+    m_indexBuffer = nullptr;
+    m_constantBuffer = nullptr;
 }
 }

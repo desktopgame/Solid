@@ -18,13 +18,13 @@ public:
     static inline constexpr int32_t k_maxCount = 1;
 
 #if SOLID_ENABLE_INTERNAL
-    void clear();
-    void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir);
+    static void clear();
+    static void draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, const Math::Vector3& dir);
 
-    static std::shared_ptr<GlobalLight> create(
+    static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
         const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures);
-    void destroy();
+    static void destroy();
 #endif
 
 private:
@@ -35,19 +35,19 @@ private:
     };
     static_assert(sizeof(Constant) == 256);
 
-    GlobalLight();
+    GlobalLight() = delete;
 
-    std::shared_ptr<Shader> m_shader;
-    bool m_drawLight;
-    Constant m_constantData;
+    static std::shared_ptr<Shader> m_shader;
+    static bool m_drawLight;
+    static Constant m_constantData;
 
 #if SOLID_ENABLE_INTERNAL
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_indexBuffer;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> m_indexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> m_constantBuffer;
 #endif
 };
 }

@@ -85,7 +85,7 @@ void Surface::begin3D()
     m_commandList->RSSetScissorRects(3, scissorRects);
 
     // clear
-    m_globalLight->clear();
+    GlobalLight::clear();
     m_pointLight->clear();
 }
 
@@ -143,7 +143,7 @@ void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
 
 void Surface::effectGlobalLight2D(const Math::Vector3& dir)
 {
-    m_globalLight->draw(m_commandList, dir);
+    GlobalLight::draw(m_commandList, dir);
 }
 
 void Surface::effectPointLight2D(const Math::Vector3& position, float innerRadius, float outerRadius)
@@ -249,7 +249,7 @@ std::shared_ptr<Surface> Surface::create(
     dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
     d3d12Device->CreateDepthStencilView(surface->m_depthBuffer.Get(), &dsvDesc, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
     // GlobalLight
-    surface->m_globalLight = GlobalLight::create(d3d12Device, surface->m_gTextures);
+    GlobalLight::initialize(d3d12Device, surface->m_gTextures);
     // PointLight
     surface->m_pointLight = PointLight::create(d3d12Device, surface->m_gTextures);
 
@@ -265,7 +265,6 @@ void Surface::destroy()
 // private
 Surface::Surface()
     : m_swapchain()
-    , m_globalLight()
     , m_pointLight()
     , m_dxgiFactory()
     , m_infoQueue()
