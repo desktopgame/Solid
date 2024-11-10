@@ -22,6 +22,7 @@ namespace Lib::Graphics::Metadata {
         Color2D,
         Text2D,
         Texture2D,
+        MeshColor3D,
         Count
     };
 
@@ -175,6 +176,49 @@ namespace Lib::Graphics::Metadata {
                 Uniform { 0, true },
             },
         },
+        Program {
+            // inputLayout
+            Reflect::InputLayout::Vertex3D,
+            // vs
+            "struct Output {"
+            "    float4 svpos : SV_POSITION;"
+            "    float4 color : COLOR;"
+            "};"
+            "cbuffer cbuff0 : register(b0) {"
+            "    matrix modelMatrix;"
+            "    matrix viewMatrix;"
+            "    matrix projectionMatrix;"
+            "}"
+            "cbuffer cbuff1 : register(b1) { float4 color; }"
+            ""
+            "Output vsMain(float3 pos : POSITION) {"
+            "    Output output;"
+            "    output.svpos = mul(modelMatrix, float4(pos, 1));"
+            "    output.svpos = mul(viewMatrix, output.svpos);"
+            "    output.svpos = mul(projectionMatrix, output.svpos);"
+            "    output.color = color;"
+            "    return output;"
+            "}"
+            ,
+            // vsUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UCamera), false },
+                Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // ps
+            "struct Output {"
+            "    float4 svpos : SV_POSITION;"
+            "    float4 color : COLOR;"
+            "};"
+            ""
+            "float4 psMain(Output input) : SV_TARGET {"
+            "    return input.color;"
+            "}"
+            ,
+            // psUniforms
+            std::vector<Uniform> {
+            },
+        },
     };
 
     template<int32_t N>
@@ -197,6 +241,12 @@ namespace Lib::Graphics::Metadata {
 
     template<>
     class Signature<ProgramTable::Texture2D> {
+    public:
+        static inline void set() { }
+    };
+
+    template<>
+    class Signature<ProgramTable::MeshColor3D> {
     public:
         static inline void set() { }
     };
