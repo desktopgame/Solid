@@ -1,6 +1,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/FontFactory.hpp>
+#include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
 #include <OS/Window.hpp>
 #include <imgui.h>
@@ -51,6 +52,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
 
     m_window = OS::Window::create(Screen::getWidth(), Screen::getHeight(), ImGui_ImplWin32_WndProcHandler);
     m_device = Device::create(m_window);
+    RenderContext::initialize();
     return s_instance;
 }
 
@@ -64,6 +66,7 @@ void Engine::shutdown()
     }
     m_shutdowned = true;
 
+    RenderContext::destroy();
     FontFactory::destroy();
 
     m_window->destroy();
