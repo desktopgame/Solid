@@ -11,6 +11,7 @@
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/PointLight.hpp>
 #include <Graphics/PrimitiveType.hpp>
+#include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
@@ -18,5 +19,6 @@
 #include <Graphics/TileBatch.hpp>
 #include <Graphics/TileBuffer.hpp>
 #include <Graphics/TileRenderer.hpp>
+#include <Graphics/UniformBuffer.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
