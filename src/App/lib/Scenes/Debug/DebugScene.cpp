@@ -6,8 +6,7 @@
 namespace App::Scenes::Debug {
 // public
 DebugScene::DebugScene()
-    : m_renderer()
-    , m_tileRenderer()
+    : m_tileRenderer()
     , m_tilePosition()
     , m_tileSide()
     , m_tilePallet()
@@ -34,9 +33,6 @@ DebugScene::~DebugScene() { }
 
 void DebugScene::onEnter()
 {
-    if (!m_renderer) {
-        m_renderer = std::make_shared<Renderer>();
-    }
     auto tex = Texture::create("./assets/tileNormal2.png");
     if (!m_tileRenderer) {
         m_tileRenderer = std::make_shared<TileRenderer>(tex, Common::Constants::k_tileSize);
@@ -200,7 +196,6 @@ void DebugScene::onDraw3D()
 
 void DebugScene::onDraw2D()
 {
-    m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 10, 10 }), Vector4({ 1, 1, 1, 1 }));
 }
 
 bool DebugScene::tryTransition(std::string& outNextScene)

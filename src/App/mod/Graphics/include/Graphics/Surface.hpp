@@ -35,13 +35,6 @@ public:
     void end2D();
 
     void render(
-        const std::shared_ptr<PipelineStateObject>& pso,
-        const std::shared_ptr<Constant>& constant,
-        const std::shared_ptr<Buffer>& vertexBuffer,
-        const std::shared_ptr<Buffer>& indexBuffer,
-        int32_t indexLength);
-
-    void render(
         const std::shared_ptr<TileBatch>& tileBatch);
 
 #if SOLID_ENABLE_INTERNAL

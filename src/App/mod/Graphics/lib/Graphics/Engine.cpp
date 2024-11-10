@@ -1,4 +1,3 @@
-#include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/FontFactory.hpp>
@@ -65,7 +64,6 @@ void Engine::shutdown()
     }
     m_shutdowned = true;
 
-    Constant::destroy();
     FontFactory::destroy();
 
     m_window->destroy();

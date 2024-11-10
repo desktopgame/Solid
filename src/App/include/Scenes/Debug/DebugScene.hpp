@@ -25,7 +25,6 @@ private:
     void restoreTiles(const Vector3& center);
     std::optional<Vector3> scanHintTiles(Vector3 forward);
 
-    std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<TileRenderer> m_tileRenderer;
     Vector3 m_tilePosition;
     int32_t m_tileSide;

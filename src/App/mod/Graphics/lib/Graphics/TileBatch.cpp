@@ -1,5 +1,4 @@
 #include <Graphics/Buffer.hpp>
-#include <Graphics/Constant.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Screen.hpp>

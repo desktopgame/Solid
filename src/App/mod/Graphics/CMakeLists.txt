@@ -31,15 +31,12 @@ add_library(
     ./lib/Graphics/Buffer.cpp
     ./lib/Graphics/Texture.cpp
     ./lib/Graphics/Screen.cpp
-    ./lib/Graphics/Renderer.cpp
     ./lib/Graphics/Camera.cpp
-    ./lib/Graphics/Constant.cpp
     ./lib/Graphics/VertexTexCoord2D.cpp
     ./lib/Graphics/VertexTexCoord3D.cpp
     ./lib/Graphics/VertexNormal3D.cpp
     ./lib/Graphics/VertexNormalTexCoord3D.cpp
     ./lib/Graphics/Swapchain.cpp
-    ./lib/Graphics/PipelineStateObject.cpp
     ./lib/Graphics/Font.cpp
     ./lib/Graphics/FontFactory.cpp
     ./lib/Graphics/FontMap.cpp

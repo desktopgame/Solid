@@ -6,8 +6,7 @@
 namespace App::Scenes::Game {
 // public
 GameScene::GameScene()
-    : m_renderer()
-    , m_tileRenderer()
+    : m_tileRenderer()
     , m_cameraPos({ 0, (k_tileSize / 2.0f) + 1.0f, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_cameraAngleX()
@@ -23,9 +22,6 @@ GameScene::~GameScene() { }
 
 void GameScene::onEnter()
 {
-    if (!m_renderer) {
-        m_renderer = std::make_shared<Renderer>();
-    }
     if (!m_tileRenderer) {
         auto tex = Texture::create("./assets/tileNormal2.png");
         m_tileRenderer = std::make_shared<TileRenderer>(tex, k_tileSize);

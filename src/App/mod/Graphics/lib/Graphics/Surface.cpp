@@ -1,7 +1,6 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/GlobalLight.hpp>
-#include <Graphics/PipelineStateObject.hpp>
 #include <Graphics/PointLight.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
@@ -123,17 +122,6 @@ void Surface::end2D()
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
-}
-
-void Surface::render(
-    const std::shared_ptr<PipelineStateObject>& pso,
-    const std::shared_ptr<Constant>& constant,
-    const std::shared_ptr<Buffer>& vertexBuffer,
-    const std::shared_ptr<Buffer>& indexBuffer,
-    int32_t indexLength)
-{
-    constant->update();
-    pso->render(m_commandList, constant, vertexBuffer, indexBuffer, indexLength);
 }
 
 void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
