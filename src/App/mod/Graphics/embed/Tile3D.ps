@@ -1,0 +1,78 @@
+struct Output {
+    float4 svpos : SV_POSITION;
+    float4 mmpos : POSITION;
+    float2 texCoord : TEXCOORD;
+    float4 axis : NORMAL;
+    float4 color : COLOR;
+};
+struct PSOutput
+{
+    float4 outPosition : SV_Target0;
+    float4 outNormal : SV_Target1;
+    float4 outColor : SV_Target2;
+};
+Texture2D<float4> tex : register(t0);
+SamplerState smp : register(s0);
+
+float4 quatConj(float4 quat)
+{
+    return float4(quat.xyz * -1, quat.w);
+}
+
+float4 quatMult(float4 quat1, float4 quat2)
+{
+    float3 vec1 = quat1.xyz;
+    float3 vec2 = quat2.xyz;
+    float3 qvec = (vec2 * quat1.w) + (vec1 * quat2.w) + cross(vec1, vec2);
+    float4 qret = float4(0, 0, 0, 0);
+    qret.x = qvec.x;
+    qret.y = qvec.y;
+    qret.z = qvec.z;
+    qret.w = (quat1.w * quat2.w) - dot(vec1, vec2);
+    return qret;
+}
+
+float3 quatTransform(float4 quat, float3 vec)
+{
+    float4 vq = float4(vec, 0);
+    float4 q2 = quatConj(quat);
+    float4 qr = quatMult(quatMult(quat, vq), q2);
+    return qr.xyz;
+}
+
+float4 quatNew(float3 axis, float degree)
+{
+    float sinv = sin(radians(degree / 2.0f));
+    float cosv = cos(radians(degree / 2.0f));
+
+    float4 q = float4(0, 0, 0, 0);
+    q.x = axis.x * sinv;
+    q.y = axis.y * sinv;
+    q.z = axis.z * sinv;
+    q.w = cosv;
+    return q;
+}
+
+PSOutput psMain(Output input) {
+    PSOutput output;
+    float3 normalColor = tex.Sample(smp, input.texCoord).xyz;
+    float3 normalVec   = 2.0f * normalColor - 1.0f;
+    normalVec = normalize(normalVec);
+
+    float4 quat = quatNew(input.axis.xyz, input.axis.w);
+    normalVec = quatTransform(quat, normalVec);
+    normalVec = normalize(normalVec);
+
+    float bright = dot(normalize(float3(1, 1, 0)), normalVec);
+    bright = max(0.0f, bright);
+    bright = ((bright * 0.5f) + 0.5f);
+
+    float3 vecColor = normalVec.xyz + float3(1, 1, 1);
+    vecColor *= 0.5;
+
+    // return float4(vecColor, input.color.w);
+    output.outPosition = input.mmpos;
+    output.outNormal = float4(normalVec, 1);
+    output.outColor = input.color;
+    return output;
+}

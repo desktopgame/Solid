@@ -1,0 +1,7 @@
+InputLayout=Vertex2D
+VS.UniformCount=2
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UVector4
+VS.Program=Color2D.vs
+PS.UniformCount=0
+PS.Program=Color2D.ps

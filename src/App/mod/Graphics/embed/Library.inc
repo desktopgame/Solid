@@ -1,0 +1,1 @@
+#define MUL(mat, vec) (mul(mat, vec))
