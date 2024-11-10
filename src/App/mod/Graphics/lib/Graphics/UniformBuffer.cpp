@@ -117,7 +117,6 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
 
         if (u.isShaderResource) {
             ub->m_psResources.emplace_back(nullptr);
-            device->CreateShaderResourceView(nullptr, nullptr, heapHandle);
         } else {
             D3D12_HEAP_PROPERTIES cbHeapProps = {};
             cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;

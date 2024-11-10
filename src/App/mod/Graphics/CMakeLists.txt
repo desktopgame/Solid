@@ -35,6 +35,7 @@ add_library(
     ./lib/Graphics/Camera.cpp
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/UniformBuffer.cpp
+    ./lib/Graphics/UniformPool.cpp
     ./lib/Graphics/VertexTexCoord2D.cpp
     ./lib/Graphics/VertexTexCoord3D.cpp
     ./lib/Graphics/VertexNormal3D.cpp
