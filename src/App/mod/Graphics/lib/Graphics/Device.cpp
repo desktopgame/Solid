@@ -104,6 +104,9 @@ void Device::destroy()
 {
     m_surface->destroy();
     m_surface = nullptr;
+
+    m_swapchain->destroy();
+    m_swapchain = nullptr;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Device> Device::getID3D12Device() const
