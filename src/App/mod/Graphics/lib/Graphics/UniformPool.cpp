@@ -13,6 +13,7 @@ std::shared_ptr<UniformBuffer> UniformPool::rent(Metadata::ProgramTable entry)
         std::shared_ptr<UniformBuffer> ub = freeVec.back();
         freeVec.pop_back();
         s_usedTable.at(entry).emplace_back(ub);
+        return ub;
     } else {
         std::shared_ptr<UniformBuffer> ub = UniformBuffer::create(entry);
         s_usedTable.at(entry).emplace_back(ub);

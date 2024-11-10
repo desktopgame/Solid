@@ -83,7 +83,7 @@ void RenderContext::initialize()
     for (int32_t i = 0; i < Metadata::ProgramTable::Count; i++) {
         auto rc = std::shared_ptr<RenderContext>(new RenderContext());
         rc->m_entry = (Metadata::ProgramTable)i;
-        s_table.emplace_back(rc);
+        s_table[i] = rc;
 
         D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
         // input layout
