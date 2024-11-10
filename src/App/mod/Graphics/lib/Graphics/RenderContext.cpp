@@ -1,7 +1,14 @@
+#include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/Metadata.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/Shader.hpp>
+#include <Graphics/UniformBuffer.hpp>
+#include <Graphics/VertexNormal3D.hpp>
+#include <Graphics/VertexNormalTexCoord3D.hpp>
+#include <Graphics/VertexTexCoord2D.hpp>
+#include <Graphics/VertexTexCoord3D.hpp>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
@@ -11,7 +18,65 @@ std::shared_ptr<RenderContext> RenderContext::get(Metadata::ProgramTable entry)
 {
     return s_table.at(entry);
 }
-// private
+// internal
+void RenderContext::render(
+    const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+    const std::shared_ptr<UniformBuffer>& ub,
+    const std::shared_ptr<Buffer>& vertexBuffer,
+    const std::shared_ptr<Buffer>& indexBuffer,
+    int32_t indexLength)
+{
+    cmdList->SetPipelineState(m_pipelineState.Get());
+    cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+    auto descriptorHeap = ub->getID3D12DescriptorHeap();
+    uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+    cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
+
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    const Metadata::Program& program = Metadata::k_programs.at(m_entry);
+
+    for (int32_t i = 0; i < program.vsUniforms.size() + program.psUniforms.size(); i++) {
+        cmdList->SetGraphicsRootDescriptorTable(i, heapHandle);
+        heapHandle.ptr += incrementSize;
+    }
+    cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    uint32_t stride = 0;
+    switch (program.inputLayout) {
+    case Reflect::InputLayout::Vertex2D:
+        stride = sizeof(Math::Vector2);
+        break;
+    case Reflect::InputLayout::VertexTexCoord2D:
+        stride = sizeof(VertexTexCoord2D);
+        break;
+    case Reflect::InputLayout::Vertex3D:
+        stride = sizeof(Math::Vector3);
+        break;
+    case Reflect::InputLayout::VertexTexCoord3D:
+        stride = sizeof(VertexTexCoord3D);
+        break;
+    case Reflect::InputLayout::VertexNormalTexCoord3D:
+        stride = sizeof(VertexNormalTexCoord3D);
+        break;
+    }
+    D3D12_VERTEX_BUFFER_VIEW vbView = {};
+    vbView.BufferLocation = vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    vbView.SizeInBytes = vertexBuffer->getSize();
+    vbView.StrideInBytes = static_cast<UINT>(stride);
+    cmdList->IASetVertexBuffers(0, 1, &vbView);
+
+    D3D12_INDEX_BUFFER_VIEW ibView = {};
+    ibView.BufferLocation = indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+    ibView.Format = DXGI_FORMAT_R32_UINT;
+    ibView.SizeInBytes = indexBuffer->getSize();
+    cmdList->IASetIndexBuffer(&ibView);
+
+    cmdList->DrawIndexedInstanced(indexLength, 1, 0, 0, 0);
+}
+
 void RenderContext::initialize()
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
@@ -213,7 +278,7 @@ void RenderContext::destroy()
 {
     s_table.clear();
 }
-
+// private
 RenderContext::RenderContext()
 {
 }

@@ -17,10 +17,9 @@ class Buffer;
 class Constant;
 class Shader;
 class Swapchain;
-class PipelineStateObject;
 class TileBatch;
-class GlobalLight;
-class PointLight;
+class RenderContext;
+class UniformBuffer;
 class Surface {
 public:
     ~Surface();
@@ -33,6 +32,13 @@ public:
 
     void begin2D();
     void end2D();
+
+    void render(
+        const std::shared_ptr<RenderContext>& rc,
+        const std::shared_ptr<UniformBuffer>& ub,
+        const std::shared_ptr<Buffer>& vertex,
+        const std::shared_ptr<Buffer>& index,
+        int32_t indexLength);
 
     void render(
         const std::shared_ptr<TileBatch>& tileBatch);

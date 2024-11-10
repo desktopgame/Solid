@@ -21,6 +21,8 @@ public:
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
     void destroy();
+
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> getID3D12DescriptorHeap() const;
 #endif
 
 private:

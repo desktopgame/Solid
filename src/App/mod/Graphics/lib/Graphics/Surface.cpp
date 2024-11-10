@@ -2,10 +2,12 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/PointLight.hpp>
+#include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Swapchain.hpp>
 #include <Graphics/TileBatch.hpp>
+#include <Graphics/UniformBuffer.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
@@ -122,6 +124,16 @@ void Surface::end2D()
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
+}
+
+void Surface::render(
+    const std::shared_ptr<RenderContext>& rc,
+    const std::shared_ptr<UniformBuffer>& ub,
+    const std::shared_ptr<Buffer>& vertex,
+    const std::shared_ptr<Buffer>& index,
+    int32_t indexLength)
+{
+    rc->render(m_commandList, ub, vertex, index, indexLength);
 }
 
 void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)

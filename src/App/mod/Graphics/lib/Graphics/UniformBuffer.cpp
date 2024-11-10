@@ -153,8 +153,14 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
     }
     return ub;
 }
+
 void UniformBuffer::destroy()
 {
+}
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> UniformBuffer::getID3D12DescriptorHeap() const
+{
+    return m_descriptorHeap;
 }
 // private
 UniformBuffer::UniformBuffer()

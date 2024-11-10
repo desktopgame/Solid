@@ -12,11 +12,20 @@ class ID3D12GraphicsCommandList;
 
 namespace Lib::Graphics {
 class Shader;
+class UniformBuffer;
+class Buffer;
 class RenderContext {
 public:
     static std::shared_ptr<RenderContext> get(Metadata::ProgramTable entry);
 
 #if SOLID_ENABLE_INTERNAL
+    void render(
+        const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+        const std::shared_ptr<UniformBuffer>& ub,
+        const std::shared_ptr<Buffer>& vertexBuffer,
+        const std::shared_ptr<Buffer>& indexBuffer,
+        int32_t indexLength);
+
     static void initialize();
     static void destroy();
 #endif
