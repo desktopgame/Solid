@@ -169,6 +169,25 @@ Math::Vector2 Renderer::measureText(const std::u16string& label, TextAlignY alig
     return offset;
 }
 
+void Renderer::drawPlane(const Math::Vector3& position, float scale, const Math::Quaternion& rotation, const Math::Vector4& color)
+{
+    initPlane();
+    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(position),
+        Math::Matrix(),
+        Math::Matrix::scale(Math::Vector3({ scale, scale, 1.0f })));
+    Reflect::UCamera uCamera;
+    uCamera.modelMatrix = modelMatrix;
+    uCamera.viewMatrix = Camera::getLookAtMatrix();
+    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
+    ub->setVS(0, &uCamera);
+
+    Reflect::UVector4 uColor;
+    uColor.value = color;
+    ub->setVS(1, &uColor);
+    renderObject(m_planeObject, ub);
+}
 // private
 void Renderer::initRect()
 {
@@ -296,6 +315,37 @@ void Renderer::initText()
     m_textObject.indexBuffer->update(indices.data());
     m_textObject.indexLength = indices.size();
     m_textObject.rc = RenderContext::get(Metadata::ProgramTable::Text2D);
+}
+
+void Renderer::initPlane()
+{
+    if (m_planeObject.rc != nullptr) {
+        return;
+    }
+    m_planeObject.vertexBuffer = Buffer::create();
+    m_planeObject.indexBuffer = Buffer::create();
+    std::vector<Math::Vector3> vertices;
+    std::vector<uint32_t> indices;
+    const float left = -0.5;
+    const float right = 0.5;
+    const float top = 0.5;
+    const float bottom = -0.5;
+    vertices.push_back(Math::Vector3({ left, bottom, 0 }));
+    vertices.push_back(Math::Vector3({ left, top, 0 }));
+    vertices.push_back(Math::Vector3({ right, bottom, 0 }));
+    vertices.push_back(Math::Vector3({ right, top, 0 }));
+    m_planeObject.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+    m_planeObject.vertexBuffer->update(vertices.data());
+    indices.emplace_back(0);
+    indices.emplace_back(1);
+    indices.emplace_back(2);
+    indices.emplace_back(2);
+    indices.emplace_back(1);
+    indices.emplace_back(3);
+    m_planeObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_planeObject.indexBuffer->update(indices.data());
+    m_planeObject.indexLength = indices.size();
+    m_planeObject.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub)

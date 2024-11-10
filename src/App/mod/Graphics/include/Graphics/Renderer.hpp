@@ -37,6 +37,8 @@ public:
     void drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color);
     Math::Vector2 measureText(const std::u16string& label, TextAlignY alignY);
 
+    void drawPlane(const Math::Vector3& position, float scale, const Math::Quaternion& rotation, const Math::Vector4& color);
+
 private:
     class Object {
     public:
@@ -52,6 +54,8 @@ private:
     void initSprite();
     void initText();
 
+    void initPlane();
+
     void renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub);
 
     // text
@@ -62,5 +66,6 @@ private:
     Object m_circleObject;
     Object m_spriteObject;
     Object m_textObject;
+    Object m_planeObject;
 };
 }
