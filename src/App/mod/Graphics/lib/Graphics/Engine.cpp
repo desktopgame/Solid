@@ -3,6 +3,7 @@
 #include <Graphics/FontFactory.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/Screen.hpp>
+#include <Graphics/UniformPool.hpp>
 #include <OS/Window.hpp>
 #include <imgui.h>
 #include <stdexcept>
@@ -53,6 +54,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
     m_window = OS::Window::create(Screen::getWidth(), Screen::getHeight(), ImGui_ImplWin32_WndProcHandler);
     m_device = Device::create(m_window);
     RenderContext::initialize();
+    UniformPool::initialize();
     return s_instance;
 }
 
@@ -66,6 +68,7 @@ void Engine::shutdown()
     }
     m_shutdowned = true;
 
+    UniformPool::destroy();
     RenderContext::destroy();
     FontFactory::destroy();
 

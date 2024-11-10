@@ -40,6 +40,8 @@ void UniformPool::initialize()
 
 void UniformPool::destroy()
 {
+    s_freeTable.clear();
+    s_usedTable.clear();
 }
 // private
 }
