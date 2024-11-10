@@ -5,15 +5,15 @@ project(
     LANGUAGES CXX
 )
 #
-# Embed Program
+# Embed Metadata
 #
 add_custom_command(
-    OUTPUT ./include/Graphics/Program.hpp
-    COMMAND powershell -File Embed.ps1 > ./include/Graphics/Program.hpp
+    OUTPUT ./include/Graphics/Metadata.hpp
+    COMMAND powershell -File Embed.ps1 > ./include/Graphics/Metadata.hpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(Embed ALL
-    DEPENDS ./include/Graphics/Program.hpp
+    DEPENDS ./include/Graphics/Metadata.hpp
 )
 #
 # Build Options
