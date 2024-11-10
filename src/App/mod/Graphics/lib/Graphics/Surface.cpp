@@ -8,6 +8,7 @@
 #include <Graphics/Swapchain.hpp>
 #include <Graphics/TileBatch.hpp>
 #include <Graphics/UniformBuffer.hpp>
+#include <Graphics/UniformPool.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
@@ -118,12 +119,17 @@ void Surface::end2D()
     m_swapchain->swap(m_commandList);
     m_commandList->Close();
     m_swapchain->execute(m_commandList);
+}
 
+void Surface::present()
+{
     m_swapchain->present(m_commandList);
     m_swapchain->waitSync();
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
+
+    UniformPool::releaseAll();
 }
 
 void Surface::render(

@@ -47,7 +47,7 @@ static int appMain(int argc, char* argv[])
         sceneManager.onDraw2D();
         surface->end2D();
 
-        UniformPool::releaseAll();
+        surface->present();
     }
     inputSystem->shutdown();
     engine->shutdown();

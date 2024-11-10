@@ -33,6 +33,8 @@ public:
     void begin2D();
     void end2D();
 
+    void present();
+
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
