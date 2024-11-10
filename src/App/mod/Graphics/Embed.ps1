@@ -102,4 +102,11 @@ foreach ($properties in $propertiesList) {
     Write-Output "        },"
 }
 Write-Output "    };"
+Write-Output ""
+
+Write-Output "    template<int32_t N>"
+Write-Output "    class Signature {"
+Write-Output "    public:"
+Write-Output "        static inline void set() { }"
+Write-Output "    };"
 Write-Output "}"
