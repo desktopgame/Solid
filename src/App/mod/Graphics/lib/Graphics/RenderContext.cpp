@@ -173,22 +173,26 @@ void RenderContext::initialize()
             rootParam.at(offset + psUniform).DescriptorTable.NumDescriptorRanges = 1;
         }
 
-        D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
-        samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
-        samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-        samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-        samplerDesc.MinLOD = 0.0f;
-        samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-        samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+        std::vector<D3D12_STATIC_SAMPLER_DESC> samplerDescs(psSRV);
+        for (int32_t sampler = 0; sampler < psSRV; sampler++) {
+            D3D12_STATIC_SAMPLER_DESC& samplerDesc = samplerDescs.at(sampler);
+            samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+            samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+            samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+            samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+            samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+            samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+            samplerDesc.MinLOD = 0.0f;
+            samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+            samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+            samplerDesc.ShaderRegister = sampler;
+        }
         D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
         rootSignatureDesc.pParameters = rootParam.data();
         rootSignatureDesc.NumParameters = rootParam.size();
         rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-        rootSignatureDesc.pStaticSamplers = &samplerDesc;
-        rootSignatureDesc.NumStaticSamplers = 1;
+        rootSignatureDesc.pStaticSamplers = samplerDescs.data();
+        rootSignatureDesc.NumStaticSamplers = psSRV;
         ComPtr<ID3DBlob> rootSigBlob = nullptr;
         ComPtr<ID3DBlob> errorBlob = nullptr;
         if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
