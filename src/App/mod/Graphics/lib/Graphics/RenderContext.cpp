@@ -17,6 +17,7 @@ void RenderContext::initialize()
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     for (int32_t i = 0; i < Metadata::ProgramTable::Count; i++) {
         auto rc = std::shared_ptr<RenderContext>(new RenderContext());
+        rc->m_entry = (Metadata::ProgramTable)i;
         s_table.emplace_back(rc);
 
         D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};

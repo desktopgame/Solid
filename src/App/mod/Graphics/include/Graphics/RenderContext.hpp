@@ -25,7 +25,7 @@ private:
 
     static std::vector<std::shared_ptr<RenderContext>> s_table;
 
-    Metadata::Program m_program;
+    Metadata::ProgramTable m_entry;
     std::shared_ptr<Shader> m_shader;
 
 #if SOLID_ENABLE_INTERNAL
