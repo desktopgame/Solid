@@ -38,7 +38,9 @@ Write-Output ""
 Write-Output "    class Program {"
 Write-Output "    public:"
 Write-Output "        Reflect::InputLayout inputLayout;"
+Write-Output "        const char* vsCode;"
 Write-Output "        std::vector<Uniform> vsUniforms;"
+Write-Output "        const char* psCode;"
 Write-Output "        std::vector<Uniform> psUniforms;"
 Write-Output "    };"
 Write-Output ""
@@ -79,6 +81,13 @@ foreach ($properties in $propertiesList) {
     Write-Output "        Program {"
     Write-Output "            // inputLayout"
     Write-Output ("            Reflect::InputLayout::{0}," -f (GetOrThrow $properties "InputLayout"))
+
+    Write-Output "            // vs"
+    $vsCode = (GetOrThrow $properties "VS.Code")
+    foreach ($vsLine in Get-Content $("./embed/$vsCode") -Encoding UTF8) {
+        Write-Output ('            "{0}"' -f $vsLine)
+    }
+    Write-Output ('            ,')
     Write-Output "            // vsUniforms"
     Write-Output "            std::vector<Uniform> {"
     $vsUniformCount = [int](GetOrThrow $properties "VS.UniformCount")
@@ -86,7 +95,13 @@ foreach ($properties in $propertiesList) {
         Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("VS.Uniform[$i]")))
     }
     Write-Output "            },"
-    
+
+    Write-Output "            // ps"
+    $psCode = (GetOrThrow $properties "PS.Code")
+    foreach ($psLine in Get-Content $("./embed/$psCode") -Encoding UTF8) {
+        Write-Output ('            "{0}"' -f $psLine)
+    }
+    Write-Output ('            ,')
     Write-Output "            // psUniforms"
     Write-Output "            std::vector<Uniform> {"
     $psUniformCount = [int](GetOrThrow $properties "PS.UniformCount")
