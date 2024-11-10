@@ -63,6 +63,7 @@ void InputSystem::shutdown()
         m_gamepads.at(i) = nullptr;
     }
     m_keyboard = nullptr;
+    m_mouse = nullptr;
     s_instance = nullptr;
 }
 
