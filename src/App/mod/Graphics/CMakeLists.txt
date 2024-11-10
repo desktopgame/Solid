@@ -24,6 +24,7 @@ find_package(imgui CONFIG REQUIRED)
 add_library(
     Lib-Graphics
     STATIC
+    ./include/Graphics/Metadata.hpp
     ./lib/Graphics/Device.cpp
     ./lib/Graphics/Engine.cpp
     ./lib/Graphics/Surface.cpp
