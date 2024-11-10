@@ -35,9 +35,9 @@ static int appMain(int argc, char* argv[])
 
         sceneManager.onUpdate();
 
-        surface->guiBegin();
+        surface->beginGui();
         sceneManager.onGui();
-        surface->guiEnd();
+        surface->endGui();
 
         surface->begin3D();
         sceneManager.onDraw3D();

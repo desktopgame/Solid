@@ -24,8 +24,8 @@ class Surface {
 public:
     ~Surface();
 
-    void guiBegin();
-    void guiEnd();
+    void beginGui();
+    void endGui();
 
     void begin3D();
     void end3D();

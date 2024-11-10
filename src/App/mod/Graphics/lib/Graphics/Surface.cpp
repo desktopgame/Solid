@@ -22,12 +22,12 @@ Surface::~Surface()
 {
 }
 
-void Surface::guiBegin()
+void Surface::beginGui()
 {
     m_swapchain->guiClear();
 }
 
-void Surface::guiEnd()
+void Surface::endGui()
 {
     m_swapchain->guiRender();
 }
