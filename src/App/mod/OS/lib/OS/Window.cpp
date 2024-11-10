@@ -82,9 +82,9 @@ std::shared_ptr<Window> Window::create(int32_t width, int32_t height, const std:
 void Window::destroy()
 {
     if (m_hwnd != nullptr) {
+        DestroyWindow(m_hwnd);
         WNDCLASSEX w = m_class;
         UnregisterClass(w.lpszClassName, w.hInstance);
-        DestroyWindow(m_hwnd);
         m_hwnd = nullptr;
     }
 }
