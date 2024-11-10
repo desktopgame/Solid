@@ -47,5 +47,9 @@ private:
     std::vector<Vector4> m_hintTiles;
     std::vector<Vector4> m_placeTiles;
     std::shared_ptr<TileBatch> m_hintTileBatch;
+
+    // test
+    std::shared_ptr<Buffer> m_vertexBuffer;
+    std::shared_ptr<Buffer> m_indexBuffer;
 };
 }
