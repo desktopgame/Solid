@@ -25,6 +25,7 @@ DebugScene::DebugScene()
     , m_hintTileID()
     , m_hintTiles()
     , m_hintTileBatch()
+    , m_renderer()
 {
     std::string fileName = "assets/model1.csv";
     std::copy(fileName.begin(), fileName.end(), m_ioFile.begin());
@@ -40,33 +41,11 @@ void DebugScene::onEnter()
     if (!m_hintTileBatch) {
         m_hintTileBatch = TileBatch::create(TileBufferUltraSmall::create(1), tex, Common::Constants::k_tileSize, TileBatch::Style::WireframeWithCross);
     }
-    if (!m_vertexBuffer) {
-        std::vector<Vector2> vertices;
-        const float left = -0.5;
-        const float right = 0.5;
-        const float top = 0.5;
-        const float bottom = -0.5;
-        vertices.push_back(Vector2({ left, top }));
-        vertices.push_back(Vector2({ right, top }));
-        vertices.push_back(Vector2({ right, bottom }));
-        vertices.push_back(Vector2({ left, bottom }));
-
-        m_vertexBuffer = Buffer::create();
-        m_vertexBuffer->allocate(sizeof(Vector2) * vertices.size());
-        m_vertexBuffer->update(vertices.data());
+    if (!m_renderer) {
+        m_renderer = std::make_shared<Renderer>();
     }
-    if (!m_indexBuffer) {
-        std::vector<uint32_t> indices;
-        indices.push_back(1);
-        indices.push_back(3);
-        indices.push_back(0);
-        indices.push_back(2);
-        indices.push_back(3);
-        indices.push_back(1);
-
-        m_indexBuffer = Buffer::create();
-        m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
-        m_indexBuffer->update(indices.data());
+    if (!m_debugTexture) {
+        m_debugTexture = Texture::create("./assets/tileNormal2.png");
     }
     m_tileID = m_tileRenderer->rentTile(TileBufferKind::UltraLarge);
     m_hintTileID = m_hintTileBatch->rent();
@@ -224,23 +203,12 @@ void DebugScene::onDraw3D()
 
 void DebugScene::onDraw2D()
 {
-    auto rc = RenderContext::get(Metadata::Color2D);
-    auto ub = UniformPool::rent(Metadata::Color2D);
-
-    Reflect::UCamera camera;
-    auto modelMatrix = Matrix::transform(
-        Matrix::translate(Vector3({ 0, 0, 0 })),
-        Matrix::rotateZ(0.0f),
-        Matrix::scale(Vector3({ 100, 100, 1.0f })));
-    camera.modelMatrix = modelMatrix;
-    camera.viewMatrix = Camera::getOrthoMatrix();
-    camera.projectionMatrix = Matrix();
-    ub->setVS(0, &camera);
-
-    Reflect::UVector4 color;
-    color.value = Vector4({ 1, 1, 0.5f, 1.0f });
-    ub->setVS(1, &color);
-    Engine::getInstance()->getDevice()->getSurface()->render(rc, ub, m_vertexBuffer, m_indexBuffer, 6);
+    m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 50, 50 }), Vector4({ 1, 1, 1, 1 }));
+    m_renderer->drawRect(Vector2({ 100, 100 }), Vector2({ 50, 50 }), 45.0f, Vector4({ 1, 0, 0, 1 }));
+    m_renderer->drawSprite(Vector2({ -100, -100 }), Vector2({ 100, 100 }), 0.0f, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
+    m_renderer->textFont(FontFactory::getInstance()->load("./assets/NotoSansJP-Regular.ttf"));
+    m_renderer->textFontSize(20);
+    m_renderer->drawText(Vector2({ 200, 200 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"こんにちわ", Vector4({ 1, 1, 1, 1 }));
 }
 
 bool DebugScene::tryTransition(std::string& outNextScene)

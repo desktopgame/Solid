@@ -12,6 +12,7 @@
 #include <Graphics/PointLight.hpp>
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/RenderContext.hpp>
+#include <Graphics/Renderer.hpp>
 #include <Graphics/Screen.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
