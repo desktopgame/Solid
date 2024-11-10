@@ -392,6 +392,7 @@ void GlobalLight::destroy()
 {
     s_shader = nullptr;
     s_pipelineState = nullptr;
+    s_rootSignature = nullptr;
     s_descriptorHeap = nullptr;
     s_vertexBuffer = nullptr;
     s_indexBuffer = nullptr;
