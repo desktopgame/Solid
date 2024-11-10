@@ -109,4 +109,14 @@ Write-Output "    class Signature {"
 Write-Output "    public:"
 Write-Output "        static inline void set() { }"
 Write-Output "    };"
+Write-Output ""
+
+for ($i = 0; $i -lt $programs.Length; $i++) {
+    Write-Output "    template<>"
+    Write-Output ("    class Signature<ProgramTable::{0}> {{" -f $programs[$i])
+    Write-Output "    public:"
+    Write-Output "        static inline void set() { }"
+    Write-Output "    };"
+    Write-Output ""
+}
 Write-Output "}"
