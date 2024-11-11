@@ -345,7 +345,7 @@ void Renderer::initPlane()
     m_planeObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_planeObject.indexBuffer->update(indices.data());
     m_planeObject.indexLength = indices.size();
-    m_planeObject.rc = RenderContext::get(Metadata::ProgramTable::MeshNormalColor3D);
+    m_planeObject.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub)
