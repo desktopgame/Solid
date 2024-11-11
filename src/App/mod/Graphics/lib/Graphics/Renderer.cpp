@@ -219,9 +219,10 @@ void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vecto
     renderObject(m_planeTextureObject, ub);
 }
 
-void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color)
+void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color, bool isWireframe)
 {
-    initBox(m_boxObject, false);
+    Object& obj = isWireframe ? m_boxWireframeObject : m_boxObject;
+    initBox(obj, isWireframe);
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -236,7 +237,7 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     Reflect::UVector4 uColor;
     uColor.value = color;
     ub->setVS(1, &uColor);
-    renderObject(m_boxObject, ub);
+    renderObject(obj, ub);
 }
 
 void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
@@ -469,45 +470,81 @@ void Renderer::initPlaneTexture()
 
 void Renderer::initBox(Object& dst, bool isWireframe)
 {
-    if (m_boxObject.rc != nullptr) {
+    if (dst.rc != nullptr) {
         return;
     }
-    m_boxObject.vertexBuffer = Buffer::create();
-    m_boxObject.indexBuffer = Buffer::create();
-    std::vector<VertexNormal3D> vertices;
+    dst.vertexBuffer = Buffer::create();
+    dst.indexBuffer = Buffer::create();
     std::vector<uint32_t> indices;
-    // z-
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-    // z+
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-    // x-
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 })));
-    // x+
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 })));
-    // y-
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 })));
-    // y+
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 })));
-    m_boxObject.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
-    m_boxObject.vertexBuffer->update(vertices.data());
+    if (isWireframe) {
+        std::vector<Math::Vector3> vertices;
+        // z-
+        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, -0.5f }));
+        // z+
+        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, 0.5f }));
+        // x-
+        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, -0.5f }));
+        // x+
+        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, 0.5f }));
+        // y-
+        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, -0.5f }));
+        // y+
+        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, 0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, -0.5f }));
+        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, 0.5f }));
+        dst.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+        dst.vertexBuffer->update(vertices.data());
+    } else {
+        std::vector<VertexNormal3D> vertices;
+        // z-
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
+        // z+
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
+        // x-
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 })));
+        // x+
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 })));
+        // y-
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 })));
+        // y+
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 })));
+        dst.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
+        dst.vertexBuffer->update(vertices.data());
+    }
     uint32_t offset = 0;
     indices.emplace_back(offset + 0);
     indices.emplace_back(offset + 1);
@@ -550,10 +587,14 @@ void Renderer::initBox(Object& dst, bool isWireframe)
     indices.emplace_back(offset + 2);
     indices.emplace_back(offset + 1);
     indices.emplace_back(offset + 3);
-    m_boxObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
-    m_boxObject.indexBuffer->update(indices.data());
-    m_boxObject.indexLength = indices.size();
-    m_boxObject.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
+    dst.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    dst.indexBuffer->update(indices.data());
+    dst.indexLength = indices.size();
+    if (isWireframe) {
+        dst.rc = RenderContext::get(Metadata::ProgramTable::MeshWireframe3D);
+    } else {
+        dst.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
+    }
 }
 
 void Renderer::initBoxTexture()

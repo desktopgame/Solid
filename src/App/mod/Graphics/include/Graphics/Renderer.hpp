@@ -40,7 +40,7 @@ public:
     void drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color, bool isWireframe);
     void drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
 
-    void drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color);
+    void drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color, bool isWireframe);
     void drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
 
 private:
