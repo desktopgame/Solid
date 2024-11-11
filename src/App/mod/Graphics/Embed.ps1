@@ -38,6 +38,7 @@ Write-Output ""
 Write-Output "    class Program {"
 Write-Output "    public:"
 Write-Output "        Reflect::InputLayout inputLayout;"
+Write-Output "        Reflect::PrimitiveType primitiveType;"
 Write-Output "        const char* vsCode;"
 Write-Output "        std::vector<Uniform> vsUniforms;"
 Write-Output "        const char* psCode;"
@@ -81,6 +82,8 @@ foreach ($properties in $propertiesList) {
     Write-Output "        Program {"
     Write-Output "            // inputLayout"
     Write-Output ("            Reflect::InputLayout::{0}," -f (GetOrThrow $properties "InputLayout"))
+    Write-Output "            // primitiveType"
+    Write-Output ("            Reflect::PrimitiveType::{0}," -f (GetOrThrow $properties "PrimitiveType"))
 
     Write-Output "            // vs"
     $vsCode = (GetOrThrow $properties "VS.Code")

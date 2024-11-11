@@ -12,6 +12,7 @@ namespace Lib::Graphics::Metadata {
     class Program {
     public:
         Reflect::InputLayout inputLayout;
+        Reflect::PrimitiveType primitiveType;
         const char* vsCode;
         std::vector<Uniform> vsUniforms;
         const char* psCode;
@@ -31,6 +32,8 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::Vertex2D,
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -74,6 +77,8 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexTexCoord2D,
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -129,6 +134,8 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexTexCoord2D,
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -180,6 +187,8 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexNormal3D,
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -239,6 +248,8 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexNormalTexCoord3D,
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"

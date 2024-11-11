@@ -1,4 +1,5 @@
 InputLayout=VertexNormalTexCoord3D
+PrimitiveType=Triangles
 VS.UniformCount=2
 VS.Uniform[0]=UCamera
 VS.Uniform[1]=UVector4
