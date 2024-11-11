@@ -1,0 +1,7 @@
+InputLayout=VertexNormal3D
+VS.UniformCount=2
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UVector4
+VS.Code=MeshNormalColor3D.vs
+PS.UniformCount=0
+PS.Code=MeshNormalColor3D.ps

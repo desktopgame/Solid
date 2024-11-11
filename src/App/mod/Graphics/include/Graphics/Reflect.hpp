@@ -8,6 +8,7 @@ enum InputLayout {
     Vertex2D,
     VertexTexCoord2D,
     Vertex3D,
+    VertexNormal3D,
     VertexTexCoord3D,
     VertexNormalTexCoord3D
 };

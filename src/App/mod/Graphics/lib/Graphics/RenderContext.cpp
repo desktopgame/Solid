@@ -55,6 +55,9 @@ void RenderContext::render(
     case Reflect::InputLayout::Vertex3D:
         stride = sizeof(Math::Vector3);
         break;
+    case Reflect::InputLayout::VertexNormal3D:
+        stride = sizeof(VertexNormal3D);
+        break;
     case Reflect::InputLayout::VertexTexCoord3D:
         stride = sizeof(VertexTexCoord3D);
         break;
@@ -117,6 +120,19 @@ void RenderContext::initialize()
             useGBuffer = true;
             inputLayout.push_back(
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+                    D3D12_APPEND_ALIGNED_ELEMENT,
+                    D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+            break;
+        case Reflect::InputLayout::VertexNormal3D:
+            depthTest = true;
+            depthWrite = true;
+            useGBuffer = true;
+            inputLayout.push_back(
+                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+                    D3D12_APPEND_ALIGNED_ELEMENT,
+                    D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+            inputLayout.push_back(
+                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
                     D3D12_APPEND_ALIGNED_ELEMENT,
                     D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
             break;

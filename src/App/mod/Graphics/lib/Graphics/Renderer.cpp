@@ -324,17 +324,17 @@ void Renderer::initPlane()
     }
     m_planeObject.vertexBuffer = Buffer::create();
     m_planeObject.indexBuffer = Buffer::create();
-    std::vector<Math::Vector3> vertices;
+    std::vector<VertexNormal3D> vertices;
     std::vector<uint32_t> indices;
     const float left = -0.5;
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    vertices.push_back(Math::Vector3({ left, bottom, 0 }));
-    vertices.push_back(Math::Vector3({ left, top, 0 }));
-    vertices.push_back(Math::Vector3({ right, bottom, 0 }));
-    vertices.push_back(Math::Vector3({ right, top, 0 }));
-    m_planeObject.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+    vertices.push_back(VertexNormal3D(Math::Vector3({ left, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
+    vertices.push_back(VertexNormal3D(Math::Vector3({ left, top, 0 }), Math::Vector3({ 0, 0, -1 })));
+    vertices.push_back(VertexNormal3D(Math::Vector3({ right, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
+    vertices.push_back(VertexNormal3D(Math::Vector3({ right, top, 0 }), Math::Vector3({ 0, 0, -1 })));
+    m_planeObject.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
     m_planeObject.vertexBuffer->update(vertices.data());
     indices.emplace_back(0);
     indices.emplace_back(1);
@@ -345,7 +345,7 @@ void Renderer::initPlane()
     m_planeObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_planeObject.indexBuffer->update(indices.data());
     m_planeObject.indexLength = indices.size();
-    m_planeObject.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
+    m_planeObject.rc = RenderContext::get(Metadata::ProgramTable::MeshNormalColor3D);
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub)

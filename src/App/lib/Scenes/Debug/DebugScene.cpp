@@ -198,7 +198,12 @@ void DebugScene::onDraw3D()
     GlobalLight::enable();
     GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
 
-    PointLight::disable();
+    PointLight::enable();
+    PointLight::set(0, Vector3({ 8, 0, 6 }), 1, 5);
+    PointLight::setCount(1);
+
+    Quaternion q;
+    m_renderer->drawPlane(Vector3({ 10, 0, 10 }), 10.0f, q, Vector4({ 1, 1, 1, 1 }));
 }
 
 void DebugScene::onDraw2D()
