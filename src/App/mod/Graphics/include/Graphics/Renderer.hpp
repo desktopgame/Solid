@@ -37,7 +37,7 @@ public:
     void drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color);
     Math::Vector2 measureText(const std::u16string& label, TextAlignY alignY);
 
-    void drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color);
+    void drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color, bool isWireframe);
     void drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
 
     void drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color);
@@ -58,9 +58,9 @@ private:
     void initSprite();
     void initText();
 
-    void initPlane();
+    void initPlane(Object& dst, bool isWireframe);
     void initPlaneTexture();
-    void initBox();
+    void initBox(Object& dst, bool isWireframe);
     void initBoxTexture();
 
     void renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub);
@@ -74,8 +74,10 @@ private:
     Object m_spriteObject;
     Object m_textObject;
     Object m_planeObject;
+    Object m_planeWireframeObject;
     Object m_planeTextureObject;
     Object m_boxObject;
+    Object m_boxWireframeObject;
     Object m_boxTextureObject;
 };
 }

@@ -206,7 +206,7 @@ void DebugScene::onDraw3D()
     PointLight::setCount(4);
 
     Quaternion q;
-    m_renderer->drawPlane(Vector3({ 10, 0, 10 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }));
+    m_renderer->drawPlane(Vector3({ 10, 0, 10 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), false);
     m_renderer->drawPlaneTexture(Vector3({ -10, 0, 10 }), Vector2({ 10, 10 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }));
     m_renderer->drawBoxTexture(Vector3({ -25, 0, 10 }), Vector3({ 5, 5, 5 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));

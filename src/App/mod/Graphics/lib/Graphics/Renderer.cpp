@@ -26,6 +26,12 @@ Renderer::Renderer()
     , m_circleObject()
     , m_spriteObject()
     , m_textObject()
+    , m_planeObject()
+    , m_planeWireframeObject()
+    , m_planeTextureObject()
+    , m_boxObject()
+    , m_boxWireframeObject()
+    , m_boxTextureObject()
 {
 }
 
@@ -170,9 +176,10 @@ Math::Vector2 Renderer::measureText(const std::u16string& label, TextAlignY alig
     return offset;
 }
 
-void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color)
+void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color, bool isWireframe)
 {
-    initPlane();
+    Object& obj = isWireframe ? m_planeWireframeObject : m_planeObject;
+    initPlane(obj, isWireframe);
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -187,7 +194,7 @@ void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& sca
     Reflect::UVector4 uColor;
     uColor.value = color;
     ub->setVS(1, &uColor);
-    renderObject(m_planeObject, ub);
+    renderObject(obj, ub);
 }
 
 void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
@@ -214,7 +221,7 @@ void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vecto
 
 void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color)
 {
-    initBox();
+    initBox(m_boxObject, false);
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -382,35 +389,51 @@ void Renderer::initText()
     m_textObject.rc = RenderContext::get(Metadata::ProgramTable::Text2D);
 }
 
-void Renderer::initPlane()
+void Renderer::initPlane(Object& dst, bool isWireframe)
 {
-    if (m_planeObject.rc != nullptr) {
+    if (dst.rc != nullptr) {
         return;
     }
-    m_planeObject.vertexBuffer = Buffer::create();
-    m_planeObject.indexBuffer = Buffer::create();
-    std::vector<VertexNormal3D> vertices;
+    dst.vertexBuffer = Buffer::create();
+    dst.indexBuffer = Buffer::create();
     std::vector<uint32_t> indices;
     const float left = -0.5;
     const float right = 0.5;
     const float top = 0.5;
     const float bottom = -0.5;
-    vertices.push_back(VertexNormal3D(Math::Vector3({ left, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ left, top, 0 }), Math::Vector3({ 0, 0, -1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ right, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
-    vertices.push_back(VertexNormal3D(Math::Vector3({ right, top, 0 }), Math::Vector3({ 0, 0, -1 })));
-    m_planeObject.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
-    m_planeObject.vertexBuffer->update(vertices.data());
+
+    if (isWireframe) {
+        std::vector<Math::Vector3> vertices;
+        vertices.push_back(Math::Vector3({ left, bottom, 0 }));
+        vertices.push_back(Math::Vector3({ left, top, 0 }));
+        vertices.push_back(Math::Vector3({ right, bottom, 0 }));
+        vertices.push_back(Math::Vector3({ right, top, 0 }));
+        dst.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+        dst.vertexBuffer->update(vertices.data());
+    } else {
+        std::vector<VertexNormal3D> vertices;
+        vertices.push_back(VertexNormal3D(Math::Vector3({ left, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ left, top, 0 }), Math::Vector3({ 0, 0, -1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ right, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
+        vertices.push_back(VertexNormal3D(Math::Vector3({ right, top, 0 }), Math::Vector3({ 0, 0, -1 })));
+        dst.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
+        dst.vertexBuffer->update(vertices.data());
+    }
     indices.emplace_back(0);
     indices.emplace_back(1);
     indices.emplace_back(2);
     indices.emplace_back(2);
     indices.emplace_back(1);
     indices.emplace_back(3);
-    m_planeObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
-    m_planeObject.indexBuffer->update(indices.data());
-    m_planeObject.indexLength = indices.size();
-    m_planeObject.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
+    dst.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    dst.indexBuffer->update(indices.data());
+    dst.indexLength = indices.size();
+
+    if (isWireframe) {
+        dst.rc = RenderContext::get(Metadata::ProgramTable::MeshWireframe3D);
+    } else {
+        dst.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
+    }
 }
 
 void Renderer::initPlaneTexture()
@@ -444,7 +467,7 @@ void Renderer::initPlaneTexture()
     m_planeTextureObject.rc = RenderContext::get(Metadata::ProgramTable::MeshTexture3D);
 }
 
-void Renderer::initBox()
+void Renderer::initBox(Object& dst, bool isWireframe)
 {
     if (m_boxObject.rc != nullptr) {
         return;
