@@ -13,6 +13,33 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 std::vector<std::shared_ptr<RenderContext>> RenderContext::s_table(Metadata::ProgramTable::Count);
+// static
+static D3D_PRIMITIVE_TOPOLOGY convPrimitiveTopology(Reflect::PrimitiveType primitiveType)
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+    switch (primitiveType) {
+    case Reflect::PrimitiveType::Triangles:
+        return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    case Reflect::PrimitiveType::LineStrip:
+        return D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
+    }
+#pragma clang diagnostic pop
+    return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+}
+static D3D12_PRIMITIVE_TOPOLOGY_TYPE convPrimitiveTopologyType(Reflect::PrimitiveType primitiveType)
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+    switch (primitiveType) {
+    case Reflect::PrimitiveType::Triangles:
+        return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    case Reflect::PrimitiveType::LineStrip:
+        return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+    }
+#pragma clang diagnostic pop
+    return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
+}
 // public
 std::shared_ptr<RenderContext> RenderContext::get(Metadata::ProgramTable entry)
 {
@@ -42,7 +69,7 @@ void RenderContext::render(
         cmdList->SetGraphicsRootDescriptorTable(i, heapHandle);
         heapHandle.ptr += incrementSize;
     }
-    cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    cmdList->IASetPrimitiveTopology(convPrimitiveTopology(program.primitiveType));
 
     uint32_t stride = 0;
     switch (program.inputLayout) {
@@ -205,7 +232,7 @@ void RenderContext::initialize()
             psoDesc.BlendState.RenderTarget[0] = rtBlendDesc;
         }
         psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
-        psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE; // TODO: Metadataから指定
+        psoDesc.PrimitiveTopologyType = convPrimitiveTopologyType(Metadata::k_programs.at(i).primitiveType);
         if (useGBuffer) {
             psoDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
             psoDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
