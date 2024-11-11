@@ -176,7 +176,7 @@ void Renderer::drawPlane(const Math::Vector3& position, float scale, const Math:
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
-        Math::Matrix(),
+        Math::Quaternion::toMatrix(rotation),
         Math::Matrix::scale(Math::Vector3({ scale, scale, 1.0f })));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
@@ -196,7 +196,7 @@ void Renderer::drawPlaneTexture(const Math::Vector3& position, float scale, cons
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
-        Math::Matrix(),
+        Math::Quaternion::toMatrix(rotation),
         Math::Matrix::scale(Math::Vector3({ scale, scale, 1.0f })));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
