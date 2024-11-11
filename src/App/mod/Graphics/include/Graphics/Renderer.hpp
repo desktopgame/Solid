@@ -40,6 +40,9 @@ public:
     void drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color);
     void drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
 
+    void drawBox(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color);
+    void drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
+
 private:
     class Object {
     public:
@@ -57,6 +60,8 @@ private:
 
     void initPlane();
     void initPlaneTexture();
+    void initBox();
+    void initBoxTexture();
 
     void renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub);
 
@@ -70,5 +75,7 @@ private:
     Object m_textObject;
     Object m_planeObject;
     Object m_planeTextureObject;
+    Object m_boxObject;
+    Object m_boxTextureObject;
 };
 }
