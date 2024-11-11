@@ -37,8 +37,8 @@ public:
     void drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color);
     Math::Vector2 measureText(const std::u16string& label, TextAlignY alignY);
 
-    void drawPlane(const Math::Vector3& position, float scale, const Math::Quaternion& rotation, const Math::Vector4& color);
-    void drawPlaneTexture(const Math::Vector3& position, float scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
+    void drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color);
+    void drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color);
 
 private:
     class Object {

@@ -170,14 +170,14 @@ Math::Vector2 Renderer::measureText(const std::u16string& label, TextAlignY alig
     return offset;
 }
 
-void Renderer::drawPlane(const Math::Vector3& position, float scale, const Math::Quaternion& rotation, const Math::Vector4& color)
+void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color)
 {
     initPlane();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(Math::Vector3({ scale, scale, 1.0f })));
+        Math::Matrix::scale(Math::Vector3(scale, 1.0f)));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -190,14 +190,14 @@ void Renderer::drawPlane(const Math::Vector3& position, float scale, const Math:
     renderObject(m_planeObject, ub);
 }
 
-void Renderer::drawPlaneTexture(const Math::Vector3& position, float scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
+void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
 {
     initPlaneTexture();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
     auto modelMatrix = Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(Math::Vector3({ scale, scale, 1.0f })));
+        Math::Matrix::scale(Math::Vector3(scale, 1.0f)));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
