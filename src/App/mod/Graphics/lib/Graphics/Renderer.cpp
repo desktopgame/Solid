@@ -232,7 +232,27 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     renderObject(m_boxObject, ub);
 }
 
-void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color) { }
+void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
+{
+    initBoxTexture();
+    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(position),
+        Math::Quaternion::toMatrix(rotation),
+        Math::Matrix::scale(scale));
+    Reflect::UCamera uCamera;
+    uCamera.modelMatrix = modelMatrix;
+    uCamera.viewMatrix = Camera::getLookAtMatrix();
+    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
+    ub->setVS(0, &uCamera);
+
+    Reflect::UVector4 uColor;
+    uColor.value = color;
+    ub->setVS(1, &uColor);
+
+    ub->setPS(0, texture);
+    renderObject(m_boxTextureObject, ub);
+}
 // private
 void Renderer::initRect()
 {
@@ -513,7 +533,94 @@ void Renderer::initBox()
     m_boxObject.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
 }
 
-void Renderer::initBoxTexture() { }
+void Renderer::initBoxTexture()
+{
+    if (m_boxTextureObject.rc != nullptr) {
+        return;
+    }
+    m_boxTextureObject.vertexBuffer = Buffer::create();
+    m_boxTextureObject.indexBuffer = Buffer::create();
+    std::vector<VertexNormalTexCoord3D> vertices;
+    std::vector<uint32_t> indices;
+    // z-
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 0, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 0, 0 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 1, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 1, 0 })));
+    // z+
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 0, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 0, 0 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 1, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 1, 0 })));
+    // x-
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 0, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 0, 0 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 1, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 1, 0 })));
+    // x+
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 0, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 0, 0 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 1, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 1, 0 })));
+    // y-
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 0, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 0, 0 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 1, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 1, 0 })));
+    // y+
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 0, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 0, 0 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 1, 1 })));
+    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 1, 0 })));
+    m_boxTextureObject.vertexBuffer->allocate(sizeof(VertexNormalTexCoord3D) * vertices.size());
+    m_boxTextureObject.vertexBuffer->update(vertices.data());
+    uint32_t offset = 0;
+    indices.emplace_back(offset + 0);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 3);
+    offset = 4;
+    indices.emplace_back(offset + 0);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 3);
+    offset = 8;
+    indices.emplace_back(offset + 0);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 3);
+    offset = 12;
+    indices.emplace_back(offset + 0);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 3);
+    offset = 16;
+    indices.emplace_back(offset + 0);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 3);
+    offset = 20;
+    indices.emplace_back(offset + 0);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 3);
+    m_boxTextureObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_boxTextureObject.indexBuffer->update(indices.data());
+    m_boxTextureObject.indexLength = indices.size();
+    m_boxTextureObject.rc = RenderContext::get(Metadata::ProgramTable::MeshTexture3D);
+}
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub)
 {

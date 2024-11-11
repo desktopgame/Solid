@@ -202,12 +202,14 @@ void DebugScene::onDraw3D()
     PointLight::set(0, Vector3({ 8, 0, 6 }), 1, 5);
     PointLight::set(1, Vector3({ -8, 0, 6 }), 1, 5);
     PointLight::set(2, Vector3({ 20, 0, 6 }), 1, 5);
-    PointLight::setCount(3);
+    PointLight::set(3, Vector3({ -20, 0, 6 }), 1, 5);
+    PointLight::setCount(4);
 
     Quaternion q;
     m_renderer->drawPlane(Vector3({ 10, 0, 10 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }));
     m_renderer->drawPlaneTexture(Vector3({ -10, 0, 10 }), Vector2({ 10, 10 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }));
+    m_renderer->drawBoxTexture(Vector3({ -25, 0, 10 }), Vector3({ 5, 5, 5 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
 }
 
 void DebugScene::onDraw2D()
