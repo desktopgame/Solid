@@ -1,6 +1,5 @@
 #pragma once
 #include <Graphics/Device.hpp>
-#include <Graphics/PrimitiveType.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
 #include <vector>

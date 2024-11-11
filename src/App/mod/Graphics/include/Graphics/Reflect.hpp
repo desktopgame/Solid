@@ -13,6 +13,12 @@ enum InputLayout {
     VertexNormalTexCoord3D
 };
 
+enum class PrimitiveType {
+    Polygon,
+    Triangles,
+    LineStrip,
+};
+
 class UCamera {
 public:
     Math::Matrix modelMatrix;
