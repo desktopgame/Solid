@@ -203,7 +203,7 @@ void RenderContext::initialize()
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
         psoDesc.RasterizerState.MultisampleEnable = false;
         psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
-        psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+        psoDesc.RasterizerState.FillMode = Metadata::k_programs.at(i).isWireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
         psoDesc.RasterizerState.DepthClipEnable = true;
         // depth
         psoDesc.DepthStencilState.DepthEnable = depthTest;
