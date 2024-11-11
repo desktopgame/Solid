@@ -200,10 +200,12 @@ void DebugScene::onDraw3D()
 
     PointLight::enable();
     PointLight::set(0, Vector3({ 8, 0, 6 }), 1, 5);
-    PointLight::setCount(1);
+    PointLight::set(0, Vector3({ -8, 0, 6 }), 1, 5);
+    PointLight::setCount(2);
 
     Quaternion q;
     m_renderer->drawPlane(Vector3({ 10, 0, 10 }), 10.0f, q, Vector4({ 1, 1, 1, 1 }));
+    m_renderer->drawPlaneTexture(Vector3({ -10, 0, 10 }), 10.0f, q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
 }
 
 void DebugScene::onDraw2D()

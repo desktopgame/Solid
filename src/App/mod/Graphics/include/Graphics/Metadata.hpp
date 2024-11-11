@@ -23,6 +23,7 @@ namespace Lib::Graphics::Metadata {
         Text2D,
         Texture2D,
         MeshColor3D,
+        MeshTexture3D,
         Count
     };
 
@@ -235,6 +236,72 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
             },
         },
+        Program {
+            // inputLayout
+            Reflect::InputLayout::VertexNormalTexCoord3D,
+            // vs
+            "struct Output {"
+            "    float4 svpos : SV_POSITION;"
+            "    float3 wpos : POSITION;"
+            "    float3 normal : NORMAL;"
+            "    float2 texCoord : TEXCOORD;"
+            "    float4 color : COLOR;"
+            "};"
+            "cbuffer cbuff0 : register(b0) {"
+            "    matrix modelMatrix;"
+            "    matrix viewMatrix;"
+            "    matrix projectionMatrix;"
+            "}"
+            "cbuffer cbuff1 : register(b1) { float4 color; }"
+            ""
+            "Output vsMain(float3 pos : POSITION, float3 normal : NORMAL, float2 texCoord : TEXCOORD) {"
+            "    Output output;"
+            "    output.svpos = mul(modelMatrix, float4(pos, 1));"
+            "    output.svpos = mul(viewMatrix, output.svpos);"
+            "    output.svpos = mul(projectionMatrix, output.svpos);"
+            "    output.wpos = mul(modelMatrix, float4(pos, 1));"
+            "    output.normal = normal;"
+            "    output.texCoord = texCoord;"
+            "    output.color = color;"
+            "    return output;"
+            "}"
+            ,
+            // vsUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UCamera), false },
+                Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // ps
+            "struct Output {"
+            "    float4 svpos : SV_POSITION;"
+            "    float3 wpos : POSITION;"
+            "    float3 normal : NORMAL;"
+            "    float2 texCoord : TEXCOORD;"
+            "    float4 color : COLOR;"
+            "};"
+            "struct PSOutput"
+            "{"
+            "    float4 outPosition : SV_Target0;"
+            "    float4 outNormal : SV_Target1;"
+            "    float4 outColor : SV_Target2;"
+            "};"
+            ""
+            "Texture2D<float4> tex : register(t0);"
+            "SamplerState smp : register(s0);"
+            ""
+            "PSOutput psMain(Output input) : SV_TARGET {"
+            "    PSOutput output;"
+            "    output.outPosition = float4(input.wpos, 1);"
+            "    output.outNormal = float4(input.normal, 1);"
+            "    output.outColor = float4(tex.Sample(smp, input.texCoord)) * input.color;"
+            "    return output;"
+            "}"
+            ,
+            // psUniforms
+            std::vector<Uniform> {
+                Uniform { 0, true },
+            },
+        },
     };
 
     template<int32_t N>
@@ -263,6 +330,12 @@ namespace Lib::Graphics::Metadata {
 
     template<>
     class Signature<ProgramTable::MeshColor3D> {
+    public:
+        static inline void set() { }
+    };
+
+    template<>
+    class Signature<ProgramTable::MeshTexture3D> {
     public:
         static inline void set() { }
     };

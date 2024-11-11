@@ -1,0 +1,8 @@
+InputLayout=VertexNormalTexCoord3D
+VS.UniformCount=2
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UVector4
+VS.Code=MeshTexture3D.vs
+PS.UniformCount=1
+PS.Uniform[0]=Texture
+PS.Code=MeshTexture3D.ps
