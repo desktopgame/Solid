@@ -4,13 +4,19 @@
 #include <vector>
 
 namespace Lib::Graphics::Reflect {
-enum InputLayout {
+enum class InputLayout {
     Vertex2D,
     VertexTexCoord2D,
     Vertex3D,
     VertexNormal3D,
     VertexTexCoord3D,
     VertexNormalTexCoord3D
+};
+
+enum class InstanceBufferType {
+    Vertex2D,
+    Vertex3D,
+    Vertex4D,
 };
 
 enum class PrimitiveType {

@@ -14,6 +14,7 @@ namespace Lib::Graphics::Metadata {
         Reflect::InputLayout inputLayout;
         Reflect::PrimitiveType primitiveType;
         bool isWireframe;
+        std::vector<Reflect::InstanceBufferType> instanceBufferLayout;
         const char* vsCode;
         std::vector<Uniform> vsUniforms;
         const char* psCode;
@@ -38,6 +39,9 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -85,6 +89,9 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -144,6 +151,9 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -199,6 +209,9 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -262,6 +275,9 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -332,6 +348,9 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             true,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"

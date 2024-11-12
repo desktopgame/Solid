@@ -30,6 +30,7 @@ Write-Output "    public:"
 Write-Output "        Reflect::InputLayout inputLayout;"
 Write-Output "        Reflect::PrimitiveType primitiveType;"
 Write-Output "        bool isWireframe;"
+Write-Output "        std::vector<Reflect::InstanceBufferType> instanceBufferLayout;"
 Write-Output "        const char* vsCode;"
 Write-Output "        std::vector<Uniform> vsUniforms;"
 Write-Output "        const char* psCode;"
@@ -77,6 +78,13 @@ foreach ($properties in $propertiesList) {
     Write-Output ("            Reflect::PrimitiveType::{0}," -f (GetOrThrow $properties "PrimitiveType"))
     Write-Output "            // isWireframe"
     Write-Output ("            {0}," -f (GetOrThrow $properties "IsWireframe"))
+    Write-Output "            // instanceBufferLayout"
+    Write-Output "            std::vector<Reflect::InstanceBufferType> {"
+    $instanceBufferCount = (GetOrThrow $properties "InstanceBufferCount")
+    for ($i = 0; $i -lt $instanceBufferCount; $i++) {
+        Write-Output ("                Reflect::InstanceBufferType::{0}," -f (GetOrThrow $properties $("InstanceBuffer[$i]")))
+    }
+    Write-Output "            },"
 
     Write-Output "            // vs"
     $vsCode = (GetOrThrow $properties "VS.Code")
