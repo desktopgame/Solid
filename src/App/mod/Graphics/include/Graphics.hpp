@@ -10,6 +10,7 @@
 #include <Graphics/FontMetrics.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/PointLight.hpp>
+#include <Graphics/Polygon.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/Renderer.hpp>
 #include <Graphics/Screen.hpp>
