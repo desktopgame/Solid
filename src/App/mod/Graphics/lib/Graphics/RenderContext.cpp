@@ -196,6 +196,30 @@ void RenderContext::initialize()
                     D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
             break;
         }
+        for (int32_t i = 0; i < static_cast<int32_t>(program.instanceBufferLayout.size()); i++) {
+            Reflect::InstanceBufferType instBufType = program.instanceBufferLayout.at(i);
+
+            switch (instBufType) {
+            case Reflect::InstanceBufferType::Vector2:
+                inputLayout.push_back(
+                    { "INSTANCE", (UINT)i, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
+                        D3D12_APPEND_ALIGNED_ELEMENT,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                break;
+            case Reflect::InstanceBufferType::Vector3:
+                inputLayout.push_back(
+                    { "INSTANCE", (UINT)i, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
+                        D3D12_APPEND_ALIGNED_ELEMENT,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                break;
+            case Reflect::InstanceBufferType::Vector4:
+                inputLayout.push_back(
+                    { "INSTANCE", (UINT)i, DXGI_FORMAT_R32G32B32A32_FLOAT, (UINT)(i + 1),
+                        D3D12_APPEND_ALIGNED_ELEMENT,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                break;
+            }
+        }
         psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
