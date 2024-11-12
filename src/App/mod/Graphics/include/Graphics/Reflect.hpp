@@ -14,9 +14,9 @@ enum class InputLayout {
 };
 
 enum class InstanceBufferType {
-    Vertex2D,
-    Vertex3D,
-    Vertex4D,
+    Vector2,
+    Vector3,
+    Vector4,
 };
 
 enum class PrimitiveType {
