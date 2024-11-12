@@ -1,6 +1,7 @@
 InputLayout=VertexTexCoord2D
 PrimitiveType=Triangles
 IsWireframe=false
+InstanceBufferCount=0
 VS.UniformCount=2
 VS.Uniform[0]=UCamera
 VS.Uniform[1]=UVector4
