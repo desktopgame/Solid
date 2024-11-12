@@ -15,6 +15,8 @@ DebugScene::DebugScene()
     , m_cursorVisible(true)
     , m_editCompleted()
     , m_renderer()
+    , m_vertexBuffer()
+    , m_indexBuffer()
 {
 }
 DebugScene::~DebugScene() { }
@@ -27,6 +29,21 @@ void DebugScene::onEnter()
     }
     if (!m_debugTexture) {
         m_debugTexture = Texture::create("./assets/tileNormal2.png");
+    }
+    if (!m_vertexBuffer) {
+        m_vertexBuffer = Buffer::create();
+        m_indexBuffer = Buffer::create();
+
+        std::vector<VertexNormal3D> vertices;
+        std::vector<uint32_t> indices;
+        Polygon::generateBox(vertices, indices);
+        m_indexLength = static_cast<int32_t>(indices.size());
+
+        m_vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
+        m_vertexBuffer->update(vertices.data());
+
+        m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+        m_indexBuffer->update(indices.data());
     }
     m_editCompleted = false;
 }
@@ -132,6 +149,27 @@ void DebugScene::onDraw3D()
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), false);
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
     m_renderer->drawBoxTexture(Vector3({ -25, 0, 10 }), Vector3({ 5, 5, 5 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
+
+    auto rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
+    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
+    Reflect::UCamera uCamera;
+    uCamera.modelMatrix = Matrix::transform(
+        Matrix::translate(Vector3({ 0, 0, 20 })),
+        Matrix(),
+        Matrix::scale(Vector3({ 3, 3, 3 })));
+    uCamera.viewMatrix = Camera::getLookAtMatrix();
+    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
+    ub->setVS(0, &uCamera);
+
+    Reflect::UVector4 uColor;
+    uColor.value = Vector4({ 1, 0, 0, 1 });
+    ub->setVS(1, &uColor);
+    Engine::getInstance()->getDevice()->getSurface()->render(
+        rc,
+        ub,
+        m_vertexBuffer,
+        m_indexBuffer,
+        m_indexLength);
 }
 
 void DebugScene::onDraw2D()

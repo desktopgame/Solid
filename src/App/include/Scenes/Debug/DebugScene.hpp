@@ -31,5 +31,9 @@ private:
 
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<Texture> m_debugTexture;
+
+    std::shared_ptr<Buffer> m_vertexBuffer;
+    std::shared_ptr<Buffer> m_indexBuffer;
+    int32_t m_indexLength;
 };
 }
