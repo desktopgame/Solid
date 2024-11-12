@@ -145,11 +145,12 @@ void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
     const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    int32_t instanceCount,
     const std::shared_ptr<Buffer>& vertex,
     const std::shared_ptr<Buffer>& index,
     int32_t indexLength)
 {
-    rc->render(m_commandList, ub, instanceBuffers, vertex, index, indexLength);
+    rc->render(m_commandList, ub, instanceBuffers, instanceCount, vertex, index, indexLength);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(
