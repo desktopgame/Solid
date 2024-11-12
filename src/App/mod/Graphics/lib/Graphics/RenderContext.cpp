@@ -386,10 +386,7 @@ void RenderContext::render(
     cmdList->IASetVertexBuffers(0, 1, &vbView);
 
     for (int32_t i = 0; i < instanceBufferCount; i++) {
-        D3D12_VERTEX_BUFFER_VIEW instView = {};
         std::shared_ptr<Buffer> instBuffer = instanceBuffers[i];
-        instView.BufferLocation = instBuffer->getID3D12Resource()->GetGPUVirtualAddress();
-        instView.SizeInBytes = instBuffer->getSize();
 
         size_t instStride = 0;
         switch (program.instanceBufferLayout.at(i)) {
@@ -403,6 +400,8 @@ void RenderContext::render(
             instStride = sizeof(Math::Vector4);
             break;
         }
+        D3D12_VERTEX_BUFFER_VIEW instView = {};
+        instView.BufferLocation = instBuffer->getID3D12Resource()->GetGPUVirtualAddress();
         instView.StrideInBytes = static_cast<UINT>(instStride);
         cmdList->IASetVertexBuffers(i + 1, 1, &instView);
     }
