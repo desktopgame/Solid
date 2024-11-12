@@ -53,6 +53,11 @@ void RenderContext::render(
     const std::shared_ptr<Buffer>& indexBuffer,
     int32_t indexLength)
 {
+    const Metadata::Program& program = Metadata::k_programs.at(m_entry);
+    if (program.instanceBufferLayout.size() > 0) {
+        throw std::logic_error("missing instance buffer.");
+    }
+
     cmdList->SetPipelineState(m_pipelineState.Get());
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
 
@@ -63,8 +68,6 @@ void RenderContext::render(
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
 
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-    const Metadata::Program& program = Metadata::k_programs.at(m_entry);
-
     for (int32_t i = 0; i < program.vsUniforms.size() + program.psUniforms.size(); i++) {
         cmdList->SetGraphicsRootDescriptorTable(i, heapHandle);
         heapHandle.ptr += incrementSize;
