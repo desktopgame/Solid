@@ -40,6 +40,15 @@ private:
 #if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+
+    void render(
+        const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+        const std::shared_ptr<UniformBuffer>& ub,
+        const std::shared_ptr<Buffer>* instanceBuffers,
+        int32_t instanceBufferCount,
+        const std::shared_ptr<Buffer>& vertexBuffer,
+        const std::shared_ptr<Buffer>& indexBuffer,
+        int32_t indexLength);
 #endif
 };
 }
