@@ -3,6 +3,7 @@
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/FontSprite.hpp>
+#include <Graphics/Polygon.hpp>
 #include <Graphics/RenderContext.hpp>
 #include <Graphics/Renderer.hpp>
 #include <Graphics/Screen.hpp>
@@ -270,22 +271,9 @@ void Renderer::initRect()
     m_rectObject.indexBuffer = Buffer::create();
     std::vector<Math::Vector2> vertices;
     std::vector<uint32_t> indices;
-    const float left = -0.5;
-    const float right = 0.5;
-    const float top = 0.5;
-    const float bottom = -0.5;
-    vertices.push_back(Math::Vector2({ left, top }));
-    vertices.push_back(Math::Vector2({ right, top }));
-    vertices.push_back(Math::Vector2({ right, bottom }));
-    vertices.push_back(Math::Vector2({ left, bottom }));
+    Polygon::generateRect(vertices, indices);
     m_rectObject.vertexBuffer->allocate(sizeof(Math::Vector2) * vertices.size());
     m_rectObject.vertexBuffer->update(vertices.data());
-    indices.push_back(1);
-    indices.push_back(3);
-    indices.push_back(0);
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(1);
     m_rectObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_rectObject.indexBuffer->update(indices.data());
     m_rectObject.indexLength = indices.size();
@@ -301,26 +289,9 @@ void Renderer::initCircle()
     m_circleObject.indexBuffer = Buffer::create();
     std::vector<Math::Vector2> vertices;
     std::vector<uint32_t> indices;
-    float degree = 0.0f;
-    vertices.emplace_back(Math::Vector2({ 0.0f, 0.0f }));
-    while (degree < 360.0f) {
-        float x = Math::Mathf::cos(Math::Mathf::Deg2Rad * degree) * 0.5f;
-        float y = Math::Mathf::sin(Math::Mathf::Deg2Rad * degree) * 0.5f;
-        vertices.emplace_back(Math::Vector2({ x, y }));
-        degree += 5.0f;
-    }
+    Polygon::generateCircle(vertices, indices);
     m_circleObject.vertexBuffer->allocate(sizeof(Math::Vector2) * vertices.size());
     m_circleObject.vertexBuffer->update(vertices.data());
-    uint32_t index = 1;
-    while (index < vertices.size()) {
-        indices.emplace_back(0);
-        indices.emplace_back(index + 1);
-        indices.emplace_back(index);
-        index = index + 1;
-    }
-    indices.emplace_back(0);
-    indices.emplace_back(1);
-    indices.emplace_back(index - 1);
     m_circleObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_circleObject.indexBuffer->update(indices.data());
     m_circleObject.indexLength = indices.size();
@@ -336,22 +307,9 @@ void Renderer::initSprite()
     m_spriteObject.indexBuffer = Buffer::create();
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
-    const float left = -0.5;
-    const float right = 0.5;
-    const float top = 0.5;
-    const float bottom = -0.5;
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, top }), Math::Vector2({ 1.0f, 0.0f })));
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
+    Polygon::generateRect(vertices, indices);
     m_spriteObject.vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
     m_spriteObject.vertexBuffer->update(vertices.data());
-    indices.push_back(1);
-    indices.push_back(3);
-    indices.push_back(0);
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(1);
     m_spriteObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_spriteObject.indexBuffer->update(indices.data());
     m_spriteObject.indexLength = indices.size();
@@ -367,22 +325,9 @@ void Renderer::initText()
     m_textObject.indexBuffer = Buffer::create();
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
-    const float left = -0.5;
-    const float right = 0.5;
-    const float top = 0.5;
-    const float bottom = -0.5;
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, top }), Math::Vector2({ 1.0f, 0.0f })));
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
-    vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
+    Polygon::generateRect(vertices, indices);
     m_textObject.vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
     m_textObject.vertexBuffer->update(vertices.data());
-    indices.push_back(1);
-    indices.push_back(3);
-    indices.push_back(0);
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(1);
     m_textObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_textObject.indexBuffer->update(indices.data());
     m_textObject.indexLength = indices.size();
@@ -397,34 +342,17 @@ void Renderer::initPlane(Object& dst, bool isWireframe)
     dst.vertexBuffer = Buffer::create();
     dst.indexBuffer = Buffer::create();
     std::vector<uint32_t> indices;
-    const float left = -0.5;
-    const float right = 0.5;
-    const float top = 0.5;
-    const float bottom = -0.5;
-
     if (isWireframe) {
         std::vector<Math::Vector3> vertices;
-        vertices.push_back(Math::Vector3({ left, bottom, 0 }));
-        vertices.push_back(Math::Vector3({ left, top, 0 }));
-        vertices.push_back(Math::Vector3({ right, bottom, 0 }));
-        vertices.push_back(Math::Vector3({ right, top, 0 }));
+        Polygon::generatePlane(vertices, indices);
         dst.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
         dst.vertexBuffer->update(vertices.data());
     } else {
         std::vector<VertexNormal3D> vertices;
-        vertices.push_back(VertexNormal3D(Math::Vector3({ left, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ left, top, 0 }), Math::Vector3({ 0, 0, -1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ right, bottom, 0 }), Math::Vector3({ 0, 0, -1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ right, top, 0 }), Math::Vector3({ 0, 0, -1 })));
+        Polygon::generatePlane(vertices, indices);
         dst.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
         dst.vertexBuffer->update(vertices.data());
     }
-    indices.emplace_back(0);
-    indices.emplace_back(1);
-    indices.emplace_back(2);
-    indices.emplace_back(2);
-    indices.emplace_back(1);
-    indices.emplace_back(3);
     dst.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     dst.indexBuffer->update(indices.data());
     dst.indexLength = indices.size();
@@ -445,22 +373,9 @@ void Renderer::initPlaneTexture()
     m_planeTextureObject.indexBuffer = Buffer::create();
     std::vector<VertexNormalTexCoord3D> vertices;
     std::vector<uint32_t> indices;
-    const float left = -0.5;
-    const float right = 0.5;
-    const float top = 0.5;
-    const float bottom = -0.5;
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ left, bottom, 0 }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ left, top, 0 }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ right, bottom, 0 }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ right, top, 0 }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 1, 0 })));
+    Polygon::generatePlane(vertices, indices);
     m_planeTextureObject.vertexBuffer->allocate(sizeof(VertexNormalTexCoord3D) * vertices.size());
     m_planeTextureObject.vertexBuffer->update(vertices.data());
-    indices.emplace_back(0);
-    indices.emplace_back(1);
-    indices.emplace_back(2);
-    indices.emplace_back(2);
-    indices.emplace_back(1);
-    indices.emplace_back(3);
     m_planeTextureObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_planeTextureObject.indexBuffer->update(indices.data());
     m_planeTextureObject.indexLength = indices.size();
@@ -477,115 +392,15 @@ void Renderer::initBox(Object& dst, bool isWireframe)
     std::vector<uint32_t> indices;
     if (isWireframe) {
         std::vector<Math::Vector3> vertices;
-        // z-
-        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, -0.5f }));
-        // z+
-        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, 0.5f }));
-        // x-
-        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, -0.5f }));
-        // x+
-        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, 0.5f }));
-        // y-
-        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, -0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, -0.5f, -0.5f }));
-        // y+
-        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ -0.5f, 0.5f, 0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, -0.5f }));
-        vertices.push_back(Math::Vector3({ 0.5f, 0.5f, 0.5f }));
+        Polygon::generateBox(vertices, indices);
         dst.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
         dst.vertexBuffer->update(vertices.data());
     } else {
         std::vector<VertexNormal3D> vertices;
-        // z-
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 })));
-        // z+
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 })));
-        // x-
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 })));
-        // x+
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 })));
-        // y-
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 })));
-        // y+
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 })));
-        vertices.push_back(VertexNormal3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 })));
+        Polygon::generateBox(vertices, indices);
         dst.vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
         dst.vertexBuffer->update(vertices.data());
     }
-    uint32_t offset = 0;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 4;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 8;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 12;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 16;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 20;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
     dst.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     dst.indexBuffer->update(indices.data());
     dst.indexLength = indices.size();
@@ -605,80 +420,9 @@ void Renderer::initBoxTexture()
     m_boxTextureObject.indexBuffer = Buffer::create();
     std::vector<VertexNormalTexCoord3D> vertices;
     std::vector<uint32_t> indices;
-    // z-
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 0, -1 }), Math::Vector2({ 1, 0 })));
-    // z+
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 0, 1 }), Math::Vector2({ 1, 0 })));
-    // x-
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ -1, 0, 0 }), Math::Vector2({ 1, 0 })));
-    // x+
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 1, 0, 0 }), Math::Vector2({ 1, 0 })));
-    // y-
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, 0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, -0.5f, -0.5f }), Math::Vector3({ 0, -1, 0 }), Math::Vector2({ 1, 0 })));
-    // y+
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 0, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ -0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 0, 0 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, -0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 1, 1 })));
-    vertices.push_back(VertexNormalTexCoord3D(Math::Vector3({ 0.5f, 0.5f, 0.5f }), Math::Vector3({ 0, 1, 0 }), Math::Vector2({ 1, 0 })));
+    Polygon::generateBox(vertices, indices);
     m_boxTextureObject.vertexBuffer->allocate(sizeof(VertexNormalTexCoord3D) * vertices.size());
     m_boxTextureObject.vertexBuffer->update(vertices.data());
-    uint32_t offset = 0;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 4;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 8;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 12;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 16;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
-    offset = 20;
-    indices.emplace_back(offset + 0);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 2);
-    indices.emplace_back(offset + 1);
-    indices.emplace_back(offset + 3);
     m_boxTextureObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_boxTextureObject.indexBuffer->update(indices.data());
     m_boxTextureObject.indexLength = indices.size();

@@ -33,6 +33,7 @@ add_library(
     ./lib/Graphics/Texture.cpp
     ./lib/Graphics/Screen.cpp
     ./lib/Graphics/Camera.cpp
+    ./lib/Graphics/Polygon.cpp
     ./lib/Graphics/Renderer.cpp
     ./lib/Graphics/RenderContext.cpp
     ./lib/Graphics/UniformBuffer.cpp
