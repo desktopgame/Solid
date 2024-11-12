@@ -34,6 +34,7 @@ private:
 
     std::shared_ptr<Buffer> m_vertexBuffer;
     std::shared_ptr<Buffer> m_indexBuffer;
+    std::vector<std::shared_ptr<Buffer>> m_instanceBuffers;
     int32_t m_indexLength;
 };
 }

@@ -17,6 +17,7 @@ DebugScene::DebugScene()
     , m_renderer()
     , m_vertexBuffer()
     , m_indexBuffer()
+    , m_instanceBuffers()
 {
 }
 DebugScene::~DebugScene() { }
@@ -44,6 +45,15 @@ void DebugScene::onEnter()
 
         m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
         m_indexBuffer->update(indices.data());
+
+        auto instBuf = Buffer::create();
+        std::vector<Vector3> instances;
+        for (int32_t i = 0; i < 10; i++) {
+            instances.emplace_back(Vector3({ 0, 0, static_cast<float>((5 + (i * 5))) }));
+        }
+        instBuf->allocate(sizeof(Vector3) * instances.size());
+        instBuf->update(instances.data());
+        m_instanceBuffers.emplace_back(instBuf);
     }
     m_editCompleted = false;
 }
@@ -150,11 +160,11 @@ void DebugScene::onDraw3D()
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
     m_renderer->drawBoxTexture(Vector3({ -25, 0, 10 }), Vector3({ 5, 5, 5 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
 
-    auto rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
-    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
+    auto rc = RenderContext::get(Metadata::ProgramTable::MeshInstanceColor3D);
+    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshInstanceColor3D);
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = Matrix::transform(
-        Matrix::translate(Vector3({ 0, 0, 20 })),
+        Matrix::translate(Vector3({ 0, 0, 0 })),
         Matrix(),
         Matrix::scale(Vector3({ 3, 3, 3 })));
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -169,7 +179,9 @@ void DebugScene::onDraw3D()
         ub,
         m_vertexBuffer,
         m_indexBuffer,
-        m_indexLength);
+        m_indexLength,
+        m_instanceBuffers,
+        10);
 }
 
 void DebugScene::onDraw2D()

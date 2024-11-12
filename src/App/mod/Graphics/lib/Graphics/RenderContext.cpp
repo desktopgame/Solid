@@ -402,6 +402,7 @@ void RenderContext::render(
         }
         D3D12_VERTEX_BUFFER_VIEW instView = {};
         instView.BufferLocation = instBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+        instView.SizeInBytes = instBuffer->getSize();
         instView.StrideInBytes = static_cast<UINT>(instStride);
         cmdList->IASetVertexBuffers(i + 1, 1, &instView);
     }
