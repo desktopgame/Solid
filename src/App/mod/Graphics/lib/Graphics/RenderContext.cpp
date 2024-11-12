@@ -115,6 +115,8 @@ void RenderContext::initialize()
         rc->m_entry = (Metadata::ProgramTable)i;
         s_table[i] = rc;
 
+        const Metadata::Program& program = Metadata::k_programs.at(i);
+
         D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
         // input layout
         std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
@@ -122,7 +124,7 @@ void RenderContext::initialize()
         bool depthWrite = false;
         bool blendEnable = false;
         bool useGBuffer = false;
-        switch (Metadata::k_programs.at(i).inputLayout) {
+        switch (program.inputLayout) {
         case Reflect::InputLayout::Vertex2D:
             blendEnable = true;
             inputLayout.push_back(
@@ -197,13 +199,13 @@ void RenderContext::initialize()
         psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
-        rc->m_shader = Shader::compile(Metadata::k_programs.at(i).vsCode, "vsMain", Metadata::k_programs.at(i).psCode, "psMain");
+        rc->m_shader = Shader::compile(program.vsCode, "vsMain", program.psCode, "psMain");
         rc->m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
         psoDesc.RasterizerState.MultisampleEnable = false;
         psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
-        psoDesc.RasterizerState.FillMode = Metadata::k_programs.at(i).isWireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
+        psoDesc.RasterizerState.FillMode = program.isWireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
         psoDesc.RasterizerState.DepthClipEnable = true;
         // depth
         psoDesc.DepthStencilState.DepthEnable = depthTest;
@@ -232,7 +234,7 @@ void RenderContext::initialize()
             psoDesc.BlendState.RenderTarget[0] = rtBlendDesc;
         }
         psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
-        psoDesc.PrimitiveTopologyType = convPrimitiveTopologyType(Metadata::k_programs.at(i).primitiveType);
+        psoDesc.PrimitiveTopologyType = convPrimitiveTopologyType(program.primitiveType);
         if (useGBuffer) {
             psoDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
             psoDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -246,7 +248,7 @@ void RenderContext::initialize()
         psoDesc.SampleDesc.Quality = 0;
         // root signature
         std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
-        for (int32_t vsUniform = 0; vsUniform < Metadata::k_programs.at(i).vsUniforms.size(); vsUniform++) {
+        for (int32_t vsUniform = 0; vsUniform < program.vsUniforms.size(); vsUniform++) {
             descTableRange.push_back({});
             descTableRange.at(vsUniform).NumDescriptors = 1;
             descTableRange.at(vsUniform).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -255,9 +257,9 @@ void RenderContext::initialize()
         }
         int32_t psSRV = 0;
         int32_t psCBV = 0;
-        for (int32_t psUniform = 0; psUniform < Metadata::k_programs.at(i).psUniforms.size(); psUniform++) {
-            int32_t offset = static_cast<int32_t>(Metadata::k_programs.at(i).vsUniforms.size());
-            Metadata::Uniform u = Metadata::k_programs.at(i).psUniforms.at(psUniform);
+        for (int32_t psUniform = 0; psUniform < program.psUniforms.size(); psUniform++) {
+            int32_t offset = static_cast<int32_t>(program.vsUniforms.size());
+            Metadata::Uniform u = program.psUniforms.at(psUniform);
             descTableRange.push_back({});
             descTableRange.at(offset + psUniform).NumDescriptors = 1;
             descTableRange.at(offset + psUniform).RangeType = u.isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -266,15 +268,15 @@ void RenderContext::initialize()
             (u.isShaderResource ? psSRV : psCBV)++;
         }
         std::vector<D3D12_ROOT_PARAMETER> rootParam;
-        for (int32_t vsUniform = 0; vsUniform < Metadata::k_programs.at(i).vsUniforms.size(); vsUniform++) {
+        for (int32_t vsUniform = 0; vsUniform < program.vsUniforms.size(); vsUniform++) {
             rootParam.push_back({});
             rootParam.at(vsUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
             rootParam.at(vsUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
             rootParam.at(vsUniform).DescriptorTable.pDescriptorRanges = &descTableRange.at(vsUniform);
             rootParam.at(vsUniform).DescriptorTable.NumDescriptorRanges = 1;
         }
-        for (int32_t psUniform = 0; psUniform < Metadata::k_programs.at(i).psUniforms.size(); psUniform++) {
-            int32_t offset = static_cast<int32_t>(Metadata::k_programs.at(i).vsUniforms.size());
+        for (int32_t psUniform = 0; psUniform < program.psUniforms.size(); psUniform++) {
+            int32_t offset = static_cast<int32_t>(program.vsUniforms.size());
             rootParam.push_back({});
             rootParam.at(offset + psUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
             rootParam.at(offset + psUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
