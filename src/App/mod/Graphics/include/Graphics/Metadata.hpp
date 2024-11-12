@@ -12,9 +12,9 @@ namespace Lib::Graphics::Metadata {
     class Program {
     public:
         Reflect::InputLayout inputLayout;
+        std::vector<Reflect::InstanceBufferType> instanceBufferLayout;
         Reflect::PrimitiveType primitiveType;
         bool isWireframe;
-        std::vector<Reflect::InstanceBufferType> instanceBufferLayout;
         const char* vsCode;
         std::vector<Uniform> vsUniforms;
         const char* psCode;
@@ -36,13 +36,13 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::Vertex2D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
-            // instanceBufferLayout
-            std::vector<Reflect::InstanceBufferType> {
-            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -86,13 +86,13 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexTexCoord2D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
-            // instanceBufferLayout
-            std::vector<Reflect::InstanceBufferType> {
-            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -148,13 +148,13 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexTexCoord2D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
-            // instanceBufferLayout
-            std::vector<Reflect::InstanceBufferType> {
-            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -206,13 +206,13 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexNormal3D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
-            // instanceBufferLayout
-            std::vector<Reflect::InstanceBufferType> {
-            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -272,13 +272,13 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexNormalTexCoord3D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
-            // instanceBufferLayout
-            std::vector<Reflect::InstanceBufferType> {
-            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -345,13 +345,13 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::Vertex3D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             true,
-            // instanceBufferLayout
-            std::vector<Reflect::InstanceBufferType> {
-            },
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
@@ -403,14 +403,14 @@ namespace Lib::Graphics::Metadata {
         Program {
             // inputLayout
             Reflect::InputLayout::VertexNormal3D,
-            // primitiveType
-            Reflect::PrimitiveType::Triangles,
-            // isWireframe
-            false,
             // instanceBufferLayout
             std::vector<Reflect::InstanceBufferType> {
                 Reflect::InstanceBufferType::Vector3,
             },
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
+            // isWireframe
+            false,
             // vs
             "struct Output {"
             "    float4 svpos : SV_POSITION;"
