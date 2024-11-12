@@ -62,6 +62,23 @@ void RenderContext::render(
         indexLength);
 }
 
+void RenderContext::render(
+    const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+    const std::shared_ptr<UniformBuffer>& ub,
+    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    const std::shared_ptr<Buffer>& vertexBuffer,
+    const std::shared_ptr<Buffer>& indexBuffer,
+    int32_t indexLength)
+{
+    render(cmdList,
+        ub,
+        instanceBuffers.data(),
+        static_cast<int32_t>(instanceBuffers.size()),
+        vertexBuffer,
+        indexBuffer,
+        indexLength);
+}
+
 void RenderContext::initialize()
 {
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();

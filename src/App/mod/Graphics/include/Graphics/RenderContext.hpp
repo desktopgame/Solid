@@ -26,6 +26,14 @@ public:
         const std::shared_ptr<Buffer>& indexBuffer,
         int32_t indexLength);
 
+    void render(
+        const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+        const std::shared_ptr<UniformBuffer>& ub,
+        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+        const std::shared_ptr<Buffer>& vertexBuffer,
+        const std::shared_ptr<Buffer>& indexBuffer,
+        int32_t indexLength);
+
     static void initialize();
     static void destroy();
 #endif

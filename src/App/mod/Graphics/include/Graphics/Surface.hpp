@@ -41,6 +41,14 @@ public:
         const std::shared_ptr<Buffer>& index,
         int32_t indexLength);
 
+    void render(
+        const std::shared_ptr<RenderContext>& rc,
+        const std::shared_ptr<UniformBuffer>& ub,
+        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+        const std::shared_ptr<Buffer>& vertex,
+        const std::shared_ptr<Buffer>& index,
+        int32_t indexLength);
+
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
         const std::shared_ptr<Device>& device,
