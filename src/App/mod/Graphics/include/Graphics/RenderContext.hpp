@@ -29,11 +29,11 @@ public:
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
-        int32_t instanceCount,
         const std::shared_ptr<Buffer>& vertexBuffer,
         const std::shared_ptr<Buffer>& indexBuffer,
-        int32_t indexLength);
+        int32_t indexLength,
+        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+        int32_t instanceCount);
 
     static void initialize();
     static void destroy();
@@ -53,12 +53,12 @@ private:
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<Buffer>* instanceBuffers,
-        int32_t instanceBufferCount,
-        int32_t instanceCount,
         const std::shared_ptr<Buffer>& vertexBuffer,
         const std::shared_ptr<Buffer>& indexBuffer,
-        int32_t indexLength);
+        int32_t indexLength,
+        const std::shared_ptr<Buffer>* instanceBuffers,
+        int32_t instanceBufferCount,
+        int32_t instanceCount);
 #endif
 };
 }

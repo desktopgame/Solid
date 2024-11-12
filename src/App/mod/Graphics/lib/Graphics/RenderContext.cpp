@@ -55,31 +55,31 @@ void RenderContext::render(
 {
     render(cmdList,
         ub,
-        nullptr,
-        0,
-        0,
         vertexBuffer,
         indexBuffer,
-        indexLength);
+        indexLength,
+        nullptr,
+        0,
+        0);
 }
 
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
-    int32_t instanceCount,
     const std::shared_ptr<Buffer>& vertexBuffer,
     const std::shared_ptr<Buffer>& indexBuffer,
-    int32_t indexLength)
+    int32_t indexLength,
+    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    int32_t instanceCount)
 {
     render(cmdList,
         ub,
-        instanceBuffers.data(),
-        static_cast<int32_t>(instanceBuffers.size()),
-        instanceCount,
         vertexBuffer,
         indexBuffer,
-        indexLength);
+        indexLength,
+        instanceBuffers.data(),
+        static_cast<int32_t>(instanceBuffers.size()),
+        instanceCount);
 }
 
 void RenderContext::initialize()
@@ -330,12 +330,12 @@ RenderContext::RenderContext()
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>* instanceBuffers,
-    int32_t instanceBufferCount,
-    int32_t instanceCount,
     const std::shared_ptr<Buffer>& vertexBuffer,
     const std::shared_ptr<Buffer>& indexBuffer,
-    int32_t indexLength)
+    int32_t indexLength,
+    const std::shared_ptr<Buffer>* instanceBuffers,
+    int32_t instanceBufferCount,
+    int32_t instanceCount)
 {
     const Metadata::Program& program = Metadata::k_programs.at(m_entry);
     if (program.instanceBufferLayout.size() > 0 && instanceBufferCount == 0) {

@@ -44,11 +44,11 @@ public:
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
-        int32_t instanceCount,
         const std::shared_ptr<Buffer>& vertex,
         const std::shared_ptr<Buffer>& index,
-        int32_t indexLength);
+        int32_t indexLength,
+        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+        int32_t instanceCount);
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
