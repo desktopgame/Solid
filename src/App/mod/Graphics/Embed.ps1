@@ -1,14 +1,4 @@
 # シェーダーコードをC++のコードに変換します。
-function Assert {
-    param (
-        [bool]$condition,
-        [string]$message = "Assertion failed"
-    )
-    
-    if (-not $condition) {
-        throw $message
-    }
-}
 
 function GetOrThrow {
     param (
