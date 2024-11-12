@@ -22,7 +22,6 @@ public:
 private:
     static inline const float k_tileSize = 5.0f;
 
-    std::shared_ptr<TileRenderer> m_tileRenderer;
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
     float m_cameraAngleX;
@@ -32,7 +31,6 @@ private:
 
     Vector3 m_globalLightDir;
 
-    std::shared_ptr<TileTicket> m_tileTicket;
-    std::vector<Vector4> m_tiles;
+    std::shared_ptr<Renderer> m_renderer;
 };
 }

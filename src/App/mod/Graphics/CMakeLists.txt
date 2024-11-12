@@ -47,9 +47,6 @@ add_library(
     ./lib/Graphics/FontMap.cpp
     ./lib/Graphics/FontSprite.cpp
     ./lib/Graphics/FontMetrics.cpp
-    ./lib/Graphics/TileBatch.cpp
-    ./lib/Graphics/TileBuffer.cpp
-    ./lib/Graphics/TileRenderer.cpp
     ./lib/Graphics/GlobalLight.cpp
     ./lib/Graphics/PointLight.cpp
 )

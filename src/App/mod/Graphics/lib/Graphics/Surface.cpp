@@ -6,7 +6,6 @@
 #include <Graphics/Screen.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Swapchain.hpp>
-#include <Graphics/TileBatch.hpp>
 #include <Graphics/UniformBuffer.hpp>
 #include <Graphics/UniformPool.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
@@ -140,11 +139,6 @@ void Surface::render(
     int32_t indexLength)
 {
     rc->render(m_commandList, ub, vertex, index, indexLength);
-}
-
-void Surface::render(const std::shared_ptr<TileBatch>& tileBatch)
-{
-    tileBatch->render(m_commandList);
 }
 // internal
 std::shared_ptr<Surface> Surface::create(

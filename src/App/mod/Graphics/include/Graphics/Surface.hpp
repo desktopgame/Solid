@@ -41,9 +41,6 @@ public:
         const std::shared_ptr<Buffer>& index,
         int32_t indexLength);
 
-    void render(
-        const std::shared_ptr<TileBatch>& tileBatch);
-
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
         const std::shared_ptr<Device>& device,

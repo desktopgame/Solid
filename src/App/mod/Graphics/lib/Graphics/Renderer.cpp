@@ -9,7 +9,6 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/Surface.hpp>
 #include <Graphics/Texture.hpp>
-#include <Graphics/TileBatch.hpp>
 #include <Graphics/UniformBuffer.hpp>
 #include <Graphics/UniformPool.hpp>
 #include <Graphics/VertexNormal3D.hpp>

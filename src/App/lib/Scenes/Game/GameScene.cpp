@@ -6,32 +6,22 @@
 namespace App::Scenes::Game {
 // public
 GameScene::GameScene()
-    : m_tileRenderer()
-    , m_cameraPos({ 0, (k_tileSize / 2.0f) + 1.0f, -1 })
+    : m_cameraPos({ 0, (k_tileSize / 2.0f) + 1.0f, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_cameraAngleX()
     , m_cameraAngleY()
     , m_cameraMoveSpeed(0.4f)
     , m_cameraRotateSpeed(0.8f)
     , m_globalLightDir({ 1, 1, 0 })
-    , m_tileTicket()
-    , m_tiles()
 {
 }
 GameScene::~GameScene() { }
 
 void GameScene::onEnter()
 {
-    if (!m_tileRenderer) {
-        auto tex = Texture::create("./assets/tileNormal2.png");
-        m_tileRenderer = std::make_shared<TileRenderer>(tex, k_tileSize);
+    if (!m_renderer) {
+        m_renderer = std::make_shared<Renderer>();
     }
-
-    IO::deserializeTile("assets\\Stages\\stage_base.csv", m_tiles, k_tileSize);
-
-    m_tileTicket = m_tileRenderer->rentTileTicket(m_tiles.size());
-    m_tileTicket->batchTileArray(m_tiles.data());
-
     if (Cursor::isVisible()) {
         Cursor::hide();
         Cursor::lock(Engine::getInstance()->getWindow());
@@ -40,8 +30,6 @@ void GameScene::onEnter()
 
 void GameScene::onExit()
 {
-    m_tileRenderer->releaseTileTicket(m_tileTicket);
-    m_tiles.clear();
 }
 
 void GameScene::onUpdate()
@@ -106,8 +94,6 @@ void GameScene::onDraw3D()
     Camera::lookAt(m_cameraLookAt);
     Camera::depthRange(0.1f, 1000.0f);
 
-    m_tileRenderer->drawTiles();
-
     GlobalLight::enable();
     GlobalLight::set(Vector3::normalized(m_globalLightDir));
 
@@ -116,6 +102,8 @@ void GameScene::onDraw3D()
     PointLight::set(0, Vector3({ 40, 10, 40 }), 10, 20);
     PointLight::set(1, Vector3({ 60, 10, 20 }), 10, 20);
     PointLight::set(2, Vector3({ 20, 10, 20 }), 10, 20);
+
+    m_renderer->drawBox(Vector3({ 0, 0, 0 }), Vector3({ 10, 10, 10 }), Quaternion(), Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }), false);
 }
 
 void GameScene::onDraw2D()
