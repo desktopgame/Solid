@@ -30,7 +30,7 @@ namespace Lib::Graphics::Metadata {
         MeshWireframe3D,
         MeshInstanceColor3D,
         MeshInstanceTexture3D,
-        Tile3D,
+        TileInstance3D,
         Count
     };
 
@@ -774,7 +774,7 @@ namespace Lib::Graphics::Metadata {
     };
 
     template<>
-    class Signature<ProgramTable::Tile3D> {
+    class Signature<ProgramTable::TileInstance3D> {
     public:
         static inline void set() { }
     };

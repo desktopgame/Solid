@@ -280,8 +280,8 @@ void DebugScene::onDraw3D()
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
     m_renderer->drawBoxTexture(Vector3({ -25, 0, 10 }), Vector3({ 5, 5, 5 }), q, m_debugTexture, Vector4({ 1, 1, 1, 1 }));
 
-    auto rc = RenderContext::get(Metadata::ProgramTable::Tile3D);
-    auto ub = UniformPool::rent(Metadata::ProgramTable::Tile3D);
+    auto rc = RenderContext::get(Metadata::ProgramTable::TileInstance3D);
+    auto ub = UniformPool::rent(Metadata::ProgramTable::TileInstance3D);
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = Matrix::transform(
         Matrix::translate(Vector3({ 0, 0, 0 })),
