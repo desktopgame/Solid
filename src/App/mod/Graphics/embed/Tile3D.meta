@@ -1,0 +1,13 @@
+InputLayout=VertexNormalTexCoord3D
+PrimitiveType=Triangles
+IsWireframe=false
+InstanceBufferCount=1
+InstanceBuffer[0]=Vector4
+VS.UniformCount=3
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UTileTransform
+VS.Uniform[2]=UTilePallet
+VS.Code=Tile3D.vs
+PS.UniformCount=1
+PS.Uniform[0]=Texture
+PS.Code=Tile3D.ps

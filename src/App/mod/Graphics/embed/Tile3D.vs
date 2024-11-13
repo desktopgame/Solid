@@ -5,25 +5,18 @@ struct Output {
     float4 axis : NORMAL;
     float4 color : COLOR;
 };
-cbuffer cbuff0 : register(b0)
-{
-    float4 tileData[${VS_TileDataSize}];
+cbuffer cbuff0 : register(b0) {
     matrix modelMatrix;
-};
-cbuffer cbuff1 : register(b1)
-{
     matrix viewMatrix;
     matrix projectionMatrix;
-    float4 padding[8];
 };
-cbuffer cbuff2 : register(b2)
+cbuffer cbuff1 : register(b1)
 {
     matrix translateMatrixTable[6];
     matrix rotationMatrixTable[6];
     float3 normalVectorTable[6];
-    float padding2[46];
 };
-cbuffer cbuff3 : register(b3)
+cbuffer cbuff2 : register(b2)
 {
     float4 colorTable[64];
 };
@@ -43,15 +36,15 @@ static const float4 axisTable[6] = {
     float4(0, 1, 0, 180)
 };
 
-Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, uint instanceID : SV_InstanceID) {
+Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, float4 tileData : INSTANCE0) {
     Output output;
-    int tileInfo = int(tileData[instanceID].w);
+    int tileInfo = int(tileData.w);
     int tileRotationID = tileInfo % 10;
     int tileColorID = tileInfo / 10;
     matrix tileRotation = rotationMatrixTable[tileRotationID];
     matrix tileTranslate = translateMatrixTable[tileRotationID];
     matrix tileTransform = mul(tileTranslate, tileRotation);
-    float3 tileOffset = tileData[instanceID].xyz;
+    float3 tileOffset = tileData.xyz;
 
     float4 tmp = float4(mul(tileTransform, float4(pos, 1)) + tileOffset, 1);
 

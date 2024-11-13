@@ -61,4 +61,19 @@ public:
     std::array<float, 60> padding;
 };
 static_assert(sizeof(UVector4) == 256);
+
+class UTileTransform {
+public:
+    std::array<Math::Matrix, 6> translateMatrixTable;
+    std::array<Math::Matrix, 6> rotationMatrixTable;
+    std::array<Math::Vector3, 6> normalVectorTable;
+    std::array<float, 46> padding;
+};
+static_assert(sizeof(UTileTransform) == 1024);
+
+class UTilePallet {
+public:
+    std::array<Math::Vector4, 64> table;
+};
+static_assert(sizeof(UTilePallet) == 1024);
 }
