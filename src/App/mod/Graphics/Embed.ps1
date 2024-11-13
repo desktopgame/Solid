@@ -89,7 +89,7 @@ foreach ($properties in $propertiesList) {
     Write-Output "            // vs"
     $vsCode = (GetOrThrow $properties "VS.Code")
     foreach ($vsLine in Get-Content $("./embed/$vsCode") -Encoding UTF8) {
-        Write-Output ('            "{0}"' -f $vsLine)
+        Write-Output ('            "{0}\n"' -f $vsLine)
     }
     Write-Output ('            ,')
     Write-Output "            // vsUniforms"
@@ -103,7 +103,7 @@ foreach ($properties in $propertiesList) {
     Write-Output "            // ps"
     $psCode = (GetOrThrow $properties "PS.Code")
     foreach ($psLine in Get-Content $("./embed/$psCode") -Encoding UTF8) {
-        Write-Output ('            "{0}"' -f $psLine)
+        Write-Output ('            "{0}\n"' -f $psLine)
     }
     Write-Output ('            ,')
     Write-Output "            // psUniforms"
