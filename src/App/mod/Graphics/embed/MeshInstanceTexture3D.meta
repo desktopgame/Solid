@@ -1,0 +1,12 @@
+InputLayout=VertexNormalTexCoord3D
+PrimitiveType=Triangles
+IsWireframe=false
+InstanceBufferCount=1
+InstanceBuffer[0]=Vector3
+VS.UniformCount=2
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UVector4
+VS.Code=MeshInstanceTexture3D.vs
+PS.UniformCount=1
+PS.Uniform[0]=Texture
+PS.Code=MeshInstanceTexture3D.ps
