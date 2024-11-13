@@ -34,6 +34,8 @@ private:
 
     std::shared_ptr<Buffer> m_vertexBuffer;
     std::shared_ptr<Buffer> m_indexBuffer;
+    Reflect::UTileTransform m_tileTransform;
+    Reflect::UTilePallet m_tilePallet;
     std::vector<std::shared_ptr<Buffer>> m_instanceBuffers;
     int32_t m_indexLength;
 };
