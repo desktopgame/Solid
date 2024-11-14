@@ -42,17 +42,11 @@ void GameScene::onEnter()
 
         auto instBuf = Buffer::create();
         std::vector<Vector4> instances;
-        for (int32_t i = 0; i < 10; i++) {
-            instances.emplace_back(Vector4({ 0, 0, static_cast<float>(i), static_cast<float>((10 * i) + 0) }));
-            instances.emplace_back(Vector4({ 0, 0, static_cast<float>(i), static_cast<float>((10 * i) + 1) }));
-            instances.emplace_back(Vector4({ 0, 0, static_cast<float>(i), static_cast<float>((10 * i) + 2) }));
-            instances.emplace_back(Vector4({ 0, 0, static_cast<float>(i), static_cast<float>((10 * i) + 3) }));
-            instances.emplace_back(Vector4({ 0, 0, static_cast<float>(i), static_cast<float>((10 * i) + 4) }));
-            instances.emplace_back(Vector4({ 0, 0, static_cast<float>(i), static_cast<float>((10 * i) + 5) }));
-        }
+        IO::deserializeTile("assets\\Stages\\stage_base.csv", instances, 1.0f);
         instBuf->allocate(sizeof(Vector4) * instances.size());
         instBuf->update(instances.data());
         m_instanceBuffers.emplace_back(instBuf);
+        m_instanceCount = static_cast<int32_t>(instances.size());
 
         const float tileSize = 1.0f;
         const float k_tileHalf = tileSize / 2.0f;
@@ -254,7 +248,7 @@ void GameScene::onDraw3D()
     uCamera.modelMatrix = Matrix::transform(
         Matrix::translate(Vector3({ 0, 0, 0 })),
         Matrix(),
-        Matrix::scale(Vector3({ 1, 1, 1 })));
+        Matrix::scale(Vector3({ 5, 5, 5 })));
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
     ub->setVS(0, &uCamera);
@@ -269,7 +263,7 @@ void GameScene::onDraw3D()
         m_indexBuffer,
         m_indexLength,
         m_instanceBuffers,
-        60);
+        m_instanceCount);
 }
 
 void GameScene::onDraw2D()

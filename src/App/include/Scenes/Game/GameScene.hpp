@@ -40,5 +40,6 @@ private:
     Reflect::UTilePallet m_tilePallet;
     std::vector<std::shared_ptr<Buffer>> m_instanceBuffers;
     int32_t m_indexLength;
+    int32_t m_instanceCount;
 };
 }
