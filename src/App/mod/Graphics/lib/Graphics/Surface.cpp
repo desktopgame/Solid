@@ -106,11 +106,32 @@ void Surface::end3D()
 
 void Surface::begin2D()
 {
-    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    // Barrier
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_bloomTexture.Get();
+    barrier.Transition.Subresource = 0;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
     // light
     GlobalLight::draw(m_commandList);
     PointLight::draw(m_commandList);
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void Surface::end2D()
