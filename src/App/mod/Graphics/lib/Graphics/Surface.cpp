@@ -12,6 +12,7 @@
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
+#include <Utils/String.hpp>
 #include <stdexcept>
 #include <vector>
 
@@ -305,6 +306,12 @@ std::shared_ptr<Surface> Surface::create(
         if (FAILED(d3d12Device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&bTexture)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
+
+        char buf[16];
+        ::memset(buf, '\0', 16);
+        ::sprintf(buf, "Bloom[%d]", i);
+        bTexture->SetName(Utils::String::toWideString(buf).c_str());
+
         D3D12_RENDER_TARGET_VIEW_DESC bloomRtvDesc = {};
         bloomRtvDesc.Texture2D.MipSlice = 0;
         bloomRtvDesc.Texture2D.PlaneSlice = 0;
