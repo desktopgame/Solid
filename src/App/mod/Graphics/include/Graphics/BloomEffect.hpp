@@ -18,6 +18,7 @@ public:
     static void draw1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     static void draw2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     static void draw3(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    static void draw4(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
     static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
@@ -29,6 +30,7 @@ private:
     static std::shared_ptr<Shader> s_shader;
     static std::shared_ptr<Shader> s_shader2;
     static std::shared_ptr<Shader> s_shader3;
+    static std::shared_ptr<Shader> s_shader4;
 
 #if SOLID_ENABLE_INTERNAL
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
@@ -51,6 +53,13 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer3;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer3;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer3;
+
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState4;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature4;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap4;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer4;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer4;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer4;
 #endif
 };
 }

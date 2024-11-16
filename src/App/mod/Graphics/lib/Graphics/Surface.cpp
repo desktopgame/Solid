@@ -213,6 +213,7 @@ void Surface::begin2D()
     // ダイレクトターゲットに戻す
     //
     m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    BloomEffect::draw4(m_commandList);
     //*/
 }
 
