@@ -1,3 +1,4 @@
+#include <Graphics/BloomEffect.hpp>
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/GlobalLight.hpp>
@@ -132,6 +133,9 @@ void Surface::begin2D()
     m_commandList->ResourceBarrier(1, &barrier);
 
     m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+
+    // bloom
+    BloomEffect::draw(m_commandList);
 }
 
 void Surface::end2D()
@@ -320,6 +324,8 @@ std::shared_ptr<Surface> Surface::create(
     GlobalLight::initialize(d3d12Device, surface->m_gTextures);
     // PointLight
     PointLight::initialize(d3d12Device, surface->m_gTextures);
+    // Bloom
+    BloomEffect::initialize(d3d12Device, surface->m_bloomTexture);
 
     surface->m_swapchain = swapchain;
     return surface;
@@ -329,6 +335,7 @@ void Surface::destroy()
 {
     GlobalLight::destroy();
     PointLight::destroy();
+    BloomEffect::destroy();
     m_swapchain->destroy();
     m_swapchain = nullptr;
 }

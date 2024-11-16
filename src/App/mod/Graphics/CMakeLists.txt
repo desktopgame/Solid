@@ -50,6 +50,7 @@ add_library(
     ./lib/Graphics/FontMetrics.cpp
     ./lib/Graphics/GlobalLight.cpp
     ./lib/Graphics/PointLight.cpp
+    ./lib/Graphics/BloomEffect.cpp
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)
