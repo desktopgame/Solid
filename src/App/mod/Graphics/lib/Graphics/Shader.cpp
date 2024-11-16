@@ -1,4 +1,5 @@
 #include <Graphics/Shader.hpp>
+#include <iostream>
 #include <stdexcept>
 
 namespace Lib::Graphics {
@@ -51,6 +52,7 @@ std::shared_ptr<Shader> Shader::compile(
         std::string errorString;
         errorString.resize(errorMessage->GetBufferSize());
         std::copy_n((char*)errorMessage->GetBufferPointer(), errorMessage->GetBufferSize(), errorString.begin());
+        std::cout << errorString << std::endl;
         throw std::logic_error(errorString);
     }
     return shader;

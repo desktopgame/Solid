@@ -10,6 +10,7 @@ public:
     static void depthRange(float zNear, float zFar);
     static void fovY(float fovY);
 
+    static Math::Vector3 getPosition();
     static Math::Matrix getOrthoMatrix();
     static Math::Matrix getLookAtMatrix();
     static Math::Matrix getPerspectiveMatrix();

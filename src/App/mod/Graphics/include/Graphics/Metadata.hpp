@@ -561,6 +561,7 @@ namespace Lib::Graphics::Metadata {
             "    float2 texCoord : TEXCOORD;\n"
             "    float4 axis : NORMAL;\n"
             "    float4 color : COLOR;\n"
+            "    float3 cameraPosition : POSITION1;\n"
             "};\n"
             "cbuffer cbuff0 : register(b0) {\n"
             "    matrix modelMatrix;\n"
@@ -576,6 +577,10 @@ namespace Lib::Graphics::Metadata {
             "cbuffer cbuff2 : register(b2)\n"
             "{\n"
             "    float4 colorTable[64];\n"
+            "};\n"
+            "cbuffer cbuff3 : register(b3)\n"
+            "{\n"
+            "    float3 cameraPosition;\n"
             "};\n"
             "\n"
             "static const float4 axisTable[6] = {\n"
@@ -620,6 +625,7 @@ namespace Lib::Graphics::Metadata {
             "    output.svpos = tmp;\n"
             "    output.color = colorTable[tileColorID];\n"
             "    output.texCoord = texCoord;\n"
+            "    output.cameraPosition = cameraPosition;\n"
             "\n"
             "    float3 normal = normalVectorTable[tileRotationID];\n"
             "    output.axis = axisTable[tileRotationID];\n"
@@ -631,6 +637,7 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UTileTransform), false },
                 Uniform { sizeof(Reflect::UTilePallet), false },
+                Uniform { sizeof(Reflect::UVector3), false },
             },
             // ps
             "struct Output {\n"
@@ -639,6 +646,7 @@ namespace Lib::Graphics::Metadata {
             "    float2 texCoord : TEXCOORD;\n"
             "    float4 axis : NORMAL;\n"
             "    float4 color : COLOR;\n"
+            "    float3 cameraPosition : POSITION1;\n"
             "};\n"
             "struct PSOutput\n"
             "{\n"
@@ -648,6 +656,9 @@ namespace Lib::Graphics::Metadata {
             "};\n"
             "Texture2D<float4> tex : register(t0);\n"
             "SamplerState smp : register(s0);\n"
+            "\n"
+            "Texture2D<float4> borderTex : register(t1);\n"
+            "SamplerState borderSmp : register(s1);\n"
             "\n"
             "float4 quatConj(float4 quat)\n"
             "{\n"
@@ -705,15 +716,38 @@ namespace Lib::Graphics::Metadata {
             "    float3 vecColor = normalVec.xyz + float3(1, 1, 1);\n"
             "    vecColor *= 0.5;\n"
             "\n"
+            "    float4 borderCol = borderTex.Sample(borderSmp, input.texCoord);\n"
+            "    float border = step(0.5, borderCol.x);\n"
+            "    float4 col = input.color;\n"
+            "    if (border > 0) {\n"
+            "        col = float4(0, 1, 0, 1);\n"
+            "    }\n"
+            "\n"
+            "/*\n"
+            "    float4 borderCol = borderTex.Sample(borderSmp, input.texCoord);\n"
+            "    float border = 1 - step(0.5, borderCol.x);\n"
+            "    float4 col = input.color;\n"
+            "    col.x *= border;\n"
+            "    col.z *= border;\n"
+            "*/\n"
+            "\n"
+            "    float fogStart = 10;\n"
+            "    float fogEnd = 200;\n"
+            "    float4 fogColor = float4(0, 0, 1, 1);\n"
+            "    float distance = length(input.mmpos - input.cameraPosition);\n"
+            "    float fogFactor = saturate((distance - fogStart) / (fogEnd - fogStart));\n"
+            "    col = lerp(col, fogColor, fogFactor);\n"
+            "\n"
             "    // return float4(vecColor, input.color.w);\n"
             "    output.outPosition = input.mmpos;\n"
             "    output.outNormal = float4(normalVec, 1);\n"
-            "    output.outColor = input.color;\n"
+            "    output.outColor = col;\n"
             "    return output;\n"
             "}\n"
             ,
             // psUniforms
             std::vector<Uniform> {
+                Uniform { 0, true },
                 Uniform { 0, true },
             },
         },

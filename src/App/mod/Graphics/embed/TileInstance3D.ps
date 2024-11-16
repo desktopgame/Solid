@@ -4,6 +4,7 @@ struct Output {
     float2 texCoord : TEXCOORD;
     float4 axis : NORMAL;
     float4 color : COLOR;
+    float3 cameraPosition : POSITION1;
 };
 struct PSOutput
 {
@@ -13,6 +14,9 @@ struct PSOutput
 };
 Texture2D<float4> tex : register(t0);
 SamplerState smp : register(s0);
+
+Texture2D<float4> borderTex : register(t1);
+SamplerState borderSmp : register(s1);
 
 float4 quatConj(float4 quat)
 {
@@ -70,9 +74,31 @@ PSOutput psMain(Output input) {
     float3 vecColor = normalVec.xyz + float3(1, 1, 1);
     vecColor *= 0.5;
 
+    float4 borderCol = borderTex.Sample(borderSmp, input.texCoord);
+    float border = step(0.5, borderCol.x);
+    float4 col = input.color;
+    if (border > 0) {
+        col = float4(0, 1, 0, 1);
+    }
+
+/*
+    float4 borderCol = borderTex.Sample(borderSmp, input.texCoord);
+    float border = 1 - step(0.5, borderCol.x);
+    float4 col = input.color;
+    col.x *= border;
+    col.z *= border;
+*/
+
+    float fogStart = 10;
+    float fogEnd = 200;
+    float4 fogColor = float4(0, 0, 1, 1);
+    float distance = length(input.mmpos - input.cameraPosition);
+    float fogFactor = saturate((distance - fogStart) / (fogEnd - fogStart));
+    col = lerp(col, fogColor, fogFactor);
+
     // return float4(vecColor, input.color.w);
     output.outPosition = input.mmpos;
     output.outNormal = float4(normalVec, 1);
-    output.outColor = input.color;
+    output.outColor = col;
     return output;
 }

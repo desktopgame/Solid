@@ -25,6 +25,9 @@ void GameScene::onEnter()
     if (!m_debugTexture) {
         m_debugTexture = Texture::create("./assets/tileNormal2.png");
     }
+    if (!m_borderTexture) {
+        m_borderTexture = Texture::create("./assets/tileBorder.png");
+    }
     if (!m_vertexBuffer) {
         m_vertexBuffer = Buffer::create();
         m_indexBuffer = Buffer::create();
@@ -255,7 +258,12 @@ void GameScene::onDraw3D()
     ub->setVS(1, &m_tileTransform);
     ub->setVS(2, &m_tilePallet);
 
+    Reflect::UVector3 uCameraPos;
+    uCameraPos.value = Camera::getPosition();
+    ub->setVS(3, &uCameraPos);
+
     ub->setPS(0, m_debugTexture);
+    ub->setPS(1, m_borderTexture);
     Engine::getInstance()->getDevice()->getSurface()->render(
         rc,
         ub,

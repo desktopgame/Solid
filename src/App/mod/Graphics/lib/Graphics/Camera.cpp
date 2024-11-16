@@ -40,6 +40,8 @@ void Camera::fovY(float fovY)
     s_dirtyProjectionMatrix = true;
 }
 
+Math::Vector3 Camera::getPosition() { return s_position; }
+
 Math::Matrix Camera::getOrthoMatrix()
 {
     if (s_dirtyOrthoMatrix) {
