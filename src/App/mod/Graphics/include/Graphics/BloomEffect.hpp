@@ -11,6 +11,7 @@
 #endif
 
 namespace Lib::Graphics {
+class Shader;
 class BloomEffect {
 public:
 #if SOLID_ENABLE_INTERNAL
@@ -23,5 +24,15 @@ public:
 #endif
 
 private:
+    static std::shared_ptr<Shader> s_shader;
+
+#if SOLID_ENABLE_INTERNAL
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
+#endif
 };
 }
