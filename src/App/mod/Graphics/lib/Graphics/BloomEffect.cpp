@@ -21,6 +21,28 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_constantBuffer;
 // internal
 void BloomEffect::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
+    commandList->SetPipelineState(s_pipelineState.Get());
+    commandList->SetGraphicsRootSignature(s_rootSignature.Get());
+
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    commandList->SetDescriptorHeaps(1, s_descriptorHeap.GetAddressOf());
+    commandList->SetGraphicsRootDescriptorTable(0, heapHandle);
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    D3D12_VERTEX_BUFFER_VIEW vbView = {};
+    vbView.BufferLocation = s_vertexBuffer->GetGPUVirtualAddress();
+    vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
+    vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
+    commandList->IASetVertexBuffers(0, 1, &vbView);
+
+    D3D12_INDEX_BUFFER_VIEW ibView = {};
+    ibView.BufferLocation = s_indexBuffer->GetGPUVirtualAddress();
+    ibView.Format = DXGI_FORMAT_R32_UINT;
+    ibView.SizeInBytes = sizeof(uint32_t) * 6;
+    commandList->IASetIndexBuffer(&ibView);
+
+    commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 void BloomEffect::initialize(
