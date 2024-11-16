@@ -10,7 +10,7 @@ void BloomEffect::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 
 void BloomEffect::initialize(
     const Microsoft::WRL::ComPtr<ID3D12Device>& device,
-    const Microsoft::WRL::ComPtr<ID3D12Resource>& bloomTextures)
+    const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures)
 {
 }
 void BloomEffect::destroy()

@@ -18,7 +18,7 @@ public:
 
     static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
-        const Microsoft::WRL::ComPtr<ID3D12Resource>& bloomTextures);
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures);
     static void destroy();
 #endif
 
