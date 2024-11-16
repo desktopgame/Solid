@@ -107,7 +107,9 @@ void Surface::end3D()
 
 void Surface::begin2D()
 {
+    auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
     // Barrier
+    // Bloom0番テクスチャにGBufferをソースとして書く
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -132,10 +134,32 @@ void Surface::begin2D()
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
     m_commandList->ResourceBarrier(1, &barrier);
 
-    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    //
+    // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
+    //
+
+    barrier.Transition.pResource = m_bloomTextures.at(1).Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
     // bloom
     BloomEffect::draw(m_commandList);
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    //
+    // ダイレクトターゲットに戻す
+    //
+    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void Surface::end2D()
