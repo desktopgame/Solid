@@ -98,7 +98,15 @@ void BloomEffect::initialize(
 
         float4 psMain(Output input) : SV_TARGET {
             float4 src = srcTex.Sample(srcSmp, input.texCoord);
-            return src;
+            float luminance = dot(src.rgb, float3(0.2126, 0.7152, 0.0722));
+            if (luminance > 0.7)
+            {
+                return src;
+            }
+            else
+            {
+                return float4(0, 0, 0, 1);
+            }
         })",
             "psMain");
         s_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
