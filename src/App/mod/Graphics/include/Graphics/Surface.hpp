@@ -69,6 +69,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_gHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gTextures;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_bloomHeap;
+    Microsoft::WRL::ComPtr<ID3D12Resource> m_bloomTexture;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;

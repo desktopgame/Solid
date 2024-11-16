@@ -216,6 +216,51 @@ std::shared_ptr<Surface> Surface::create(
         d3d12Device->CreateRenderTargetView(gTexture.Get(), nullptr, gHandle);
         gHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
+    // Bloom
+    D3D12_DESCRIPTOR_HEAP_DESC bloomHeapDesc = {};
+    bloomHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    bloomHeapDesc.NodeMask = 0;
+    bloomHeapDesc.NumDescriptors = 1;
+    bloomHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    if (FAILED(d3d12Device->CreateDescriptorHeap(&bloomHeapDesc, IID_PPV_ARGS(&surface->m_bloomHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    D3D12_CPU_DESCRIPTOR_HANDLE bloomHandle = surface->m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
+
+    D3D12_CLEAR_VALUE clearValue = {};
+    clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    clearValue.Color[0] = 0.0f;
+    clearValue.Color[1] = 0.0f;
+    clearValue.Color[2] = 0.0f;
+    clearValue.Color[3] = 0.0f;
+
+    D3D12_HEAP_PROPERTIES texHeapProps = {};
+    texHeapProps.Type = D3D12_HEAP_TYPE_CUSTOM;
+    texHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+    texHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+    texHeapProps.CreationNodeMask = 0;
+    texHeapProps.VisibleNodeMask = 0;
+    D3D12_RESOURCE_DESC texResDesc = {};
+    texResDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    texResDesc.Width = Screen::getWidth();
+    texResDesc.Height = Screen::getHeight();
+    texResDesc.DepthOrArraySize = 1;
+    texResDesc.SampleDesc.Count = 1;
+    texResDesc.SampleDesc.Quality = 0;
+    texResDesc.MipLevels = 1;
+    texResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    texResDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    texResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+    if (FAILED(d3d12Device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&surface->m_bloomTexture)))) {
+        throw std::runtime_error("failed CreateCommittedResource()");
+    }
+    D3D12_RENDER_TARGET_VIEW_DESC bloomRtvDesc = {};
+    bloomRtvDesc.Texture2D.MipSlice = 0;
+    bloomRtvDesc.Texture2D.PlaneSlice = 0;
+    bloomRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+    bloomRtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    d3d12Device->CreateRenderTargetView(surface->m_bloomTexture.Get(), nullptr, bloomHandle);
     // DepthBuffer
     D3D12_RESOURCE_DESC depthResDesc = {};
     depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -275,6 +320,8 @@ Surface::Surface()
     , m_commandList()
     , m_gHeap()
     , m_gTextures(3)
+    , m_bloomHeap()
+    , m_bloomTexture()
     , m_depthBuffer()
     , m_depthStencilViewHeap()
     , m_fence()
