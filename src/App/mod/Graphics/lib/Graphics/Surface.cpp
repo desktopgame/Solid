@@ -108,6 +108,12 @@ void Surface::end3D()
 
 void Surface::begin2D()
 {
+    /*
+    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    GlobalLight::draw(m_commandList);
+    PointLight::draw(m_commandList);
+    */
+    //*
     auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
     // Barrier
     // Bloom0番テクスチャにGBufferをソースとして書く
@@ -184,6 +190,7 @@ void Surface::begin2D()
     // ダイレクトターゲットに戻す
     //
     m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    //*/
 }
 
 void Surface::end2D()

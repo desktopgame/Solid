@@ -126,7 +126,7 @@ void BloomEffect::initialize(
         float4 psMain(Output input) : SV_TARGET {
             float4 src = srcTex.Sample(srcSmp, input.texCoord);
             float luminance = dot(src.rgb, float3(0.2126, 0.7152, 0.0722));
-            if (luminance > 0.7)
+            if (luminance > 0.4)
             {
                 return src;
             }
@@ -414,11 +414,11 @@ void BloomEffect::initialize(
         }
         {
             void* outData;
-            if (FAILED(s_vertexBuffer->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_vertexBuffer2->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
-            s_vertexBuffer->Unmap(0, nullptr);
+            s_vertexBuffer2->Unmap(0, nullptr);
         }
         indices.emplace_back(0);
         indices.emplace_back(1);
@@ -452,11 +452,11 @@ void BloomEffect::initialize(
         }
         {
             void* outData;
-            if (FAILED(s_indexBuffer->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_indexBuffer2->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
-            s_indexBuffer->Unmap(0, nullptr);
+            s_indexBuffer2->Unmap(0, nullptr);
         }
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -533,7 +533,7 @@ void BloomEffect::initialize(
         if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_rootSignature2)))) {
             throw std::runtime_error("failed CreateRootSignature()");
         }
-        psoDesc.pRootSignature = s_rootSignature.Get();
+        psoDesc.pRootSignature = s_rootSignature2.Get();
         if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState2)))) {
             throw std::runtime_error("failed CreateGraphicsPipelineState()");
         }
@@ -550,14 +550,14 @@ void BloomEffect::initialize(
             throw std::runtime_error("failed CreateDescriptorHeap()");
         }
 
-        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap2->GetCPUDescriptorHandleForHeapStart();
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Texture2D.MipLevels = 1;
 
-        device->CreateShaderResourceView(bloomTextures.at(0).Get(), &srvDesc, heapHandle);
+        device->CreateShaderResourceView(bloomTextures.at(1).Get(), &srvDesc, heapHandle);
         heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     }
 }
