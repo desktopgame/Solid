@@ -258,6 +258,18 @@ std::shared_ptr<Surface> Surface::create(
             throw std::runtime_error("failed CreateCommittedResource()");
         }
 
+        switch (i) {
+        case 0:
+            gTexture->SetName(L"Position");
+            break;
+        case 1:
+            gTexture->SetName(L"Normal");
+            break;
+        case 2:
+            gTexture->SetName(L"Color");
+            break;
+        }
+
         D3D12_RENDER_TARGET_VIEW_DESC gRtvDesc = {};
         gRtvDesc.Texture2D.MipSlice = 0;
         gRtvDesc.Texture2D.PlaneSlice = 0;
