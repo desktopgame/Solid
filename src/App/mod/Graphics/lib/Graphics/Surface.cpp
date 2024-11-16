@@ -282,13 +282,13 @@ std::shared_ptr<Surface> Surface::create(
     D3D12_DESCRIPTOR_HEAP_DESC bloomHeapDesc = {};
     bloomHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     bloomHeapDesc.NodeMask = 0;
-    bloomHeapDesc.NumDescriptors = 2;
+    bloomHeapDesc.NumDescriptors = 3;
     bloomHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     if (FAILED(d3d12Device->CreateDescriptorHeap(&bloomHeapDesc, IID_PPV_ARGS(&surface->m_bloomHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
     D3D12_CPU_DESCRIPTOR_HANDLE bloomHandle = surface->m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    for (int32_t i = 0; i < 2; i++) {
+    for (int32_t i = 0; i < 3; i++) {
         D3D12_CLEAR_VALUE clearValue = {};
         clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         clearValue.Color[0] = 1.0f;
@@ -395,7 +395,7 @@ Surface::Surface()
     , m_gHeap()
     , m_gTextures(3)
     , m_bloomHeap()
-    , m_bloomTextures(2)
+    , m_bloomTextures(3)
     , m_depthBuffer()
     , m_depthStencilViewHeap()
     , m_fence()
