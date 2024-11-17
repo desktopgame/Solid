@@ -196,7 +196,7 @@ void BloomEffect::initialize(
         float4 psMain(Output input) : SV_TARGET {
             float4 src = srcTex.Sample(srcSmp, input.texCoord);
             float luminance = dot(src.rgb, float3(0.2126, 0.7152, 0.0722));
-            if (luminance > 0.7)
+            if (luminance > 0.4)
             {
                 return src;
             }

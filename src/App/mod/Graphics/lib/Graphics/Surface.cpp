@@ -129,35 +129,22 @@ void Surface::begin2D()
     BloomEffect::draw1(m_commandList);
     bloomRead(1);
 
-    //
-    // Bloom1番をソースとしてBloom2番にブラー書き込む
-    //
-    bloomWrite(2);
-    BloomEffect::draw2(m_commandList);
-    bloomRead(2);
+    for (int32_t i = 0; i < 8; i++) {
+        //
+        // Bloom1番をソースとしてBloom2番にブラー書き込む
+        //
+        bloomWrite(2);
+        BloomEffect::draw2(m_commandList);
+        bloomRead(2);
 
-    //
-    // Bloom2番をソースとしてBloom1番にブラーを書き込む
-    //
+        //
+        // Bloom2番をソースとしてBloom1番にブラーを書き込む
+        //
 
-    bloomWrite(1);
-    BloomEffect::draw3(m_commandList);
-    bloomRead(1);
-
-    //
-    // Bloom1番をソースとしてBloom2番にブラー書き込む
-    //
-    bloomWrite(2);
-    BloomEffect::draw2(m_commandList);
-    bloomRead(2);
-
-    //
-    // Bloom2番をソースとしてBloom1番にブラーを書き込む
-    //
-    bloomWrite(1);
-    BloomEffect::draw3(m_commandList);
-    bloomRead(1);
-
+        bloomWrite(1);
+        BloomEffect::draw3(m_commandList);
+        bloomRead(1);
+    }
     //
     // ダイレクトターゲットに戻す
     //
