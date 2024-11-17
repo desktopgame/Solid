@@ -235,9 +235,9 @@ void RenderContext::initialize()
         psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
         psoDesc.PrimitiveTopologyType = convPrimitiveTopologyType(program.primitiveType);
         if (useGBuffer) {
-            psoDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-            psoDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-            psoDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            psoDesc.RTVFormats[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+            psoDesc.RTVFormats[1] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+            psoDesc.RTVFormats[2] = DXGI_FORMAT_R16G16B16A16_FLOAT;
             psoDesc.NumRenderTargets = 3;
         } else {
             psoDesc.RTVFormats[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
