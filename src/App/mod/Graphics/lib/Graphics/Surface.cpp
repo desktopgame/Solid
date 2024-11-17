@@ -293,7 +293,7 @@ std::shared_ptr<Surface> Surface::create(
     D3D12_CPU_DESCRIPTOR_HANDLE bloomHandle = surface->m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
     for (int32_t i = 0; i < 3; i++) {
         D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        clearValue.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         clearValue.Color[0] = 0.0f;
         clearValue.Color[1] = 0.0f;
         clearValue.Color[2] = 0.0f;
@@ -306,7 +306,7 @@ std::shared_ptr<Surface> Surface::create(
         texHeapProps.CreationNodeMask = 0;
         texHeapProps.VisibleNodeMask = 0;
         D3D12_RESOURCE_DESC texResDesc = {};
-        texResDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        texResDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         texResDesc.Width = Screen::getWidth();
         texResDesc.Height = Screen::getHeight();
         texResDesc.DepthOrArraySize = 1;
@@ -331,7 +331,7 @@ std::shared_ptr<Surface> Surface::create(
         bloomRtvDesc.Texture2D.MipSlice = 0;
         bloomRtvDesc.Texture2D.PlaneSlice = 0;
         bloomRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-        bloomRtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        bloomRtvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         d3d12Device->CreateRenderTargetView(bTexture.Get(), nullptr, bloomHandle);
         bloomHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }

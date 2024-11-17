@@ -37,7 +37,7 @@ std::shared_ptr<Swapchain> Swapchain::create(
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
     swapchainDesc.Width = Screen::getWidth();
     swapchainDesc.Height = Screen::getHeight();
-    swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapchainDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
     swapchainDesc.Stereo = false;
     swapchainDesc.SampleDesc.Count = 1;
     swapchainDesc.SampleDesc.Quality = 0;
@@ -84,7 +84,7 @@ std::shared_ptr<Swapchain> Swapchain::create(
     }
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX12_Init(device.Get(), 3,
-        DXGI_FORMAT_R8G8B8A8_UNORM, swapchain->m_imguiDescriptorHeap.Get(),
+        DXGI_FORMAT_R16G16B16A16_FLOAT, swapchain->m_imguiDescriptorHeap.Get(),
         swapchain->m_imguiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
         swapchain->m_imguiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
     return swapchain;
