@@ -239,7 +239,7 @@ void GameScene::onDraw3D()
     GlobalLight::enable();
     GlobalLight::set(Vector3::normalized(m_globalLightDir));
 
-    PointLight::disable();
+    PointLight::enable();
     PointLight::setCount(3);
     PointLight::set(0, Vector3({ 120, 10, 120 }), 10, 20);
     PointLight::set(1, Vector3({ 90, 10, 90 }), 10, 20);
