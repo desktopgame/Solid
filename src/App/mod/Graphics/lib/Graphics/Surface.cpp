@@ -117,142 +117,46 @@ void Surface::begin2D()
     auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
     // Barrier
     // Bloom0番テクスチャにGBufferをソースとして書く
-    D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Transition.pResource = m_bloomTextures.at(0).Get();
-    barrier.Transition.Subresource = 0;
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &barrier);
-
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
-    // light
+    bloomWrite(0);
     GlobalLight::draw(m_commandList);
     PointLight::draw(m_commandList);
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    m_commandList->ResourceBarrier(1, &barrier);
+    bloomRead(0);
 
     //
     // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
     //
-
-    barrier.Transition.pResource = m_bloomTextures.at(1).Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &barrier);
-
-    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
-    // bloom
+    bloomWrite(1);
     BloomEffect::draw1(m_commandList);
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    m_commandList->ResourceBarrier(1, &barrier);
+    bloomRead(1);
 
     //
     // Bloom1番をソースとしてBloom2番にブラー書き込む
     //
-
-    barrier.Transition.pResource = m_bloomTextures.at(2).Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &barrier);
-
-    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
+    bloomWrite(2);
     BloomEffect::draw2(m_commandList);
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    m_commandList->ResourceBarrier(1, &barrier);
+    bloomRead(2);
 
     //
     // Bloom2番をソースとしてBloom1番にブラーを書き込む
     //
 
-    barrier.Transition.pResource = m_bloomTextures.at(1).Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &barrier);
-
-    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
+    bloomWrite(1);
     BloomEffect::draw3(m_commandList);
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    m_commandList->ResourceBarrier(1, &barrier);
+    bloomRead(1);
 
     //
     // Bloom1番をソースとしてBloom2番にブラー書き込む
     //
-
-    barrier.Transition.pResource = m_bloomTextures.at(2).Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &barrier);
-
-    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
+    bloomWrite(2);
     BloomEffect::draw2(m_commandList);
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    m_commandList->ResourceBarrier(1, &barrier);
+    bloomRead(2);
 
     //
     // Bloom2番をソースとしてBloom1番にブラーを書き込む
     //
-
-    barrier.Transition.pResource = m_bloomTextures.at(1).Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &barrier);
-
-    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
+    bloomWrite(1);
     BloomEffect::draw3(m_commandList);
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    m_commandList->ResourceBarrier(1, &barrier);
+    bloomRead(1);
 
     //
     // ダイレクトターゲットに戻す
@@ -499,5 +403,55 @@ Surface::Surface()
     , m_depthStencilViewHeap()
     , m_fence()
 {
+}
+
+void Surface::bloomWrite(int32_t index)
+{
+    auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_bloomTextures.at(index).Get();
+    barrier.Transition.Subresource = 0;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+    rtvHandle.ptr += index * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+    // viewport
+    D3D12_VIEWPORT viewport = {};
+    viewport.Width = Screen::getWidth();
+    viewport.Height = Screen::getHeight();
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.MaxDepth = 1.0f;
+    viewport.MinDepth = 0.0f;
+    m_commandList->RSSetViewports(1, &viewport);
+    // scissor
+    D3D12_RECT scissorRect = {};
+    scissorRect.top = 0;
+    scissorRect.left = 0;
+    scissorRect.right = scissorRect.left + Screen::getWidth();
+    scissorRect.bottom = scissorRect.top + Screen::getHeight();
+    m_commandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void Surface::bloomRead(int32_t index)
+{
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_bloomTextures.at(index).Get();
+    barrier.Transition.Subresource = 0;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    m_commandList->ResourceBarrier(1, &barrier);
 }
 }

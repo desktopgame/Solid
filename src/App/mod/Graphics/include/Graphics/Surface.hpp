@@ -60,6 +60,9 @@ public:
 private:
     Surface();
 
+    void bloomWrite(int32_t index);
+    void bloomRead(int32_t index);
+
     std::shared_ptr<Swapchain> m_swapchain;
 
 #if SOLID_ENABLE_INTERNAL
