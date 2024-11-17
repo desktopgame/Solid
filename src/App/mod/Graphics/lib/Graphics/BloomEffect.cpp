@@ -915,7 +915,9 @@ void BloomEffect::initialize(
         float4 psMain(Output input) : SV_TARGET {      
             float4 sceneColor = srcTex.Sample(srcSmp, input.texCoord);
             float4 bloomColor = blurTex.Sample(blurSmp, input.texCoord) * 1.0;
-            return sceneColor + bloomColor;
+            float4 col =  sceneColor + bloomColor;
+            col = float4(col.rgb / (1.0 + col.rgb), 1.0);
+            return col;
         })",
             "psMain");
         s_shader4->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
