@@ -241,9 +241,9 @@ void GameScene::onDraw3D()
 
     PointLight::enable();
     PointLight::setCount(3);
-    PointLight::set(0, Vector3({ 40, 10, 40 }), 10, 20);
-    PointLight::set(1, Vector3({ 60, 10, 20 }), 10, 20);
-    PointLight::set(2, Vector3({ 20, 10, 20 }), 10, 20);
+    PointLight::set(0, Vector3({ 120, 10, 120 }), 10, 20);
+    PointLight::set(1, Vector3({ 90, 10, 90 }), 10, 20);
+    PointLight::set(2, Vector3({ 60, 10, 60 }), 10, 20);
 
     auto rc = RenderContext::get(Metadata::ProgramTable::TileInstance3D);
     auto ub = UniformPool::rent(Metadata::ProgramTable::TileInstance3D);

@@ -130,7 +130,7 @@ void Surface::begin2D()
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
     m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
-    float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
     // light
@@ -159,6 +159,51 @@ void Surface::begin2D()
 
     // bloom
     BloomEffect::draw1(m_commandList);
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    //
+    // Bloom1番をソースとしてBloom2番にブラー書き込む
+    //
+
+    barrier.Transition.pResource = m_bloomTextures.at(2).Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
+    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+    BloomEffect::draw2(m_commandList);
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    //
+    // Bloom2番をソースとしてBloom1番にブラーを書き込む
+    //
+
+    barrier.Transition.pResource = m_bloomTextures.at(1).Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_commandList->ResourceBarrier(1, &barrier);
+
+    rtvHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
+    rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+    // float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+    BloomEffect::draw3(m_commandList);
 
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
@@ -345,10 +390,10 @@ std::shared_ptr<Surface> Surface::create(
     for (int32_t i = 0; i < 3; i++) {
         D3D12_CLEAR_VALUE clearValue = {};
         clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-        clearValue.Color[0] = 1.0f;
-        clearValue.Color[1] = 1.0f;
+        clearValue.Color[0] = 0.0f;
+        clearValue.Color[1] = 0.0f;
         clearValue.Color[2] = 0.0f;
-        clearValue.Color[3] = 1.0f;
+        clearValue.Color[3] = 0.0f;
 
         D3D12_HEAP_PROPERTIES texHeapProps = {};
         texHeapProps.Type = D3D12_HEAP_TYPE_CUSTOM;

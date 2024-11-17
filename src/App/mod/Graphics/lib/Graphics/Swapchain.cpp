@@ -121,7 +121,7 @@ void Swapchain::clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& c
     rtvHandle.ptr += backBufferIndex * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
-    float clearColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
     commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
     // viewport
