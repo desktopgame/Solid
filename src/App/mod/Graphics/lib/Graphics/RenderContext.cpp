@@ -240,7 +240,7 @@ void RenderContext::initialize()
             psoDesc.RTVFormats[2] = DXGI_FORMAT_R16G16B16A16_FLOAT;
             psoDesc.NumRenderTargets = 3;
         } else {
-            psoDesc.RTVFormats[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+            psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
             psoDesc.NumRenderTargets = 1;
         }
         psoDesc.SampleDesc.Count = 1;
