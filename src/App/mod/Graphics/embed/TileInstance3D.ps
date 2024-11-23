@@ -98,7 +98,7 @@ PSOutput psMain(Output input) {
         input.texCoord.x < borderSize || input.texCoord.y < borderSize) {
         col = float4(0, 1, 0, 1);
     }
-    //col = lerp(col, fogColor, fogFactor);
+    col = lerp(col, fogColor, fogFactor);
 
     // return float4(vecColor, input.color.w);
     output.outPosition = input.mmpos;

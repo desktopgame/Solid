@@ -740,7 +740,7 @@ namespace Lib::Graphics::Metadata {
             "        input.texCoord.x < borderSize || input.texCoord.y < borderSize) {\n"
             "        col = float4(0, 1, 0, 1);\n"
             "    }\n"
-            "    //col = lerp(col, fogColor, fogFactor);\n"
+            "    col = lerp(col, fogColor, fogFactor);\n"
             "\n"
             "    // return float4(vecColor, input.color.w);\n"
             "    output.outPosition = input.mmpos;\n"
