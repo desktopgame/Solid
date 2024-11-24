@@ -309,7 +309,7 @@ void RenderContext::initialize()
         for (int32_t gsUniform = 0; gsUniform < program.gsUniforms.size(); gsUniform++) {
             rootParam.push_back({});
             rootParam.at(offset + gsUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-            rootParam.at(offset + gsUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(offset + gsUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_GEOMETRY;
             rootParam.at(offset + gsUniform).DescriptorTable.pDescriptorRanges = &descTableRange.at(offset + gsUniform);
             rootParam.at(offset + gsUniform).DescriptorTable.NumDescriptorRanges = 1;
         }
