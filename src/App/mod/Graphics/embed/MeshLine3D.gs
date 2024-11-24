@@ -25,7 +25,7 @@ cbuffer cbuff2 : register(b2) {
 
 [maxvertexcount(18)]
 void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream) {
-    matrix vpMat = mul(viewMatrix, projectionMatrix);
+    matrix vpMat = mul(projectionMatrix, viewMatrix);
     for (int i = 0; i < 3; ++i) {
         int nextIndex = (i + 1) % 3;
 
@@ -56,12 +56,8 @@ void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream)
         triStream.Append(v1);
         triStream.Append(v2);
 
-        triStream.RestartStrip();
-
         triStream.Append(v2);
         triStream.Append(v1);
         triStream.Append(v3);
-
-        triStream.RestartStrip();
     }
 }
