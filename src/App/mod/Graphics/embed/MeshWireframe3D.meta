@@ -2,6 +2,7 @@ InputLayout=Vertex3D
 PrimitiveType=Triangles
 IsWireframe=true
 InstanceBufferCount=0
+UseGeometryShader=false
 VS.UniformCount=2
 VS.Uniform[0]=UCamera
 VS.Uniform[1]=UVector4

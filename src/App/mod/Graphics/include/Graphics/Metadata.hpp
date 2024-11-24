@@ -381,7 +381,7 @@ namespace Lib::Graphics::Metadata {
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
-            false,
+            true,
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -409,59 +409,7 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UVector4), false },
             },
             // gs
-            "struct GSInput {\n"
-            "    float4 position : SV_POSITION;\n"
-            "    float4 color : COLOR;\n"
-            "};\n"
-            "\n"
-            "struct GSOutput {\n"
-            "    float4 position : SV_POSITION;\n"
-            "    float4 color : COLOR;\n"
-            "};\n"
-            "\n"
-            "[maxvertexcount(18)]\n"
-            "void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream) {\n"
-            "    float lineWidth = 50;\n"
-            "    float ViewportHeight = 600;\n"
-            "    float ndcLineWidth = lineWidth / ViewportHeight;\n"
-            "\n"
-            "    for (int i = 0; i < 3; ++i) {\n"
-            "        int nextIndex = (i + 1) % 3; // 次の頂点\n"
-            "\n"
-            "        float4 p0 = input[i].position;\n"
-            "        float4 p1 = input[nextIndex].position;\n"
-            "\n"
-            "        float2 dir = normalize(float2(p1.x - p0.x, p1.y - p0.y));\n"
-            "\n"
-            "        float2 normal = float2(-dir.y, dir.x) * ndcLineWidth;\n"
-            "\n"
-            "        GSOutput v0, v1, v2, v3;\n"
-            "\n"
-            "        v0.position = p0 + float4(normal, 0.0, 0.0);\n"
-            "        v0.color = input[i].color;\n"
-            "\n"
-            "        v1.position = p1 + float4(normal, 0.0, 0.0);\n"
-            "        v1.color = input[nextIndex].color;\n"
-            "\n"
-            "        v2.position = p0 - float4(normal, 0.0, 0.0);\n"
-            "        v2.color = input[i].color;\n"
-            "\n"
-            "        v3.position = p1 - float4(normal, 0.0, 0.0);\n"
-            "        v3.color = input[nextIndex].color;\n"
-            "\n"
-            "        triStream.Append(v0);\n"
-            "        triStream.Append(v1);\n"
-            "        triStream.Append(v2);\n"
-            "        triStream.RestartStrip();\n"
-            "\n"
-            "        triStream.Append(v2);\n"
-            "        triStream.Append(v1);\n"
-            "        triStream.Append(v3);\n"
-            "\n"
-            "        triStream.RestartStrip();\n"
-            "    }\n"
-            "}\n"
-            ,
+            nullptr,
             // gsUniforms
             std::vector<Uniform> {
             },
