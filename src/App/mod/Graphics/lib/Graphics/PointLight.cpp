@@ -572,7 +572,7 @@ void PointLight::initialize(
             // return float4(input.svpos.xy, 0, 1);
             // return float4(coord, 0, 1);
             // return float4(colorCol.xyz, 1);
-            return float4(colorCol.xyz * Phong, 1.0);
+            return float4(colorCol.xyz * Phong, 0.0);
         })",
             "psMain");
         s_scrShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
