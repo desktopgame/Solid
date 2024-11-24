@@ -24,36 +24,36 @@ public:
 #endif
 
 private:
-    static std::shared_ptr<Shader> s_shader;
-    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
-    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
-    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
+    static std::shared_ptr<Shader> s_filterShader;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_filterPipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_filterRootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_filterDescriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_filterVertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_filterIndexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_filterConstantBuffer;
 
-    static std::shared_ptr<Shader> s_shader2;
-    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState2;
-    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature2;
-    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap2;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer2;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer2;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer2;
+    static std::shared_ptr<Shader> s_blur1Shader;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_blur1PipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_blur1RootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_blur1DescriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_blur1VertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_blur1IndexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_blur1ConstantBuffer;
 
-    static std::shared_ptr<Shader> s_shader3;
-    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState3;
-    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature3;
-    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap3;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer3;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer3;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer3;
+    static std::shared_ptr<Shader> s_blur2Shader;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_blur2PipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_blur2RootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_blur2DescriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_blur2VertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_blur2IndexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_blur2ConstantBuffer;
 
-    static std::shared_ptr<Shader> s_shader4;
-    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState4;
-    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature4;
-    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap4;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer4;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer4;
-    static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer4;
+    static std::shared_ptr<Shader> s_mixShader;
+    static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_mixPipelineState;
+    static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_mixRootSignature;
+    static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_mixDescriptorHeap;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_mixVertexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_mixIndexBuffer;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_mixConstantBuffer;
 };
 }

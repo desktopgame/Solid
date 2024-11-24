@@ -10,58 +10,58 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 
-std::shared_ptr<Shader> BloomEffect::s_shader;
-Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_pipelineState;
-Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_rootSignature;
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_descriptorHeap;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_vertexBuffer;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_indexBuffer;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_constantBuffer;
+std::shared_ptr<Shader> BloomEffect::s_filterShader;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_filterPipelineState;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_filterRootSignature;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_filterDescriptorHeap;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_filterVertexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_filterIndexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_filterConstantBuffer;
 
-std::shared_ptr<Shader> BloomEffect::s_shader2;
-Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_pipelineState2;
-Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_rootSignature2;
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_descriptorHeap2;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_vertexBuffer2;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_indexBuffer2;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_constantBuffer2;
+std::shared_ptr<Shader> BloomEffect::s_blur1Shader;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_blur1PipelineState;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_blur1RootSignature;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_blur1DescriptorHeap;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur1VertexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur1IndexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur1ConstantBuffer;
 
-std::shared_ptr<Shader> BloomEffect::s_shader3;
-Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_pipelineState3;
-Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_rootSignature3;
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_descriptorHeap3;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_vertexBuffer3;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_indexBuffer3;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_constantBuffer3;
+std::shared_ptr<Shader> BloomEffect::s_blur2Shader;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_blur2PipelineState;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_blur2RootSignature;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_blur2DescriptorHeap;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur2VertexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur2IndexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur2ConstantBuffer;
 
-std::shared_ptr<Shader> BloomEffect::s_shader4;
-Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_pipelineState4;
-Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_rootSignature4;
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_descriptorHeap4;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_vertexBuffer4;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_indexBuffer4;
-Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_constantBuffer4;
+std::shared_ptr<Shader> BloomEffect::s_mixShader;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_mixPipelineState;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_mixRootSignature;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_mixDescriptorHeap;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_mixVertexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_mixIndexBuffer;
+Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_mixConstantBuffer;
 // public
 // internal
 void BloomEffect::draw1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
-    commandList->SetPipelineState(s_pipelineState.Get());
-    commandList->SetGraphicsRootSignature(s_rootSignature.Get());
+    commandList->SetPipelineState(s_filterPipelineState.Get());
+    commandList->SetGraphicsRootSignature(s_filterRootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-    commandList->SetDescriptorHeaps(1, s_descriptorHeap.GetAddressOf());
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_filterDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    commandList->SetDescriptorHeaps(1, s_filterDescriptorHeap.GetAddressOf());
     commandList->SetGraphicsRootDescriptorTable(0, heapHandle);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = s_vertexBuffer->GetGPUVirtualAddress();
+    vbView.BufferLocation = s_filterVertexBuffer->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
     vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
     commandList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = s_indexBuffer->GetGPUVirtualAddress();
+    ibView.BufferLocation = s_filterIndexBuffer->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = sizeof(uint32_t) * 6;
     commandList->IASetIndexBuffer(&ibView);
@@ -71,23 +71,23 @@ void BloomEffect::draw1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 
 void BloomEffect::draw2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
-    commandList->SetPipelineState(s_pipelineState2.Get());
-    commandList->SetGraphicsRootSignature(s_rootSignature2.Get());
+    commandList->SetPipelineState(s_blur1PipelineState.Get());
+    commandList->SetGraphicsRootSignature(s_blur1RootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap2->GetGPUDescriptorHandleForHeapStart();
-    commandList->SetDescriptorHeaps(1, s_descriptorHeap2.GetAddressOf());
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_blur1DescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    commandList->SetDescriptorHeaps(1, s_blur1DescriptorHeap.GetAddressOf());
     commandList->SetGraphicsRootDescriptorTable(0, heapHandle);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = s_vertexBuffer2->GetGPUVirtualAddress();
+    vbView.BufferLocation = s_blur1VertexBuffer->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
     vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
     commandList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = s_indexBuffer2->GetGPUVirtualAddress();
+    ibView.BufferLocation = s_blur1IndexBuffer->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = sizeof(uint32_t) * 6;
     commandList->IASetIndexBuffer(&ibView);
@@ -97,23 +97,23 @@ void BloomEffect::draw2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 
 void BloomEffect::draw3(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
-    commandList->SetPipelineState(s_pipelineState3.Get());
-    commandList->SetGraphicsRootSignature(s_rootSignature3.Get());
+    commandList->SetPipelineState(s_blur2PipelineState.Get());
+    commandList->SetGraphicsRootSignature(s_blur2RootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap3->GetGPUDescriptorHandleForHeapStart();
-    commandList->SetDescriptorHeaps(1, s_descriptorHeap3.GetAddressOf());
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_blur2DescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    commandList->SetDescriptorHeaps(1, s_blur2DescriptorHeap.GetAddressOf());
     commandList->SetGraphicsRootDescriptorTable(0, heapHandle);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = s_vertexBuffer3->GetGPUVirtualAddress();
+    vbView.BufferLocation = s_blur2VertexBuffer->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
     vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
     commandList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = s_indexBuffer3->GetGPUVirtualAddress();
+    ibView.BufferLocation = s_blur2IndexBuffer->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = sizeof(uint32_t) * 6;
     commandList->IASetIndexBuffer(&ibView);
@@ -123,25 +123,25 @@ void BloomEffect::draw3(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 
 void BloomEffect::draw4(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
-    commandList->SetPipelineState(s_pipelineState4.Get());
-    commandList->SetGraphicsRootSignature(s_rootSignature4.Get());
+    commandList->SetPipelineState(s_mixPipelineState.Get());
+    commandList->SetGraphicsRootSignature(s_mixRootSignature.Get());
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
-    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap4->GetGPUDescriptorHandleForHeapStart();
-    commandList->SetDescriptorHeaps(1, s_descriptorHeap4.GetAddressOf());
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_mixDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    commandList->SetDescriptorHeaps(1, s_mixDescriptorHeap.GetAddressOf());
     commandList->SetGraphicsRootDescriptorTable(0, heapHandle);
     heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     commandList->SetGraphicsRootDescriptorTable(1, heapHandle);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = s_vertexBuffer4->GetGPUVirtualAddress();
+    vbView.BufferLocation = s_mixVertexBuffer->GetGPUVirtualAddress();
     vbView.SizeInBytes = sizeof(VertexTexCoord2D) * 4;
     vbView.StrideInBytes = static_cast<UINT>(sizeof(VertexTexCoord2D));
     commandList->IASetVertexBuffers(0, 1, &vbView);
 
     D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = s_indexBuffer4->GetGPUVirtualAddress();
+    ibView.BufferLocation = s_mixIndexBuffer->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R32_UINT;
     ibView.SizeInBytes = sizeof(uint32_t) * 6;
     commandList->IASetIndexBuffer(&ibView);
@@ -171,7 +171,7 @@ void BloomEffect::initialize(
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
         std::unordered_map<std::string, std::string> shaderKeywords;
-        s_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
+        s_filterShader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -183,8 +183,8 @@ void BloomEffect::initialize(
             output.texCoord = texCoord;
             return output;
         })"),
-                                       shaderKeywords),
-            "vsMain", R"(
+                                                                    shaderKeywords),
+                                         "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -205,8 +205,8 @@ void BloomEffect::initialize(
                 return float4(0, 0, 0, 1);
             }
         })",
-            "psMain");
-        s_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+                                         "psMain");
+        s_filterShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // vertex buffer and index buffer
         std::vector<VertexTexCoord2D> vertices;
         std::vector<uint32_t> indices;
@@ -240,16 +240,16 @@ void BloomEffect::initialize(
                 &vResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_vertexBuffer)))) {
+                IID_PPV_ARGS(&s_filterVertexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_vertexBuffer->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_filterVertexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
-            s_vertexBuffer->Unmap(0, nullptr);
+            s_filterVertexBuffer->Unmap(0, nullptr);
         }
         indices.emplace_back(0);
         indices.emplace_back(1);
@@ -278,16 +278,16 @@ void BloomEffect::initialize(
                 &ibResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_indexBuffer)))) {
+                IID_PPV_ARGS(&s_filterIndexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_indexBuffer->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_filterIndexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
-            s_indexBuffer->Unmap(0, nullptr);
+            s_filterIndexBuffer->Unmap(0, nullptr);
         }
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -361,11 +361,11 @@ void BloomEffect::initialize(
         if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
             throw std::runtime_error("failed D3D12SerializeRootSignature()");
         }
-        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_rootSignature)))) {
+        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_filterRootSignature)))) {
             throw std::runtime_error("failed CreateRootSignature()");
         }
-        psoDesc.pRootSignature = s_rootSignature.Get();
-        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState)))) {
+        psoDesc.pRootSignature = s_filterRootSignature.Get();
+        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_filterPipelineState)))) {
             throw std::runtime_error("failed CreateGraphicsPipelineState()");
         }
         //
@@ -377,11 +377,11 @@ void BloomEffect::initialize(
         descHeapDesc.NumDescriptors = 1;
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_descriptorHeap)))) {
+        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_filterDescriptorHeap)))) {
             throw std::runtime_error("failed CreateDescriptorHeap()");
         }
 
-        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_filterDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -409,7 +409,7 @@ void BloomEffect::initialize(
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
         std::unordered_map<std::string, std::string> shaderKeywords;
-        s_shader2 = Shader::compile(Utils::String::interpolate(std::string(R"(
+        s_blur1Shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -421,8 +421,8 @@ void BloomEffect::initialize(
             output.texCoord = texCoord;
             return output;
         })"),
-                                        shaderKeywords),
-            "vsMain", R"(
+                                                                   shaderKeywords),
+                                        "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -444,8 +444,8 @@ void BloomEffect::initialize(
             }
             return result;
         })",
-            "psMain");
-        s_shader2->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+                                        "psMain");
+        s_blur1Shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // vertex buffer and index buffer
         std::vector<VertexTexCoord2D> vertices;
         std::vector<uint32_t> indices;
@@ -479,16 +479,16 @@ void BloomEffect::initialize(
                 &vResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_vertexBuffer2)))) {
+                IID_PPV_ARGS(&s_blur1VertexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_vertexBuffer2->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_blur1VertexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
-            s_vertexBuffer2->Unmap(0, nullptr);
+            s_blur1VertexBuffer->Unmap(0, nullptr);
         }
         indices.emplace_back(0);
         indices.emplace_back(1);
@@ -517,16 +517,16 @@ void BloomEffect::initialize(
                 &ibResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_indexBuffer2)))) {
+                IID_PPV_ARGS(&s_blur1IndexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_indexBuffer2->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_blur1IndexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
-            s_indexBuffer2->Unmap(0, nullptr);
+            s_blur1IndexBuffer->Unmap(0, nullptr);
         }
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -600,11 +600,11 @@ void BloomEffect::initialize(
         if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
             throw std::runtime_error("failed D3D12SerializeRootSignature()");
         }
-        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_rootSignature2)))) {
+        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_blur1RootSignature)))) {
             throw std::runtime_error("failed CreateRootSignature()");
         }
-        psoDesc.pRootSignature = s_rootSignature2.Get();
-        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState2)))) {
+        psoDesc.pRootSignature = s_blur1RootSignature.Get();
+        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_blur1PipelineState)))) {
             throw std::runtime_error("failed CreateGraphicsPipelineState()");
         }
         //
@@ -616,11 +616,11 @@ void BloomEffect::initialize(
         descHeapDesc.NumDescriptors = 1;
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_descriptorHeap2)))) {
+        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_blur1DescriptorHeap)))) {
             throw std::runtime_error("failed CreateDescriptorHeap()");
         }
 
-        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap2->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_blur1DescriptorHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -648,7 +648,7 @@ void BloomEffect::initialize(
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
         std::unordered_map<std::string, std::string> shaderKeywords;
-        s_shader3 = Shader::compile(Utils::String::interpolate(std::string(R"(
+        s_blur2Shader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -660,8 +660,8 @@ void BloomEffect::initialize(
             output.texCoord = texCoord;
             return output;
         })"),
-                                        shaderKeywords),
-            "vsMain", R"(
+                                                                   shaderKeywords),
+                                        "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -683,8 +683,8 @@ void BloomEffect::initialize(
             }
             return result;
         })",
-            "psMain");
-        s_shader3->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+                                        "psMain");
+        s_blur2Shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // vertex buffer and index buffer
         std::vector<VertexTexCoord2D> vertices;
         std::vector<uint32_t> indices;
@@ -718,16 +718,16 @@ void BloomEffect::initialize(
                 &vResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_vertexBuffer3)))) {
+                IID_PPV_ARGS(&s_blur2VertexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_vertexBuffer3->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_blur2VertexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
-            s_vertexBuffer3->Unmap(0, nullptr);
+            s_blur2VertexBuffer->Unmap(0, nullptr);
         }
         indices.emplace_back(0);
         indices.emplace_back(1);
@@ -756,16 +756,16 @@ void BloomEffect::initialize(
                 &ibResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_indexBuffer3)))) {
+                IID_PPV_ARGS(&s_blur2IndexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_indexBuffer3->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_blur2IndexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
-            s_indexBuffer3->Unmap(0, nullptr);
+            s_blur2IndexBuffer->Unmap(0, nullptr);
         }
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -839,11 +839,11 @@ void BloomEffect::initialize(
         if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
             throw std::runtime_error("failed D3D12SerializeRootSignature()");
         }
-        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_rootSignature3)))) {
+        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_blur2RootSignature)))) {
             throw std::runtime_error("failed CreateRootSignature()");
         }
-        psoDesc.pRootSignature = s_rootSignature3.Get();
-        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState3)))) {
+        psoDesc.pRootSignature = s_blur2RootSignature.Get();
+        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_blur2PipelineState)))) {
             throw std::runtime_error("failed CreateGraphicsPipelineState()");
         }
         //
@@ -855,11 +855,11 @@ void BloomEffect::initialize(
         descHeapDesc.NumDescriptors = 1;
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_descriptorHeap3)))) {
+        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_blur2DescriptorHeap)))) {
             throw std::runtime_error("failed CreateDescriptorHeap()");
         }
 
-        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap3->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_blur2DescriptorHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -887,7 +887,7 @@ void BloomEffect::initialize(
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
         std::unordered_map<std::string, std::string> shaderKeywords;
-        s_shader4 = Shader::compile(Utils::String::interpolate(std::string(R"(
+        s_mixShader = Shader::compile(Utils::String::interpolate(std::string(R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -899,8 +899,8 @@ void BloomEffect::initialize(
             output.texCoord = texCoord;
             return output;
         })"),
-                                        shaderKeywords),
-            "vsMain", R"(
+                                                                 shaderKeywords),
+                                      "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -919,8 +919,8 @@ void BloomEffect::initialize(
             col = float4(col.rgb / (1.0 + col.rgb), 1.0);
             return col;
         })",
-            "psMain");
-        s_shader4->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+                                      "psMain");
+        s_mixShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
         // vertex buffer and index buffer
         std::vector<VertexTexCoord2D> vertices;
         std::vector<uint32_t> indices;
@@ -954,16 +954,16 @@ void BloomEffect::initialize(
                 &vResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_vertexBuffer4)))) {
+                IID_PPV_ARGS(&s_mixVertexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_vertexBuffer4->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_mixVertexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
-            s_vertexBuffer4->Unmap(0, nullptr);
+            s_mixVertexBuffer->Unmap(0, nullptr);
         }
         indices.emplace_back(0);
         indices.emplace_back(1);
@@ -992,16 +992,16 @@ void BloomEffect::initialize(
                 &ibResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&s_indexBuffer4)))) {
+                IID_PPV_ARGS(&s_mixIndexBuffer)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
         {
             void* outData;
-            if (FAILED(s_indexBuffer4->Map(0, nullptr, (void**)&outData))) {
+            if (FAILED(s_mixIndexBuffer->Map(0, nullptr, (void**)&outData))) {
                 throw std::runtime_error("failed Map()");
             }
             ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
-            s_indexBuffer4->Unmap(0, nullptr);
+            s_mixIndexBuffer->Unmap(0, nullptr);
         }
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -1085,11 +1085,11 @@ void BloomEffect::initialize(
         if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
             throw std::runtime_error("failed D3D12SerializeRootSignature()");
         }
-        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_rootSignature4)))) {
+        if (FAILED(device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&s_mixRootSignature)))) {
             throw std::runtime_error("failed CreateRootSignature()");
         }
-        psoDesc.pRootSignature = s_rootSignature4.Get();
-        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState4)))) {
+        psoDesc.pRootSignature = s_mixRootSignature.Get();
+        if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_mixPipelineState)))) {
             throw std::runtime_error("failed CreateGraphicsPipelineState()");
         }
         //
@@ -1101,11 +1101,11 @@ void BloomEffect::initialize(
         descHeapDesc.NumDescriptors = 2;
         descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_descriptorHeap4)))) {
+        if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_mixDescriptorHeap)))) {
             throw std::runtime_error("failed CreateDescriptorHeap()");
         }
 
-        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap4->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_mixDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
