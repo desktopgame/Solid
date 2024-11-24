@@ -1,11 +1,13 @@
 InputLayout=Vertex3D
 PrimitiveType=Triangles
-IsWireframe=true
+IsWireframe=false
 InstanceBufferCount=0
-UseGeometryShader=false
+UseGeometryShader=true
 VS.UniformCount=2
 VS.Uniform[0]=UCamera
 VS.Uniform[1]=UVector4
 VS.Code=MeshWireframe3D.vs
+GS.UniformCount=0
+GS.Code=MeshWireframe3D.gs
 PS.UniformCount=0
 PS.Code=MeshWireframe3D.ps

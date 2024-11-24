@@ -380,7 +380,7 @@ namespace Lib::Graphics::Metadata {
             // primitiveType
             Reflect::PrimitiveType::Triangles,
             // isWireframe
-            true,
+            false,
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -408,7 +408,53 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UVector4), false },
             },
             // gs
-            nullptr,
+            "struct GSInput {\n"
+            "    float4 position : SV_POSITION;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "\n"
+            "struct GSOutput {\n"
+            "    float4 position : SV_POSITION;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "\n"
+            "[maxvertexcount(6)]\n"
+            "void gsMain(triangle GSInput input[3], inout LineStream<GSOutput> stream) {\n"
+            "    {\n"
+            "        GSOutput output1;\n"
+            "        output1.position = input[0].position;\n"
+            "        output1.color = input[0].color;\n"
+            "        stream.Append(output1);\n"
+            "\n"
+            "        GSOutput output2;\n"
+            "        output2.position = input[1].position;\n"
+            "        output2.color = input[1].color;\n"
+            "        stream.Append(output2);\n"
+            "    }\n"
+            "    {\n"
+            "        GSOutput output1;\n"
+            "        output1.position = input[1].position;\n"
+            "        output1.color = input[1].color;\n"
+            "        stream.Append(output1);\n"
+            "\n"
+            "        GSOutput output2;\n"
+            "        output2.position = input[2].position;\n"
+            "        output2.color = input[2].color;\n"
+            "        stream.Append(output2);\n"
+            "    }\n"
+            "    {\n"
+            "        GSOutput output1;\n"
+            "        output1.position = input[0].position;\n"
+            "        output1.color = input[0].color;\n"
+            "        stream.Append(output1);\n"
+            "\n"
+            "        GSOutput output2;\n"
+            "        output2.position = input[2].position;\n"
+            "        output2.color = input[2].color;\n"
+            "        stream.Append(output2);\n"
+            "    }\n"
+            "}\n"
+            ,
             // gsUniforms
             std::vector<Uniform> {
             },
