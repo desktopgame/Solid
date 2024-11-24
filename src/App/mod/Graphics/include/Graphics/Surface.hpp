@@ -49,7 +49,7 @@ public:
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
-        const std::shared_ptr<Device>& device,
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
         const std::shared_ptr<Swapchain>& swapchain);
     void destroy();
 #endif

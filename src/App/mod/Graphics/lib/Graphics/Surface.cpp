@@ -194,10 +194,10 @@ void Surface::render(
 }
 // internal
 std::shared_ptr<Surface> Surface::create(
-    const std::shared_ptr<Device>& device,
+    const Microsoft::WRL::ComPtr<ID3D12Device>& device,
     const std::shared_ptr<Swapchain>& swapchain)
 {
-    auto d3d12Device = device->getID3D12Device();
+    auto d3d12Device = device;
     auto surface = std::shared_ptr<Surface>(new Surface());
     // CommandAllocator
     if (FAILED(d3d12Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&surface->m_commandAllocator)))) {

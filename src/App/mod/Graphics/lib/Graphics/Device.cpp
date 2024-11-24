@@ -45,58 +45,7 @@ std::shared_ptr<Surface> Device::getSurface() const
 std::shared_ptr<Device> Device::create(const std::shared_ptr<OS::Window>& window)
 {
     auto device = std::shared_ptr<Device>(new Device());
-    device->m_hwnd = window->getHWND();
-    // Debug Layer
-#if _DEBUG
-    ComPtr<ID3D12Debug> debugController = nullptr;
-    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-        debugController->EnableDebugLayer();
-    }
-#endif
-    // Factory
-    UINT flags = DXGI_CREATE_FACTORY_DEBUG;
-    if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&device->m_dxgiFactory)))) {
-        throw std::runtime_error("failed CreateDXGIFactory2()");
-    }
-    // Adapter
-    std::vector<ComPtr<IDXGIAdapter>> adapters;
-    ComPtr<IDXGIAdapter> mainAdapter = nullptr;
-    for (uint32_t i = 0; device->m_dxgiFactory->EnumAdapters(i, &mainAdapter) != DXGI_ERROR_NOT_FOUND; i++) {
-        adapters.emplace_back(mainAdapter);
-    }
-    if (adapters.empty()) {
-        throw std::runtime_error("failed EnumAdapters()");
-    }
-    // first adapter is primary adapter.
-    // see: https://learn.microsoft.com/ja-jp/windows/win32/api/dxgi/nf-dxgi-idxgifactory-enumadapters
-    mainAdapter = adapters.at(0);
-    adapters.clear();
-    // Feature level
-    std::optional<D3D_FEATURE_LEVEL> useLevel;
-    D3D_FEATURE_LEVEL levels[] = {
-        D3D_FEATURE_LEVEL_12_1,
-        D3D_FEATURE_LEVEL_12_0,
-    };
-    for (D3D_FEATURE_LEVEL level : levels) {
-        HRESULT deviceStatus = D3D12CreateDevice(mainAdapter.Get(), level, IID_PPV_ARGS(&device->m_device));
-        if (SUCCEEDED(deviceStatus)) {
-            useLevel = level;
-            break;
-        }
-    }
-    if (!useLevel) {
-        throw std::runtime_error("failed D3D12CreateDevice()");
-    }
-    // InfoQueue
-#if _DEBUG
-    if (FAILED(device->m_device->QueryInterface(__uuidof(ID3D12InfoQueue), &device->m_infoQueue))) {
-        throw std::runtime_error("failed ID3D12InfoQueue()");
-    }
-#endif
-    // Swapchain
-    device->m_swapchain = Swapchain::create(window, device->m_dxgiFactory, device->m_device);
-    // Surface
-    device->m_surface = Surface::create(device, device->m_swapchain);
+    device->init(window);
     return device;
 }
 
@@ -119,5 +68,61 @@ Device::Device()
     , m_device()
     , m_infoQueue()
 {
+}
+
+void Device::init(const std::shared_ptr<OS::Window>& window)
+{
+    m_hwnd = window->getHWND();
+    // Debug Layer
+#if _DEBUG
+    ComPtr<ID3D12Debug> debugController = nullptr;
+    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+        debugController->EnableDebugLayer();
+    }
+#endif
+    // Factory
+    UINT flags = DXGI_CREATE_FACTORY_DEBUG;
+    if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&m_dxgiFactory)))) {
+        throw std::runtime_error("failed CreateDXGIFactory2()");
+    }
+    // Adapter
+    std::vector<ComPtr<IDXGIAdapter>> adapters;
+    ComPtr<IDXGIAdapter> mainAdapter = nullptr;
+    for (uint32_t i = 0; m_dxgiFactory->EnumAdapters(i, &mainAdapter) != DXGI_ERROR_NOT_FOUND; i++) {
+        adapters.emplace_back(mainAdapter);
+    }
+    if (adapters.empty()) {
+        throw std::runtime_error("failed EnumAdapters()");
+    }
+    // first adapter is primary adapter.
+    // see: https://learn.microsoft.com/ja-jp/windows/win32/api/dxgi/nf-dxgi-idxgifactory-enumadapters
+    mainAdapter = adapters.at(0);
+    adapters.clear();
+    // Feature level
+    std::optional<D3D_FEATURE_LEVEL> useLevel;
+    D3D_FEATURE_LEVEL levels[] = {
+        D3D_FEATURE_LEVEL_12_1,
+        D3D_FEATURE_LEVEL_12_0,
+    };
+    for (D3D_FEATURE_LEVEL level : levels) {
+        HRESULT deviceStatus = D3D12CreateDevice(mainAdapter.Get(), level, IID_PPV_ARGS(&m_device));
+        if (SUCCEEDED(deviceStatus)) {
+            useLevel = level;
+            break;
+        }
+    }
+    if (!useLevel) {
+        throw std::runtime_error("failed D3D12CreateDevice()");
+    }
+    // InfoQueue
+#if _DEBUG
+    if (FAILED(m_device->QueryInterface(__uuidof(ID3D12InfoQueue), &m_infoQueue))) {
+        throw std::runtime_error("failed ID3D12InfoQueue()");
+    }
+#endif
+    // Swapchain
+    m_swapchain = Swapchain::create(window, m_dxgiFactory, m_device);
+    // Surface
+    m_surface = Surface::create(m_device, m_swapchain);
 }
 }

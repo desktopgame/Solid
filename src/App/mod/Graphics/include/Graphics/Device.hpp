@@ -29,6 +29,7 @@ public:
 
 private:
     Device();
+    void init(const std::shared_ptr<OS::Window>& window);
 
     std::shared_ptr<Swapchain> m_swapchain;
     std::shared_ptr<Surface> m_surface;
