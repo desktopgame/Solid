@@ -10,22 +10,19 @@ namespace Lib::Graphics {
 class Shader {
 public:
     static std::shared_ptr<Shader> compile(
-        const std::string& vertexShader,
-        const std::string& vertexEntrypoint,
-        const std::string& pixelShader,
-        const std::string& pixelEntrypoint);
+        const std::string& stage,
+        const std::string& entryPoint,
+        const std::string& shaderCode,
+        const std::string& shaderName);
     ~Shader();
 
 #if SOLID_ENABLE_INTERNAL
-    void getD3D12_SHADER_BYTECODE(
-        D3D12_SHADER_BYTECODE& outVS,
-        D3D12_SHADER_BYTECODE& outPS) const;
+    void getD3D12_SHADER_BYTECODE(D3D12_SHADER_BYTECODE& output) const;
 #endif
 
 private:
     Shader();
 
-    Microsoft::WRL::ComPtr<ID3DBlob> m_vertexBlob;
-    Microsoft::WRL::ComPtr<ID3DBlob> m_pixelBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> m_blob;
 };
 }
