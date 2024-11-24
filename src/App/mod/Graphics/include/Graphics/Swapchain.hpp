@@ -36,6 +36,10 @@ public:
 
 private:
     Swapchain();
+    void init(
+        const std::shared_ptr<OS::Window>& window,
+        const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device);
 
     uint64_t m_fenceVal;
     bool m_renderGui;

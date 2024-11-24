@@ -22,71 +22,8 @@ std::shared_ptr<Swapchain> Swapchain::create(
     const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
     const Microsoft::WRL::ComPtr<ID3D12Device>& device)
 {
-    HWND hwnd = window->getHWND();
     auto swapchain = std::shared_ptr<Swapchain>(new Swapchain());
-    // CommandQueue
-    D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
-    commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-    commandQueueDesc.NodeMask = 0;
-    commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-    commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    if (FAILED(device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&swapchain->m_commandQueue)))) {
-        throw std::runtime_error("failed CreateCommandQueue()");
-    }
-    // Swapchain
-    DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
-    swapchainDesc.Width = Screen::getWidth();
-    swapchainDesc.Height = Screen::getHeight();
-    swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    swapchainDesc.Stereo = false;
-    swapchainDesc.SampleDesc.Count = 1;
-    swapchainDesc.SampleDesc.Quality = 0;
-    swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;
-    swapchainDesc.BufferCount = 2;
-    swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
-    swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-    swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-    swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(swapchain->m_commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)swapchain->m_swapchain.ReleaseAndGetAddressOf()))) {
-        throw std::runtime_error("failed CreateSwapChainForHwnd()");
-    }
-    // DescriptorHeap
-    D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    heapDesc.NodeMask = 0;
-    heapDesc.NumDescriptors = 2;
-    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&swapchain->m_renderTargetViewHeap)))) {
-        throw std::runtime_error("failed CreateDescriptorHeap()");
-    }
-    // RenderTargetView
-    std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
-    D3D12_CPU_DESCRIPTOR_HANDLE handle = swapchain->m_renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
-    for (uint32_t i = 0; i < swapchainDesc.BufferCount; i++) {
-        if (FAILED(swapchain->m_swapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
-            throw std::runtime_error("failed GetBuffer()");
-        }
-        device->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
-        handle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    }
-    swapchain->m_renderTargetViews = renderTargetViews;
-    // Fence
-    if (FAILED(device->CreateFence(swapchain->m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&swapchain->m_fence)))) {
-        throw std::runtime_error("failed CreateFence()");
-    }
-    // ImGui
-    D3D12_DESCRIPTOR_HEAP_DESC imguiDescriptorHeapDesc = {};
-    imguiDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    imguiDescriptorHeapDesc.NumDescriptors = 1;
-    imguiDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    if (FAILED(device->CreateDescriptorHeap(&imguiDescriptorHeapDesc, IID_PPV_ARGS(&swapchain->m_imguiDescriptorHeap)))) {
-        throw std::runtime_error("failed CreateDescriptorHeap()");
-    }
-    ImGui_ImplWin32_Init(hwnd);
-    ImGui_ImplDX12_Init(device.Get(), 3,
-        DXGI_FORMAT_R8G8B8A8_UNORM, swapchain->m_imguiDescriptorHeap.Get(),
-        swapchain->m_imguiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-        swapchain->m_imguiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+    swapchain->init(window, dxgiFactory, device);
     return swapchain;
 }
 
@@ -201,5 +138,76 @@ Swapchain::Swapchain()
     , m_fence()
     , m_imguiDescriptorHeap()
 {
+}
+
+void Swapchain::init(
+    const std::shared_ptr<OS::Window>& window,
+    const Microsoft::WRL::ComPtr<IDXGIFactory6>& dxgiFactory,
+    const Microsoft::WRL::ComPtr<ID3D12Device>& device)
+{
+    HWND hwnd = window->getHWND();
+    // CommandQueue
+    D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
+    commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    commandQueueDesc.NodeMask = 0;
+    commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+    commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    if (FAILED(device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&m_commandQueue)))) {
+        throw std::runtime_error("failed CreateCommandQueue()");
+    }
+    // Swapchain
+    DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
+    swapchainDesc.Width = Screen::getWidth();
+    swapchainDesc.Height = Screen::getHeight();
+    swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapchainDesc.Stereo = false;
+    swapchainDesc.SampleDesc.Count = 1;
+    swapchainDesc.SampleDesc.Quality = 0;
+    swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;
+    swapchainDesc.BufferCount = 2;
+    swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
+    swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+    swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+    if (FAILED(dxgiFactory->CreateSwapChainForHwnd(m_commandQueue.Get(), hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)m_swapchain.ReleaseAndGetAddressOf()))) {
+        throw std::runtime_error("failed CreateSwapChainForHwnd()");
+    }
+    // DescriptorHeap
+    D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    heapDesc.NodeMask = 0;
+    heapDesc.NumDescriptors = 2;
+    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    if (FAILED(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_renderTargetViewHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    // RenderTargetView
+    std::vector<ComPtr<ID3D12Resource>> renderTargetViews(2);
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
+    for (uint32_t i = 0; i < swapchainDesc.BufferCount; i++) {
+        if (FAILED(m_swapchain->GetBuffer(i, IID_PPV_ARGS(&renderTargetViews.at(i))))) {
+            throw std::runtime_error("failed GetBuffer()");
+        }
+        device->CreateRenderTargetView(renderTargetViews.at(i).Get(), nullptr, handle);
+        handle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    }
+    m_renderTargetViews = renderTargetViews;
+    // Fence
+    if (FAILED(device->CreateFence(m_fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)))) {
+        throw std::runtime_error("failed CreateFence()");
+    }
+    // ImGui
+    D3D12_DESCRIPTOR_HEAP_DESC imguiDescriptorHeapDesc = {};
+    imguiDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    imguiDescriptorHeapDesc.NumDescriptors = 1;
+    imguiDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    if (FAILED(device->CreateDescriptorHeap(&imguiDescriptorHeapDesc, IID_PPV_ARGS(&m_imguiDescriptorHeap)))) {
+        throw std::runtime_error("failed CreateDescriptorHeap()");
+    }
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX12_Init(device.Get(), 3,
+        DXGI_FORMAT_R8G8B8A8_UNORM, m_imguiDescriptorHeap.Get(),
+        m_imguiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+        m_imguiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 }
 }
