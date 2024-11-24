@@ -198,12 +198,46 @@ std::shared_ptr<Surface> Surface::create(
     const std::shared_ptr<Swapchain>& swapchain)
 {
     auto surface = std::shared_ptr<Surface>(new Surface());
+    surface->init(device, swapchain);
+    return surface;
+}
+
+void Surface::destroy()
+{
+    GlobalLight::destroy();
+    PointLight::destroy();
+    BloomEffect::destroy();
+    m_swapchain->destroy();
+    m_swapchain = nullptr;
+}
+// private
+Surface::Surface()
+    : m_swapchain()
+    , m_dxgiFactory()
+    , m_infoQueue()
+    , m_commandAllocator()
+    , m_commandList()
+    , m_gHeap()
+    , m_gTextures(3)
+    , m_bloomHeap()
+    , m_bloomTextures(3)
+    , m_depthBuffer()
+    , m_depthStencilViewHeap()
+    , m_fence()
+{
+}
+
+void Surface::init(
+    const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+    const std::shared_ptr<Swapchain>& swapchain)
+{
+    m_swapchain = swapchain;
     // CommandAllocator
-    if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&surface->m_commandAllocator)))) {
+    if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)))) {
         throw std::runtime_error("failed CreateCommandAllocator()");
     }
     // CommandList
-    if (FAILED(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, surface->m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&surface->m_commandList)))) {
+    if (FAILED(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_commandList)))) {
         throw std::runtime_error("failed CreateCommandList()");
     }
     // GBuffer
@@ -212,10 +246,10 @@ std::shared_ptr<Surface> Surface::create(
     gHeapDesc.NodeMask = 0;
     gHeapDesc.NumDescriptors = 3;
     gHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    if (FAILED(device->CreateDescriptorHeap(&gHeapDesc, IID_PPV_ARGS(&surface->m_gHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&gHeapDesc, IID_PPV_ARGS(&m_gHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
-    D3D12_CPU_DESCRIPTOR_HANDLE gHandle = surface->m_gHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE gHandle = m_gHeap->GetCPUDescriptorHandleForHeapStart();
     for (int32_t i = 0; i < 3; i++) {
         D3D12_CLEAR_VALUE clearValue = {};
         clearValue.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -242,7 +276,7 @@ std::shared_ptr<Surface> Surface::create(
         texResDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
         texResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
-        ComPtr<ID3D12Resource>& gTexture = surface->m_gTextures.at(i);
+        ComPtr<ID3D12Resource>& gTexture = m_gTextures.at(i);
         if (FAILED(device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&gTexture)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
@@ -273,10 +307,10 @@ std::shared_ptr<Surface> Surface::create(
     bloomHeapDesc.NodeMask = 0;
     bloomHeapDesc.NumDescriptors = 3;
     bloomHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    if (FAILED(device->CreateDescriptorHeap(&bloomHeapDesc, IID_PPV_ARGS(&surface->m_bloomHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&bloomHeapDesc, IID_PPV_ARGS(&m_bloomHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
-    D3D12_CPU_DESCRIPTOR_HANDLE bloomHandle = surface->m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE bloomHandle = m_bloomHeap->GetCPUDescriptorHandleForHeapStart();
     for (int32_t i = 0; i < 3; i++) {
         D3D12_CLEAR_VALUE clearValue = {};
         clearValue.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -303,7 +337,7 @@ std::shared_ptr<Surface> Surface::create(
         texResDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
         texResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
-        ComPtr<ID3D12Resource>& bTexture = surface->m_bloomTextures.at(i);
+        ComPtr<ID3D12Resource>& bTexture = m_bloomTextures.at(i);
         if (FAILED(device->CreateCommittedResource(&texHeapProps, D3D12_HEAP_FLAG_NONE, &texResDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&bTexture)))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
@@ -338,15 +372,15 @@ std::shared_ptr<Surface> Surface::create(
     depthClearValue.DepthStencil.Depth = 1.0f;
     depthClearValue.DepthStencil.Stencil = 0;
     depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    if (FAILED(device->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&surface->m_depthBuffer)))) {
+    if (FAILED(device->CreateCommittedResource(&depthHeapProps, D3D12_HEAP_FLAG_NONE, &depthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&m_depthBuffer)))) {
         throw std::runtime_error("failed CreateCommittedResource()");
     }
-    surface->m_depthBuffer->SetName(L"DepthBuffer");
+    m_depthBuffer->SetName(L"DepthBuffer");
     // DepthStencilViewHeap
     D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
     dsvHeapDesc.NumDescriptors = 1;
     dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-    if (FAILED(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&surface->m_depthStencilViewHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_depthStencilViewHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
     // DepthBufferView
@@ -354,41 +388,13 @@ std::shared_ptr<Surface> Surface::create(
     dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-    device->CreateDepthStencilView(surface->m_depthBuffer.Get(), &dsvDesc, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+    device->CreateDepthStencilView(m_depthBuffer.Get(), &dsvDesc, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
     // GlobalLight
-    GlobalLight::initialize(device, surface->m_gTextures);
+    GlobalLight::initialize(device, m_gTextures);
     // PointLight
-    PointLight::initialize(device, surface->m_gTextures);
+    PointLight::initialize(device, m_gTextures);
     // Bloom
-    BloomEffect::initialize(device, surface->m_bloomTextures);
-
-    surface->m_swapchain = swapchain;
-    return surface;
-}
-
-void Surface::destroy()
-{
-    GlobalLight::destroy();
-    PointLight::destroy();
-    BloomEffect::destroy();
-    m_swapchain->destroy();
-    m_swapchain = nullptr;
-}
-// private
-Surface::Surface()
-    : m_swapchain()
-    , m_dxgiFactory()
-    , m_infoQueue()
-    , m_commandAllocator()
-    , m_commandList()
-    , m_gHeap()
-    , m_gTextures(3)
-    , m_bloomHeap()
-    , m_bloomTextures(3)
-    , m_depthBuffer()
-    , m_depthStencilViewHeap()
-    , m_fence()
-{
+    BloomEffect::initialize(device, m_bloomTextures);
 }
 
 void Surface::bloomWrite(int32_t index)

@@ -56,6 +56,9 @@ public:
 
 private:
     Surface();
+    void init(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::shared_ptr<Swapchain>& swapchain);
 
     void bloomWrite(int32_t index);
     void bloomRead(int32_t index);
