@@ -28,9 +28,11 @@ Renderer::Renderer()
     , m_textObject()
     , m_planeObject()
     , m_planeWireframeObject()
+    , m_planeLineObject()
     , m_planeTextureObject()
     , m_boxObject()
     , m_boxWireframeObject()
+    , m_boxLineObject()
     , m_boxTextureObject()
 {
 }
@@ -197,6 +199,36 @@ void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& sca
     renderObject(obj, ub);
 }
 
+void Renderer::drawPlaneLine(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color, float lineWidth)
+{
+    initPlaneLine();
+    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshLine3D);
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(position),
+        Math::Quaternion::toMatrix(rotation),
+        Math::Matrix::scale(Math::Vector3(scale, 1.0f)));
+    Reflect::UCamera uCamera;
+    uCamera.modelMatrix = modelMatrix;
+    uCamera.viewMatrix = Camera::getLookAtMatrix();
+    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
+    ub->setVS(0, &uCamera);
+
+    Reflect::UVector4 uColor;
+    uColor.value = color;
+    ub->setVS(1, &uColor);
+
+    ub->setGS(0, &uCamera);
+
+    Reflect::UFloat uLineWidth;
+    uLineWidth.value = lineWidth;
+    ub->setGS(1, &uLineWidth);
+
+    Reflect::UVector3 uCameraPosition;
+    uCameraPosition.value = Camera::getPosition();
+    ub->setGS(2, &uCameraPosition);
+    renderObject(m_planeLineObject, ub);
+}
+
 void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
 {
     initPlaneTexture();
@@ -238,6 +270,36 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     uColor.value = color;
     ub->setVS(1, &uColor);
     renderObject(obj, ub);
+}
+
+void Renderer::drawBoxLine(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color, float lineWidth)
+{
+    initBoxLine();
+    auto ub = UniformPool::rent(Metadata::ProgramTable::MeshLine3D);
+    auto modelMatrix = Math::Matrix::transform(
+        Math::Matrix::translate(position),
+        Math::Quaternion::toMatrix(rotation),
+        Math::Matrix::scale(scale));
+    Reflect::UCamera uCamera;
+    uCamera.modelMatrix = modelMatrix;
+    uCamera.viewMatrix = Camera::getLookAtMatrix();
+    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
+    ub->setVS(0, &uCamera);
+
+    Reflect::UVector4 uColor;
+    uColor.value = color;
+    ub->setVS(1, &uColor);
+
+    ub->setGS(0, &uCamera);
+
+    Reflect::UFloat uLineWidth;
+    uLineWidth.value = lineWidth;
+    ub->setGS(1, &uLineWidth);
+
+    Reflect::UVector3 uCameraPosition;
+    uCameraPosition.value = Camera::getPosition();
+    ub->setGS(2, &uCameraPosition);
+    renderObject(m_boxLineObject, ub);
 }
 
 void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
@@ -364,6 +426,24 @@ void Renderer::initPlane(Object& dst, bool isWireframe)
     }
 }
 
+void Renderer::initPlaneLine()
+{
+    if (m_planeLineObject.rc != nullptr) {
+        return;
+    }
+    m_planeLineObject.vertexBuffer = Buffer::create();
+    m_planeLineObject.indexBuffer = Buffer::create();
+    std::vector<uint32_t> indices;
+    std::vector<Math::Vector3> vertices;
+    Polygon::generatePlane(vertices, indices);
+    m_planeLineObject.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+    m_planeLineObject.vertexBuffer->update(vertices.data());
+    m_planeLineObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_planeLineObject.indexBuffer->update(indices.data());
+    m_planeLineObject.indexLength = indices.size();
+    m_planeLineObject.rc = RenderContext::get(Metadata::ProgramTable::MeshLine3D);
+}
+
 void Renderer::initPlaneTexture()
 {
     if (m_planeTextureObject.rc != nullptr) {
@@ -409,6 +489,24 @@ void Renderer::initBox(Object& dst, bool isWireframe)
     } else {
         dst.rc = RenderContext::get(Metadata::ProgramTable::MeshColor3D);
     }
+}
+
+void Renderer::initBoxLine()
+{
+    if (m_boxLineObject.rc != nullptr) {
+        return;
+    }
+    m_boxLineObject.vertexBuffer = Buffer::create();
+    m_boxLineObject.indexBuffer = Buffer::create();
+    std::vector<uint32_t> indices;
+    std::vector<Math::Vector3> vertices;
+    Polygon::generateBox(vertices, indices);
+    m_boxLineObject.vertexBuffer->allocate(sizeof(Math::Vector3) * vertices.size());
+    m_boxLineObject.vertexBuffer->update(vertices.data());
+    m_boxLineObject.indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    m_boxLineObject.indexBuffer->update(indices.data());
+    m_boxLineObject.indexLength = indices.size();
+    m_boxLineObject.rc = RenderContext::get(Metadata::ProgramTable::MeshLine3D);
 }
 
 void Renderer::initBoxTexture()
