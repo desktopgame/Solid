@@ -10,37 +10,19 @@ struct GSOutput {
 
 [maxvertexcount(6)]
 void gsMain(triangle GSInput input[3], inout LineStream<GSOutput> stream) {
-    {
-        GSOutput output1;
-        output1.position = input[0].position;
-        output1.color = input[0].color;
-        stream.Append(output1);
+    for (int i = 0; i < 3; ++i) {
+        GSOutput outputStart, outputEnd;
 
-        GSOutput output2;
-        output2.position = input[1].position;
-        output2.color = input[1].color;
-        stream.Append(output2);
-    }
-    {
-        GSOutput output1;
-        output1.position = input[1].position;
-        output1.color = input[1].color;
-        stream.Append(output1);
+        int nextIndex = (i + 1) % 3;
+        outputStart.position = input[i].position;
+        outputEnd.position = input[nextIndex].position;
 
-        GSOutput output2;
-        output2.position = input[2].position;
-        output2.color = input[2].color;
-        stream.Append(output2);
-    }
-    {
-        GSOutput output1;
-        output1.position = input[0].position;
-        output1.color = input[0].color;
-        stream.Append(output1);
+        outputStart.color = input[i].color;
+        outputEnd.color = input[nextIndex].color;
 
-        GSOutput output2;
-        output2.position = input[2].position;
-        output2.color = input[2].color;
-        stream.Append(output2);
+        stream.Append(outputStart);
+        stream.Append(outputEnd);
+
+        stream.RestartStrip();
     }
 }
