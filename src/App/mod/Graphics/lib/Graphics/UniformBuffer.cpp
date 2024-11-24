@@ -84,11 +84,12 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
     m_entry = entry;
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+    const Metadata::Program& program = Metadata::k_programs.at(entry);
     // descriptor heap
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
-    descHeapDesc.NumDescriptors = Metadata::k_programs.at(entry).vsUniforms.size() + Metadata::k_programs.at(entry).psUniforms.size();
+    descHeapDesc.NumDescriptors = program.vsUniforms.size() + program.psUniforms.size();
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
@@ -96,8 +97,8 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
     // define constants
-    for (int32_t i = 0; i < Metadata::k_programs.at(entry).vsUniforms.size(); i++) {
-        Metadata::Uniform u = Metadata::k_programs.at(entry).vsUniforms.at(i);
+    for (int32_t i = 0; i < program.vsUniforms.size(); i++) {
+        Metadata::Uniform u = program.vsUniforms.at(i);
 
         D3D12_HEAP_PROPERTIES cbHeapProps = {};
         cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -131,8 +132,8 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
         device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
         heapHandle.ptr += unitSize;
     }
-    for (int32_t i = 0; i < Metadata::k_programs.at(entry).psUniforms.size(); i++) {
-        Metadata::Uniform u = Metadata::k_programs.at(entry).psUniforms.at(i);
+    for (int32_t i = 0; i < program.psUniforms.size(); i++) {
+        Metadata::Uniform u = program.psUniforms.at(i);
 
         if (u.isShaderResource) {
             m_psResources.emplace_back(nullptr);
