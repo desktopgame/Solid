@@ -204,6 +204,14 @@ void RenderContext::initialize()
         rc->m_vShader = Shader::compile("vs_5_0", "vsMain", program.vsCode, vsName);
         rc->m_vShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
 
+        if (program.gsCode != nullptr) {
+            char gsName[16];
+            ::memset(gsName, '\0', 16);
+            ::sprintf(gsName, "RC[%d]_GS", i);
+            rc->m_gShader = Shader::compile("gs_5_0", "gsMain", program.gsCode, gsName);
+            rc->m_gShader->getD3D12_SHADER_BYTECODE(psoDesc.GS);
+        }
+
         char psName[16];
         ::memset(psName, '\0', 16);
         ::sprintf(psName, "RC[%d]_PS", i);

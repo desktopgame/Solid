@@ -40,6 +40,7 @@ private:
 
     Metadata::ProgramTable m_entry;
     std::shared_ptr<Shader> m_vShader;
+    std::shared_ptr<Shader> m_gShader;
     std::shared_ptr<Shader> m_pShader;
 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
