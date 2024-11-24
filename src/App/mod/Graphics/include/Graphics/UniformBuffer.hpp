@@ -22,6 +22,7 @@ public:
 
 private:
     UniformBuffer();
+    void init(Metadata::ProgramTable entry);
 
     Metadata::ProgramTable m_entry;
 

@@ -62,7 +62,26 @@ void UniformBuffer::setPS(int32_t index, const std::shared_ptr<Texture>& texture
 std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entry)
 {
     auto ub = std::shared_ptr<UniformBuffer>(new UniformBuffer());
-    ub->m_entry = entry;
+    ub->init(entry);
+    return ub;
+}
+
+void UniformBuffer::destroy()
+{
+}
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> UniformBuffer::getID3D12DescriptorHeap() const
+{
+    return m_descriptorHeap;
+}
+// private
+UniformBuffer::UniformBuffer()
+{
+}
+
+void UniformBuffer::init(Metadata::ProgramTable entry)
+{
+    m_entry = entry;
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     // descriptor heap
@@ -71,11 +90,11 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
     descHeapDesc.NodeMask = 0;
     descHeapDesc.NumDescriptors = Metadata::k_programs.at(entry).vsUniforms.size() + Metadata::k_programs.at(entry).psUniforms.size();
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&ub->m_descriptorHeap)))) {
+    if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
     }
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = ub->m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
     // define constants
     for (int32_t i = 0; i < Metadata::k_programs.at(entry).vsUniforms.size(); i++) {
         Metadata::Uniform u = Metadata::k_programs.at(entry).vsUniforms.at(i);
@@ -95,19 +114,19 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
         cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
         cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-        ub->m_vsResources.emplace_back(nullptr);
+        m_vsResources.emplace_back(nullptr);
         if (FAILED(device->CreateCommittedResource(
                 &cbHeapProps,
                 D3D12_HEAP_FLAG_NONE,
                 &cbResDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
-                IID_PPV_ARGS(&ub->m_vsResources.back())))) {
+                IID_PPV_ARGS(&m_vsResources.back())))) {
             throw std::runtime_error("failed CreateCommittedResource()");
         }
 
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-        cbvColorDesc.BufferLocation = ub->m_vsResources.back()->GetGPUVirtualAddress();
+        cbvColorDesc.BufferLocation = m_vsResources.back()->GetGPUVirtualAddress();
         cbvColorDesc.SizeInBytes = u.size;
         device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
         heapHandle.ptr += unitSize;
@@ -116,7 +135,7 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
         Metadata::Uniform u = Metadata::k_programs.at(entry).psUniforms.at(i);
 
         if (u.isShaderResource) {
-            ub->m_psResources.emplace_back(nullptr);
+            m_psResources.emplace_back(nullptr);
         } else {
             D3D12_HEAP_PROPERTIES cbHeapProps = {};
             cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -133,37 +152,23 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
             cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
             cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-            ub->m_psResources.emplace_back(nullptr);
+            m_psResources.emplace_back(nullptr);
             if (FAILED(device->CreateCommittedResource(
                     &cbHeapProps,
                     D3D12_HEAP_FLAG_NONE,
                     &cbResDesc,
                     D3D12_RESOURCE_STATE_GENERIC_READ,
                     nullptr,
-                    IID_PPV_ARGS(&ub->m_psResources.back())))) {
+                    IID_PPV_ARGS(&m_psResources.back())))) {
                 throw std::runtime_error("failed CreateCommittedResource()");
             }
 
             D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-            cbvColorDesc.BufferLocation = ub->m_psResources.back()->GetGPUVirtualAddress();
+            cbvColorDesc.BufferLocation = m_psResources.back()->GetGPUVirtualAddress();
             cbvColorDesc.SizeInBytes = u.size;
             device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
         }
         heapHandle.ptr += unitSize;
     }
-    return ub;
-}
-
-void UniformBuffer::destroy()
-{
-}
-
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> UniformBuffer::getID3D12DescriptorHeap() const
-{
-    return m_descriptorHeap;
-}
-// private
-UniformBuffer::UniformBuffer()
-{
 }
 }
