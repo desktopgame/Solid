@@ -164,6 +164,41 @@ void BloomEffect::initialize(
 }
 void BloomEffect::destroy()
 {
+    s_filterVShader = nullptr;
+    s_filterPShader = nullptr;
+    s_filterPipelineState = nullptr;
+    s_filterRootSignature = nullptr;
+    s_filterDescriptorHeap = nullptr;
+    s_filterVertexBuffer = nullptr;
+    s_filterIndexBuffer = nullptr;
+    s_filterConstantBuffer = nullptr;
+
+    s_blur1VShader = nullptr;
+    s_blur1PShader = nullptr;
+    s_blur1PipelineState = nullptr;
+    s_blur1RootSignature = nullptr;
+    s_blur1DescriptorHeap = nullptr;
+    s_blur1VertexBuffer = nullptr;
+    s_blur1IndexBuffer = nullptr;
+    s_blur1ConstantBuffer = nullptr;
+
+    s_blur2VShader = nullptr;
+    s_blur2PShader = nullptr;
+    s_blur2PipelineState = nullptr;
+    s_blur2RootSignature = nullptr;
+    s_blur2DescriptorHeap = nullptr;
+    s_blur2VertexBuffer = nullptr;
+    s_blur2IndexBuffer = nullptr;
+    s_blur2ConstantBuffer = nullptr;
+
+    s_mixVShader = nullptr;
+    s_mixPShader = nullptr;
+    s_mixPipelineState = nullptr;
+    s_mixRootSignature = nullptr;
+    s_mixDescriptorHeap = nullptr;
+    s_mixVertexBuffer = nullptr;
+    s_mixIndexBuffer = nullptr;
+    s_mixConstantBuffer = nullptr;
 }
 // private
 void BloomEffect::initFilter(
