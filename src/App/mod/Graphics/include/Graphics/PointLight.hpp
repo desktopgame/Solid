@@ -51,14 +51,13 @@ private:
     PointLight() = delete;
     static void generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices);
 
-    static std::shared_ptr<Shader> s_shader;
-    static std::shared_ptr<Shader> s_scrShader;
     static int32_t s_vertexLength;
     static int32_t s_indexLength;
     static bool s_enabled;
     static std::vector<Constant2> s_constantVec;
     static int32_t s_count;
 
+    static std::shared_ptr<Shader> s_shader;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
@@ -66,6 +65,7 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
 
+    static std::shared_ptr<Shader> s_scrShader;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_scrPipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_scrRootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_scrDescriptorHeap;

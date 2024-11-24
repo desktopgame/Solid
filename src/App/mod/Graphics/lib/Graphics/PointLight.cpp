@@ -11,14 +11,13 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 
-std::shared_ptr<Shader> PointLight::s_shader;
-std::shared_ptr<Shader> PointLight::s_scrShader;
 int32_t PointLight::s_vertexLength;
 int32_t PointLight::s_indexLength;
 bool PointLight::s_enabled;
 std::vector<PointLight::Constant2> PointLight::s_constantVec(PointLight::k_maxCount);
 int32_t PointLight::s_count;
 
+std::shared_ptr<Shader> PointLight::s_shader;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> PointLight::s_pipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> PointLight::s_rootSignature;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> PointLight::s_descriptorHeap;
@@ -26,6 +25,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_vertexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_indexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_constantBuffer;
 
+std::shared_ptr<Shader> PointLight::s_scrShader;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> PointLight::s_scrPipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> PointLight::s_scrRootSignature;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> PointLight::s_scrDescriptorHeap;
