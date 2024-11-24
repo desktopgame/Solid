@@ -55,6 +55,9 @@ private:
     static void initLight(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,
         const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures);
+
+    static void drawStencil(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, int32_t lightIndex);
+    static void drawLight(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, int32_t lightIndex);
     static void generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices);
 
     static int32_t s_vertexLength;
