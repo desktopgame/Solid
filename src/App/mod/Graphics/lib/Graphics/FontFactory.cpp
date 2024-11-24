@@ -51,7 +51,6 @@ FontFactory::FontFactory()
     , m_occurredError(false)
 {
     if (FT_Init_FreeType(&m_impl->ft)) {
-        // Debug::logWarning("FreeType is not working.");
         this->m_occurredError = true;
     }
 }
