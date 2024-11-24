@@ -1,0 +1,13 @@
+InputLayout=Vertex3D
+PrimitiveType=Triangles
+IsWireframe=false
+InstanceBufferCount=0
+UseGeometryShader=true
+VS.UniformCount=2
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UVector4
+VS.Code=MeshLine3D.vs
+GS.UniformCount=0
+GS.Code=MeshLine3D.gs
+PS.UniformCount=0
+PS.Code=MeshLine3D.ps

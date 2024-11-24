@@ -30,6 +30,7 @@ namespace Lib::Graphics::Metadata {
         MeshColor3D,
         MeshTexture3D,
         MeshWireframe3D,
+        MeshLine3D,
         MeshInstanceColor3D,
         MeshInstanceTexture3D,
         TileInstance3D,
@@ -369,6 +370,121 @@ namespace Lib::Graphics::Metadata {
             // psUniforms
             std::vector<Uniform> {
                 Uniform { 0, true },
+            },
+        },
+        Program {
+            // inputLayout
+            Reflect::InputLayout::Vertex3D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
+            // isWireframe
+            false,
+            // vs
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "cbuffer cbuff0 : register(b0) {\n"
+            "    matrix modelMatrix;\n"
+            "    matrix viewMatrix;\n"
+            "    matrix projectionMatrix;\n"
+            "}\n"
+            "cbuffer cbuff1 : register(b1) { float4 color; }\n"
+            "\n"
+            "Output vsMain(float3 pos : POSITION) {\n"
+            "    Output output;\n"
+            "    output.svpos = mul(modelMatrix, float4(pos, 1));\n"
+            "    output.svpos = mul(viewMatrix, output.svpos);\n"
+            "    output.svpos = mul(projectionMatrix, output.svpos);\n"
+            "    output.color = color;\n"
+            "    return output;\n"
+            "}\n"
+            ,
+            // vsUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UCamera), false },
+                Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // gs
+            "struct GSInput {\n"
+            "    float4 position : SV_POSITION;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "\n"
+            "struct GSOutput {\n"
+            "    float4 position : SV_POSITION;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "\n"
+            "[maxvertexcount(18)]\n"
+            "void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream) {\n"
+            "    float lineWidth = 50;\n"
+            "    float ViewportHeight = 600;\n"
+            "    float ndcLineWidth = lineWidth / ViewportHeight;\n"
+            "\n"
+            "    for (int i = 0; i < 3; ++i) {\n"
+            "        int nextIndex = (i + 1) % 3; // 次の頂点\n"
+            "\n"
+            "        float4 p0 = input[i].position;\n"
+            "        float4 p1 = input[nextIndex].position;\n"
+            "\n"
+            "        float2 dir = normalize(float2(p1.x - p0.x, p1.y - p0.y));\n"
+            "\n"
+            "        float2 normal = float2(-dir.y, dir.x) * ndcLineWidth;\n"
+            "\n"
+            "        GSOutput v0, v1, v2, v3;\n"
+            "\n"
+            "        v0.position = p0 + float4(normal, 0.0, 0.0);\n"
+            "        v0.color = input[i].color;\n"
+            "\n"
+            "        v1.position = p1 + float4(normal, 0.0, 0.0);\n"
+            "        v1.color = input[nextIndex].color;\n"
+            "\n"
+            "        v2.position = p0 - float4(normal, 0.0, 0.0);\n"
+            "        v2.color = input[i].color;\n"
+            "\n"
+            "        v3.position = p1 - float4(normal, 0.0, 0.0);\n"
+            "        v3.color = input[nextIndex].color;\n"
+            "\n"
+            "        triStream.Append(v0);\n"
+            "        triStream.Append(v1);\n"
+            "        triStream.Append(v2);\n"
+            "        triStream.RestartStrip();\n"
+            "\n"
+            "        triStream.Append(v2);\n"
+            "        triStream.Append(v1);\n"
+            "        triStream.Append(v3);\n"
+            "\n"
+            "        triStream.RestartStrip();\n"
+            "    }\n"
+            "}\n"
+            ,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
+            // ps
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "struct PSOutput\n"
+            "{\n"
+            "    float4 outPosition : SV_Target0;\n"
+            "    float4 outNormal : SV_Target1;\n"
+            "    float4 outColor : SV_Target2;\n"
+            "};\n"
+            "\n"
+            "PSOutput psMain(Output input) : SV_TARGET {\n"
+            "    PSOutput output;\n"
+            "    output.outColor = input.color;\n"
+            "    return output;\n"
+            "}\n"
+            ,
+            // psUniforms
+            std::vector<Uniform> {
             },
         },
         Program {
@@ -894,6 +1010,12 @@ namespace Lib::Graphics::Metadata {
 
     template<>
     class Signature<ProgramTable::MeshWireframe3D> {
+    public:
+        static inline void set() { }
+    };
+
+    template<>
+    class Signature<ProgramTable::MeshLine3D> {
     public:
         static inline void set() { }
     };
