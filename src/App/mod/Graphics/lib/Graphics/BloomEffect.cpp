@@ -43,7 +43,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_mixIndexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_mixConstantBuffer;
 // public
 // internal
-void BloomEffect::draw1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void BloomEffect::drawFilter(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     commandList->SetPipelineState(s_filterPipelineState.Get());
     commandList->SetGraphicsRootSignature(s_filterRootSignature.Get());
@@ -69,7 +69,7 @@ void BloomEffect::draw1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
     commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void BloomEffect::draw2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void BloomEffect::drawBlur1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     commandList->SetPipelineState(s_blur1PipelineState.Get());
     commandList->SetGraphicsRootSignature(s_blur1RootSignature.Get());
@@ -95,7 +95,7 @@ void BloomEffect::draw2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
     commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void BloomEffect::draw3(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void BloomEffect::drawBlur2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     commandList->SetPipelineState(s_blur2PipelineState.Get());
     commandList->SetGraphicsRootSignature(s_blur2RootSignature.Get());
@@ -121,7 +121,7 @@ void BloomEffect::draw3(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
     commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void BloomEffect::draw4(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void BloomEffect::drawMix(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
 {
     commandList->SetPipelineState(s_mixPipelineState.Get());
     commandList->SetGraphicsRootSignature(s_mixRootSignature.Get());

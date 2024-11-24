@@ -12,10 +12,10 @@ class Shader;
 class BloomEffect {
 public:
 #if SOLID_ENABLE_INTERNAL
-    static void draw1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    static void draw2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    static void draw3(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    static void draw4(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    static void drawFilter(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    static void drawBlur1(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    static void drawBlur2(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    static void drawMix(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
     static void initialize(
         const Microsoft::WRL::ComPtr<ID3D12Device>& device,

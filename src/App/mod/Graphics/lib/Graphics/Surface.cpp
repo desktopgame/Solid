@@ -126,7 +126,7 @@ void Surface::begin2D()
     // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
     //
     bloomWrite(1);
-    BloomEffect::draw1(m_commandList);
+    BloomEffect::drawFilter(m_commandList);
     bloomRead(1);
 
     for (int32_t i = 0; i < 8; i++) {
@@ -134,7 +134,7 @@ void Surface::begin2D()
         // Bloom1番をソースとしてBloom2番にブラー書き込む
         //
         bloomWrite(2);
-        BloomEffect::draw2(m_commandList);
+        BloomEffect::drawBlur1(m_commandList);
         bloomRead(2);
 
         //
@@ -142,14 +142,14 @@ void Surface::begin2D()
         //
 
         bloomWrite(1);
-        BloomEffect::draw3(m_commandList);
+        BloomEffect::drawBlur2(m_commandList);
         bloomRead(1);
     }
     //
     // ダイレクトターゲットに戻す
     //
     m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
-    BloomEffect::draw4(m_commandList);
+    BloomEffect::drawMix(m_commandList);
     //*/
 }
 
