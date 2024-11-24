@@ -267,17 +267,18 @@ void RenderContext::initialize()
         psoDesc.SampleDesc.Quality = 0;
         // root signature
         std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
+        int32_t offset = 0;
         for (int32_t vsUniform = 0; vsUniform < program.vsUniforms.size(); vsUniform++) {
             descTableRange.push_back({});
-            descTableRange.at(vsUniform).NumDescriptors = 1;
-            descTableRange.at(vsUniform).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-            descTableRange.at(vsUniform).BaseShaderRegister = vsUniform;
-            descTableRange.at(vsUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+            descTableRange.at(offset + vsUniform).NumDescriptors = 1;
+            descTableRange.at(offset + vsUniform).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(offset + vsUniform).BaseShaderRegister = vsUniform;
+            descTableRange.at(offset + vsUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
         }
         int32_t psSRV = 0;
         int32_t psCBV = 0;
+        offset = static_cast<int32_t>(program.vsUniforms.size());
         for (int32_t psUniform = 0; psUniform < program.psUniforms.size(); psUniform++) {
-            int32_t offset = static_cast<int32_t>(program.vsUniforms.size());
             Metadata::Uniform u = program.psUniforms.at(psUniform);
             descTableRange.push_back({});
             descTableRange.at(offset + psUniform).NumDescriptors = 1;
@@ -286,16 +287,18 @@ void RenderContext::initialize()
             descTableRange.at(offset + psUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
             (u.isShaderResource ? psSRV : psCBV)++;
         }
+
         std::vector<D3D12_ROOT_PARAMETER> rootParam;
+        offset = 0;
         for (int32_t vsUniform = 0; vsUniform < program.vsUniforms.size(); vsUniform++) {
             rootParam.push_back({});
-            rootParam.at(vsUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-            rootParam.at(vsUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-            rootParam.at(vsUniform).DescriptorTable.pDescriptorRanges = &descTableRange.at(vsUniform);
-            rootParam.at(vsUniform).DescriptorTable.NumDescriptorRanges = 1;
+            rootParam.at(offset + vsUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+            rootParam.at(offset + vsUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+            rootParam.at(offset + vsUniform).DescriptorTable.pDescriptorRanges = &descTableRange.at(vsUniform);
+            rootParam.at(offset + vsUniform).DescriptorTable.NumDescriptorRanges = 1;
         }
+        offset = static_cast<int32_t>(program.vsUniforms.size());
         for (int32_t psUniform = 0; psUniform < program.psUniforms.size(); psUniform++) {
-            int32_t offset = static_cast<int32_t>(program.vsUniforms.size());
             rootParam.push_back({});
             rootParam.at(offset + psUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
             rootParam.at(offset + psUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
