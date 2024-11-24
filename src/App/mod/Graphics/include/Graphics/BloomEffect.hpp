@@ -25,10 +25,6 @@ public:
 
 private:
     static std::shared_ptr<Shader> s_shader;
-    static std::shared_ptr<Shader> s_shader2;
-    static std::shared_ptr<Shader> s_shader3;
-    static std::shared_ptr<Shader> s_shader4;
-
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
@@ -36,6 +32,7 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
 
+    static std::shared_ptr<Shader> s_shader2;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState2;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature2;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap2;
@@ -43,6 +40,7 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer2;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer2;
 
+    static std::shared_ptr<Shader> s_shader3;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState3;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature3;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap3;
@@ -50,6 +48,7 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer3;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer3;
 
+    static std::shared_ptr<Shader> s_shader4;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState4;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature4;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap4;
