@@ -25,6 +25,18 @@ public:
 
 private:
     BloomEffect() = delete;
+    static void initFilter(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures);
+    static void initBlur1(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures);
+    static void initBlur2(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures);
+    static void initMix(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures);
 
     static std::shared_ptr<Shader> s_filterShader;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_filterPipelineState;
