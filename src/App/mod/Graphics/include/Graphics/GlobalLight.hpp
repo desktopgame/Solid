@@ -37,7 +37,8 @@ private:
 
     GlobalLight() = delete;
 
-    static std::shared_ptr<Shader> s_shader;
+    static std::shared_ptr<Shader> s_vShader;
+    static std::shared_ptr<Shader> s_pShader;
     static bool s_enabled;
     static Math::Vector3 s_dir;
     static Constant s_constantData;

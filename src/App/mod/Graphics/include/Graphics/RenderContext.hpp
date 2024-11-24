@@ -39,7 +39,8 @@ private:
     static std::vector<std::shared_ptr<RenderContext>> s_table;
 
     Metadata::ProgramTable m_entry;
-    std::shared_ptr<Shader> m_shader;
+    std::shared_ptr<Shader> m_vShader;
+    std::shared_ptr<Shader> m_pShader;
 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;

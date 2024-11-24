@@ -66,7 +66,8 @@ private:
     static std::vector<Constant2> s_constantVec;
     static int32_t s_count;
 
-    static std::shared_ptr<Shader> s_shader;
+    static std::shared_ptr<Shader> s_vShader;
+    static std::shared_ptr<Shader> s_pShader;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
@@ -74,7 +75,8 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer;
 
-    static std::shared_ptr<Shader> s_scrShader;
+    static std::shared_ptr<Shader> s_scrVShader;
+    static std::shared_ptr<Shader> s_scrPShader;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_scrPipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_scrRootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_scrDescriptorHeap;

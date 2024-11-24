@@ -198,8 +198,17 @@ void RenderContext::initialize()
         psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
         psoDesc.InputLayout.NumElements = inputLayout.size();
         // shader
-        rc->m_shader = Shader::compile(program.vsCode, "vsMain", program.psCode, "psMain");
-        rc->m_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+        char vsName[16];
+        ::memset(vsName, '\0', 16);
+        ::sprintf(vsName, "RC[%d]_VS", i);
+        rc->m_vShader = Shader::compile("vs_5_0", "vsMain", program.vsCode, vsName);
+        rc->m_vShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
+
+        char psName[16];
+        ::memset(psName, '\0', 16);
+        ::sprintf(psName, "RC[%d]_PS", i);
+        rc->m_pShader = Shader::compile("ps_5_0", "psMain", program.psCode, psName);
+        rc->m_pShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
         psoDesc.RasterizerState.MultisampleEnable = false;

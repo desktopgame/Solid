@@ -10,7 +10,8 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 
-std::shared_ptr<Shader> BloomEffect::s_filterShader;
+std::shared_ptr<Shader> BloomEffect::s_filterVShader;
+std::shared_ptr<Shader> BloomEffect::s_filterPShader;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_filterPipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_filterRootSignature;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_filterDescriptorHeap;
@@ -18,7 +19,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_filterVertexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_filterIndexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_filterConstantBuffer;
 
-std::shared_ptr<Shader> BloomEffect::s_blur1Shader;
+std::shared_ptr<Shader> BloomEffect::s_blur1VShader;
+std::shared_ptr<Shader> BloomEffect::s_blur1PShader;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_blur1PipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_blur1RootSignature;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_blur1DescriptorHeap;
@@ -26,7 +28,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur1VertexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur1IndexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur1ConstantBuffer;
 
-std::shared_ptr<Shader> BloomEffect::s_blur2Shader;
+std::shared_ptr<Shader> BloomEffect::s_blur2VShader;
+std::shared_ptr<Shader> BloomEffect::s_blur2PShader;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_blur2PipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_blur2RootSignature;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_blur2DescriptorHeap;
@@ -34,7 +37,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur2VertexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur2IndexBuffer;
 Microsoft::WRL::ComPtr<ID3D12Resource> BloomEffect::s_blur2ConstantBuffer;
 
-std::shared_ptr<Shader> BloomEffect::s_mixShader;
+std::shared_ptr<Shader> BloomEffect::s_mixVShader;
+std::shared_ptr<Shader> BloomEffect::s_mixPShader;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> BloomEffect::s_mixPipelineState;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> BloomEffect::s_mixRootSignature;
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> BloomEffect::s_mixDescriptorHeap;
@@ -181,7 +185,7 @@ void BloomEffect::initFilter(
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
-    s_filterShader = Shader::compile(Utils::String::interpolate(std::string(R"(
+    s_filterVShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -192,9 +196,9 @@ void BloomEffect::initFilter(
             output.svpos = float4(pos, 0, 1);
             output.texCoord = texCoord;
             return output;
-        })"),
-                                         shaderKeywords),
-        "vsMain", R"(
+        })",
+        "BloomFilter_VS");
+    s_filterPShader = Shader::compile("ps_5_0", "psMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -215,8 +219,9 @@ void BloomEffect::initFilter(
                 return float4(0, 0, 0, 1);
             }
         })",
-        "psMain");
-    s_filterShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+        "BloomFilter_PS");
+    s_filterVShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
+    s_filterPShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
@@ -420,7 +425,7 @@ void BloomEffect::initBlur1(
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
-    s_blur1Shader = Shader::compile(Utils::String::interpolate(std::string(R"(
+    s_blur1VShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -431,9 +436,9 @@ void BloomEffect::initBlur1(
             output.svpos = float4(pos, 0, 1);
             output.texCoord = texCoord;
             return output;
-        })"),
-                                        shaderKeywords),
-        "vsMain", R"(
+        })",
+        "BloomBlur1_VS");
+    s_blur1PShader = Shader::compile("ps_5_0", "psMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -455,8 +460,9 @@ void BloomEffect::initBlur1(
             }
             return result;
         })",
-        "psMain");
-    s_blur1Shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+        "BloomBlur1_PS");
+    s_blur1VShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
+    s_blur1PShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
@@ -660,7 +666,7 @@ void BloomEffect::initBlur2(
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
-    s_blur2Shader = Shader::compile(Utils::String::interpolate(std::string(R"(
+    s_blur2VShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -671,9 +677,9 @@ void BloomEffect::initBlur2(
             output.svpos = float4(pos, 0, 1);
             output.texCoord = texCoord;
             return output;
-        })"),
-                                        shaderKeywords),
-        "vsMain", R"(
+        })",
+        "BloomBlur2_VS");
+    s_blur2PShader = Shader::compile("ps_5_0", "psMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -695,8 +701,9 @@ void BloomEffect::initBlur2(
             }
             return result;
         })",
-        "psMain");
-    s_blur2Shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+        "BloomBlur2_PS");
+    s_blur2VShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
+    s_blur2PShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
@@ -900,7 +907,7 @@ void BloomEffect::initMix(
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
-    s_mixShader = Shader::compile(Utils::String::interpolate(std::string(R"(
+    s_mixVShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -911,9 +918,9 @@ void BloomEffect::initMix(
             output.svpos = float4(pos, 0, 1);
             output.texCoord = texCoord;
             return output;
-        })"),
-                                      shaderKeywords),
-        "vsMain", R"(
+        })",
+        "BloomMix_VS");
+    s_mixPShader = Shader::compile("ps_5_0", "psMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -932,8 +939,9 @@ void BloomEffect::initMix(
             col = float4(col.rgb / (1.0 + col.rgb), 1.0);
             return col;
         })",
-        "psMain");
-    s_mixShader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+        "BloomMix_PS");
+    s_mixVShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
+    s_mixPShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;

@@ -9,7 +9,8 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 
-std::shared_ptr<Shader> GlobalLight::s_shader;
+std::shared_ptr<Shader> GlobalLight::s_vShader;
+std::shared_ptr<Shader> GlobalLight::s_pShader;
 bool GlobalLight::s_enabled;
 Math::Vector3 GlobalLight::s_dir;
 GlobalLight::Constant GlobalLight::s_constantData;
@@ -89,7 +90,7 @@ void GlobalLight::initialize(
     psoDesc.InputLayout.NumElements = inputLayout.size();
     // shader
     std::unordered_map<std::string, std::string> shaderKeywords;
-    s_shader = Shader::compile(Utils::String::interpolate(std::string(R"(
+    s_vShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -100,9 +101,9 @@ void GlobalLight::initialize(
             output.svpos = float4(pos, 0, 1);
             output.texCoord = texCoord;
             return output;
-        })"),
-                                   shaderKeywords),
-        "vsMain", R"(
+        })",
+        "GlobalLight_VS");
+    s_pShader = Shader::compile("ps_5_0", "psMain", R"(
         struct Output {
             float4 svpos : SV_POSITION;
             float2 texCoord : TEXCOORD;
@@ -130,8 +131,9 @@ void GlobalLight::initialize(
 
             return float4(colorCol.xyz * bright, colorCol.w);
         })",
-        "psMain");
-    s_shader->getD3D12_SHADER_BYTECODE(psoDesc.VS, psoDesc.PS);
+        "GlobalLight_PS");
+    s_vShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
+    s_pShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
     // vertex buffer and index buffer
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
@@ -390,7 +392,8 @@ void GlobalLight::initialize(
 
 void GlobalLight::destroy()
 {
-    s_shader = nullptr;
+    s_vShader = nullptr;
+    s_pShader = nullptr;
     s_pipelineState = nullptr;
     s_rootSignature = nullptr;
     s_descriptorHeap = nullptr;
