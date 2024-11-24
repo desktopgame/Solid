@@ -21,6 +21,8 @@ static D3D_PRIMITIVE_TOPOLOGY convPrimitiveTopology(Reflect::PrimitiveType primi
     switch (primitiveType) {
     case Reflect::PrimitiveType::Triangles:
         return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    case Reflect::PrimitiveType::Lines:
+        return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
     case Reflect::PrimitiveType::LineStrip:
         return D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
     }
@@ -34,6 +36,7 @@ static D3D12_PRIMITIVE_TOPOLOGY_TYPE convPrimitiveTopologyType(Reflect::Primitiv
     switch (primitiveType) {
     case Reflect::PrimitiveType::Triangles:
         return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    case Reflect::PrimitiveType::Lines:
     case Reflect::PrimitiveType::LineStrip:
         return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
     }

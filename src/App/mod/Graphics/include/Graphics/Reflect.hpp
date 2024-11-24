@@ -22,6 +22,7 @@ enum class InstanceBufferType {
 enum class PrimitiveType {
     Polygon,
     Triangles,
+    Lines,
     LineStrip,
 };
 
