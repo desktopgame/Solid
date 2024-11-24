@@ -24,6 +24,8 @@ public:
 #endif
 
 private:
+    BloomEffect() = delete;
+
     static std::shared_ptr<Shader> s_filterShader;
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_filterPipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_filterRootSignature;
