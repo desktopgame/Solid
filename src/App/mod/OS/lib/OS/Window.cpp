@@ -49,33 +49,7 @@ void Window::hide()
 std::shared_ptr<Window> Window::create(int32_t width, int32_t height, const std::function<LRESULT(HWND, UINT, WPARAM, LPARAM)>& imguiCallback)
 {
     auto window = std::shared_ptr<Window>(new Window());
-    // create HWND
-    WNDCLASSEX w = {};
-    w.cbSize = sizeof(WNDCLASSEX);
-    w.lpfnWndProc = (WNDPROC)WindowProcedure;
-    w.lpszClassName = _T("DX12");
-    w.hInstance = GetModuleHandle(nullptr);
-    RegisterClassEx(&w);
-    window->m_class = w;
-
-    RECT wrc = { 0, 0, width, height };
-    AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
-    HWND hwnd = CreateWindow(
-        w.lpszClassName,
-        _T("DX12"),
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        wrc.right - wrc.left,
-        wrc.bottom - wrc.top,
-        nullptr,
-        nullptr,
-        w.hInstance,
-        nullptr);
-    window->m_hwnd = hwnd;
-    window->m_imguiCallback = imguiCallback;
-    SetProp(hwnd, _T("UserPtr"), window.get());
+    window->init(width, height, imguiCallback);
     return window;
 }
 
@@ -121,5 +95,35 @@ Window::Window()
     : m_hwnd(nullptr)
     , m_class()
 {
+}
+
+void Window::init(int32_t width, int32_t height, const std::function<LRESULT(HWND, UINT, WPARAM, LPARAM)>& imguiCallback)
+{
+    WNDCLASSEX w = {};
+    w.cbSize = sizeof(WNDCLASSEX);
+    w.lpfnWndProc = (WNDPROC)WindowProcedure;
+    w.lpszClassName = _T("DX12");
+    w.hInstance = GetModuleHandle(nullptr);
+    RegisterClassEx(&w);
+    m_class = w;
+
+    RECT wrc = { 0, 0, width, height };
+    AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
+
+    HWND hwnd = CreateWindow(
+        w.lpszClassName,
+        _T("DX12"),
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        wrc.right - wrc.left,
+        wrc.bottom - wrc.top,
+        nullptr,
+        nullptr,
+        w.hInstance,
+        nullptr);
+    m_hwnd = hwnd;
+    m_imguiCallback = imguiCallback;
+    SetProp(hwnd, _T("UserPtr"), this);
 }
 }

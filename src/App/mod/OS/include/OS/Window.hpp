@@ -26,6 +26,7 @@ public:
 
 private:
     Window();
+    void init(int32_t width, int32_t height, const std::function<LRESULT(HWND, UINT, WPARAM, LPARAM)>& imguiCallback);
 
     HWND m_hwnd;
     WNDCLASSEX m_class;
