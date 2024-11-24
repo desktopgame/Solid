@@ -17,6 +17,8 @@ namespace Lib::Graphics::Metadata {
         bool isWireframe;
         const char* vsCode;
         std::vector<Uniform> vsUniforms;
+        const char* gsCode;
+        std::vector<Uniform> gsUniforms;
         const char* psCode;
         std::vector<Uniform> psUniforms;
     };
@@ -71,6 +73,11 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
             },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
             // ps
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -122,6 +129,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
             },
             // ps
             "struct Output {\n"
@@ -185,6 +197,11 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
             },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
             // ps
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -244,6 +261,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
             },
             // ps
             "struct Output {\n"
@@ -313,6 +335,11 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
             },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
             // ps
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -380,6 +407,11 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
             },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
             // ps
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -442,6 +474,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
             },
             // ps
             "struct Output {\n"
@@ -511,6 +548,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
             },
             // ps
             "struct Output {\n"
@@ -638,6 +680,11 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UTileTransform), false },
                 Uniform { sizeof(Reflect::UTilePallet), false },
                 Uniform { sizeof(Reflect::UVector3), false },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
             },
             // ps
             "struct Output {\n"

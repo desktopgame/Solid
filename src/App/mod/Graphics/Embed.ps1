@@ -33,6 +33,8 @@ Write-Output "        Reflect::PrimitiveType primitiveType;"
 Write-Output "        bool isWireframe;"
 Write-Output "        const char* vsCode;"
 Write-Output "        std::vector<Uniform> vsUniforms;"
+Write-Output "        const char* gsCode;"
+Write-Output "        std::vector<Uniform> gsUniforms;"
 Write-Output "        const char* psCode;"
 Write-Output "        std::vector<Uniform> psUniforms;"
 Write-Output "    };"
@@ -99,6 +101,28 @@ foreach ($properties in $propertiesList) {
         Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("VS.Uniform[$i]")))
     }
     Write-Output "            },"
+
+    if ((GetOrThrow $properties "UseGeometryShader") -eq "true") {
+        Write-Output "            // gs"
+        $gsCode = (GetOrThrow $properties "GS.Code")
+        foreach ($gsLine in Get-Content $("./embed/$gsCode") -Encoding UTF8) {
+            Write-Output ('            "{0}\n"' -f $gsLine)
+        }
+        Write-Output ('            ,')
+        Write-Output "            // gsUniforms"
+        Write-Output "            std::vector<Uniform> {"
+        $gsUniformCount = [int](GetOrThrow $properties "GS.UniformCount")
+        for ($i = 0; $i -lt $gsUniformCOunt; $i++) {
+            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("GS.Uniform[$i]")))
+        }
+        Write-Output "            },"
+    } else {
+        Write-Output "            // gs"
+        Write-Output ('            nullptr,')
+        Write-Output "            // gsUniforms"
+        Write-Output "            std::vector<Uniform> {"
+        Write-Output "            },"
+    }
 
     Write-Output "            // ps"
     $psCode = (GetOrThrow $properties "PS.Code")
