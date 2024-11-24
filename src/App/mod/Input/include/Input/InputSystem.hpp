@@ -1,11 +1,8 @@
 #pragma once
+#include <Windows.h>
 #include <array>
 #include <memory>
 #include <mutex>
-
-#if SOLID_ENABLE_INTERNAL
-#include <Windows.h>
-#endif
 
 namespace Lib::OS {
 class Window;

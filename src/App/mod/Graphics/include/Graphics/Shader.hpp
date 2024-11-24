@@ -1,13 +1,10 @@
 #pragma once
-#include <memory>
-#include <string>
-
-#if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
+#include <memory>
+#include <string>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::Graphics {
 class Shader {
@@ -28,9 +25,7 @@ public:
 private:
     Shader();
 
-#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3DBlob> m_vertexBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> m_pixelBlob;
-#endif
 };
 }

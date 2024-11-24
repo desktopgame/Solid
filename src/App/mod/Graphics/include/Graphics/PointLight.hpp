@@ -1,14 +1,11 @@
 #pragma once
 #include <Math/Matrix.hpp>
 #include <Math/Vector.hpp>
-#include <memory>
-#include <vector>
-
-#if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <memory>
+#include <vector>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::Graphics {
 class Device;
@@ -62,7 +59,6 @@ private:
     static std::vector<Constant2> s_constantVec;
     static int32_t s_count;
 
-#if SOLID_ENABLE_INTERNAL
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
@@ -76,6 +72,5 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_scrVertexBuffer;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_scrIndexBuffer;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_scrConstantBuffer;
-#endif
 };
 }

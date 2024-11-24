@@ -1,14 +1,11 @@
 #pragma once
 #include <Math/Matrix.hpp>
 #include <Math/Vector.hpp>
-#include <memory>
-#include <vector>
-
-#if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <memory>
+#include <vector>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::Graphics {
 class Shader;
@@ -32,7 +29,6 @@ private:
     static std::shared_ptr<Shader> s_shader3;
     static std::shared_ptr<Shader> s_shader4;
 
-#if SOLID_ENABLE_INTERNAL
     static Microsoft::WRL::ComPtr<ID3D12PipelineState> s_pipelineState;
     static Microsoft::WRL::ComPtr<ID3D12RootSignature> s_rootSignature;
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> s_descriptorHeap;
@@ -60,6 +56,5 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_vertexBuffer4;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_indexBuffer4;
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_constantBuffer4;
-#endif
 };
 }

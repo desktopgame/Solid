@@ -1,14 +1,9 @@
 #pragma once
 #include <Graphics/Metadata.hpp>
+#include <d3d12.h>
 #include <memory>
 #include <vector>
-
-#if SOLID_ENABLE_INTERNAL
-#include <d3d12.h>
 #include <wrl/client.h>
-
-class ID3D12GraphicsCommandList;
-#endif
 
 namespace Lib::Graphics {
 class Shader;
@@ -46,7 +41,6 @@ private:
     Metadata::ProgramTable m_entry;
     std::shared_ptr<Shader> m_shader;
 
-#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
 
@@ -59,6 +53,5 @@ private:
         const std::shared_ptr<Buffer>* instanceBuffers,
         int32_t instanceBufferCount,
         int32_t instanceCount);
-#endif
 };
 }

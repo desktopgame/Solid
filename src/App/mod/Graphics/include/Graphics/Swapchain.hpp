@@ -1,13 +1,10 @@
 #pragma once
 #include <Graphics/Device.hpp>
-#include <memory>
-#include <vector>
-
-#if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <memory>
+#include <vector>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::OS {
 class Window;
@@ -43,13 +40,11 @@ private:
     uint64_t m_fenceVal;
     bool m_renderGui;
 
-#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
     Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapchain;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_renderTargetViewHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_renderTargetViews;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_imguiDescriptorHeap;
-#endif
 };
 }

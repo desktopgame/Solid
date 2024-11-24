@@ -1,12 +1,9 @@
 #pragma once
 #include <any>
+#include <d3d12.h>
 #include <memory>
 #include <string>
-
-#if SOLID_ENABLE_INTERNAL
-#include <d3d12.h>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::Graphics {
 class Texture {
@@ -37,8 +34,6 @@ private:
     int32_t m_height;
     Format m_format;
 
-#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12Resource> m_resource;
-#endif
 };
 }

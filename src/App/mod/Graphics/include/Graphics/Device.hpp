@@ -1,12 +1,9 @@
 #pragma once
 #include <Graphics/Engine.hpp>
-#include <memory>
-
-#if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <memory>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::OS {
 class Window;
@@ -36,11 +33,9 @@ private:
     std::shared_ptr<Swapchain> m_swapchain;
     std::shared_ptr<Surface> m_surface;
 
-#if SOLID_ENABLE_INTERNAL
     HWND m_hwnd;
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
     Microsoft::WRL::ComPtr<ID3D12InfoQueue> m_infoQueue;
-#endif
 };
 }

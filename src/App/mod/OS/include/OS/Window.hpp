@@ -1,10 +1,7 @@
 #pragma once
-#include <memory>
-
-#if SOLID_ENABLE_INTERNAL
 #include <Windows.h>
 #include <functional>
-#endif
+#include <memory>
 
 namespace Lib::OS {
 class Window {
@@ -30,11 +27,9 @@ public:
 private:
     Window();
 
-#if SOLID_ENABLE_INTERNAL
     HWND m_hwnd;
     WNDCLASSEX m_class;
     std::function<LRESULT(HWND, UINT, WPARAM, LPARAM)> m_imguiCallback;
     std::function<void(HWND, UINT, WPARAM, LPARAM)> m_userCallback;
-#endif
 };
 }

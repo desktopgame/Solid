@@ -1,14 +1,9 @@
 #pragma once
 #include <Graphics/Metadata.hpp>
+#include <d3d12.h>
 #include <memory>
 #include <vector>
-
-#if SOLID_ENABLE_INTERNAL
-#include <d3d12.h>
 #include <wrl/client.h>
-
-class ID3D12GraphicsCommandList;
-#endif
 
 namespace Lib::Graphics {
 class Texture;
@@ -30,10 +25,8 @@ private:
 
     Metadata::ProgramTable m_entry;
 
-#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_vsResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_psResources;
-#endif
 };
 }

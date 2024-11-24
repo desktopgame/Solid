@@ -1,14 +1,11 @@
 #pragma once
 #include <Graphics/Device.hpp>
 #include <Math/Vector.hpp>
-#include <memory>
-#include <vector>
-
-#if SOLID_ENABLE_INTERNAL
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <memory>
+#include <vector>
 #include <wrl/client.h>
-#endif
 
 namespace Lib::Graphics {
 class Device;
@@ -65,7 +62,6 @@ private:
 
     std::shared_ptr<Swapchain> m_swapchain;
 
-#if SOLID_ENABLE_INTERNAL
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
     Microsoft::WRL::ComPtr<ID3D12InfoQueue> m_infoQueue;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
@@ -77,6 +73,5 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
-#endif
 };
 }

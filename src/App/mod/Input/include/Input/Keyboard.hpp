@@ -1,11 +1,9 @@
 #pragma once
 #include <Input/ButtonState.hpp>
+#include <Windows.h>
 #include <array>
 #include <memory>
 
-#if SOLID_ENABLE_INTERNAL
-#include <Windows.h>
-#endif
 
 namespace Lib::Input {
 enum class KeyCode : int32_t {
