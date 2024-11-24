@@ -6,6 +6,7 @@ struct GSInput {
 
 struct GSOutput {
     float4 position : SV_POSITION;
+    float4 wpos : POSITION;
     float4 color : COLOR;
 };
 
@@ -41,15 +42,19 @@ void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream)
         GSOutput v0, v1, v2, v3;
 
         v0.position = mul(vpMat, float4(worldP0 + offset, 1.0));
+        v0.wpos = float4(worldP0 + offset, 1.0);
         v0.color = input[i].color;
 
         v1.position = mul(vpMat, float4(worldP1 + offset, 1.0));
+        v1.wpos = float4(worldP1 + offset, 1.0);
         v1.color = input[nextIndex].color;
 
         v2.position = mul(vpMat, float4(worldP0 - offset, 1.0));
+        v2.wpos = float4(worldP0 - offset, 1.0);
         v2.color = input[i].color;
 
         v3.position = mul(vpMat, float4(worldP1 - offset, 1.0));
+        v3.wpos = float4(worldP1 - offset, 1.0);
         v3.color = input[nextIndex].color;
 
         triStream.Append(v0);

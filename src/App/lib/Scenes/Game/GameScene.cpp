@@ -242,10 +242,10 @@ void GameScene::onDraw3D()
     PointLight::enable();
     PointLight::setCount(3);
     PointLight::set(0, Vector3({ 120, 10, 120 }), 10, 20);
-    PointLight::set(1, Vector3({ 90, 10, 90 }), 10, 20);
+    PointLight::set(1, Vector3({ 90, 20, 90 }), 20, 30);
     PointLight::set(2, Vector3({ 60, 10, 60 }), 10, 20);
 
-    m_renderer->drawBoxLine(Vector3({ 90, 20, 90 }), Vector3({ 10, 10, 10 }), Quaternion(), Vector4({ 1, 0, 0, 1 }), 1.0f);
+    m_renderer->drawBoxLine(Vector3({ 90, 20, 90 }), Vector3({ 10, 10, 10 }), Quaternion(), Vector4({ 1, 0, 0, 1 }), 0.1f);
 
     auto rc = RenderContext::get(Metadata::ProgramTable::TileInstance3D);
     auto ub = UniformPool::rent(Metadata::ProgramTable::TileInstance3D);

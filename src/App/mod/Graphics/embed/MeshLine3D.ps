@@ -1,5 +1,6 @@
 struct Output {
     float4 svpos : SV_POSITION;
+    float4 wpos : POSITION;
     float4 color : COLOR;
 };
 struct PSOutput
@@ -11,6 +12,7 @@ struct PSOutput
 
 PSOutput psMain(Output input) : SV_TARGET {
     PSOutput output;
+    output.outPosition = input.wpos;
     output.outColor = input.color;
     return output;
 }
