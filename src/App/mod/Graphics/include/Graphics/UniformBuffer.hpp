@@ -10,6 +10,7 @@ class Texture;
 class UniformBuffer {
 public:
     void setVS(int32_t index, const void* data);
+    void setGS(int32_t index, const void* data);
     void setPS(int32_t index, const void* data);
     void setPS(int32_t index, const std::shared_ptr<Texture>& texture);
 
@@ -28,6 +29,7 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_vsResources;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gsResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_psResources;
 };
 }

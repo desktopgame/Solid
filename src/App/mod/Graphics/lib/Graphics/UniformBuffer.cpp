@@ -17,6 +17,19 @@ void UniformBuffer::setVS(int32_t index, const void* data)
     ::memcpy(outData, data, Metadata::k_programs.at(m_entry).vsUniforms.at(index).size);
     resource->Unmap(0, nullptr);
 }
+
+void UniformBuffer::setGS(int32_t index, const void* data)
+{
+    if (index >= Metadata::k_programs.at(m_entry).gsUniforms.size()) {
+        throw std::logic_error("uniform is out of range.");
+    }
+    void* outData;
+    ComPtr<ID3D12Resource> resource = m_gsResources.at(index);
+    resource->Map(0, nullptr, (void**)&outData);
+    ::memcpy(outData, data, Metadata::k_programs.at(m_entry).gsUniforms.at(index).size);
+    resource->Unmap(0, nullptr);
+}
+
 void UniformBuffer::setPS(int32_t index, const void* data)
 {
     if (index >= Metadata::k_programs.at(m_entry).psUniforms.size()) {
@@ -33,6 +46,7 @@ void UniformBuffer::setPS(int32_t index, const void* data)
         resource->Unmap(0, nullptr);
     }
 }
+
 void UniformBuffer::setPS(int32_t index, const std::shared_ptr<Texture>& texture)
 {
     if (index >= Metadata::k_programs.at(m_entry).psUniforms.size()) {
@@ -89,7 +103,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
-    descHeapDesc.NumDescriptors = program.vsUniforms.size() + program.psUniforms.size();
+    descHeapDesc.NumDescriptors = program.vsUniforms.size() + program.gsUniforms.size() + program.psUniforms.size();
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
@@ -128,6 +142,41 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
 
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
         cbvColorDesc.BufferLocation = m_vsResources.back()->GetGPUVirtualAddress();
+        cbvColorDesc.SizeInBytes = u.size;
+        device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+        heapHandle.ptr += unitSize;
+    }
+    for (int32_t i = 0; i < program.gsUniforms.size(); i++) {
+        Metadata::Uniform u = program.gsUniforms.at(i);
+
+        D3D12_HEAP_PROPERTIES cbHeapProps = {};
+        cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+        cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+        cbHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+        D3D12_RESOURCE_DESC cbResDesc = {};
+        cbResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+        cbResDesc.Width = u.size;
+        cbResDesc.Height = 1;
+        cbResDesc.DepthOrArraySize = 1;
+        cbResDesc.MipLevels = 1;
+        cbResDesc.Format = DXGI_FORMAT_UNKNOWN;
+        cbResDesc.SampleDesc.Count = 1;
+        cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+        cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+        m_gsResources.emplace_back(nullptr);
+        if (FAILED(device->CreateCommittedResource(
+                &cbHeapProps,
+                D3D12_HEAP_FLAG_NONE,
+                &cbResDesc,
+                D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&m_gsResources.back())))) {
+            throw std::runtime_error("failed CreateCommittedResource()");
+        }
+
+        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
+        cbvColorDesc.BufferLocation = m_gsResources.back()->GetGPUVirtualAddress();
         cbvColorDesc.SizeInBytes = u.size;
         device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
         heapHandle.ptr += unitSize;
