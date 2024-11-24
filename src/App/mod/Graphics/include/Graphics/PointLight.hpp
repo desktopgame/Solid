@@ -49,6 +49,12 @@ private:
     static_assert(sizeof(Constant2) == 256);
 
     PointLight() = delete;
+    static void initStencil(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures);
+    static void initLight(
+        const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+        const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures);
     static void generateSphere(int32_t radius, int32_t latitudes, int32_t longitudes, std::vector<Math::Vector3>& vertices, std::vector<uint32_t>& indices);
 
     static int32_t s_vertexLength;
