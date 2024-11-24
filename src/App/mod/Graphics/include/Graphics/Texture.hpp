@@ -29,6 +29,7 @@ public:
 
 private:
     Texture();
+    void init(int32_t width, int32_t height, Format format, const uint8_t* data);
 
     int32_t m_width;
     int32_t m_height;
