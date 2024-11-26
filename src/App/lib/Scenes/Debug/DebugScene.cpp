@@ -94,13 +94,6 @@ void DebugScene::onGui()
     ImGui::DragFloat("RotationSpeed", &m_cameraRotateSpeed, 0.01f);
     ImGui::End();
 
-    ImGui::Begin("Cursor");
-    auto pos = InputSystem::getInstance()->getMouse()->getPosition();
-    auto delta = InputSystem::getInstance()->getMouse()->getDelta();
-    ImGui::LabelText("Pos", "%d, %d", pos.x(), pos.y());
-    ImGui::LabelText("Delta", "%d, %d", delta.x(), delta.y());
-    ImGui::End();
-
     ImGui::Begin("Menu");
     if (ImGui::Button("Demo")) {
         m_nextScene = "Demo";
