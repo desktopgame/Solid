@@ -41,6 +41,10 @@ void DemoScene::onUpdate()
 void DemoScene::onGui()
 {
     ImGui::Begin("Demo");
+    ImGui::SeparatorText("General");
+    ImGui::Checkbox("Draw2D", &m_isDraw2D);
+    ImGui::Checkbox("Draw3D", &m_isDraw3D);
+    ImGui::SeparatorText("Light");
     ImGui::DragFloat3("GlobalLightDir", m_globalLightDir.data(), 0.01f);
     for (int32_t i = 0; i < m_pointLightPositions.size(); i++) {
         char buf[32];
@@ -51,6 +55,7 @@ void DemoScene::onGui()
     if (ImGui::Button("Add PointLight")) {
         m_pointLightPositions.push_back(m_pointLightPos);
     }
+    ImGui::SeparatorText("Scene Transition");
     if (ImGui::Button("Exit")) {
         m_sceneCompleted = true;
     }
