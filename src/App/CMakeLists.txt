@@ -32,6 +32,7 @@ add_subdirectory(./mod/Utils)
 add_executable(
     App
     lib/main.cpp
+    lib/Common/FpsController.cpp
     lib/Scenes/Debug/DebugScene.cpp
     lib/Scenes/Demo/DemoScene.cpp
     lib/Scenes/Game/GameScene.cpp
