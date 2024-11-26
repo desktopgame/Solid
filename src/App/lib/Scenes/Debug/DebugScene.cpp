@@ -95,6 +95,7 @@ void DebugScene::onGui()
     ImGui::End();
 
     ImGui::Begin("Menu");
+    ImGui::SeparatorText("Scene Transition");
     if (ImGui::Button("Demo")) {
         m_nextScene = "Demo";
     } else if (ImGui::Button("Game")) {
