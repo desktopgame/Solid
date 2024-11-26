@@ -107,30 +107,11 @@ void DebugScene::onDraw3D()
     Camera::position(m_cameraPos);
     Camera::lookAt(m_cameraLookAt);
 
-    GlobalLight::enable();
-    GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
-
-    PointLight::enable();
-    PointLight::set(0, Vector3({ 8, 0, 6 }), 1, 5);
-    PointLight::set(1, Vector3({ -8, 0, 6 }), 1, 5);
-    PointLight::set(2, Vector3({ 20, 0, 6 }), 1, 5);
-    PointLight::set(3, Vector3({ -20, 0, 6 }), 1, 5);
-    PointLight::setCount(4);
-
-    Quaternion q;
-    m_renderer->drawPlane(Vector3({ 10, 0, 10 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), false);
-    m_renderer->drawPlane(Vector3({ 10, 0, 20 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), true);
-    m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), false);
-    m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
+    m_renderer->drawBox(Vector3({ 0, 0, 0 }), Vector3({ 5, 5, 5 }), Quaternion(), Vector4({ 1, 1, 1, 1 }), false);
 }
 
 void DebugScene::onDraw2D()
 {
-    m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 50, 50 }), Vector4({ 1, 1, 1, 1 }));
-    m_renderer->drawRect(Vector2({ 100, 100 }), Vector2({ 50, 50 }), 45.0f, Vector4({ 1, 0, 0, 1 }));
-    m_renderer->textFont(FontFactory::getInstance()->load("./assets/NotoSansJP-Regular.ttf"));
-    m_renderer->textFontSize(20);
-    m_renderer->drawText(Vector2({ 200, 200 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"こんにちわ", Vector4({ 1, 1, 1, 1 }));
 }
 
 bool DebugScene::tryTransition(std::string& outNextScene)
