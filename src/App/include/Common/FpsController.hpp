@@ -20,12 +20,12 @@ public:
     float getRotateSpeed() const;
 
 private:
-    Vector3 m_cameraPos;
-    Vector3 m_cameraLookAt;
-    float m_cameraAngleX;
-    float m_cameraAngleY;
-    float m_cameraMoveSpeed;
-    float m_cameraRotateSpeed;
+    Vector3 m_position;
+    Vector3 m_lookAt;
+    float m_angleX;
+    float m_angleY;
+    float m_moveSpeed;
+    float m_rotateSpeed;
     bool m_cursorVisible;
 };
 }
