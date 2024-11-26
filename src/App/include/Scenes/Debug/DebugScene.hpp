@@ -1,4 +1,5 @@
 #pragma once
+#include <Common/FpsController.hpp>
 #include <library.hpp>
 #include <memory>
 #include <optional>
@@ -20,13 +21,7 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
-    Vector3 m_cameraPos;
-    Vector3 m_cameraLookAt;
-    float m_cameraAngleX;
-    float m_cameraAngleY;
-    float m_cameraMoveSpeed;
-    float m_cameraRotateSpeed;
-    bool m_cursorVisible;
+    Common::FpsController m_fpsController;
     std::string m_nextScene;
 
     std::shared_ptr<Renderer> m_renderer;

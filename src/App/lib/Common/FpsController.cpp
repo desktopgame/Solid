@@ -2,19 +2,18 @@
 
 namespace App::Common {
 FpsController::FpsController()
-    : m_position({0, 0, -3 })
-    , m_lookAt({0, 0, 0 })
+    : m_position({ 0, 0, -3 })
+    , m_lookAt({ 0, 0, 0 })
     , m_angleX()
     , m_angleY()
-    , m_cameraMoveSpeed(0.08f)
-    , m_cameraRotateSpeed(0.8f)
-    , m_cursorVisible(true)
+    , m_moveSpeed(0.08f)
+    , m_rotateSpeed(0.8f)
 {
 }
 
 void FpsController::update()
 {
-    auto rotation = Quaternion::angleAxis(m_angleY, Vector3({0, 1, 0 })) * Quaternion::angleAxis(-m_angleX, Vector3({1, 0, 0 }));
+    auto rotation = Quaternion::angleAxis(m_angleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_angleX, Vector3({ 1, 0, 0 }));
     auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
     auto right = Quaternion::transform(rotation * Quaternion::angleAxis(90.0f, Vector3({ 0, 1, 0 })), Vector3({ 0, 0, 1 }));
 
@@ -22,18 +21,18 @@ void FpsController::update()
     auto mouse = InputSystem::getInstance()->getMouse();
     if (Cursor::isLocked()) {
         if (keyboard->isPressed(KeyCode::W)) {
-            m_position += forward * Vector3({1, 0, 1 }) * m_moveSpeed;
+            m_position += forward * Vector3({ 1, 0, 1 }) * m_moveSpeed;
         } else if (keyboard->isPressed(KeyCode::S)) {
-            m_position -= forward * Vector3({1, 0, 1 }) * m_moveSpeed;
+            m_position -= forward * Vector3({ 1, 0, 1 }) * m_moveSpeed;
         } else if (keyboard->isPressed(KeyCode::D)) {
-            m_position += right * Vector3({1, 0, 1 }) * m_moveSpeed;
+            m_position += right * Vector3({ 1, 0, 1 }) * m_moveSpeed;
         } else if (keyboard->isPressed(KeyCode::A)) {
-            m_position -= right * Vector3({1, 0, 1 }) * m_moveSpeed;
+            m_position -= right * Vector3({ 1, 0, 1 }) * m_moveSpeed;
         }
         if (keyboard->isPressed(KeyCode::Space)) {
-            m_position += Vector3({0, 1, 0 }) * m_moveSpeed;
+            m_position += Vector3({ 0, 1, 0 }) * m_moveSpeed;
         } else if (keyboard->isPressed(KeyCode::Shift)) {
-            m_position -= Vector3({0, 1, 0 }) * m_moveSpeed;
+            m_position -= Vector3({ 0, 1, 0 }) * m_moveSpeed;
         }
         m_lookAt = m_position + forward;
 
@@ -50,25 +49,43 @@ void FpsController::update()
     }
 
     if (keyboard->isTrigger(KeyCode::E)) {
-        if (m_cursorVisible) {
-            Cursor::hide();
-            Cursor::lock(Engine::getInstance()->getWindow());
+        if (Cursor::isVisible()) {
+            lockCursor();
         } else {
-            Cursor::show();
-            Cursor::unlock();
+            unlockCursor();
         }
-        m_cursorVisible = !m_cursorVisible;
     }
 }
 
+void FpsController::lockCursor()
+{
+    Cursor::hide();
+    Cursor::lock(Engine::getInstance()->getWindow());
+}
+void FpsController::unlockCursor()
+{
+    Cursor::show();
+    Cursor::unlock();
+}
+
+void FpsController::setPosition(const Vector3& position) { m_position = position; }
 Vector3 FpsController::getPosition() const { return m_position; }
+
+void FpsController::setAngleX(float angleX) { m_angleX = angleX; }
+float FpsController::getAngleX() const { return m_angleX; }
+
+void FpsController::setAngleY(float angleY) { m_angleY = angleY; }
+float FpsController::getAngleY() const { return m_angleY; }
+
 Vector3 FpsController::getLookAt() const { return m_lookAt; }
-Quaternion FpsController::getForward() const { return Quaternion::angleAxis(m_angleY, Vector3({0, 1, 0 })) * Quaternion::angleAxis(-m_angleX, Vector3({1, 0, 0 })); }
+Quaternion FpsController::getForward() const { return Quaternion::angleAxis(m_angleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_angleX, Vector3({ 1, 0, 0 })); }
 Vector3 FpsController::getForwardDir() const { return Quaternion::transform(getForward(), Vector3({ 0, 0, 1 })); }
 
 void FpsController::setMoveSpeed(float moveSpeed) { m_moveSpeed = moveSpeed; }
 float FpsController::getMoveSpeed() const { return m_moveSpeed; }
+float& FpsController::getMoveSpeed() { return m_moveSpeed; }
 
 void FpsController::setRotateSpeed(float rotateSpeed) { m_rotateSpeed = rotateSpeed; }
 float FpsController::getRotateSpeed() const { return m_rotateSpeed; }
+float& FpsController::getRotateSpeed() { return m_rotateSpeed; }
 }
