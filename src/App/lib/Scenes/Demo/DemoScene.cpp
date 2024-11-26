@@ -85,16 +85,7 @@ void DemoScene::onUpdate()
 
 void DemoScene::onGui()
 {
-    ImGui::Begin("Camera");
-    ImGui::DragFloat3("Pos", m_cameraPos.data());
-    ImGui::DragFloat3("LookAt", m_cameraLookAt.data());
-    ImGui::DragFloat("AngleX", &m_cameraAngleX);
-    ImGui::DragFloat("AngleY", &m_cameraAngleY);
-    ImGui::DragFloat("MoveSpeed", &m_cameraMoveSpeed, 0.01f);
-    ImGui::DragFloat("RotationSpeed", &m_cameraRotateSpeed, 0.01f);
-    ImGui::End();
-
-    ImGui::Begin("Menu");
+    ImGui::Begin("Demo");
     if (ImGui::Button("Exit")) {
         m_editCompleted = true;
     }
@@ -124,11 +115,20 @@ void DemoScene::onDraw3D()
 
 void DemoScene::onDraw2D()
 {
-    m_renderer->drawCircle(Vector2({ 0, 0 }), Vector2({ 50, 50 }), Vector4({ 1, 1, 1, 1 }));
-    m_renderer->drawRect(Vector2({ 100, 100 }), Vector2({ 50, 50 }), 45.0f, Vector4({ 1, 0, 0, 1 }));
+    Vector2 backgroundCenter = Vector2({ -Screen::getWidth() / 4.0f, Screen::getHeight() / 4.0f });
+    Vector2 backgroundSize = (Vector2)Screen::getSize() / 2.0f;
+    m_renderer->drawRect(
+        backgroundCenter,
+        backgroundSize,
+        0.0f,
+        Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
+
+    m_renderer->drawCircle(backgroundCenter + Vector2({ -50, 0 }), Vector2({ 50, 50 }), Vector4({ 1, 0, 0, 1 }));
+    m_renderer->drawRect(backgroundCenter + Vector2({ 50, 0 }), Vector2({ 50, 50 }), 45.0f, Vector4({ 0, 1, 0, 1 }));
+
     m_renderer->textFont(FontFactory::getInstance()->load("./assets/NotoSansJP-Regular.ttf"));
     m_renderer->textFontSize(20);
-    m_renderer->drawText(Vector2({ 200, 200 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"こんにちわ", Vector4({ 1, 1, 1, 1 }));
+    m_renderer->drawText(backgroundCenter - Vector2({ 0, 100 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"2D描画のテスト", Vector4({ 0, 0, 0, 1 }));
 }
 
 bool DemoScene::tryTransition(std::string& outNextScene)
