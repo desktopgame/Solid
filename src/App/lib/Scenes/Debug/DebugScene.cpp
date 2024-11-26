@@ -55,6 +55,9 @@ void DebugScene::onDraw3D()
     Camera::position(m_fpsController.getPosition());
     Camera::lookAt(m_fpsController.getLookAt());
 
+    GlobalLight::enable();
+    PointLight::enable();
+    PointLight::setCount(0);
     m_renderer->drawBox(Vector3({ 0, 0, 0 }), Vector3({ 5, 5, 5 }), Quaternion(), Vector4({ 1, 1, 1, 1 }), false);
 }
 
