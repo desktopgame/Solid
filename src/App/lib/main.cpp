@@ -7,6 +7,7 @@
 // App
 #include <Common/Constants.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
+#include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
 using namespace App::Common;
 using namespace App::Scenes;
@@ -26,6 +27,7 @@ static int appMain(int argc, char* argv[])
 
     std::unordered_map<std::string, std::shared_ptr<IScene>> sceneMap;
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
+    sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     SceneManager sceneManager(sceneMap, "Debug");
 
