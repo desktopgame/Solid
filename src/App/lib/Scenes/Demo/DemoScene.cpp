@@ -13,7 +13,7 @@ DemoScene::DemoScene()
     , m_cameraMoveSpeed(0.08f)
     , m_cameraRotateSpeed(0.8f)
     , m_cursorVisible(true)
-    , m_editCompleted()
+    , m_sceneCompleted()
     , m_renderer()
 {
 }
@@ -25,7 +25,7 @@ void DemoScene::onEnter()
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
-    m_editCompleted = false;
+    m_sceneCompleted = false;
 }
 void DemoScene::onExit()
 {
@@ -87,7 +87,7 @@ void DemoScene::onGui()
 {
     ImGui::Begin("Demo");
     if (ImGui::Button("Exit")) {
-        m_editCompleted = true;
+        m_sceneCompleted = true;
     }
     ImGui::End();
 }
@@ -133,10 +133,10 @@ void DemoScene::onDraw2D()
 
 bool DemoScene::tryTransition(std::string& outNextScene)
 {
-    if (m_editCompleted) {
-        outNextScene = "Game";
+    if (m_sceneCompleted) {
+        outNextScene = "Debug";
     }
-    return m_editCompleted;
+    return m_sceneCompleted;
 }
 // private
 }

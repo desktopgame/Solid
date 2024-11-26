@@ -27,7 +27,7 @@ private:
     float m_cameraMoveSpeed;
     float m_cameraRotateSpeed;
     bool m_cursorVisible;
-    bool m_editCompleted;
+    bool m_sceneCompleted;
 
     std::shared_ptr<Renderer> m_renderer;
 };
