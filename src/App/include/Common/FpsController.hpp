@@ -34,7 +34,6 @@ public:
 
 private:
     Vector3 m_position;
-    Vector3 m_lookAt;
     float m_angleX;
     float m_angleY;
     float m_moveSpeed;

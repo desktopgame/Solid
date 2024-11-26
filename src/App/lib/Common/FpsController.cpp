@@ -3,7 +3,6 @@
 namespace App::Common {
 FpsController::FpsController()
     : m_position({ 0, 0, -3 })
-    , m_lookAt({ 0, 0, 0 })
     , m_angleX()
     , m_angleY()
     , m_moveSpeed(0.08f)
@@ -34,7 +33,6 @@ void FpsController::update()
         } else if (keyboard->isPressed(KeyCode::Shift)) {
             m_position -= Vector3({ 0, 1, 0 }) * m_moveSpeed;
         }
-        m_lookAt = m_position + forward;
 
         auto mouseDelta = mouse->getDelta();
         m_angleX -= static_cast<float>(mouseDelta.y()) * m_rotateSpeed;
@@ -77,7 +75,7 @@ float FpsController::getAngleX() const { return m_angleX; }
 void FpsController::setAngleY(float angleY) { m_angleY = angleY; }
 float FpsController::getAngleY() const { return m_angleY; }
 
-Vector3 FpsController::getLookAt() const { return m_lookAt; }
+Vector3 FpsController::getLookAt() const { return m_position + getForwardDir(); }
 Quaternion FpsController::getForward() const { return Quaternion::angleAxis(m_angleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_angleX, Vector3({ 1, 0, 0 })); }
 Vector3 FpsController::getForwardDir() const { return Quaternion::transform(getForward(), Vector3({ 0, 0, 1 })); }
 
