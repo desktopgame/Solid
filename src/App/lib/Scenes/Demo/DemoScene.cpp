@@ -7,6 +7,11 @@ namespace App::Scenes::Demo {
 // public
 DemoScene::DemoScene()
     : m_fpsController()
+    , m_isDraw2D(true)
+    , m_isDraw3D(true)
+    , m_globalLightDir({ 1, 1, 0 })
+    , m_pointLightPos({ 0, 0, 0 })
+    , m_pointLightPositions()
     , m_sceneCompleted()
     , m_renderer()
 {
@@ -20,6 +25,9 @@ void DemoScene::onEnter()
         m_renderer = std::make_shared<Renderer>();
     }
     m_sceneCompleted = false;
+    m_globalLightDir = Vector3({ 1, 1, 0 });
+    m_pointLightPositions.clear();
+    m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
 }
 void DemoScene::onExit()
 {
@@ -33,6 +41,16 @@ void DemoScene::onUpdate()
 void DemoScene::onGui()
 {
     ImGui::Begin("Demo");
+    ImGui::DragFloat3("GlobalLightDir", m_globalLightDir.data(), 0.01f);
+    for (int32_t i = 0; i < m_pointLightPositions.size(); i++) {
+        char buf[32];
+        ::sprintf(buf, "PointLight[%d]", i);
+        ImGui::DragFloat3(buf, m_pointLightPositions.at(i).data(), 0.01f);
+    }
+    ImGui::DragFloat3("Next PointLight", m_pointLightPos.data(), 0.01f);
+    if (ImGui::Button("Add PointLight")) {
+        m_pointLightPositions.push_back(m_pointLightPos);
+    }
     if (ImGui::Button("Exit")) {
         m_sceneCompleted = true;
     }
@@ -40,18 +58,21 @@ void DemoScene::onGui()
 }
 void DemoScene::onDraw3D()
 {
+    if (!m_isDraw3D) {
+        return;
+    }
+
     Camera::position(m_fpsController.getPosition());
     Camera::lookAt(m_fpsController.getLookAt());
 
     GlobalLight::enable();
-    GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
+    GlobalLight::set(Vector3::normalized(m_globalLightDir));
 
     PointLight::enable();
-    PointLight::set(0, Vector3({ 8, 0, 6 }), 1, 5);
-    PointLight::set(1, Vector3({ -8, 0, 6 }), 1, 5);
-    PointLight::set(2, Vector3({ 20, 0, 6 }), 1, 5);
-    PointLight::set(3, Vector3({ -20, 0, 6 }), 1, 5);
-    PointLight::setCount(4);
+    for (int32_t i = 0; i < m_pointLightPositions.size(); i++) {
+        PointLight::set(i, m_pointLightPositions.at(i), 1, 5);
+    }
+    PointLight::setCount(m_pointLightPositions.size());
 
     Quaternion q;
     m_renderer->drawPlane(Vector3({ 10, 0, 10 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), false);
@@ -62,6 +83,9 @@ void DemoScene::onDraw3D()
 
 void DemoScene::onDraw2D()
 {
+    if (!m_isDraw2D) {
+        return;
+    }
     Vector2 backgroundCenter = Vector2({ -Screen::getWidth() / 4.0f, Screen::getHeight() / 4.0f });
     Vector2 backgroundSize = (Vector2)Screen::getSize() / 2.0f;
     m_renderer->drawRect(
