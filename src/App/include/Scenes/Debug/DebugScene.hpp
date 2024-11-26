@@ -21,7 +21,23 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    class Node : public std::enable_shared_from_this<Node> {
+    public:
+        explicit Node() = default;
+        std::array<char, 16> name;
+        Vector3 position;
+        Vector3 size;
+        Vector3 color;
+        std::vector<std::shared_ptr<Node>> children;
+        bool removed;
+
+        void update();
+        void gui(const std::shared_ptr<Node>& parent);
+        void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
+    };
+
     Common::FpsController m_fpsController;
+    std::shared_ptr<Node> m_rootNode;
     std::string m_nextScene;
 
     std::shared_ptr<Renderer> m_renderer;

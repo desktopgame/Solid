@@ -4,9 +4,57 @@
 #include <imgui.h>
 
 namespace App::Scenes::Debug {
+// Node
+void DebugScene::Node::update()
+{
+    for (auto& c : children) {
+        c->update();
+    }
+    auto iter = std::remove_if(children.begin(), children.end(), [](const auto& e) -> bool {
+        return e->removed;
+    });
+    children.erase(iter, children.end());
+}
+
+void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
+{
+    if (ImGui::TreeNodeEx(name.data(), ImGuiTreeNodeFlags_OpenOnArrow)) {
+        ImGui::InputText("Name", name.data(), 16);
+        ImGui::DragFloat3("Pos", position.data(), 0.01f);
+        ImGui::DragFloat3("Size", size.data(), 0.01f);
+        ImGui::ColorEdit3("Color", color.data());
+        if (ImGui::Button("New Node")) {
+            auto child = std::make_shared<Node>();
+            char buf[16];
+            ::sprintf(buf, "Child[%d]", static_cast<int32_t>(children.size()));
+            std::string childName = buf;
+            std::copy(childName.begin(), childName.end(), child->name.begin());
+            children.push_back(child);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Remove This")) {
+            removed = true;
+        }
+
+        for (const auto& c : children) {
+            c->gui(shared_from_this());
+        }
+        ImGui::TreePop();
+    }
+}
+
+void DebugScene::Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
+{
+    renderer->drawBoxLine(position, size, Quaternion(), Vector4(color, 1.0f), 0.5f);
+
+    for (const auto& c : children) {
+        c->draw(shared_from_this(), renderer);
+    }
+}
 // public
 DebugScene::DebugScene()
     : m_fpsController()
+    , m_rootNode()
     , m_nextScene()
     , m_renderer()
 {
@@ -18,6 +66,14 @@ void DebugScene::onEnter()
     auto tex = Texture::create("./assets/tileNormal2.png");
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
+    }
+    if (!m_rootNode) {
+        m_rootNode = std::make_shared<Node>();
+        std::string name = "Root";
+        std::copy(name.begin(), name.end(), m_rootNode->name.begin());
+        m_rootNode->position = Vector3({ 0, 0, 0 });
+        m_rootNode->size = Vector3({ 10, 10, 10 });
+        m_rootNode->color = Vector3({ 1, 1, 1 });
     }
     m_nextScene = "";
     m_fpsController.setPosition(Vector3({ 0, 0, -10 }));
@@ -41,6 +97,11 @@ void DebugScene::onGui()
     ImGui::DragFloat("RotateSpeed", &m_fpsController.getRotateSpeed(), 0.01f);
     ImGui::End();
 
+    ImGui::Begin("Tree");
+    m_rootNode->gui(nullptr);
+    m_rootNode->update();
+    ImGui::End();
+
     ImGui::Begin("Menu");
     ImGui::SeparatorText("Scene Transition");
     if (ImGui::Button("Demo")) {
@@ -60,6 +121,8 @@ void DebugScene::onDraw3D()
     PointLight::enable();
     PointLight::setCount(0);
     m_renderer->drawBox(Vector3({ 0, 0, 0 }), Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 1, 1, 1 }), false);
+
+    m_rootNode->draw(nullptr, m_renderer);
 }
 
 void DebugScene::onDraw2D()
