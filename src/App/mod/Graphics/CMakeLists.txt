@@ -77,3 +77,7 @@ target_link_libraries(
     Freetype::Freetype
     imgui::imgui
 )
+
+enable_testing()
+set(TEST_EMBED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/embed")
+mod_test(Graphics)
