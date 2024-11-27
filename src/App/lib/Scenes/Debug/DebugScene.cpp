@@ -101,6 +101,7 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
         ImGui::SameLine();
         if (ImGui::Button("Inspect This")) {
             s_target = shared_from_this();
+            s_selected = parent;
         }
 
         for (const auto& c : children) {
