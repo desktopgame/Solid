@@ -31,6 +31,8 @@ private:
         std::vector<std::shared_ptr<Node>> children;
         bool removed;
 
+        static std::shared_ptr<Node> s_selected;
+
         void update();
         void gui(const std::shared_ptr<Node>& parent);
         void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);

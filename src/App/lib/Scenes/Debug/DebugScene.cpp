@@ -5,6 +5,7 @@
 
 namespace App::Scenes::Debug {
 // Node
+std::shared_ptr<DebugScene::Node> DebugScene::Node::s_selected = nullptr;
 void DebugScene::Node::update()
 {
     for (auto& c : children) {
@@ -18,7 +19,14 @@ void DebugScene::Node::update()
 
 void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
 {
-    if (ImGui::TreeNodeEx(name.data(), ImGuiTreeNodeFlags_OpenOnArrow)) {
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+    if (shared_from_this() == s_selected) {
+        flags = ImGuiTreeNodeFlags_Selected;
+    }
+    if (ImGui::TreeNodeEx(name.data(), flags)) {
+        if (ImGui::IsItemClicked()) {
+            s_selected = shared_from_this();
+        }
         ImGui::InputText("Name", name.data(), 16);
         ImGui::DragFloat3("Pos", position.data(), 0.01f);
         ImGui::DragFloat3("Size", size.data(), 0.01f);
@@ -34,6 +42,10 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
         ImGui::SameLine();
         if (ImGui::Button("Remove This")) {
             removed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Select This")) {
+            s_selected = shared_from_this();
         }
 
         for (const auto& c : children) {
