@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 #ifndef TEST_EMBED_DIR
 #define TEST_EMBED_DIR "."
@@ -36,12 +37,17 @@ int main(int argc, char* argv[])
         }
 
         std::string code = buf.str();
-        if (endsWith(filename, ".vs")) {
-            Shader::compile("vs_5_0", "vsMain", code, filename);
-        } else if (endsWith(filename, ".ps")) {
-            Shader::compile("ps_5_0", "psMain", code, filename);
-        } else if (endsWith(filename, ".gs")) {
-            Shader::compile("gs_5_0", "gsMain", code, filename);
+        try {
+            if (endsWith(filename, ".vs")) {
+                Shader::compile("vs_5_0", "vsMain", code, filename);
+            } else if (endsWith(filename, ".ps")) {
+                Shader::compile("ps_5_0", "psMain", code, filename);
+            } else if (endsWith(filename, ".gs")) {
+                Shader::compile("gs_5_0", "gsMain", code, filename);
+            }
+        } catch (const std::exception& e) {
+            std::cerr << e.what() << '\n';
+            ::exit(1);
         }
     }
     return 0;
