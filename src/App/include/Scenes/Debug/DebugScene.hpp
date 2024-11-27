@@ -32,8 +32,10 @@ private:
         bool removed;
 
         static std::shared_ptr<Node> s_selected;
+        static std::shared_ptr<Node> s_target;
 
         void update();
+        void inspect();
         void gui(const std::shared_ptr<Node>& parent);
         void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
     };

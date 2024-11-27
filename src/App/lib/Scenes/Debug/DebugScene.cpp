@@ -6,6 +6,7 @@
 namespace App::Scenes::Debug {
 // Node
 std::shared_ptr<DebugScene::Node> DebugScene::Node::s_selected = nullptr;
+std::shared_ptr<DebugScene::Node> DebugScene::Node::s_target = nullptr;
 void DebugScene::Node::update()
 {
     for (auto& c : children) {
@@ -15,6 +16,56 @@ void DebugScene::Node::update()
         return e->removed;
     });
     children.erase(iter, children.end());
+}
+
+void DebugScene::Node::inspect()
+{
+    ImGui::SeparatorText("Layout");
+    if (ImGui::Button("-PosX")) {
+        if (s_selected) {
+            Vector3 pos = s_selected->position - (s_selected->size * Vector3({ 0.5f, 0, 0 }));
+            pos.x() -= size.x() * 0.5f;
+            position = pos;
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("+PosX")) {
+        if (s_selected) {
+            Vector3 pos = s_selected->position + (s_selected->size * Vector3({ 0.5f, 0, 0 }));
+            pos.x() += size.x() * 0.5f;
+            position = pos;
+        }
+    }
+    if (ImGui::Button("-PosY")) {
+        if (s_selected) {
+            Vector3 pos = s_selected->position - (s_selected->size * Vector3({ 0, 0.5f, 0 }));
+            pos.y() -= size.y() * 0.5f;
+            position = pos;
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("+PosY")) {
+        if (s_selected) {
+            Vector3 pos = s_selected->position + (s_selected->size * Vector3({ 0, 0.5f, 0 }));
+            pos.y() += size.y() * 0.5f;
+            position = pos;
+        }
+    }
+    if (ImGui::Button("-PosZ")) {
+        if (s_selected) {
+            Vector3 pos = s_selected->position - (s_selected->size * Vector3({ 0, 0, 0.5f }));
+            pos.z() -= size.z() * 0.5f;
+            position = pos;
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("+PosZ")) {
+        if (s_selected) {
+            Vector3 pos = s_selected->position + (s_selected->size * Vector3({ 0, 0, 0.5f }));
+            pos.z() += size.z() * 0.5f;
+            position = pos;
+        }
+    }
 }
 
 void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
@@ -33,6 +84,10 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
         ImGui::ColorEdit3("Color", color.data());
         if (ImGui::Button("New Node")) {
             auto child = std::make_shared<Node>();
+            child->position = Vector3({ 0, 0, 0 });
+            child->size = Vector3({ 10, 10, 10 });
+            child->color = Vector3({ 1, 1, 1 });
+
             char buf[16];
             ::sprintf(buf, "Child[%d]", static_cast<int32_t>(children.size()));
             std::string childName = buf;
@@ -44,8 +99,8 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
             removed = true;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Select This")) {
-            s_selected = shared_from_this();
+        if (ImGui::Button("Inspect This")) {
+            s_target = shared_from_this();
         }
 
         for (const auto& c : children) {
@@ -112,6 +167,12 @@ void DebugScene::onGui()
     ImGui::Begin("Tree");
     m_rootNode->gui(nullptr);
     m_rootNode->update();
+    ImGui::End();
+
+    ImGui::Begin("Inspector");
+    if (Node::s_target) {
+        Node::s_target->inspect();
+    }
     ImGui::End();
 
     ImGui::Begin("Menu");
