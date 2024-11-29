@@ -113,7 +113,7 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
 
 void DebugScene::Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
 {
-    float thickness = 0.5f;
+    float thickness = 0.25f;
     {
         Vector3 offset = Vector3({ thickness / 2.0f, thickness / 2.0f, 0 });
         Vector3 center = position + (size * Vector3({ 0.5f, 0.5f, 0 })) - offset;
