@@ -1,7 +1,7 @@
 #pragma once
 #include <library.hpp>
 
-namespace App::Common {
+namespace App::Common::Util {
 class FpsController {
 public:
     explicit FpsController();

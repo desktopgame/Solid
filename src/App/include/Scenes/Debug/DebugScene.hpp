@@ -1,5 +1,5 @@
 #pragma once
-#include <Common/FpsController.hpp>
+#include <Common/Util/FpsController.hpp>
 #include <library.hpp>
 #include <memory>
 #include <optional>
@@ -40,7 +40,7 @@ private:
         void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
     };
 
-    Common::FpsController m_fpsController;
+    Common::Util::FpsController m_fpsController;
     std::shared_ptr<Node> m_rootNode;
     std::string m_nextScene;
 

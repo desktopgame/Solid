@@ -1,6 +1,6 @@
-#include <Common/FpsController.hpp>
+#include <Common/Util/FpsController.hpp>
 
-namespace App::Common {
+namespace App::Common::Util {
 FpsController::FpsController()
     : m_position({ 0, 0, -3 })
     , m_angleX()
