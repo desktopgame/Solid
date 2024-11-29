@@ -1,4 +1,3 @@
-#include <Common/Constants.hpp>
 #include <Scenes/Game/GameScene.hpp>
 #include <cmath>
 #include <imgui.h>

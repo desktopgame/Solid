@@ -5,7 +5,6 @@
 #endif
 
 // App
-#include <Common/Constants.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>

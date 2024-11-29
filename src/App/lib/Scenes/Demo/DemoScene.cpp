@@ -1,4 +1,3 @@
-#include <Common/Constants.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <cmath>
 #include <imgui.h>
