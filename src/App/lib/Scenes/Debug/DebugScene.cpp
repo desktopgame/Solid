@@ -113,53 +113,54 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
 
 void DebugScene::Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
 {
+    float thickness = 0.5f;
     {
-        Vector3 center = position + (size * Vector3({ 0.5f, 0.5f, 0 }));
-        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0.5f, 0.5f, 0 })) - Vector3({ thickness / 2.0f, thickness / 2.0f, 0 });
+        renderer->drawBox(center, Vector3({ thickness, thickness, size.z() }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ -0.5f, 0.5f, 0 }));
-        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ -0.5f, 0.5f, 0 })) - Vector3({ -thickness / 2.0f, thickness / 2.0f, 0 });
+        renderer->drawBox(center, Vector3({ thickness, thickness, size.z() }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0.5f, -0.5f, 0 }));
-        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0.5f, -0.5f, 0 })) - Vector3({ thickness / 2.0f, -thickness / 2.0f, 0 });
+        renderer->drawBox(center, Vector3({ thickness, thickness, size.z() }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ -0.5f, -0.5f, 0 }));
-        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ -0.5f, -0.5f, 0 })) - Vector3({ -thickness / 2.0f, -thickness / 2.0f, 0 });
+        renderer->drawBox(center, Vector3({ thickness, thickness, size.z() }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0.5f, 0, 0.5f }));
-        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0.5f, 0, 0.5f })) - Vector3({ thickness / 2.0f, 0, thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ thickness, size.y(), thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0.5f, 0, -0.5f }));
-        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0.5f, 0, -0.5f })) - Vector3({ thickness / 2.0f, 0, -thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ thickness, size.y(), thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ -0.5f, 0, 0.5f }));
-        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ -0.5f, 0, 0.5f })) - Vector3({ -thickness / 2.0f, 0, thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ thickness, size.y(), thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ -0.5f, 0, -0.5f }));
-        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ -0.5f, 0, -0.5f })) - Vector3({ -thickness / 2.0f, 0, -thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ thickness, size.y(), thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0, 0.5f, 0.5f }));
-        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0, 0.5f, 0.5f })) - Vector3({ 0, thickness / 2.0f, thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ size.x(), thickness, thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0, -0.5f, 0.5f }));
-        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0, -0.5f, 0.5f })) - Vector3({ 0, -thickness / 2.0f, thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ size.x(), thickness, thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0, 0.5f, -0.5f }));
-        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0, 0.5f, -0.5f })) - Vector3({ 0, thickness / 2.0f, -thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ size.x(), thickness, thickness }), Quaternion(), Vector4(color, 1), false);
     }
     {
-        Vector3 center = position + (size * Vector3({ 0, -0.5f, -0.5f }));
-        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+        Vector3 center = position + (size * Vector3({ 0, -0.5f, -0.5f })) - Vector3({ 0, -thickness / 2.0f, -thickness / 2.0f });
+        renderer->drawBox(center, Vector3({ size.x(), thickness, thickness }), Quaternion(), Vector4(color, 1), false);
     }
 
     for (const auto& c : children) {
