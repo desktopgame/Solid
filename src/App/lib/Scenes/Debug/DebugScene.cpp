@@ -113,7 +113,54 @@ void DebugScene::Node::gui(const std::shared_ptr<Node>& parent)
 
 void DebugScene::Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
 {
-    renderer->drawBoxLine(position, size, Quaternion(), Vector4(color, 1.0f), 0.5f);
+    {
+        Vector3 center = position + (size * Vector3({ 0.5f, 0.5f, 0 }));
+        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ -0.5f, 0.5f, 0 }));
+        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0.5f, -0.5f, 0 }));
+        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ -0.5f, -0.5f, 0 }));
+        renderer->drawBox(center, Vector3({ 0.5f, 0.5f, size.z() }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0.5f, 0, 0.5f }));
+        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0.5f, 0, -0.5f }));
+        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ -0.5f, 0, 0.5f }));
+        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ -0.5f, 0, -0.5f }));
+        renderer->drawBox(center, Vector3({ 0.5f, size.y(), 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0, 0.5f, 0.5f }));
+        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0, -0.5f, 0.5f }));
+        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0, 0.5f, -0.5f }));
+        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
+    {
+        Vector3 center = position + (size * Vector3({ 0, -0.5f, -0.5f }));
+        renderer->drawBox(center, Vector3({ size.x(), 0.5f, 0.5f }), Quaternion(), Vector4(color, 1), false);
+    }
 
     for (const auto& c : children) {
         c->draw(shared_from_this(), renderer);
