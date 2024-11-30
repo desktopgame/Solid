@@ -22,6 +22,55 @@ void BasicEntity::update(Field& field)
 
     {
         std::vector<IntVector3> hits;
+        Vector3 offset = delta * Vector3({ 1, 0, 0 });
+        Vector3 to = oldPos + offset;
+        hitTiles(field, m_node, offset, hits, false);
+
+        if (hits.size() > 0) {
+            if (m_velocity.x() > 0.0f) {
+                float minX = 9999.0f;
+                bool hit = false;
+                for (const auto& tile : hits) {
+                    float baseX = (tile.x() * Field::k_tileSize);
+                    baseX -= (Field::k_tileSize / 2.0f);
+                    if (baseX <= (to.x() - (size.x() / 2.0f))) {
+                        continue;
+                    }
+                    if (baseX < minX) {
+                        minX = baseX;
+                        hit = true;
+                    }
+                }
+                if (hit) {
+                    minX -= (size.x() / 2.0f) + Mathf::Epsilon;
+                    newPos.x() = minX;
+                    m_velocity.x() = 0.0f;
+                }
+            } else if (m_velocity.x() < 0.0f) {
+                float maxX = -9999.0f;
+                bool hit = false;
+                for (const auto& tile : hits) {
+                    float baseX = (tile.x() * Field::k_tileSize);
+                    baseX += (Field::k_tileSize / 2.0f);
+                    if (baseX >= (to.x() + (size.x() / 2.0f))) {
+                        continue;
+                    }
+                    if (baseX > maxX) {
+                        maxX = baseX;
+                        hit = true;
+                    }
+                }
+                if (hit) {
+                    maxX += (size.x() / 2.0f) + Mathf::Epsilon;
+                    newPos.x() = maxX;
+                    m_velocity.x() = 0.0f;
+                }
+            }
+        }
+    }
+
+    {
+        std::vector<IntVector3> hits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
         Vector3 to = oldPos + offset;
         hitTiles(field, m_node, offset, hits, false);
@@ -64,6 +113,55 @@ void BasicEntity::update(Field& field)
                     maxY += (size.y() / 2.0f) + Mathf::Epsilon;
                     newPos.y() = maxY;
                     m_velocity.y() = 0.0f;
+                }
+            }
+        }
+    }
+
+    {
+        std::vector<IntVector3> hits;
+        Vector3 offset = delta * Vector3({ 0, 0, 1 });
+        Vector3 to = oldPos + offset;
+        hitTiles(field, m_node, offset, hits, false);
+
+        if (hits.size() > 0) {
+            if (m_velocity.z() > 0.0f) {
+                float minZ = 9999.0f;
+                bool hit = false;
+                for (const auto& tile : hits) {
+                    float baseZ = (tile.z() * Field::k_tileSize);
+                    baseZ -= (Field::k_tileSize / 2.0f);
+                    if (baseZ <= (to.z() - (size.z() / 2.0f))) {
+                        continue;
+                    }
+                    if (baseZ < minZ) {
+                        minZ = baseZ;
+                        hit = true;
+                    }
+                }
+                if (hit) {
+                    minZ -= (size.z() / 2.0f) + Mathf::Epsilon;
+                    newPos.z() = minZ;
+                    m_velocity.z() = 0.0f;
+                }
+            } else if (m_velocity.z() < 0.0f) {
+                float maxZ = -9999.0f;
+                bool hit = false;
+                for (const auto& tile : hits) {
+                    float baseZ = (tile.z() * Field::k_tileSize);
+                    baseZ += (Field::k_tileSize / 2.0f);
+                    if (baseZ >= (to.z() + (size.z() / 2.0f))) {
+                        continue;
+                    }
+                    if (baseZ > maxZ) {
+                        maxZ = baseZ;
+                        hit = true;
+                    }
+                }
+                if (hit) {
+                    maxZ += (size.z() / 2.0f) + Mathf::Epsilon;
+                    newPos.z() = maxZ;
+                    m_velocity.z() = 0.0f;
                 }
             }
         }
