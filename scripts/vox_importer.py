@@ -198,7 +198,7 @@ def proc(ifp: io.BufferedReader, ofp: io.TextIOWrapper):
 
 
 def main():
-    for i, o in mylib.resolve_import_files('.vox', '.csv'):
+    for i, o in mylib.resolve_import_files('./rawdata/Stages', './assets/Stages', '.vox', '.csv'):
         with open(i, 'rb') as ifp:
             with open(o, 'w', encoding='UTF-8') as ofp:
                 proc(ifp, ofp)
