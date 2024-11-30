@@ -31,6 +31,7 @@ private:
     static float alignTile(float a, float tileSize);
 
     std::shared_ptr<Common::Graphics::Node> m_node;
+    IntVector3 m_groundTile;
     Geom::AABB m_aabb;
     bool m_dirtyAABB;
     Vector3 m_velocity;

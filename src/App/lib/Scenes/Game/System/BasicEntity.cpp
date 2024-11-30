@@ -23,35 +23,50 @@ void BasicEntity::update(Field& field)
     {
         std::vector<IntVector3> newHits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
+        Vector3 to = oldPos + offset;
         hitTiles(field, m_node, offset, newHits, false);
 
         if (newHits.size() > 0) {
             int32_t hitCount = static_cast<int32_t>(newHits.size());
             (void)hitCount;
             if (m_velocity.y() > 0.0f) {
-                /*
                 float minY = 9999.0f;
+                bool hit = false;
                 for (const auto& tile : newHits) {
                     float baseY = (tile.y() * Field::k_tileSize);
+                    baseY -= (Field::k_tileSize / 2.0f);
+                    if (baseY <= (to.y() - (size.y() / 2.0f))) {
+                        continue;
+                    }
                     if (baseY < minY) {
-                        minY = baseY - (Field::k_tileSize / 2.0f);
+                        minY = baseY;
+                        hit = true;
                     }
                 }
-                minY -= (size.y() / 2.0f);
-                newPos.y() = minY;
-                */
+                if (hit) {
+                    minY -= (size.y() / 2.0f) + Mathf::Epsilon;
+                    newPos.y() = minY;
+                    m_velocity.y() = 0.0f;
+                }
             } else if (m_velocity.y() < 0.0f) {
                 float maxY = -9999.0f;
+                bool hit = false;
                 for (const auto& tile : newHits) {
                     float baseY = (tile.y() * Field::k_tileSize);
                     baseY += (Field::k_tileSize / 2.0f);
+                    if (baseY >= (to.y() + (size.y() / 2.0f))) {
+                        continue;
+                    }
                     if (baseY > maxY) {
                         maxY = baseY;
+                        hit = true;
                     }
                 }
-                maxY += (size.y() / 2.0f);
-                newPos.y() = maxY;
-                m_velocity.y() = 0.0f;
+                if (hit) {
+                    maxY += (size.y() / 2.0f) + Mathf::Epsilon;
+                    newPos.y() = maxY;
+                    m_velocity.y() = 0.0f;
+                }
             }
         }
     }
