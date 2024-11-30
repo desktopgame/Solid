@@ -3,7 +3,9 @@ App
 
 *.vcxproj
 *.vcxproj.filters
+*.vcxproj.user
 *.sln
+*.log
 *.tlog
 *.lastbuildsate
 *.recipe
