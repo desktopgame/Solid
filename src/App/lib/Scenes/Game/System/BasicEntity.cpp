@@ -52,7 +52,6 @@ void BasicEntity::update(Field& field)
                 maxY += (size.y() / 2.0f);
                 newPos.y() = maxY;
                 m_velocity.y() = 0.0f;
-                m_temp = newHits;
             }
         }
     }
@@ -68,13 +67,6 @@ void BasicEntity::update(Field& field)
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     m_node->draw(renderer);
-
-    int32_t tc = static_cast<int32_t>(m_temp.size());
-    (void)tc;
-    for (const auto& tile : m_temp) {
-        Vector3 pos = (Vector3)tile * Field::k_tileSize;
-        renderer->drawBox(pos, Vector3({ 1, 1, 1 }) * Field::k_tileSize, Quaternion(), Vector4({ 1, 0, 0, 1 }), true);
-    }
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 
@@ -98,7 +90,6 @@ bool BasicEntity::isReceiveGravity() const { return m_receiveGravity; }
 // protected
 BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : m_node(node)
-    , m_temp()
     , m_aabb()
     , m_dirtyAABB(true)
     , m_velocity()
