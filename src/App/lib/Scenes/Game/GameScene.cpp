@@ -5,7 +5,7 @@
 namespace App::Scenes::Game {
 // public
 GameScene::GameScene()
-    : m_cameraPos({ 0, (k_tileSize / 2.0f) + 1.0f, -1 })
+    : m_cameraPos({ 0, (System::Field::k_tileSize / 2.0f) + 1.0f, -1 })
     , m_cameraLookAt({ 0, 0, 0 })
     , m_cameraAngleX()
     , m_cameraAngleY()

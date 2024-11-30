@@ -21,8 +21,6 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
-    static inline const float k_tileSize = 5.0f;
-
     Vector3 m_cameraPos;
     Vector3 m_cameraLookAt;
     float m_cameraAngleX;

@@ -72,7 +72,7 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
     uCamera.modelMatrix = Matrix::transform(
         Matrix::translate(Vector3({ 0, 0, 0 })),
         Matrix(),
-        Matrix::scale(Vector3({ 5, 5, 5 })));
+        Matrix::scale(Vector3({ k_tileSize, k_tileSize, k_tileSize })));
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
     ub->setVS(0, &uCamera);
