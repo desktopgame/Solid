@@ -21,11 +21,10 @@ void DebugScene::onEnter()
     }
     if (!m_rootNode) {
         m_rootNode = std::make_shared<Common::Graphics::Node>();
-        std::string name = "Root";
-        std::copy(name.begin(), name.end(), m_rootNode->name.begin());
-        m_rootNode->position = Vector3({ 0, 0, 0 });
-        m_rootNode->size = Vector3({ 10, 10, 10 });
-        m_rootNode->color = Vector3({ 1, 1, 1 });
+        m_rootNode->setName("Root");
+        m_rootNode->setPosition(Vector3({ 0, 0, 0 }));
+        m_rootNode->setSize(Vector3({ 10, 10, 10 }));
+        m_rootNode->setColor(Vector3({ 1, 1, 1 }));
     }
     m_nextScene = "";
     m_fpsController.setPosition(Vector3({ 0, 0, -10 }));
@@ -50,13 +49,13 @@ void DebugScene::onGui()
     ImGui::End();
 
     ImGui::Begin("Tree");
-    m_rootNode->gui(nullptr);
+    guiEditNode(nullptr, m_rootNode);
     m_rootNode->update();
     ImGui::End();
 
     ImGui::Begin("Inspector");
     if (Common::Graphics::Node::s_target) {
-        Common::Graphics::Node::s_target->inspect();
+        guiInspectNode(nullptr, Common::Graphics::Node::s_target);
     }
     ImGui::End();
 
@@ -96,4 +95,16 @@ bool DebugScene::tryTransition(std::string& outNextScene)
     return false;
 }
 // private
+void DebugScene::guiInspectNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node)
+{
+    node->inspect();
+}
+void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node)
+{
+    node->gui(parent);
+}
+void DebugScene::drawNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node, const std::shared_ptr<Renderer>& renderer)
+{
+    node->draw(parent, renderer);
+}
 }

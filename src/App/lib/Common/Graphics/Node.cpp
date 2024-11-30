@@ -11,7 +11,7 @@ void Node::update()
         c->update();
     }
     auto iter = std::remove_if(m_children.begin(), m_children.end(), [](const auto& e) -> bool {
-        return e->removed;
+        return e->isRemoved();
     });
     m_children.erase(iter, m_children.end());
 }
@@ -180,6 +180,7 @@ void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Rende
     }
 }
 
+void Node::setName(const std::string& name) { std::copy(name.begin(), name.end(), m_name.begin()); }
 void Node::setName(const std::array<char, 16>& name) { m_name = name; }
 std::array<char, 16> Node::getName() const { return m_name; }
 std::array<char, 16>& Node::getName() { return m_name; }
@@ -191,4 +192,10 @@ Vector3& Node::getPosition() { return m_position; }
 void Node::setSize(const Vector3& size) { m_size = size; }
 Vector3 Node::getSize() const { return m_size; }
 Vector3& Node::getSize() { return m_size; }
+
+void Node::setColor(const Vector3& color) { m_color = color; }
+Vector3 Node::getColor() const { return m_color; }
+Vector3& Node::getColor() { return m_color; }
+
+bool Node::isRemoved() const { return m_removed; }
 }

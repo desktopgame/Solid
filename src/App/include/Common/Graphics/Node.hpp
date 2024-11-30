@@ -16,6 +16,7 @@ public:
     void gui(const std::shared_ptr<Node>& parent);
     void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
 
+    void setName(const std::string& name);
     void setName(const std::array<char, 16>& name);
     std::array<char, 16> getName() const;
     std::array<char, 16>& getName();
@@ -27,6 +28,12 @@ public:
     void setSize(const Vector3& size);
     Vector3 getSize() const;
     Vector3& getSize();
+
+    void setColor(const Vector3& color);
+    Vector3 getColor() const;
+    Vector3& getColor();
+
+    bool isRemoved() const;
 
 private:
     std::array<char, 16> m_name;
