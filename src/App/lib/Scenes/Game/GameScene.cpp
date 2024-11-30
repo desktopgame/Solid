@@ -104,7 +104,7 @@ void GameScene::onGui()
 
     ImGui::Begin("Entity");
     if (ImGui::Button("Jump")) {
-        m_debugEntity->setVelocity(Vector3({ 0, 1, 0 }));
+        m_debugEntity->setVelocity(Vector3({ 0, 50, 0 }));
     }
     ImGui::End();
 }

@@ -112,15 +112,23 @@ void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
     }
 }
 
-int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
+bool Field::hasBlockAt(int32_t x, int32_t y, int32_t z) const
 {
     if (x >= k_fieldSize || x < 0) {
-        return 1;
+        return false;
     }
     if (y >= k_fieldSize || y < 0) {
-        return 1;
+        return false;
     }
     if (z >= k_fieldSize || z < 0) {
+        return false;
+    }
+    return true;
+}
+
+int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
+{
+    if (!hasBlockAt(x, y, z)) {
         return 1;
     }
     return m_blocks[x][y][z];

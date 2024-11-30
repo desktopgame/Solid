@@ -12,28 +12,22 @@ BasicEntity::~BasicEntity() { }
 
 void BasicEntity::update(Field& field)
 {
-    float dt = 0.0001f;
+    float dt = 0.01f;
     Vector3 size = m_aabb.max - m_aabb.min;
     Vector3 delta = m_velocity * dt;
     Vector3 oldPos = getPosition();
     Vector3 newPos = oldPos + delta;
 
     {
-        Vector3 checkPos = oldPos;
-        checkPos += delta * Vector3({ 0, 1, 0 });
-
-        m_node->setPosition(oldPos);
-
-        std::vector<IntVector3> hits;
-        hitTiles(field, m_node, hits);
-
-        m_node->setPosition(checkPos);
-
         std::vector<IntVector3> newHits;
-        hitTiles(field, m_node, newHits);
+        Vector3 offset = delta * Vector3({ 0, 1, 0 });
+        hitTiles(field, m_node, offset, newHits, false);
 
-        if (!newHits.empty()) {
+        if (newHits.size() > 0) {
+            int32_t hitCount = static_cast<int32_t>(newHits.size());
+            (void)hitCount;
             if (m_velocity.y() > 0.0f) {
+                /*
                 float minY = 9999.0f;
                 for (const auto& tile : newHits) {
                     float baseY = (tile.y() * Field::k_tileSize);
@@ -43,6 +37,7 @@ void BasicEntity::update(Field& field)
                 }
                 minY -= (size.y() / 2.0f);
                 newPos.y() = minY;
+                */
             } else if (m_velocity.y() < 0.0f) {
                 float maxY = -9999.0f;
                 for (const auto& tile : newHits) {
@@ -53,9 +48,13 @@ void BasicEntity::update(Field& field)
                 }
                 maxY += (size.y() / 2.0f);
                 newPos.y() = maxY;
+                m_temp = newHits;
             }
         }
     }
+
+    // m_temp.clear();
+    // hitTiles(field, m_node, Vector3({ 0, 50, 0 }), m_temp, true);
 
     setPosition(newPos);
     m_velocity.y() -= Field::k_gravity * dt;
@@ -65,6 +64,13 @@ void BasicEntity::update(Field& field)
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     m_node->draw(renderer);
+
+    int32_t tc = static_cast<int32_t>(m_temp.size());
+    (void)tc;
+    for (const auto& tile : m_temp) {
+        Vector3 pos = (Vector3)tile * Field::k_tileSize;
+        renderer->drawBox(pos, Vector3({ 1, 1, 1 }) * Field::k_tileSize, Quaternion(), Vector4({ 1, 0, 0, 1 }), true);
+    }
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 
@@ -88,6 +94,7 @@ bool BasicEntity::isReceiveGravity() const { return m_receiveGravity; }
 // protected
 BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : m_node(node)
+    , m_temp()
     , m_aabb()
     , m_dirtyAABB(true)
     , m_velocity()
@@ -131,36 +138,48 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
     }
 }
 
-void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, std::vector<IntVector3>& hits)
+void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits, bool always)
 {
     Vector3 center = node->getPosition();
     Vector3 size = node->getSize();
+    Vector3 end = center + offset;
+    Vector3 dir = Vector3::normalized(end - center);
 
-    float minX = alignTile(center.x() - (size.x() / 2.0f), Field::k_tileSize);
-    float maxX = alignTile(center.x() + (size.x() / 2.0f), Field::k_tileSize);
-    float minY = alignTile(center.y() - (size.y() / 2.0f), Field::k_tileSize);
-    float maxY = alignTile(center.y() + (size.y() / 2.0f), Field::k_tileSize);
-    float minZ = alignTile(center.z() - (size.z() / 2.0f), Field::k_tileSize);
-    float maxZ = alignTile(center.z() + (size.z() / 2.0f), Field::k_tileSize);
+    float distance = 0.0f;
+    float limit = Vector3::distance(center, end);
+    while (distance < limit) {
+        float minX = alignTile(center.x() - (size.x() / 2.0f), Field::k_tileSize);
+        float maxX = alignTile(center.x() + (size.x() / 2.0f), Field::k_tileSize);
+        float minY = alignTile(center.y() - (size.y() / 2.0f), Field::k_tileSize);
+        float maxY = alignTile(center.y() + (size.y() / 2.0f), Field::k_tileSize);
+        float minZ = alignTile(center.z() - (size.z() / 2.0f), Field::k_tileSize);
+        float maxZ = alignTile(center.z() + (size.z() / 2.0f), Field::k_tileSize);
 
-    for (float fx = minX; fx <= maxX; fx += Field::k_tileSize) {
-        for (float fy = minY; fy <= maxY; fy += Field::k_tileSize) {
-            for (float fz = minZ; fz <= maxZ; fz += Field::k_tileSize) {
-                int32_t ix = static_cast<int32_t>(fx / Field::k_tileSize);
-                int32_t iy = static_cast<int32_t>(fy / Field::k_tileSize);
-                int32_t iz = static_cast<int32_t>(fz / Field::k_tileSize);
+        for (float fx = minX; fx <= maxX; fx += Field::k_tileSize) {
+            for (float fy = minY; fy <= maxY; fy += Field::k_tileSize) {
+                for (float fz = minZ; fz <= maxZ; fz += Field::k_tileSize) {
+                    int32_t ix = static_cast<int32_t>(fx / Field::k_tileSize);
+                    int32_t iy = static_cast<int32_t>(fy / Field::k_tileSize);
+                    int32_t iz = static_cast<int32_t>(fz / Field::k_tileSize);
+                    if (!field.hasBlockAt(ix, iy, iz)) {
+                        continue;
+                    }
 
-                int32_t block = field.getBlockAt(ix, iy, iz);
-                if (block != 0) {
-                    hits.emplace_back(IntVector3({ ix, iy, iz }));
+                    int32_t block = field.getBlockAt(ix, iy, iz);
+                    if (always || block != 0) {
+                        hits.emplace_back(IntVector3({ ix, iy, iz }));
+                    }
                 }
             }
         }
+
+        center += (dir * Field::k_tileSize);
+        distance += Field::k_tileSize;
     }
 
     for (int32_t i = 0; i < node->getChildrenCount(); i++) {
         auto c = node->getChildAt(i);
-        hitTiles(field, c, hits);
+        hitTiles(field, c, offset, hits, always);
     }
 }
 
