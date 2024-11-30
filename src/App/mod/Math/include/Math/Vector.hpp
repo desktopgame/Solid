@@ -353,6 +353,15 @@ public:
         return *this;
     }
 
+    VectorT<T, N> operator-() const
+    {
+        VectorT<T, N> v;
+        for (int32_t i = 0; i < N; i++) {
+            v.components[i] = -components[i];
+        }
+        return v;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const VectorT<T, N>& a)
     {
         os << a.str();
