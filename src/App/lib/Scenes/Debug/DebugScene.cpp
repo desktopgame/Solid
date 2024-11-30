@@ -4,7 +4,6 @@
 
 namespace App::Scenes::Debug {
 std::shared_ptr<Common::Graphics::Node> DebugScene::s_selected = nullptr;
-std::shared_ptr<Common::Graphics::Node> DebugScene::s_target = nullptr;
 // public
 DebugScene::DebugScene()
     : m_fpsController()
@@ -55,12 +54,6 @@ void DebugScene::onGui()
     m_rootNode->update();
     ImGui::End();
 
-    ImGui::Begin("Inspector");
-    if (s_target) {
-        guiInspectNode(nullptr, s_target);
-    }
-    ImGui::End();
-
     ImGui::Begin("Menu");
     ImGui::SeparatorText("Scene Transition");
     if (ImGui::Button("Demo")) {
@@ -97,55 +90,6 @@ bool DebugScene::tryTransition(std::string& outNextScene)
     return false;
 }
 // private
-void DebugScene::guiInspectNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node)
-{
-    ImGui::SeparatorText("Layout");
-    if (ImGui::Button("-PosX")) {
-        if (s_selected) {
-            Vector3 pos = s_selected->getPosition() - (s_selected->getSize() * Vector3({ 0.5f, 0, 0 }));
-            pos.x() -= node->getSize().x() * 0.5f;
-            node->setPosition(pos);
-        }
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("+PosX")) {
-        if (s_selected) {
-            Vector3 pos = s_selected->getPosition() + (s_selected->getSize() * Vector3({ 0.5f, 0, 0 }));
-            pos.x() += node->getSize().x() * 0.5f;
-            node->setPosition(pos);
-        }
-    }
-    if (ImGui::Button("-PosY")) {
-        if (s_selected) {
-            Vector3 pos = s_selected->getPosition() - (s_selected->getSize() * Vector3({ 0, 0.5f, 0 }));
-            pos.y() -= node->getSize().y() * 0.5f;
-            node->setPosition(pos);
-        }
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("+PosY")) {
-        if (s_selected) {
-            Vector3 pos = s_selected->getPosition() + (s_selected->getSize() * Vector3({ 0, 0.5f, 0 }));
-            pos.y() += node->getSize().y() * 0.5f;
-            node->setPosition(pos);
-        }
-    }
-    if (ImGui::Button("-PosZ")) {
-        if (s_selected) {
-            Vector3 pos = s_selected->getPosition() - (s_selected->getSize() * Vector3({ 0, 0, 0.5f }));
-            pos.z() -= node->getSize().z() * 0.5f;
-            node->setPosition(pos);
-        }
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("+PosZ")) {
-        if (s_selected) {
-            Vector3 pos = s_selected->getPosition() + (s_selected->getSize() * Vector3({ 0, 0, 0.5f }));
-            pos.z() += node->getSize().z() * 0.5f;
-            node->setPosition(pos);
-        }
-    }
-}
 void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node)
 {
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
@@ -176,10 +120,41 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
         if (ImGui::Button("Remove This")) {
             node->removeFromParent();
         }
+
+        if (ImGui::Button("-X")) {
+            Vector3 pos = -(parent->getSize() * Vector3({ 0.5f, 0, 0 }));
+            pos.x() -= node->getSize().x() * 0.5f;
+            node->setPosition(pos);
+        }
         ImGui::SameLine();
-        if (ImGui::Button("Inspect This")) {
-            s_target = node;
-            s_selected = parent;
+        if (ImGui::Button("+X")) {
+            Vector3 pos = (parent->getSize() * Vector3({ 0.5f, 0, 0 }));
+            pos.x() += node->getSize().x() * 0.5f;
+            node->setPosition(pos);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("-Y")) {
+            Vector3 pos = -(parent->getSize() * Vector3({ 0, 0.5f, 0 }));
+            pos.y() -= node->getSize().y() * 0.5f;
+            node->setPosition(pos);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("+Y")) {
+            Vector3 pos = (parent->getSize() * Vector3({ 0, 0.5f, 0 }));
+            pos.y() += node->getSize().y() * 0.5f;
+            node->setPosition(pos);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("-Z")) {
+            Vector3 pos = -(parent->getSize() * Vector3({ 0, 0, 0.5f }));
+            pos.z() -= node->getSize().z() * 0.5f;
+            node->setPosition(pos);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("+Z")) {
+            Vector3 pos = (parent->getSize() * Vector3({ 0, 0, 0.5f }));
+            pos.z() += node->getSize().z() * 0.5f;
+            node->setPosition(pos);
         }
 
         for (int32_t i = 0; i < node->getChildrenCount(); i++) {
