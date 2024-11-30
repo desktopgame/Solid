@@ -12,6 +12,8 @@ BasicEntity::~BasicEntity() { }
 
 void BasicEntity::update(Field& field)
 {
+    rehashAABB();
+
     float dt = 0.01f;
     Vector3 size = m_aabb.max - m_aabb.min;
     Vector3 delta = m_velocity * dt;
@@ -42,8 +44,9 @@ void BasicEntity::update(Field& field)
                 float maxY = -9999.0f;
                 for (const auto& tile : newHits) {
                     float baseY = (tile.y() * Field::k_tileSize);
+                    baseY += (Field::k_tileSize / 2.0f);
                     if (baseY > maxY) {
-                        maxY = baseY + (Field::k_tileSize / 2.0f);
+                        maxY = baseY;
                     }
                 }
                 maxY += (size.y() / 2.0f);
