@@ -25,6 +25,13 @@ VisualStudio Code 向けの設定はリポジトリにコミットされてい�
 コード補完が働かない場合、一度ビルドを実行してみてください。  
 このリポジトリではCMakeがビルド時に生成する `compile_commands.json` を利用してコード補完を行います。
 
+### VisualStudio
+VisualStudio の場合、CMakeでソリューションとプロジェクトを生成する必要があります。
+````
+cd Solid
+cmake -S src -B build -G "Visual Studio 17 2022"
+````
+
 ### CLion
 CLionは公式にCMakeをサポートしているので、基本的には公式の使い方に従えば開くことができます。
 
@@ -44,6 +51,9 @@ cd Solid
 cmake -S src -B build -G "Unix Makefiles"
 make -C build
 ````
+
+### VisualStudio
+VisualStudioの場合、 `App` という名前になっている構成で実行ファイルをビルドできます。
 
 ### CLion
 CLionの場合、 `App` という名前になっている構成で実行ファイルをビルドできます。
