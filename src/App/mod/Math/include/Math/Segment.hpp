@@ -4,7 +4,7 @@
 
 namespace Lib::Math {
 template <typename T>
-class Segment {
+class SegmentT {
 public:
     explicit Segment(T a, T b)
     {
@@ -75,4 +75,6 @@ public:
     T min;
     T max;
 };
+
+using Segment = SegmentT<float>;
 }
