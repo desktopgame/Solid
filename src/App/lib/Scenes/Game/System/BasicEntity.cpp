@@ -230,7 +230,7 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
         dst.max.y() = maxY;
     }
     if (minZ < dst.min.z()) {
-        dst.min.x() = minX;
+        dst.min.z() = minZ;
     }
     if (maxZ > dst.max.z()) {
         dst.max.z() = maxZ;
