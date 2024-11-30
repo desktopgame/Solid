@@ -56,9 +56,6 @@ void BasicEntity::update(Field& field)
         }
     }
 
-    // m_temp.clear();
-    // hitTiles(field, m_node, Vector3({ 0, 50, 0 }), m_temp, true);
-
     setPosition(newPos);
     m_velocity.y() -= Field::k_gravity * dt;
 
