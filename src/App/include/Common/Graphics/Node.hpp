@@ -5,7 +5,7 @@
 namespace App::Common::Graphics {
 class Node : public std::enable_shared_from_this<Node> {
 public:
-    explicit Node() = default;
+    static std::shared_ptr<Node> create();
 
     void update();
     void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
@@ -41,6 +41,8 @@ public:
 private:
     static void serialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
     static void deserialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
+
+    Node();
 
     std::array<char, 32> m_name;
     Vector3 m_position;

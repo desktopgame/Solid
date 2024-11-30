@@ -4,6 +4,11 @@
 
 namespace App::Common::Graphics {
 // public
+std::shared_ptr<Node> Node::create()
+{
+    return std::shared_ptr<Node>(new Node());
+}
+
 void Node::update()
 {
     for (auto& c : m_children) {
@@ -103,7 +108,7 @@ std::shared_ptr<Node> Node::deserialize(const std::string& file)
     std::istream_iterator<char> input(ifs);
 
     picojson::value v;
-    auto rootNode = std::make_shared<Node>();
+    auto rootNode = Node::create();
     std::string err;
     picojson::parse(v, input, std::istream_iterator<char>(), &err);
     deserialize(v.get<picojson::value::object>(), rootNode);
@@ -194,10 +199,20 @@ void Node::deserialize(picojson::value::object& parent, const std::shared_ptr<No
 
     picojson::array children = parent["children"].get<picojson::value::array>();
     for (picojson::value& c : children) {
-        auto cNode = std::make_shared<Node>();
+        auto cNode = Node::create();
         deserialize(c.get<picojson::value::object>(), cNode);
 
         node->addChild(cNode);
     }
+}
+Node::Node()
+    : m_name()
+    , m_position()
+    , m_size()
+    , m_color()
+    , m_parent()
+    , m_children()
+    , m_removed()
+{
 }
 }

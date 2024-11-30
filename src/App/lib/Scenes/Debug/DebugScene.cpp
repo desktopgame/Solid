@@ -21,7 +21,7 @@ void DebugScene::onEnter()
         m_renderer = std::make_shared<Renderer>();
     }
 
-    m_rootNode = std::make_shared<Common::Graphics::Node>();
+    m_rootNode = Common::Graphics::Node::create();
     m_rootNode->setName("Root");
     m_rootNode->setPosition(Vector3({ 0, 0, 0 }));
     m_rootNode->setSize(Vector3({ 10, 10, 10 }));
@@ -119,7 +119,7 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
         ImGui::DragFloat3("Size", node->getSize().data(), 0.01f);
         ImGui::ColorEdit3("Color", node->getColor().data());
         if (ImGui::Button("New Node")) {
-            auto child = std::make_shared<Common::Graphics::Node>();
+            auto child = Common::Graphics::Node::create();
             child->setPosition(Vector3({ 0, 0, 0 }));
             child->setSize(Vector3({ 10, 10, 10 }));
             child->setColor(Vector3({ 1, 1, 1 }));
