@@ -17,6 +17,7 @@ class Mathf {
 public:
     inline static constexpr float Deg2Rad = 3.14f / 180.0f;
     inline static constexpr float Rad2Deg = 180.0f / 3.14f;
+    inline static constexpr float Epsilon = std::numeric_limits<float>::epsilon();
 
     template <typename T>
     inline static T min(T a, T b)
