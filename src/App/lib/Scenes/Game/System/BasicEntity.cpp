@@ -23,8 +23,8 @@ void BasicEntity::markAsDirtyAABB() { m_dirtyAABB = true; }
 void BasicEntity::rehashAABB()
 {
     if (m_dirtyAABB) {
-        m_aabb.max = Vector3({ -9999, -9999, -999 });
-        m_aabb.min = Vector3({ 9999, 9999, 999 });
+        m_aabb.max = Vector3({ -9999, -9999, -9999 });
+        m_aabb.min = Vector3({ 9999, 9999, 9999 });
         rehashAABB(m_node, m_aabb);
         m_dirtyAABB = false;
     }
