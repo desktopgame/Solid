@@ -27,8 +27,6 @@ void BasicEntity::update(Field& field)
         hitTiles(field, m_node, offset, newHits, false);
 
         if (newHits.size() > 0) {
-            int32_t hitCount = static_cast<int32_t>(newHits.size());
-            (void)hitCount;
             if (m_velocity.y() > 0.0f) {
                 float minY = 9999.0f;
                 bool hit = false;
