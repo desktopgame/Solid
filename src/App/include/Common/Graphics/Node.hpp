@@ -1,5 +1,6 @@
 #include <library.hpp>
 #include <memory>
+#include <picojson/picojson.h>
 
 namespace App::Common::Graphics {
 class Node : public std::enable_shared_from_this<Node> {
@@ -10,10 +11,13 @@ public:
     void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
     void removeFromParent();
 
+    static void serialize(const std::string& file, const std::shared_ptr<Node>& node);
+    static std::shared_ptr<Node> deserialize(const std::string& file);
+
     void setName(const std::string& name);
-    void setName(const std::array<char, 16>& name);
-    std::array<char, 16> getName() const;
-    std::array<char, 16>& getName();
+    void setName(const std::array<char, 32>& name);
+    std::array<char, 32> getName() const;
+    std::array<char, 32>& getName();
 
     void setPosition(const Vector3& position);
     Vector3 getPosition() const;
@@ -35,7 +39,10 @@ public:
     bool isRemoved() const;
 
 private:
-    std::array<char, 16> m_name;
+    static void serialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
+    static void deserialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
+
+    std::array<char, 32> m_name;
     Vector3 m_position;
     Vector3 m_size;
     Vector3 m_color;

@@ -20,13 +20,17 @@ void DebugScene::onEnter()
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
-    if (!m_rootNode) {
-        m_rootNode = std::make_shared<Common::Graphics::Node>();
-        m_rootNode->setName("Root");
-        m_rootNode->setPosition(Vector3({ 0, 0, 0 }));
-        m_rootNode->setSize(Vector3({ 10, 10, 10 }));
-        m_rootNode->setColor(Vector3({ 1, 1, 1 }));
-    }
+
+    m_rootNode = std::make_shared<Common::Graphics::Node>();
+    m_rootNode->setName("Root");
+    m_rootNode->setPosition(Vector3({ 0, 0, 0 }));
+    m_rootNode->setSize(Vector3({ 10, 10, 10 }));
+    m_rootNode->setColor(Vector3({ 1, 1, 1 }));
+
+    std::string ioFileName = "./rawdata/sample.json";
+    std::fill(m_ioFileName.begin(), m_ioFileName.end(), '\0');
+    std::copy(ioFileName.begin(), ioFileName.end(), m_ioFileName.begin());
+
     m_nextScene = "";
     m_fpsController.setPosition(Vector3({ 0, 0, -10 }));
     m_fpsController.setAngleX(0);
@@ -52,6 +56,16 @@ void DebugScene::onGui()
     ImGui::Begin("Tree");
     guiEditNode(nullptr, m_rootNode);
     m_rootNode->update();
+    ImGui::End();
+
+    ImGui::Begin("IO");
+    ImGui::InputText("File", m_ioFileName.data(), 32);
+    if (ImGui::Button("Serialize")) {
+        Common::Graphics::Node::serialize(std::string(m_ioFileName.data()), m_rootNode);
+    }
+    if (ImGui::Button("Deserialize")) {
+        m_rootNode = Common::Graphics::Node::deserialize(std::string(m_ioFileName.data()));
+    }
     ImGui::End();
 
     ImGui::Begin("Menu");
