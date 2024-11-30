@@ -6,7 +6,7 @@ namespace Lib::Math {
 template <typename T>
 class SegmentT {
 public:
-    explicit Segment(T a, T b)
+    explicit SegmentT(T a, T b)
     {
         if (a > b) {
             max = a;
@@ -25,20 +25,20 @@ public:
         return value >= min && value < max;
     }
 
-    Segment<T> logicAnd(const Segment<T>& other) const
+    SegmentT<T> logicAnd(const SegmentT<T>& other) const
     {
         if (contains(other.min, true) && contains(other.max, true)) {
             return other;
         } else if (!contains(other.min, true) && contains(other.max, true)) {
-            return Segment<T>(min, other.max);
+            return SegmentT<T>(min, other.max);
         } else if (contains(other.min, true) && !contains(other.max, true)) {
-            return Segment<T>(other.min, max);
+            return SegmentT<T>(other.min, max);
         } else {
-            return Segment<T>(0, 0);
+            return SegmentT<T>(0, 0);
         }
     }
 
-    Segment<T> logicOr(const Segment<T>& other) const
+    SegmentT<T> logicOr(const SegmentT<T>& other) const
     {
         T newMin = static_cast<T>(0);
         if (min < other.min) {
@@ -53,7 +53,7 @@ public:
         } else {
             newMax = other.max;
         }
-        return Segment<T>(newMin, newMax);
+        return SegmentT<T>(newMin, newMax);
     }
 
     float diff() const { return max - min; }
