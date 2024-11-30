@@ -37,6 +37,8 @@ add_executable(
     lib/Scenes/Debug/DebugScene.cpp
     lib/Scenes/Demo/DemoScene.cpp
     lib/Scenes/Game/GameScene.cpp
+    lib/Scenes/Game/System/Field.cpp
+    lib/Scenes/Game/System/Entity.cpp
 )
 app_target_compile_params(App)
 app_target_link_params(App)

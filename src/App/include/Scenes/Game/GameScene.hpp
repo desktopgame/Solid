@@ -1,4 +1,5 @@
 #pragma once
+#include <Scenes/Game/System/Field.hpp>
 #include <library.hpp>
 #include <memory>
 #include <optional>
@@ -32,15 +33,6 @@ private:
     Vector3 m_globalLightDir;
 
     std::shared_ptr<Renderer> m_renderer;
-    std::shared_ptr<Texture> m_debugTexture;
-    std::shared_ptr<Texture> m_borderTexture;
-
-    std::shared_ptr<Buffer> m_vertexBuffer;
-    std::shared_ptr<Buffer> m_indexBuffer;
-    Reflect::UTileTransform m_tileTransform;
-    Reflect::UTilePallet m_tilePallet;
-    std::vector<std::shared_ptr<Buffer>> m_instanceBuffers;
-    int32_t m_indexLength;
-    int32_t m_instanceCount;
+    std::shared_ptr<System::Field> m_field;
 };
 }
