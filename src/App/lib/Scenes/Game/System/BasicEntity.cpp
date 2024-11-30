@@ -40,7 +40,7 @@ bool BasicEntity::isReceiveGravity() const { return m_receiveGravity; }
 BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : m_node(node)
     , m_aabb()
-    , m_dirtyAABB()
+    , m_dirtyAABB(true)
     , m_velocity()
     , m_receiveGravity(true)
 {
