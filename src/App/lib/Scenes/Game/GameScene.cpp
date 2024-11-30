@@ -1,4 +1,5 @@
 #include <Scenes/Game/GameScene.hpp>
+#include <Scenes/Game/System/BasicEntity.hpp>
 #include <cmath>
 #include <imgui.h>
 
@@ -28,6 +29,11 @@ void GameScene::onEnter()
         auto borderTex = Texture::create("./assets/tileBorder.png");
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->load("assets\\Stages\\stage_base.csv");
+
+        auto entity = System::BasicEntity::create(
+            Common::Graphics::Node::deserialize("assets\\Models\\sample.json"));
+        entity->setPosition(Vector3({ 90, 20, 90 }));
+        m_field->spwan(entity);
     }
     if (Cursor::isVisible()) {
         Cursor::hide();
@@ -86,6 +92,8 @@ void GameScene::onUpdate()
             Cursor::unlock();
         }
     }
+
+    m_field->update();
 }
 
 void GameScene::onGui()

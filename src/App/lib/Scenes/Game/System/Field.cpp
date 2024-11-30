@@ -1,3 +1,4 @@
+#include <Scenes/Game/System/Entity.hpp>
 #include <Scenes/Game/System/Field.hpp>
 
 namespace App::Scenes::Game::System {
@@ -63,7 +64,13 @@ void Field::load(const std::string& file)
     }
 }
 
-void Field::update() { }
+void Field::update()
+{
+    Field& self = *this;
+    for (auto& entity : m_entities) {
+        entity->update(self);
+    }
+}
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     auto rc = RenderContext::get(Metadata::ProgramTable::TileInstance3D);
@@ -93,8 +100,17 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
         m_indexLength,
         m_instanceBuffers,
         m_instanceCount);
+
+    for (auto& entity : m_entities) {
+        entity->draw3D(renderer);
+    }
 }
-void Field::draw2D(const std::shared_ptr<Renderer>& renderer) { }
+void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
+{
+    for (auto& entity : m_entities) {
+        entity->draw2D(renderer);
+    }
+}
 
 void Field::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_entities.at(index); }

@@ -1,3 +1,4 @@
+#pragma once
 #include <library.hpp>
 #include <memory>
 #include <picojson/picojson.h>
@@ -8,7 +9,7 @@ public:
     static std::shared_ptr<Node> create();
 
     void update();
-    void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
+    void draw(const std::shared_ptr<Renderer>& renderer);
     void removeFromParent();
 
     static void serialize(const std::string& file, const std::shared_ptr<Node>& node);
@@ -43,6 +44,7 @@ private:
     static void deserialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
 
     Node();
+    void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
 
     std::array<char, 32> m_name;
     Vector3 m_position;
