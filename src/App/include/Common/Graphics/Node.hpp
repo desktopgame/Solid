@@ -6,15 +6,9 @@ class Node : public std::enable_shared_from_this<Node> {
 public:
     explicit Node() = default;
 
-    static std::shared_ptr<Node> s_selected;
-    static std::shared_ptr<Node> s_target;
-
     void update();
-    void removeFromParent();
-
-    void inspect();
-    void gui(const std::shared_ptr<Node>& parent);
     void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
+    void removeFromParent();
 
     void setName(const std::string& name);
     void setName(const std::array<char, 16>& name);
@@ -32,6 +26,10 @@ public:
     void setColor(const Vector3& color);
     Vector3 getColor() const;
     Vector3& getColor();
+
+    void addChild(const std::shared_ptr<Node>& node);
+    std::shared_ptr<Node> getChildAt(int32_t index) const;
+    int32_t getChildrenCount() const;
 
     bool isRemoved() const;
 
