@@ -12,6 +12,10 @@ public:
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
+    void markAsDirtyAABB();
+    void rehashAABB();
+    Geom::AABB getAABB() const;
+
     void setVelocity(const Vector3& velocity);
     Vector3 getVelocity() const;
 
@@ -22,7 +26,11 @@ protected:
     BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node);
 
 private:
+    void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
+
     std::shared_ptr<Common::Graphics::Node> m_node;
+    Geom::AABB m_aabb;
+    bool m_dirtyAABB;
     Vector3 m_velocity;
     bool m_receiveGravity;
 };
