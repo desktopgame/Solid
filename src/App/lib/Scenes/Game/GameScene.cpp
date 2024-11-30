@@ -30,10 +30,10 @@ void GameScene::onEnter()
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->load("assets\\Stages\\stage_base.csv");
 
-        auto entity = System::BasicEntity::create(
+        m_debugEntity = System::BasicEntity::create(
             Common::Graphics::Node::deserialize("assets\\Models\\sample.json"));
-        entity->setPosition(Vector3({ 90, 20, 90 }));
-        m_field->spwan(entity);
+        m_debugEntity->setPosition(Vector3({ 90, 20, 90 }));
+        m_field->spwan(m_debugEntity);
     }
     if (Cursor::isVisible()) {
         Cursor::hide();
@@ -100,6 +100,12 @@ void GameScene::onGui()
 {
     ImGui::Begin("Light");
     ImGui::DragFloat3("GlobalLight", m_globalLightDir.data(), 0.001f, -1.0f, 1.0f);
+    ImGui::End();
+
+    ImGui::Begin("Entity");
+    if (ImGui::Button("Jump")) {
+        m_debugEntity->setVelocity(Vector3({ 0, 1, 0 }));
+    }
     ImGui::End();
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <Scenes/Game/System/BasicEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
 #include <library.hpp>
 #include <memory>
@@ -32,5 +33,6 @@ private:
 
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<System::Field> m_field;
+    std::shared_ptr<System::BasicEntity> m_debugEntity;
 };
 }
