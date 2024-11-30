@@ -25,12 +25,12 @@ void BasicEntity::update(Field& field)
         m_node->setPosition(oldPos);
 
         std::vector<IntVector3> hits;
-        hitTiles(field, m_node, hits, false);
+        hitTiles(field, m_node, hits);
 
         m_node->setPosition(checkPos);
 
         std::vector<IntVector3> newHits;
-        hitTiles(field, m_node, newHits, false);
+        hitTiles(field, m_node, newHits);
 
         if (!newHits.empty()) {
             if (m_velocity.y() > 0.0f) {
@@ -131,7 +131,7 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
     }
 }
 
-void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, std::vector<IntVector3>& hits, bool alwaysHit)
+void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, std::vector<IntVector3>& hits)
 {
     Vector3 center = node->getPosition();
     Vector3 size = node->getSize();
@@ -151,7 +151,7 @@ void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics:
                 int32_t iz = static_cast<int32_t>(fz / Field::k_tileSize);
 
                 int32_t block = field.getBlockAt(ix, iy, iz);
-                if (alwaysHit || block != 0) {
+                if (block != 0) {
                     hits.emplace_back(IntVector3({ ix, iy, iz }));
                 }
             }
@@ -160,7 +160,7 @@ void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics:
 
     for (int32_t i = 0; i < node->getChildrenCount(); i++) {
         auto c = node->getChildAt(i);
-        hitTiles(field, c, hits, alwaysHit);
+        hitTiles(field, c, hits);
     }
 }
 

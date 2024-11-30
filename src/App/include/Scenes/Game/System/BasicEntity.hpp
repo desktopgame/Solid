@@ -27,7 +27,7 @@ protected:
 
 private:
     void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
-    void hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, std::vector<IntVector3>& hits, bool alwaysHit);
+    void hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, std::vector<IntVector3>& hits);
     static float alignTile(float a, float tileSize);
 
     std::shared_ptr<Common::Graphics::Node> m_node;
