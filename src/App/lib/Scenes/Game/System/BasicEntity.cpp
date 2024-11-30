@@ -51,6 +51,7 @@ void BasicEntity::update(Field& field)
                 }
                 maxY += (size.y() / 2.0f);
                 newPos.y() = maxY;
+                m_velocity.y() = 0.0f;
                 m_temp = newHits;
             }
         }
