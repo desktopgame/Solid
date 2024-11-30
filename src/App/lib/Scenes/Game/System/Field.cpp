@@ -112,6 +112,20 @@ void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
     }
 }
 
+int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
+{
+    if (x >= k_fieldSize || x < 0) {
+        return 1;
+    }
+    if (y >= k_fieldSize || y < 0) {
+        return 1;
+    }
+    if (z >= k_fieldSize || z < 0) {
+        return 1;
+    }
+    return m_blocks[x][y][z];
+}
+
 void Field::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_entities.at(index); }
 int32_t Field::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }

@@ -21,6 +21,8 @@ public:
     void draw3D(const std::shared_ptr<Renderer>& renderer);
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 
+    int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const;
+
     void spwan(const std::shared_ptr<Entity>& entity);
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
     int32_t getEntityCount() const;
