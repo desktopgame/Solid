@@ -91,6 +91,24 @@ public:
     }
 
     template <typename T>
+    inline static T ceil(T v)
+    {
+        return static_cast<T>(std::ceil(static_cast<float>(v)));
+    }
+
+    template <typename T>
+    inline static T round(T v)
+    {
+        return static_cast<T>(std::round(static_cast<float>(v)));
+    }
+
+    template <typename T>
+    inline static T floor(T v)
+    {
+        return static_cast<T>(std::floor(static_cast<float>(v)));
+    }
+
+    template <typename T>
     inline static bool equals(T a, T b)
     {
         return a == b;
