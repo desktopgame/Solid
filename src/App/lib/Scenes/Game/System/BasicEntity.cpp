@@ -21,16 +21,16 @@ void BasicEntity::update(Field& field)
     Vector3 newPos = oldPos + delta;
 
     {
-        std::vector<IntVector3> newHits;
+        std::vector<IntVector3> hits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
         Vector3 to = oldPos + offset;
-        hitTiles(field, m_node, offset, newHits, false);
+        hitTiles(field, m_node, offset, hits, false);
 
-        if (newHits.size() > 0) {
+        if (hits.size() > 0) {
             if (m_velocity.y() > 0.0f) {
                 float minY = 9999.0f;
                 bool hit = false;
-                for (const auto& tile : newHits) {
+                for (const auto& tile : hits) {
                     float baseY = (tile.y() * Field::k_tileSize);
                     baseY -= (Field::k_tileSize / 2.0f);
                     if (baseY <= (to.y() - (size.y() / 2.0f))) {
@@ -49,7 +49,7 @@ void BasicEntity::update(Field& field)
             } else if (m_velocity.y() < 0.0f) {
                 float maxY = -9999.0f;
                 bool hit = false;
-                for (const auto& tile : newHits) {
+                for (const auto& tile : hits) {
                     float baseY = (tile.y() * Field::k_tileSize);
                     baseY += (Field::k_tileSize / 2.0f);
                     if (baseY >= (to.y() + (size.y() / 2.0f))) {
