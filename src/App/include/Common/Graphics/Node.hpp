@@ -18,6 +18,7 @@ public:
     void setPosition(const Vector3& position);
     Vector3 getPosition() const;
     Vector3& getPosition();
+    Vector3 getAbsolutePosition() const;
 
     void setSize(const Vector3& size);
     Vector3 getSize() const;
@@ -38,6 +39,7 @@ private:
     Vector3 m_position;
     Vector3 m_size;
     Vector3 m_color;
+    std::weak_ptr<Node> m_parent;
     std::vector<std::shared_ptr<Node>> m_children;
     bool m_removed;
 };
