@@ -14,6 +14,7 @@ private:
     Time() = delete;
     static std::chrono::system_clock::time_point s_start;
     static std::chrono::system_clock::time_point s_end;
+    static std::chrono::milliseconds s_overSleep;
     static float s_deltaTime;
 };
 }
