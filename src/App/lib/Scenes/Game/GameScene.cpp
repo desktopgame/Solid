@@ -1,3 +1,4 @@
+#include <Common/Graphics/NodeRegistry.hpp>
 #include <Scenes/Game/GameScene.hpp>
 #include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <Scenes/Game/System/Entities/SlimeEntity.hpp>
@@ -27,8 +28,7 @@ void GameScene::onEnter()
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->load("assets\\Stages\\stage_base.csv");
 
-        m_debugEntity = System::Entities::SlimeEntity::create(
-            Common::Graphics::Node::deserialize("assets\\Models\\sample.json"));
+        m_debugEntity = System::Entities::SlimeEntity::create(Common::Graphics::NodeRegistry::s_slimeNode);
         m_debugEntity->setPosition(Vector3({ 90, 20, 90 }));
         m_field->spwan(m_debugEntity);
 

@@ -5,6 +5,7 @@
 #endif
 
 // App
+#include <Common/Graphics/NodeRegistry.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
@@ -29,6 +30,8 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     SceneManager sceneManager(sceneMap, "Debug");
+
+    Graphics::NodeRegistry::initialize();
 
     window->show();
     bool running = true;
@@ -55,6 +58,9 @@ static int appMain(int argc, char* argv[])
         Time::end();
         Time::sync();
     }
+
+    Graphics::NodeRegistry::destroy();
+
     inputSystem->shutdown();
     engine->shutdown();
     return 0;
