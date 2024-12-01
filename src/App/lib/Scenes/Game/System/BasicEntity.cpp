@@ -16,6 +16,7 @@ void BasicEntity::update(Field& field)
 
     float dt = 0.01f;
     float ep = Mathf::Epsilon;
+    float threshould = 0.1f;
     Vector3 size = m_aabb.max - m_aabb.min;
     Vector3 delta = m_velocity * dt;
     Vector3 oldPos = getPosition();
@@ -37,7 +38,7 @@ void BasicEntity::update(Field& field)
                     if (baseX <= (to.x() - (size.x() / 2.0f))) {
                         continue;
                     }
-                    if (Mathf::abs((to.x() + (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                    if (Mathf::abs((to.x() + (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
                     if (baseX < minX) {
@@ -59,7 +60,7 @@ void BasicEntity::update(Field& field)
                     if (baseX >= (to.x() + (size.x() / 2.0f))) {
                         continue;
                     }
-                    if (Mathf::abs((to.x() - (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                    if (Mathf::abs((to.x() - (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
                     if (baseX > maxX) {
@@ -92,7 +93,7 @@ void BasicEntity::update(Field& field)
                     if (baseY <= (to.y() - (size.y() / 2.0f))) {
                         continue;
                     }
-                    if (Mathf::abs((to.y() + (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                    if (Mathf::abs((to.y() + (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
                     if (baseY < minY) {
@@ -114,7 +115,7 @@ void BasicEntity::update(Field& field)
                     if (baseY >= (to.y() + (size.y() / 2.0f))) {
                         continue;
                     }
-                    if (Mathf::abs((to.y() - (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                    if (Mathf::abs((to.y() - (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
                     if (baseY > maxY) {
@@ -147,7 +148,7 @@ void BasicEntity::update(Field& field)
                     if (baseZ <= (to.z() - (size.z() / 2.0f))) {
                         continue;
                     }
-                    if (Mathf::abs((to.z() + (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                    if (Mathf::abs((to.z() + (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
                     if (baseZ < minZ) {
@@ -169,7 +170,7 @@ void BasicEntity::update(Field& field)
                     if (baseZ >= (to.z() + (size.z() / 2.0f))) {
                         continue;
                     }
-                    if (Mathf::abs((to.z() - (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                    if (Mathf::abs((to.z() - (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
                     if (baseZ > maxZ) {
