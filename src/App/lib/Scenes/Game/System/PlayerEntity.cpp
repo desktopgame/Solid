@@ -28,17 +28,20 @@ void PlayerEntity::update(Field& field)
         } else if (keyboard->isPressed(KeyCode::A)) {
             addVelocity -= right * Vector3({ 1, 0, 1 }) * m_cameraMoveSpeed;
         }
-        /*
+
+        bool isJump = false;
         if (keyboard->isPressed(KeyCode::Space)) {
-            addVelocity += Vector3({ 0, 1, 0 }) * m_cameraMoveSpeed;
-        } else if (keyboard->isPressed(KeyCode::Shift)) {
-            addVelocity -= Vector3({ 0, 1, 0 }) * m_cameraMoveSpeed;
+            isJump = true;
         }
-        */
-        if (addVelocity.length() > 0.0f) {
-            setVelocity(getVelocity() * Vector3({ 0, 1, 0 }) + addVelocity);
+
+        if (isJump) {
+            setVelocity(Vector3({ 0, 30, 0 }));
         } else {
-            setVelocity(getVelocity() * Vector3({ 0, 1, 0 }));
+            if (addVelocity.length() > 0.0f) {
+                setVelocity(getVelocity() * Vector3({ 0, 1, 0 }) + addVelocity);
+            } else {
+                setVelocity(getVelocity() * Vector3({ 0, 1, 0 }));
+            }
         }
 
         auto mouseDelta = mouse->getDelta();

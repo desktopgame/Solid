@@ -10,7 +10,7 @@ class Field {
 public:
     static inline constexpr int32_t k_fieldSize = 40;
     static inline constexpr float k_tileSize = 5.0f;
-    static inline constexpr float k_gravity = 9.8f;
+    static inline constexpr float k_gravity = 9.8f * 5.0f;
 
     explicit Field(
         const std::shared_ptr<Texture>& normalTexture,
