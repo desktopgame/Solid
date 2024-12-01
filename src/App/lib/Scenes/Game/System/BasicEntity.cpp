@@ -15,6 +15,7 @@ void BasicEntity::update(Field& field)
     rehashAABB();
 
     float dt = 0.01f;
+    float ep = Mathf::Epsilon;
     Vector3 size = m_aabb.max - m_aabb.min;
     Vector3 delta = m_velocity * dt;
     Vector3 oldPos = getPosition();
@@ -42,7 +43,7 @@ void BasicEntity::update(Field& field)
                     }
                 }
                 if (hit) {
-                    minX -= (size.x() / 2.0f) + Mathf::Epsilon;
+                    minX -= (size.x() / 2.0f) + ep;
                     newPos.x() = minX;
                     m_velocity.x() = 0.0f;
                 }
@@ -61,7 +62,7 @@ void BasicEntity::update(Field& field)
                     }
                 }
                 if (hit) {
-                    maxX += (size.x() / 2.0f) + Mathf::Epsilon;
+                    maxX += (size.x() / 2.0f) + ep;
                     newPos.x() = maxX;
                     m_velocity.x() = 0.0f;
                 }
@@ -91,7 +92,7 @@ void BasicEntity::update(Field& field)
                     }
                 }
                 if (hit) {
-                    minY -= (size.y() / 2.0f) + Mathf::Epsilon;
+                    minY -= (size.y() / 2.0f) + ep;
                     newPos.y() = minY;
                     m_velocity.y() = 0.0f;
                 }
@@ -110,7 +111,7 @@ void BasicEntity::update(Field& field)
                     }
                 }
                 if (hit) {
-                    maxY += (size.y() / 2.0f) + Mathf::Epsilon;
+                    maxY += (size.y() / 2.0f) + ep;
                     newPos.y() = maxY;
                     m_velocity.y() = 0.0f;
                 }
@@ -140,7 +141,7 @@ void BasicEntity::update(Field& field)
                     }
                 }
                 if (hit) {
-                    minZ -= (size.z() / 2.0f) + Mathf::Epsilon;
+                    minZ -= (size.z() / 2.0f) + ep;
                     newPos.z() = minZ;
                     m_velocity.z() = 0.0f;
                 }
@@ -159,7 +160,7 @@ void BasicEntity::update(Field& field)
                     }
                 }
                 if (hit) {
-                    maxZ += (size.z() / 2.0f) + Mathf::Epsilon;
+                    maxZ += (size.z() / 2.0f) + ep;
                     newPos.z() = maxZ;
                     m_velocity.z() = 0.0f;
                 }
