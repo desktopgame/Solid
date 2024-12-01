@@ -86,6 +86,9 @@ void BasicEntity::update(Field& field)
                     if (baseY <= (to.y() - (size.y() / 2.0f))) {
                         continue;
                     }
+                    if (Mathf::abs((to.y() + (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                        continue;
+                    }
                     if (baseY < minY) {
                         minY = baseY;
                         hit = true;
@@ -103,6 +106,9 @@ void BasicEntity::update(Field& field)
                     float baseY = (tile.y() * Field::k_tileSize);
                     baseY += (Field::k_tileSize / 2.0f);
                     if (baseY >= (to.y() + (size.y() / 2.0f))) {
+                        continue;
+                    }
+                    if (Mathf::abs((to.y() - (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
                         continue;
                     }
                     if (baseY > maxY) {
@@ -280,6 +286,36 @@ void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics:
         center += (dir * Field::k_tileSize);
         distance += Field::k_tileSize;
     }
+
+    center = end;
+
+    float minX = alignTile(center.x() - (size.x() / 2.0f), Field::k_tileSize);
+    float maxX = alignTile(center.x() + (size.x() / 2.0f), Field::k_tileSize);
+    float minY = alignTile(center.y() - (size.y() / 2.0f), Field::k_tileSize);
+    float maxY = alignTile(center.y() + (size.y() / 2.0f), Field::k_tileSize);
+    float minZ = alignTile(center.z() - (size.z() / 2.0f), Field::k_tileSize);
+    float maxZ = alignTile(center.z() + (size.z() / 2.0f), Field::k_tileSize);
+
+    for (float fx = minX; fx <= maxX; fx += Field::k_tileSize) {
+        for (float fy = minY; fy <= maxY; fy += Field::k_tileSize) {
+            for (float fz = minZ; fz <= maxZ; fz += Field::k_tileSize) {
+                int32_t ix = static_cast<int32_t>(fx / Field::k_tileSize);
+                int32_t iy = static_cast<int32_t>(fy / Field::k_tileSize);
+                int32_t iz = static_cast<int32_t>(fz / Field::k_tileSize);
+                if (!field.hasBlockAt(ix, iy, iz)) {
+                    continue;
+                }
+
+                int32_t block = field.getBlockAt(ix, iy, iz);
+                if (always || block != 0) {
+                    hits.emplace_back(IntVector3({ ix, iy, iz }));
+                }
+            }
+        }
+    }
+
+    center += (dir * Field::k_tileSize);
+    distance += Field::k_tileSize;
 
     for (int32_t i = 0; i < node->getChildrenCount(); i++) {
         auto c = node->getChildAt(i);
