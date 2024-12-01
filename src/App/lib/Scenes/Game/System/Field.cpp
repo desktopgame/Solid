@@ -1,5 +1,6 @@
 #include <Scenes/Game/System/Entity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <Scenes/Game/System/PlayerEntity.hpp>
 
 namespace App::Scenes::Game::System {
 // public
@@ -7,6 +8,7 @@ Field::Field(
     const std::shared_ptr<Texture>& normalTexture,
     const std::shared_ptr<Texture>& borderTexture)
     : m_blocks()
+    , m_player()
     , m_entities()
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
@@ -67,6 +69,8 @@ void Field::load(const std::string& file)
 void Field::update()
 {
     Field& self = *this;
+
+    m_player->update(self);
     for (auto& entity : m_entities) {
         entity->update(self);
     }
@@ -101,12 +105,14 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
         m_instanceBuffers,
         m_instanceCount);
 
+    m_player->draw3D(renderer);
     for (auto& entity : m_entities) {
         entity->draw3D(renderer);
     }
 }
 void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
+    m_player->draw2D(renderer);
     for (auto& entity : m_entities) {
         entity->draw2D(renderer);
     }
@@ -133,6 +139,9 @@ int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
     }
     return m_blocks[x][y][z];
 }
+
+void Field::setPlayer(const std::shared_ptr<PlayerEntity>& player) { m_player = player; }
+std::shared_ptr<PlayerEntity> Field::getPlayer() const { return m_player; }
 
 void Field::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_entities.at(index); }

@@ -40,6 +40,7 @@ add_executable(
     lib/Scenes/Game/System/Field.cpp
     lib/Scenes/Game/System/Entity.cpp
     lib/Scenes/Game/System/BasicEntity.cpp
+    lib/Scenes/Game/System/PlayerEntity.cpp
 )
 app_target_compile_params(App)
 app_target_link_params(App)

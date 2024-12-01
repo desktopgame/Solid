@@ -5,6 +5,7 @@
 
 namespace App::Scenes::Game::System {
 class Entity;
+class PlayerEntity;
 class Field {
 public:
     static inline constexpr int32_t k_fieldSize = 40;
@@ -23,6 +24,9 @@ public:
 
     bool hasBlockAt(int32_t x, int32_t y, int32_t z) const;
     int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const;
+
+    void setPlayer(const std::shared_ptr<PlayerEntity>& player);
+    std::shared_ptr<PlayerEntity> getPlayer() const;
 
     void spwan(const std::shared_ptr<Entity>& entity);
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
@@ -141,6 +145,7 @@ private:
     };
 
     std::array<std::array<std::array<int32_t, k_fieldSize>, k_fieldSize>, k_fieldSize> m_blocks;
+    std::shared_ptr<PlayerEntity> m_player;
     std::vector<std::shared_ptr<Entity>> m_entities;
 
     std::shared_ptr<Texture> m_normalTexture;
