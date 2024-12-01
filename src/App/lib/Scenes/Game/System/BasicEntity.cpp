@@ -37,6 +37,9 @@ void BasicEntity::update(Field& field)
                     if (baseX <= (to.x() - (size.x() / 2.0f))) {
                         continue;
                     }
+                    if (Mathf::abs((to.x() + (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                        continue;
+                    }
                     if (baseX < minX) {
                         minX = baseX;
                         hit = true;
@@ -54,6 +57,9 @@ void BasicEntity::update(Field& field)
                     float baseX = (tile.x() * Field::k_tileSize);
                     baseX += (Field::k_tileSize / 2.0f);
                     if (baseX >= (to.x() + (size.x() / 2.0f))) {
+                        continue;
+                    }
+                    if (Mathf::abs((to.x() - (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
                         continue;
                     }
                     if (baseX > maxX) {
@@ -141,6 +147,9 @@ void BasicEntity::update(Field& field)
                     if (baseZ <= (to.z() - (size.z() / 2.0f))) {
                         continue;
                     }
+                    if (Mathf::abs((to.z() + (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
+                        continue;
+                    }
                     if (baseZ < minZ) {
                         minZ = baseZ;
                         hit = true;
@@ -158,6 +167,9 @@ void BasicEntity::update(Field& field)
                     float baseZ = (tile.z() * Field::k_tileSize);
                     baseZ += (Field::k_tileSize / 2.0f);
                     if (baseZ >= (to.z() + (size.z() / 2.0f))) {
+                        continue;
+                    }
+                    if (Mathf::abs((to.z() - (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - 0.1f)) {
                         continue;
                     }
                     if (baseZ > maxZ) {
