@@ -1,7 +1,7 @@
 #pragma once
-#include <Scenes/Game/System/BasicEntity.hpp>
+#include <Scenes/Game/System/Entities/BasicEntity.hpp>
 
-namespace App::Scenes::Game::System {
+namespace App::Scenes::Game::System::Entities {
 class PlayerEntity : public BasicEntity {
 public:
     static std::shared_ptr<PlayerEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);

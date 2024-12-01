@@ -1,6 +1,6 @@
+#include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entity.hpp>
 #include <Scenes/Game/System/Field.hpp>
-#include <Scenes/Game/System/PlayerEntity.hpp>
 
 namespace App::Scenes::Game::System {
 // public
@@ -140,8 +140,8 @@ int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
     return m_blocks[x][y][z];
 }
 
-void Field::setPlayer(const std::shared_ptr<PlayerEntity>& player) { m_player = player; }
-std::shared_ptr<PlayerEntity> Field::getPlayer() const { return m_player; }
+void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
+std::shared_ptr<Entities::PlayerEntity> Field::getPlayer() const { return m_player; }
 
 void Field::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_entities.at(index); }

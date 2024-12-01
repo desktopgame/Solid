@@ -2,7 +2,7 @@
 #include <Common/Graphics/Node.hpp>
 #include <Scenes/Game/System/Entity.hpp>
 
-namespace App::Scenes::Game::System {
+namespace App::Scenes::Game::System::Entities {
 class BasicEntity : public Entity {
 public:
     static std::shared_ptr<BasicEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);

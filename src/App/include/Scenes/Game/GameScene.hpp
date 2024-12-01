@@ -1,7 +1,7 @@
 #pragma once
-#include <Scenes/Game/System/BasicEntity.hpp>
+#include <Scenes/Game/System/Entities/BasicEntity.hpp>
+#include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
-#include <Scenes/Game/System/PlayerEntity.hpp>
 #include <library.hpp>
 #include <memory>
 #include <optional>
@@ -27,7 +27,7 @@ private:
 
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<System::Field> m_field;
-    std::shared_ptr<System::PlayerEntity> m_debugPlayer;
-    std::shared_ptr<System::BasicEntity> m_debugEntity;
+    std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
+    std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
 };
 }

@@ -1,8 +1,8 @@
 #include <Common/Graphics/Node.hpp>
-#include <Scenes/Game/System/BasicEntity.hpp>
+#include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
 
-namespace App::Scenes::Game::System {
+namespace App::Scenes::Game::System::Entities {
 // public
 std::shared_ptr<BasicEntity> BasicEntity::create(const std::shared_ptr<Common::Graphics::Node>& node)
 {

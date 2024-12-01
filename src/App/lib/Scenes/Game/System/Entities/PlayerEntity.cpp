@@ -1,6 +1,6 @@
-#include <Scenes/Game/System/PlayerEntity.hpp>
+#include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 
-namespace App::Scenes::Game::System {
+namespace App::Scenes::Game::System::Entities {
 // public
 std::shared_ptr<PlayerEntity> PlayerEntity::create(const std::shared_ptr<Common::Graphics::Node>& node)
 {

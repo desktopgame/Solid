@@ -1,5 +1,5 @@
 #include <Scenes/Game/GameScene.hpp>
-#include <Scenes/Game/System/BasicEntity.hpp>
+#include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <cmath>
 #include <imgui.h>
 
@@ -26,12 +26,12 @@ void GameScene::onEnter()
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->load("assets\\Stages\\stage_base.csv");
 
-        m_debugEntity = System::BasicEntity::create(
+        m_debugEntity = System::Entities::BasicEntity::create(
             Common::Graphics::Node::deserialize("assets\\Models\\sample.json"));
         m_debugEntity->setPosition(Vector3({ 90, 20, 90 }));
         m_field->spwan(m_debugEntity);
 
-        m_debugPlayer = System::PlayerEntity::create(
+        m_debugPlayer = System::Entities::PlayerEntity::create(
             Common::Graphics::Node::deserialize("assets\\Models\\player.json"));
         m_debugPlayer->setPosition(Vector3({ 80, 20, 80 }));
         m_field->setPlayer(m_debugPlayer);
