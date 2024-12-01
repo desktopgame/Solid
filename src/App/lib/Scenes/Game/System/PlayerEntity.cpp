@@ -34,7 +34,7 @@ void PlayerEntity::update(Field& field)
             isJump = true;
         }
 
-        if (isJump) {
+        if (isOnGround() && isJump) {
             setVelocity(Vector3({ 0, 30, 0 }));
         } else {
             if (addVelocity.length() > 0.0f) {

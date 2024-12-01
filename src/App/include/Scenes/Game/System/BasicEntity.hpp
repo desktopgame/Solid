@@ -22,6 +22,8 @@ public:
     void setReceiveGravity(bool receiveGravity);
     bool isReceiveGravity() const;
 
+    bool isOnGround() const;
+
 protected:
     BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node);
 
@@ -36,5 +38,6 @@ private:
     bool m_dirtyAABB;
     Vector3 m_velocity;
     bool m_receiveGravity;
+    bool m_onGround;
 };
 }

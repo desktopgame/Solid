@@ -13,6 +13,7 @@ BasicEntity::~BasicEntity() { }
 void BasicEntity::update(Field& field)
 {
     rehashAABB();
+    m_onGround = false;
 
     float dt = Time::deltaTime();
     float ep = Mathf::Epsilon;
@@ -137,6 +138,7 @@ void BasicEntity::update(Field& field)
                     maxY += (size.y() / 2.0f) + ep;
                     newPos.y() = maxY;
                     m_velocity.y() = 0.0f;
+                    m_onGround = true;
                 }
             }
         }
@@ -235,6 +237,8 @@ Vector3 BasicEntity::getVelocity() const { return m_velocity; }
 
 void BasicEntity::setReceiveGravity(bool receiveGravity) { m_receiveGravity = receiveGravity; }
 bool BasicEntity::isReceiveGravity() const { return m_receiveGravity; }
+
+bool BasicEntity::isOnGround() const { return m_onGround; }
 // protected
 BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : m_node(node)
