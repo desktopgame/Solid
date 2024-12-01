@@ -1,4 +1,4 @@
-// Auto generated. DO NOT EDIT.
+﻿// Auto generated. DO NOT EDIT.
 #pragma once
 #include <Graphics/Reflect.hpp>
 

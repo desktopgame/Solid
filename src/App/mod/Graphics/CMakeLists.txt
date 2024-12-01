@@ -9,7 +9,7 @@ project(
 #
 add_custom_command(
     OUTPUT ./include/Graphics/Metadata.hpp
-    COMMAND powershell -File Embed.ps1 > ./include/Graphics/Metadata.hpp
+    COMMAND powershell -File Rehash.ps1
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(Embed ALL
