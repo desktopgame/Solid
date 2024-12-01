@@ -12,10 +12,14 @@ function Get-StringHash {
 }
 
 $source = Invoke-Expression -Command ".\Generate.ps1"
-$hash = (Get-Content "./hash.txt").Trim()
 $newHash = (Get-StringHash $source).Trim()
+if (Test-Path -Path "./hash.txt") {
+    $hash = (Get-Content "./hash.txt").Trim()
 
-if ($hash -ne $newHash) {
+    if ($hash -ne $newHash) {
+        Set-Content "./include/Graphics/Metadata.hpp" -Encoding UTF8 $source
+    }
+} else {
     Set-Content "./include/Graphics/Metadata.hpp" -Encoding UTF8 $source
 }
 Set-Content "./hash.txt" $newHash
