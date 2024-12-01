@@ -32,7 +32,7 @@ void GameScene::onEnter()
         m_field->spwan(m_debugEntity);
 
         m_debugPlayer = System::PlayerEntity::create(
-            Common::Graphics::Node::deserialize("assets\\Models\\sample.json"));
+            Common::Graphics::Node::deserialize("assets\\Models\\player.json"));
         m_debugPlayer->setPosition(Vector3({ 80, 20, 80 }));
         m_field->setPlayer(m_debugPlayer);
     }
