@@ -38,6 +38,11 @@ void BasicEntity::update(Field& field)
                     if (baseX <= (to.x() - (size.x() / 2.0f))) {
                         continue;
                     }
+                    Segment nodeSegZ = Segment(to.z() - (size.z() / 2.0f), to.z() + (size.z() / 2.0f));
+                    Segment blockSegZ = Segment((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
+                    if (nodeSegZ.logicAnd(blockSegZ).distance() <= threshould) {
+                        continue;
+                    }
                     if (Mathf::abs((to.x() + (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
@@ -58,6 +63,11 @@ void BasicEntity::update(Field& field)
                     float baseX = (tile.x() * Field::k_tileSize);
                     baseX += (Field::k_tileSize / 2.0f);
                     if (baseX >= (to.x() + (size.x() / 2.0f))) {
+                        continue;
+                    }
+                    Segment nodeSegZ = Segment(to.z() - (size.z() / 2.0f), to.z() + (size.z() / 2.0f));
+                    Segment blockSegZ = Segment((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
+                    if (nodeSegZ.logicAnd(blockSegZ).distance() <= threshould) {
                         continue;
                     }
                     if (Mathf::abs((to.x() - (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
@@ -148,6 +158,11 @@ void BasicEntity::update(Field& field)
                     if (baseZ <= (to.z() - (size.z() / 2.0f))) {
                         continue;
                     }
+                    Segment nodeSegX = Segment(to.x() - (size.x() / 2.0f), to.x() + (size.x() / 2.0f));
+                    Segment blockSegX = Segment((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
+                    if (nodeSegX.logicAnd(blockSegX).distance() <= threshould) {
+                        continue;
+                    }
                     if (Mathf::abs((to.z() + (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
                         continue;
                     }
@@ -171,6 +186,11 @@ void BasicEntity::update(Field& field)
                         continue;
                     }
                     if (Mathf::abs((to.z() - (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
+                        continue;
+                    }
+                    Segment nodeSegX = Segment(to.x() - (size.x() / 2.0f), to.x() + (size.x() / 2.0f));
+                    Segment blockSegX = Segment((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
+                    if (nodeSegX.logicAnd(blockSegX).distance() <= threshould) {
                         continue;
                     }
                     if (baseZ > maxZ) {
