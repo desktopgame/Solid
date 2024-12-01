@@ -33,7 +33,6 @@ add_executable(
     App
     lib/main.cpp
     lib/Common/Graphics/Node.cpp
-    lib/Common/Util/Time.cpp
     lib/Common/Util/FpsController.cpp
     lib/Scenes/Debug/DebugScene.cpp
     lib/Scenes/Demo/DemoScene.cpp

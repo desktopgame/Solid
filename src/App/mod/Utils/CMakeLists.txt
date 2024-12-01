@@ -12,6 +12,7 @@ add_library(
     STATIC
     lib/Utils/String.cpp
     lib/Utils/IO.cpp
+    lib/Utils/Time.cpp
     lib/Utils/Stopwatch.cpp
 )
 lib_target_compile_params(Lib-Utils)

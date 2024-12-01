@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-namespace App::Common::Util {
+namespace Lib::Utils {
 class Time {
 public:
     static void begin();

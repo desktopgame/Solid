@@ -1,7 +1,7 @@
-#include <Common/Util/Time.hpp>
+#include <Utils/Time.hpp>
 #include <thread>
 
-namespace App::Common::Util {
+namespace Lib::Utils {
 std::chrono::system_clock::time_point Time::s_start;
 std::chrono::system_clock::time_point Time::s_end;
 float Time::s_deltaTime;

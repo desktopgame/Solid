@@ -1,5 +1,4 @@
 #include <Common/Graphics/Node.hpp>
-#include <Common/Util/Time.hpp>
 #include <Scenes/Game/System/BasicEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
 
@@ -15,7 +14,7 @@ void BasicEntity::update(Field& field)
 {
     rehashAABB();
 
-    float dt = Common::Util::Time::deltaTime();
+    float dt = Time::deltaTime();
     float ep = Mathf::Epsilon;
     float threshould = 0.1f;
     Vector3 size = m_aabb.max - m_aabb.min;

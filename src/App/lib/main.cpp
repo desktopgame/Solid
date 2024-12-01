@@ -5,7 +5,6 @@
 #endif
 
 // App
-#include <Common/Util/Time.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
@@ -34,7 +33,7 @@ static int appMain(int argc, char* argv[])
     window->show();
     bool running = true;
     while (running) {
-        Util::Time::begin();
+        Time::begin();
         running = window->peekMessage();
         inputSystem->sync();
 
@@ -53,9 +52,8 @@ static int appMain(int argc, char* argv[])
         surface->end2D();
 
         surface->present();
-        Util::Time::end();
-
-        Util::Time::sync();
+        Time::end();
+        Time::sync();
     }
     inputSystem->shutdown();
     engine->shutdown();
