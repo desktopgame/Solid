@@ -32,8 +32,10 @@ static int appMain(int argc, char* argv[])
     SceneManager sceneManager(sceneMap, "Debug");
 
     window->show();
-    while (window->peekMessage()) {
+    bool running = true;
+    while (running) {
         Util::Time::begin();
+        running = window->peekMessage();
         inputSystem->sync();
 
         sceneManager.onUpdate();
