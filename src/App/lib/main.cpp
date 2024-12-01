@@ -5,6 +5,7 @@
 #endif
 
 // App
+#include <Common/Util/Time.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
@@ -32,6 +33,7 @@ static int appMain(int argc, char* argv[])
 
     window->show();
     while (window->peekMessage()) {
+        Util::Time::begin();
         inputSystem->sync();
 
         sceneManager.onUpdate();
@@ -49,6 +51,9 @@ static int appMain(int argc, char* argv[])
         surface->end2D();
 
         surface->present();
+        Util::Time::end();
+
+        Util::Time::sync();
     }
     inputSystem->shutdown();
     engine->shutdown();
