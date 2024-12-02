@@ -33,6 +33,8 @@ void SlimeEntity::update(Field& field)
             m_state = State::Wait;
         }
         break;
+    case State::Jump:
+        break;
     }
 
     BasicEntity::update(field);
