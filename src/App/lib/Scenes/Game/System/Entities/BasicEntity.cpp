@@ -58,7 +58,7 @@ void BasicEntity::update(Field& field)
                     minX -= (size.x() / 2.0f) + ep;
                     newPos.x() = minX;
                     m_velocity.x() = 0.0f;
-                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.x() < 0.0f) {
                 float maxX = -9999.0f;
@@ -88,7 +88,7 @@ void BasicEntity::update(Field& field)
                     maxX += (size.x() / 2.0f) + ep;
                     newPos.x() = maxX;
                     m_velocity.x() = 0.0f;
-                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -134,7 +134,7 @@ void BasicEntity::update(Field& field)
                     minY -= (size.y() / 2.0f) + ep;
                     newPos.y() = minY;
                     m_velocity.y() = 0.0f;
-                    onCollisionRoof(hitTile.x(), hitTile.y(), hitTile.z());
+                    onCollisionRoof(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.y() < 0.0f) {
                 float maxY = -9999.0f;
@@ -170,7 +170,7 @@ void BasicEntity::update(Field& field)
                     newPos.y() = maxY;
                     m_velocity.y() = 0.0f;
                     m_onGround = true;
-                    onCollisionFloor(hitTile.x(), hitTile.y(), hitTile.z());
+                    onCollisionFloor(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -211,7 +211,7 @@ void BasicEntity::update(Field& field)
                     minZ -= (size.z() / 2.0f) + ep;
                     newPos.z() = minZ;
                     m_velocity.z() = 0.0f;
-                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.z() < 0.0f) {
                 float maxZ = -9999.0f;
@@ -241,7 +241,7 @@ void BasicEntity::update(Field& field)
                     maxZ += (size.z() / 2.0f) + ep;
                     newPos.z() = maxZ;
                     m_velocity.z() = 0.0f;
-                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -286,9 +286,9 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_receiveGravity(true)
 {
 }
-void BasicEntity::onCollisionWall(int32_t x, int32_t y, int32_t z) { }
-void BasicEntity::onCollisionRoof(int32_t x, int32_t y, int32_t z) { }
-void BasicEntity::onCollisionFloor(int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) { }
 // private
 void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst)
 {

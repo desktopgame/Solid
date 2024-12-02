@@ -12,9 +12,9 @@ public:
 protected:
     SlimeEntity();
 
-    virtual void onCollisionWall(int32_t x, int32_t y, int32_t z) override;
-    virtual void onCollisionRoof(int32_t x, int32_t y, int32_t z) override;
-    virtual void onCollisionFloor(int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) override;
 
 private:
     enum State : int32_t {

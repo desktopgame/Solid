@@ -47,17 +47,17 @@ SlimeEntity::SlimeEntity()
 {
 }
 
-void SlimeEntity::onCollisionWall(int32_t x, int32_t y, int32_t z)
+void SlimeEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z)
 {
     if (m_state == State::Walk) {
         m_state = State::Wait;
         m_timer = 0;
     }
 }
-void SlimeEntity::onCollisionRoof(int32_t x, int32_t y, int32_t z)
+void SlimeEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z)
 {
 }
-void SlimeEntity::onCollisionFloor(int32_t x, int32_t y, int32_t z)
+void SlimeEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z)
 {
 }
 }
