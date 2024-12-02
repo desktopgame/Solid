@@ -7,9 +7,21 @@ public:
     static std::shared_ptr<SlimeEntity> create();
     virtual ~SlimeEntity();
 
+    virtual void update(Field& field) override;
+
 protected:
     SlimeEntity();
 
 private:
+    enum State : int32_t {
+        Wait = 0,
+        Walk,
+        Jump
+    };
+
+    State m_state;
+    float m_timer;
+    Vector3 m_moveDir;
+    Random m_random;
 };
 }
