@@ -28,6 +28,13 @@ void Node::draw(const std::shared_ptr<Renderer>& renderer)
 
 void Node::removeFromParent() { m_removed = true; }
 
+std::shared_ptr<Node> Node::clone() const
+{
+    auto c = create();
+    clone(shared_from_this(), c);
+    return c;
+}
+
 void Node::serialize(const std::string& file, const std::shared_ptr<Node>& node)
 {
     picojson::value::object root;
@@ -87,6 +94,19 @@ int32_t Node::getChildrenCount() const { return static_cast<int32_t>(m_children.
 
 bool Node::isRemoved() const { return m_removed; }
 // private
+void Node::clone(const std::shared_ptr<const Node>& src, const std::shared_ptr<Node>& dst)
+{
+    dst->m_position = src->m_position;
+    dst->m_size = src->m_size;
+    dst->m_color = src->m_color;
+
+    dst->m_children.reserve(src->m_children.size());
+    for (const auto& child : src->m_children) {
+        auto newChild = create();
+        clone(child, newChild);
+        dst->addChild(newChild);
+    }
+}
 void Node::serialize(picojson::value::object& parent, const std::shared_ptr<Node>& node)
 {
     parent["name"] = picojson::value(std::string(node->m_name.data()));

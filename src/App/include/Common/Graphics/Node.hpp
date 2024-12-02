@@ -12,6 +12,8 @@ public:
     void draw(const std::shared_ptr<Renderer>& renderer);
     void removeFromParent();
 
+    std::shared_ptr<Node> clone() const;
+
     static void serialize(const std::string& file, const std::shared_ptr<Node>& node);
     static std::shared_ptr<Node> deserialize(const std::string& file);
 
@@ -40,6 +42,7 @@ public:
     bool isRemoved() const;
 
 private:
+    static void clone(const std::shared_ptr<const Node>& src, const std::shared_ptr<Node>& dst);
     static void serialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
     static void deserialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
 
