@@ -33,6 +33,7 @@ void BasicEntity::update(Field& field)
             if (m_velocity.x() > 0.0f) {
                 float minX = 9999.0f;
                 bool hit = false;
+                IntVector3 hitTile;
                 for (const auto& tile : hits) {
                     float baseX = (tile.x() * Field::k_tileSize);
                     baseX -= (Field::k_tileSize / 2.0f);
@@ -50,16 +51,19 @@ void BasicEntity::update(Field& field)
                     if (baseX < minX) {
                         minX = baseX;
                         hit = true;
+                        hitTile = tile;
                     }
                 }
                 if (hit) {
                     minX -= (size.x() / 2.0f) + ep;
                     newPos.x() = minX;
                     m_velocity.x() = 0.0f;
+                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.x() < 0.0f) {
                 float maxX = -9999.0f;
                 bool hit = false;
+                IntVector3 hitTile;
                 for (const auto& tile : hits) {
                     float baseX = (tile.x() * Field::k_tileSize);
                     baseX += (Field::k_tileSize / 2.0f);
@@ -77,12 +81,14 @@ void BasicEntity::update(Field& field)
                     if (baseX > maxX) {
                         maxX = baseX;
                         hit = true;
+                        hitTile = tile;
                     }
                 }
                 if (hit) {
                     maxX += (size.x() / 2.0f) + ep;
                     newPos.x() = maxX;
                     m_velocity.x() = 0.0f;
+                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -98,6 +104,7 @@ void BasicEntity::update(Field& field)
             if (m_velocity.y() > 0.0f) {
                 float minY = 9999.0f;
                 bool hit = false;
+                IntVector3 hitTile;
                 for (const auto& tile : hits) {
                     float baseY = (tile.y() * Field::k_tileSize);
                     baseY -= (Field::k_tileSize / 2.0f);
@@ -120,16 +127,19 @@ void BasicEntity::update(Field& field)
                     if (baseY < minY) {
                         minY = baseY;
                         hit = true;
+                        hitTile = tile;
                     }
                 }
                 if (hit) {
                     minY -= (size.y() / 2.0f) + ep;
                     newPos.y() = minY;
                     m_velocity.y() = 0.0f;
+                    onCollisionRoof(hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.y() < 0.0f) {
                 float maxY = -9999.0f;
                 bool hit = false;
+                IntVector3 hitTile;
                 for (const auto& tile : hits) {
                     float baseY = (tile.y() * Field::k_tileSize);
                     baseY += (Field::k_tileSize / 2.0f);
@@ -152,6 +162,7 @@ void BasicEntity::update(Field& field)
                     if (baseY > maxY) {
                         maxY = baseY;
                         hit = true;
+                        hitTile = tile;
                     }
                 }
                 if (hit) {
@@ -159,6 +170,7 @@ void BasicEntity::update(Field& field)
                     newPos.y() = maxY;
                     m_velocity.y() = 0.0f;
                     m_onGround = true;
+                    onCollisionFloor(hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -174,6 +186,7 @@ void BasicEntity::update(Field& field)
             if (m_velocity.z() > 0.0f) {
                 float minZ = 9999.0f;
                 bool hit = false;
+                IntVector3 hitTile;
                 for (const auto& tile : hits) {
                     float baseZ = (tile.z() * Field::k_tileSize);
                     baseZ -= (Field::k_tileSize / 2.0f);
@@ -191,16 +204,19 @@ void BasicEntity::update(Field& field)
                     if (baseZ < minZ) {
                         minZ = baseZ;
                         hit = true;
+                        hitTile = tile;
                     }
                 }
                 if (hit) {
                     minZ -= (size.z() / 2.0f) + ep;
                     newPos.z() = minZ;
                     m_velocity.z() = 0.0f;
+                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.z() < 0.0f) {
                 float maxZ = -9999.0f;
                 bool hit = false;
+                IntVector3 hitTile;
                 for (const auto& tile : hits) {
                     float baseZ = (tile.z() * Field::k_tileSize);
                     baseZ += (Field::k_tileSize / 2.0f);
@@ -218,12 +234,14 @@ void BasicEntity::update(Field& field)
                     if (baseZ > maxZ) {
                         maxZ = baseZ;
                         hit = true;
+                        hitTile = tile;
                     }
                 }
                 if (hit) {
                     maxZ += (size.z() / 2.0f) + ep;
                     newPos.z() = maxZ;
                     m_velocity.z() = 0.0f;
+                    onCollisionWall(hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -268,6 +286,9 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_receiveGravity(true)
 {
 }
+void BasicEntity::onCollisionWall(int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionRoof(int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionFloor(int32_t x, int32_t y, int32_t z) { }
 // private
 void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst)
 {

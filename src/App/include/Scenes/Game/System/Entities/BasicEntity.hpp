@@ -27,6 +27,10 @@ public:
 protected:
     BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node);
 
+    virtual void onCollisionWall(int32_t x, int32_t y, int32_t z);
+    virtual void onCollisionRoof(int32_t x, int32_t y, int32_t z);
+    virtual void onCollisionFloor(int32_t x, int32_t y, int32_t z);
+
 private:
     void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
     void hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits, bool always);
