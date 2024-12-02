@@ -14,6 +14,7 @@ add_library(
     lib/Utils/IO.cpp
     lib/Utils/Time.cpp
     lib/Utils/Stopwatch.cpp
+    lib/Utils/Random.cpp
 )
 lib_target_compile_params(Lib-Utils)
 lib_target_link_params(Lib-Utils)
