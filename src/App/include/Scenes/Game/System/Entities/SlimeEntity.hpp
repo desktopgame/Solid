@@ -4,11 +4,11 @@
 namespace App::Scenes::Game::System::Entities {
 class SlimeEntity : public EnemyEntity {
 public:
-    static std::shared_ptr<SlimeEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);
+    static std::shared_ptr<SlimeEntity> create();
     virtual ~SlimeEntity();
 
 protected:
-    SlimeEntity(const std::shared_ptr<Common::Graphics::Node>& node);
+    SlimeEntity();
 
 private:
 };
