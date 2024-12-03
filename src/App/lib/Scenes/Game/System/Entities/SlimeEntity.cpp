@@ -13,7 +13,7 @@ SlimeEntity::~SlimeEntity()
 void SlimeEntity::update(Field& field)
 {
     switch (m_state) {
-    case State::Wait:
+    case State::Wait: {
         if (isOnGround()) {
             m_timer += Time::deltaTime();
         }
@@ -28,9 +28,15 @@ void SlimeEntity::update(Field& field)
             m_timer = 0.0f;
         }
         break;
-    case State::Look:
-        if (Mathf::abs(m_rotation.y() - Mathf::normalizeDegree(m_degree + 90.0f)) > 5) {
-            setTorque(Vector3({ 0, 120, 0 }));
+    }
+    case State::Look: {
+        float targetDegree = Mathf::normalizeDegree(m_degree + 90.0f);
+        if (Mathf::abs(m_rotation.y() - targetDegree) > 5) {
+            if (m_rotation.y() > targetDegree) {
+                setTorque(Vector3({ 0, -120, 0 }));
+            } else {
+                setTorque(Vector3({ 0, 120, 0 }));
+            }
         } else {
             m_state = State::Walk;
             setTorque(Vector3({ 0, 0, 0 }));
@@ -40,7 +46,8 @@ void SlimeEntity::update(Field& field)
             }
         }
         break;
-    case State::Walk:
+    }
+    case State::Walk: {
         m_timer += Time::deltaTime();
         if (m_timer < 3.0f) {
             Vector3 vel = getVelocity() * Vector3({ 0, 1, 0 });
@@ -49,8 +56,10 @@ void SlimeEntity::update(Field& field)
             stop();
         }
         break;
-    case State::Jump:
+    }
+    case State::Jump: {
         break;
+    }
     }
 
     BasicEntity::update(field);
