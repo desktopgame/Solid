@@ -248,7 +248,10 @@ void BasicEntity::update(Field& field)
     }
 
     setPosition(newPos);
-    m_velocity.y() -= Field::k_gravity * dt;
+
+    if (m_receiveGravity) {
+        m_velocity.y() -= Field::k_gravity * dt;
+    }
 
     m_node->setPosition(getPosition());
 

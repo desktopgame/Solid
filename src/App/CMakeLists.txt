@@ -44,6 +44,7 @@ add_executable(
     lib/Scenes/Game/System/Entities/PlayerEntity.cpp
     lib/Scenes/Game/System/Entities/EnemyEntity.cpp
     lib/Scenes/Game/System/Entities/SlimeEntity.cpp
+    lib/Scenes/Game/System/Entities/ProjectileEntity.cpp
 )
 app_target_compile_params(App)
 app_target_link_params(App)
