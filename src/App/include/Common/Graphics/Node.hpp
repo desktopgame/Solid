@@ -27,6 +27,11 @@ public:
     Vector3& getPosition();
     Vector3 getAbsolutePosition() const;
 
+    void setRotation(const Vector3& rotation);
+    Vector3 getRotation() const;
+    Vector3& getRotation();
+    Quaternion getAbsoluteRotation() const;
+
     void setSize(const Vector3& size);
     Vector3 getSize() const;
     Vector3& getSize();
@@ -51,6 +56,7 @@ private:
 
     std::array<char, 32> m_name;
     Vector3 m_position;
+    Vector3 m_rotation;
     Vector3 m_size;
     Vector3 m_color;
     std::weak_ptr<Node> m_parent;

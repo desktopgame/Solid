@@ -116,6 +116,7 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
         }
         ImGui::InputText("Name", node->getName().data(), 16);
         ImGui::DragFloat3("Pos", node->getPosition().data(), 0.01f);
+        ImGui::DragFloat3("Rot", node->getRotation().data(), 1.0f, 0.0f, 360.0f);
         ImGui::DragFloat3("Size", node->getSize().data(), 0.01f);
         ImGui::ColorEdit3("Color", node->getColor().data());
         if (ImGui::Button("New Node")) {
