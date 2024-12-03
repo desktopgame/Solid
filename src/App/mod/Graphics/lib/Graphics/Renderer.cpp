@@ -20,7 +20,8 @@
 namespace Lib::Graphics {
 // public
 Renderer::Renderer()
-    : m_fontMap()
+    : m_matrixStack()
+    , m_fontMap()
     , m_fontSize(16)
     , m_rectObject()
     , m_circleObject()
@@ -37,6 +38,10 @@ Renderer::Renderer()
 {
 }
 
+void Renderer::pushMatrix(const Math::Matrix& m) { m_matrixStack.push(m); }
+
+void Renderer::popMatrix() { m_matrixStack.pop(); }
+
 void Renderer::textFont(const std::shared_ptr<FontMap>& fontMap) { m_fontMap = fontMap; }
 
 void Renderer::textFontSize(int32_t fontSize) { m_fontSize = fontSize; }
@@ -45,10 +50,10 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
 {
     initRect();
     auto ub = UniformPool::rent(Metadata::ProgramTable::Color2D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
         Math::Matrix::rotateZ(degree),
-        Math::Matrix::scale(Math::Vector3(size, 1.0f)));
+        Math::Matrix::scale(Math::Vector3(size, 1.0f))));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
@@ -66,10 +71,10 @@ void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& si
 {
     initCircle();
     auto ub = UniformPool::rent(Metadata::ProgramTable::Color2D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
         Math::Matrix(),
-        Math::Matrix::scale(Math::Vector3(size, 1.0f)));
+        Math::Matrix::scale(Math::Vector3(size, 1.0f))));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
@@ -86,10 +91,10 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
 {
     initSprite();
     auto ub = UniformPool::rent(Metadata::ProgramTable::Texture2D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
         Math::Matrix(),
-        Math::Matrix::scale(Math::Vector3(size, 1.0f)));
+        Math::Matrix::scale(Math::Vector3(size, 1.0f))));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
@@ -138,10 +143,10 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
         float ypos = offset.y() - (fontSprite->metrics.size.y() - fontSprite->metrics.bearing.y()) + (fontSprite->metrics.size.y() / 2);
 
         auto ub = UniformPool::rent(Metadata::Text2D);
-        auto modelMatrix = Math::Matrix::transform(
+        auto modelMatrix = applyMatrix(Math::Matrix::transform(
             Math::Matrix::translate(Math::Vector3(Math::Vector2({ xpos, ypos }), 0)),
             Math::Matrix(),
-            Math::Matrix::scale(Math::Vector3({ static_cast<float>(fontSprite->metrics.size.x()), static_cast<float>(fontSprite->metrics.size.y()), 1.0f })));
+            Math::Matrix::scale(Math::Vector3({ static_cast<float>(fontSprite->metrics.size.x()), static_cast<float>(fontSprite->metrics.size.y()), 1.0f }))));
         Reflect::UCamera uCamera;
         uCamera.modelMatrix = modelMatrix;
         uCamera.viewMatrix = Math::Matrix();
@@ -183,10 +188,10 @@ void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& sca
     Object& obj = isWireframe ? m_planeWireframeObject : m_planeObject;
     initPlane(obj, isWireframe);
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(Math::Vector3(scale, 1.0f)));
+        Math::Matrix::scale(Math::Vector3(scale, 1.0f))));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -203,10 +208,10 @@ void Renderer::drawPlaneLine(const Math::Vector3& position, const Math::Vector2&
 {
     initPlaneLine();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshLine3D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(Math::Vector3(scale, 1.0f)));
+        Math::Matrix::scale(Math::Vector3(scale, 1.0f))));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -233,10 +238,10 @@ void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vecto
 {
     initPlaneTexture();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(Math::Vector3(scale, 1.0f)));
+        Math::Matrix::scale(Math::Vector3(scale, 1.0f))));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -256,10 +261,10 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     Object& obj = isWireframe ? m_boxWireframeObject : m_boxObject;
     initBox(obj, isWireframe);
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(scale));
+        Math::Matrix::scale(scale)));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -276,10 +281,10 @@ void Renderer::drawBoxLine(const Math::Vector3& position, const Math::Vector3& s
 {
     initBoxLine();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshLine3D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(scale));
+        Math::Matrix::scale(scale)));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -306,10 +311,10 @@ void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3
 {
     initBoxTexture();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
-    auto modelMatrix = Math::Matrix::transform(
+    auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
         Math::Quaternion::toMatrix(rotation),
-        Math::Matrix::scale(scale));
+        Math::Matrix::scale(scale)));
     Reflect::UCamera uCamera;
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
@@ -525,6 +530,11 @@ void Renderer::initBoxTexture()
     m_boxTextureObject.indexBuffer->update(indices.data());
     m_boxTextureObject.indexLength = indices.size();
     m_boxTextureObject.rc = RenderContext::get(Metadata::ProgramTable::MeshTexture3D);
+}
+
+Math::Matrix Renderer::applyMatrix(const Math::Matrix& m) const
+{
+    return m_matrixStack.mult() * m;
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub)

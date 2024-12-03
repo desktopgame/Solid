@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphics/Color.hpp>
 #include <Graphics/FontMap.hpp>
+#include <Graphics/MatrixStack.hpp>
 #include <Math/Quaternion.hpp>
 #include <Math/Vector.hpp>
 #include <array>
@@ -26,6 +27,9 @@ public:
     };
 
     explicit Renderer();
+
+    void pushMatrix(const Math::Matrix& m);
+    void popMatrix();
 
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
@@ -66,7 +70,11 @@ private:
     void initBoxLine();
     void initBoxTexture();
 
+    Math::Matrix applyMatrix(const Math::Matrix& m) const;
     void renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub);
+
+    // common
+    MatrixStack m_matrixStack;
 
     // text
     std::shared_ptr<FontMap> m_fontMap;
