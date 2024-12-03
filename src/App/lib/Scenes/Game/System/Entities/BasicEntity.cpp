@@ -251,6 +251,13 @@ void BasicEntity::update(Field& field)
     m_velocity.y() -= Field::k_gravity * dt;
 
     m_node->setPosition(getPosition());
+
+    Vector3 rot = m_torque * dt;
+    Vector3 oldRot = getRotation();
+    Vector3 newRot = oldRot + rot;
+
+    setRotation(newRot);
+    m_node->setRotation(newRot);
 }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
