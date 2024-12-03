@@ -29,6 +29,7 @@ private:
     State m_state;
     float m_timer;
     float m_waitTime;
+    float m_moveSpeed;
     int32_t m_degree;
     bool m_jump;
     Vector3 m_moveDir;

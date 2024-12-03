@@ -43,18 +43,20 @@ void SlimeEntity::update(Field& field)
         float targetDegree = Mathf::normalizeDegree(m_degree + 90.0f);
         if (Mathf::abs(m_rotation.y() - targetDegree) > 5) {
             if (m_rotation.y() > targetDegree) {
-                setTorque(Vector3({ 0, -120, 0 }));
+                setTorque(Vector3({ 0, -200, 0 }));
             } else {
-                setTorque(Vector3({ 0, 120, 0 }));
+                setTorque(Vector3({ 0, 200, 0 }));
             }
         } else {
             m_state = State::Walk;
             setTorque(Vector3({ 0, 0, 0 }));
 
             m_jump = false;
+            m_moveSpeed = 30.0f;
             if (m_random.range(0, 10) > 5) {
                 setVelocity(Vector3({ 0, 30, 0 }));
                 m_jump = true;
+                m_moveSpeed = 20.0f;
             }
         }
         break;
@@ -63,7 +65,7 @@ void SlimeEntity::update(Field& field)
         m_timer += Time::deltaTime();
         if (m_timer < 2.0f) {
             Vector3 vel = getVelocity() * Vector3({ 0, 1, 0 });
-            setVelocity(vel + (m_moveDir * 20.0f));
+            setVelocity(vel + (m_moveDir * m_moveSpeed));
 
             if (m_jump && isOnGround()) {
                 stop();
@@ -86,6 +88,7 @@ SlimeEntity::SlimeEntity()
     , m_state()
     , m_timer()
     , m_waitTime(2.0f)
+    , m_moveSpeed()
     , m_degree()
     , m_jump()
     , m_moveDir()
