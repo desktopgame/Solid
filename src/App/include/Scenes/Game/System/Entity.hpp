@@ -21,11 +21,15 @@ public:
     void setPosition(const Vector3& position);
     Vector3 getPosition() const;
 
+    void setRotation(const Vector3& rotation);
+    Vector3 getRotation() const;
+
 protected:
     Entity();
 
     int32_t m_maximumHP;
     int32_t m_currentHP;
     Vector3 m_position;
+    Vector3 m_rotation;
 };
 }

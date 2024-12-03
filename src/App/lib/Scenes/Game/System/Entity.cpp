@@ -19,11 +19,16 @@ bool Entity::isDead() const { return m_currentHP == 0; }
 
 void Entity::setPosition(const Vector3& position) { m_position = position; }
 Vector3 Entity::getPosition() const { return m_position; }
+
+void Entity::setRotation(const Vector3& rotation) { m_rotation = rotation; }
+Vector3 Entity::getRotation() const { return m_rotation; }
+
 // protected
 Entity::Entity()
     : m_maximumHP(10)
     , m_currentHP(10)
     , m_position()
+    , m_rotation()
 {
 }
 }

@@ -273,6 +273,9 @@ Geom::AABB BasicEntity::getAABB() const { return m_aabb; }
 void BasicEntity::setVelocity(const Vector3& velocity) { m_velocity = velocity; }
 Vector3 BasicEntity::getVelocity() const { return m_velocity; }
 
+void BasicEntity::setTorque(const Vector3& torque) { m_torque = torque; }
+Vector3 BasicEntity::getTorque() const { return m_torque; }
+
 void BasicEntity::setReceiveGravity(bool receiveGravity) { m_receiveGravity = receiveGravity; }
 bool BasicEntity::isReceiveGravity() const { return m_receiveGravity; }
 
@@ -283,6 +286,7 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_aabb()
     , m_dirtyAABB(true)
     , m_velocity()
+    , m_torque()
     , m_receiveGravity(true)
 {
 }

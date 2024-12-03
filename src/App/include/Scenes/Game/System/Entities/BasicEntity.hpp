@@ -19,6 +19,9 @@ public:
     void setVelocity(const Vector3& velocity);
     Vector3 getVelocity() const;
 
+    void setTorque(const Vector3& torque);
+    Vector3 getTorque() const;
+
     void setReceiveGravity(bool receiveGravity);
     bool isReceiveGravity() const;
 
@@ -41,6 +44,7 @@ private:
     Geom::AABB m_aabb;
     bool m_dirtyAABB;
     Vector3 m_velocity;
+    Vector3 m_torque;
     bool m_receiveGravity;
     bool m_onGround;
 };
