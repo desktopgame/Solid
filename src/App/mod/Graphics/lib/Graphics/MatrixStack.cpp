@@ -17,7 +17,7 @@ Math::Matrix MatrixStack::mult() const
     Math::Matrix m;
     auto iter = m_stack.begin();
     while (iter != m_stack.end()) {
-        m = m * (*iter);
+        m = (*iter) * m;
         ++iter;
     }
     return m;

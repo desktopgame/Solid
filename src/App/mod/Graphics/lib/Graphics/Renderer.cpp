@@ -534,7 +534,7 @@ void Renderer::initBoxTexture()
 
 Math::Matrix Renderer::applyMatrix(const Math::Matrix& m) const
 {
-    return m_matrixStack.mult() * m;
+    return m * m_matrixStack.mult();
 }
 
 void Renderer::renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub)
