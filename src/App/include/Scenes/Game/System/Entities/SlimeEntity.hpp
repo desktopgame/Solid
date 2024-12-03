@@ -30,6 +30,7 @@ private:
     float m_timer;
     float m_waitTime;
     int32_t m_degree;
+    bool m_jump;
     Vector3 m_moveDir;
     Random m_random;
 };

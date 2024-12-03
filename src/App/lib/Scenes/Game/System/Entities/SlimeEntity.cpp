@@ -1,5 +1,7 @@
 #include <Common/Graphics/NodeRegistry.hpp>
+#include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entities/SlimeEntity.hpp>
+#include <Scenes/Game/System/Field.hpp>
 
 namespace App::Scenes::Game::System::Entities {
 // public
@@ -21,6 +23,14 @@ void SlimeEntity::update(Field& field)
             m_state = State::Look;
 
             int32_t degree = m_random.range(0, 360);
+            Vector3 playerPos = field.getPlayer()->getPosition();
+            Vector3 selfPos = getPosition();
+            float distToPlayer = Vector3::distance(playerPos, selfPos);
+            if (distToPlayer < 30.0f) {
+                Vector3 dir = Vector3::normalized(playerPos - selfPos);
+                degree = (::atan2f(dir.z(), dir.x()) * Mathf::Rad2Deg);
+            }
+
             float x = Mathf::cos(Mathf::Deg2Rad * (float)degree);
             float z = Mathf::sin(Mathf::Deg2Rad * (float)degree);
             m_degree = degree;
@@ -41,17 +51,23 @@ void SlimeEntity::update(Field& field)
             m_state = State::Walk;
             setTorque(Vector3({ 0, 0, 0 }));
 
+            m_jump = false;
             if (m_random.range(0, 10) > 5) {
                 setVelocity(Vector3({ 0, 30, 0 }));
+                m_jump = true;
             }
         }
         break;
     }
     case State::Walk: {
         m_timer += Time::deltaTime();
-        if (m_timer < 3.0f) {
+        if (m_timer < 2.0f) {
             Vector3 vel = getVelocity() * Vector3({ 0, 1, 0 });
             setVelocity(vel + (m_moveDir * 20.0f));
+
+            if (m_jump && isOnGround()) {
+                stop();
+            }
         } else {
             stop();
         }
@@ -71,6 +87,7 @@ SlimeEntity::SlimeEntity()
     , m_timer()
     , m_waitTime(2.0f)
     , m_degree()
+    , m_jump()
     , m_moveDir()
     , m_random()
 {
