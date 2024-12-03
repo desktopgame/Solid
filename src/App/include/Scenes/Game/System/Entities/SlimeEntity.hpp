@@ -17,14 +17,19 @@ protected:
     virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) override;
 
 private:
+    void stop();
+
     enum State : int32_t {
         Wait = 0,
+        Look,
         Walk,
         Jump
     };
 
     State m_state;
     float m_timer;
+    float m_waitTime;
+    int32_t m_degree;
     Vector3 m_moveDir;
     Random m_random;
 };

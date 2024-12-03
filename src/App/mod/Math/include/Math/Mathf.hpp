@@ -143,6 +143,28 @@ public:
         return a > 0 ? a : -a;
     }
 
+    template <typename T>
+    inline static T normalizeDegree(T degree)
+    {
+        T full = static_cast<T>(360);
+        T a = degree % full;
+        if (a < 0) {
+            a += full;
+        }
+        return a;
+    }
+
+    template <>
+    INLINE_SPEC_STATIC float normalizeDegree<float>(float degree)
+    {
+        float full = 360.0f;
+        float a = ::fmodf(degree, full);
+        if (a < 0.0f) {
+            a += full;
+        }
+        return a;
+    }
+
 private:
     Mathf() = delete;
     ~Mathf() = delete;

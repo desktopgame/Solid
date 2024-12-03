@@ -256,6 +256,8 @@ void BasicEntity::update(Field& field)
     Vector3 oldRot = getRotation();
     Vector3 newRot = oldRot + rot;
 
+    newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
+
     setRotation(newRot);
     m_node->setRotation(newRot);
 }
