@@ -14,7 +14,9 @@ void SlimeEntity::update(Field& field)
 {
     switch (m_state) {
     case State::Wait:
-        m_timer += Time::deltaTime();
+        if (isOnGround()) {
+            m_timer += Time::deltaTime();
+        }
         if (m_timer > m_waitTime) {
             m_state = State::Look;
 
@@ -32,12 +34,17 @@ void SlimeEntity::update(Field& field)
         } else {
             m_state = State::Walk;
             setTorque(Vector3({ 0, 0, 0 }));
+
+            if (m_random.range(0, 10) > 5) {
+                setVelocity(Vector3({ 0, 30, 0 }));
+            }
         }
         break;
     case State::Walk:
         m_timer += Time::deltaTime();
         if (m_timer < 3.0f) {
-            setVelocity(m_moveDir * 20.0f);
+            Vector3 vel = getVelocity() * Vector3({ 0, 1, 0 });
+            setVelocity(vel + (m_moveDir * 20.0f));
         } else {
             stop();
         }
