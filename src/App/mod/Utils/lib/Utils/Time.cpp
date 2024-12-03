@@ -15,6 +15,10 @@ void Time::end()
 
     auto elapsedTime = std::chrono::duration<float>(s_end - s_start);
     s_deltaTime = elapsedTime.count();
+
+    if (s_deltaTime > 1.0f) {
+        s_deltaTime = 1.0f;
+    }
 }
 void Time::sync()
 {
