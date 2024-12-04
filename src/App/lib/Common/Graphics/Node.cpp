@@ -92,7 +92,7 @@ void Node::setColor(const Vector3& color) { m_color = color; }
 Vector3 Node::getColor() const { return m_color; }
 Vector3& Node::getColor() { return m_color; }
 
-void Node::rehashTransform()
+Matrix Node::getTransform()
 {
     if (m_isDirtyTransform) {
         m_transform = Matrix::transform(
@@ -101,8 +101,30 @@ void Node::rehashTransform()
             Matrix());
         m_isDirtyTransform = false;
     }
+    return m_transform;
 }
-Matrix Node::getTransform() const { return m_transform; }
+Matrix Node::getAbsoluteTransform()
+{
+    auto sp = m_parent.lock();
+    if (sp) {
+        return getTransform() * sp->getAbsoluteTransform();
+    }
+    return getTransform();
+}
+std::array<Vector3, 4> Node::getEdges()
+{
+    Vector3 a = m_position + (m_size * Vector3({ -0.5f, 0.5f, 0.5f }));
+    Vector3 b = m_position + (m_size * Vector3({ 0.5f, 0.5f, 0.5f }));
+    Vector3 c = m_position + (m_size * Vector3({ -0.5f, 0.5f, -0.5f }));
+    Vector3 d = m_position + (m_size * Vector3({ 0.5f, 0.5f, -0.5f }));
+
+    Matrix m = getAbsoluteTransform();
+    a = Matrix::multiply(m, a);
+    b = Matrix::multiply(m, b);
+    c = Matrix::multiply(m, c);
+    d = Matrix::multiply(m, d);
+    return std::array<Vector3, 4> { a, b, c, d };
+}
 
 void Node::addChild(const std::shared_ptr<Node>& node)
 {
@@ -196,8 +218,6 @@ Node::Node()
 }
 void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
 {
-    rehashTransform();
-
     float thickness = 0.25f;
     renderer->pushMatrix(getTransform());
     {

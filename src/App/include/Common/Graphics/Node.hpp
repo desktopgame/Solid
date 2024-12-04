@@ -38,8 +38,9 @@ public:
     Vector3 getColor() const;
     Vector3& getColor();
 
-    void rehashTransform();
-    Matrix getTransform() const;
+    Matrix getTransform();
+    Matrix getAbsoluteTransform();
+    std::array<Vector3, 4> getEdges();
 
     void addChild(const std::shared_ptr<Node>& node);
     std::shared_ptr<Node> getChildAt(int32_t index) const;
