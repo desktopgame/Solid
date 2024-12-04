@@ -344,7 +344,7 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
 
 void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits, bool always)
 {
-    Vector3 center = node->getAbsolutePosition();
+    Vector3 center = node->getPosition();
     Vector3 size = node->getSize();
     Vector3 end = center + offset;
     Vector3 dir = Vector3::normalized(end - center);

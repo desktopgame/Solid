@@ -67,31 +67,10 @@ std::array<char, 32>& Node::getName() { return m_name; }
 void Node::setPosition(const Vector3& position) { m_position = position; }
 Vector3 Node::getPosition() const { return m_position; }
 Vector3& Node::getPosition() { return m_position; }
-Vector3 Node::getAbsolutePosition() const
-{
-    auto sp = m_parent.lock();
-    if (sp) {
-        return sp->getAbsolutePosition() + m_position;
-    }
-    return m_position;
-}
 
 void Node::setRotation(const Vector3& rotation) { m_rotation = rotation; }
 Vector3 Node::getRotation() const { return m_rotation; }
 Vector3& Node::getRotation() { return m_rotation; }
-Quaternion Node::getAbsoluteRotation() const
-{
-    Quaternion q1 = Quaternion::angleAxis(m_rotation.x(), Vector3({ 1, 0, 0 }));
-    Quaternion q2 = Quaternion::angleAxis(m_rotation.y(), Vector3({ 0, 1, 0 }));
-    Quaternion q3 = Quaternion::angleAxis(m_rotation.z(), Vector3({ 0, 0, 1 }));
-    Quaternion q = q1 * q2 * q3;
-
-    auto sp = m_parent.lock();
-    if (sp) {
-        return sp->getAbsoluteRotation() * q;
-    }
-    return q;
-}
 
 void Node::setSize(const Vector3& size) { m_size = size; }
 Vector3 Node::getSize() const { return m_size; }

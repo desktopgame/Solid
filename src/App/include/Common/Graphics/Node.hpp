@@ -25,12 +25,10 @@ public:
     void setPosition(const Vector3& position);
     Vector3 getPosition() const;
     Vector3& getPosition();
-    Vector3 getAbsolutePosition() const;
 
     void setRotation(const Vector3& rotation);
     Vector3 getRotation() const;
     Vector3& getRotation();
-    Quaternion getAbsoluteRotation() const;
 
     void setSize(const Vector3& size);
     Vector3 getSize() const;
