@@ -22,13 +22,13 @@ public:
     std::array<char, 32> getName() const;
     std::array<char, 32>& getName();
 
-    void setPosition(const Vector3& position);
-    Vector3 getPosition() const;
-    Vector3& getPosition();
+    void setLocalPosition(const Vector3& localPosition);
+    Vector3 getLocalPosition() const;
+    Vector3& getLocalPosition();
 
-    void setRotation(const Vector3& rotation);
-    Vector3 getRotation() const;
-    Vector3& getRotation();
+    void setLocalRotation(const Vector3& localRotation);
+    Vector3 getLocalRotation() const;
+    Vector3& getLocalRotation();
 
     void setSize(const Vector3& size);
     Vector3 getSize() const;
@@ -38,9 +38,9 @@ public:
     Vector3 getColor() const;
     Vector3& getColor();
 
-    Matrix getTransform();
-    Matrix getAbsoluteTransform();
-    std::array<Vector3, 4> getEdges();
+    Matrix getLocalTransform();
+    Matrix getGlobalTransform();
+    std::array<Vector3, 8> getEdges();
 
     void addChild(const std::shared_ptr<Node>& node);
     std::shared_ptr<Node> getChildAt(int32_t index) const;
@@ -57,11 +57,11 @@ private:
     void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer);
 
     std::array<char, 32> m_name;
-    Vector3 m_position;
-    Vector3 m_rotation;
+    Vector3 m_localPosition;
+    Vector3 m_localRotation;
     Vector3 m_size;
     Vector3 m_color;
-    Matrix m_transform;
+    Matrix m_localTransform;
     bool m_isDirtyTransform;
     std::weak_ptr<Node> m_parent;
     std::vector<std::shared_ptr<Node>> m_children;

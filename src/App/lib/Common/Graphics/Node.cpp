@@ -64,21 +64,21 @@ void Node::setName(const std::array<char, 32>& name) { m_name = name; }
 std::array<char, 32> Node::getName() const { return m_name; }
 std::array<char, 32>& Node::getName() { return m_name; }
 
-void Node::setPosition(const Vector3& position)
+void Node::setLocalPosition(const Vector3& localPosition)
 {
     m_isDirtyTransform = true;
-    m_position = position;
+    m_localPosition = localPosition;
 }
-Vector3 Node::getPosition() const { return m_position; }
-Vector3& Node::getPosition() { return m_position; }
+Vector3 Node::getLocalPosition() const { return m_localPosition; }
+Vector3& Node::getLocalPosition() { return m_localPosition; }
 
-void Node::setRotation(const Vector3& rotation)
+void Node::setLocalRotation(const Vector3& localRotation)
 {
     m_isDirtyTransform = true;
-    m_rotation = rotation;
+    m_localRotation = localRotation;
 }
-Vector3 Node::getRotation() const { return m_rotation; }
-Vector3& Node::getRotation() { return m_rotation; }
+Vector3 Node::getLocalRotation() const { return m_localRotation; }
+Vector3& Node::getLocalRotation() { return m_localRotation; }
 
 void Node::setSize(const Vector3& size)
 {
@@ -92,38 +92,46 @@ void Node::setColor(const Vector3& color) { m_color = color; }
 Vector3 Node::getColor() const { return m_color; }
 Vector3& Node::getColor() { return m_color; }
 
-Matrix Node::getTransform()
+Matrix Node::getLocalTransform()
 {
     if (m_isDirtyTransform) {
-        m_transform = Matrix::transform(
-            Matrix::translate(m_position),
-            Quaternion::toMatrix(Quaternion::angleAxis(m_rotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_rotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_rotation.z(), Vector3({ 0, 0, 1 }))),
+        m_localTransform = Matrix::transform(
+            Matrix::translate(m_localPosition),
+            Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
             Matrix());
         m_isDirtyTransform = false;
     }
-    return m_transform;
+    return m_localTransform;
 }
-Matrix Node::getAbsoluteTransform()
+Matrix Node::getGlobalTransform()
 {
     auto sp = m_parent.lock();
     if (sp) {
-        return getTransform() * sp->getAbsoluteTransform();
+        return getLocalTransform() * sp->getGlobalTransform();
     }
-    return getTransform();
+    return getLocalTransform();
 }
-std::array<Vector3, 4> Node::getEdges()
+std::array<Vector3, 8> Node::getEdges()
 {
-    Vector3 a = m_position + (m_size * Vector3({ -0.5f, 0.5f, 0.5f }));
-    Vector3 b = m_position + (m_size * Vector3({ 0.5f, 0.5f, 0.5f }));
-    Vector3 c = m_position + (m_size * Vector3({ -0.5f, 0.5f, -0.5f }));
-    Vector3 d = m_position + (m_size * Vector3({ 0.5f, 0.5f, -0.5f }));
+    Vector3 a = m_localPosition + (m_size * Vector3({ -0.5f, 0.5f, 0.5f }));
+    Vector3 b = m_localPosition + (m_size * Vector3({ 0.5f, 0.5f, 0.5f }));
+    Vector3 c = m_localPosition + (m_size * Vector3({ -0.5f, 0.5f, -0.5f }));
+    Vector3 d = m_localPosition + (m_size * Vector3({ 0.5f, 0.5f, -0.5f }));
+    Vector3 e = m_localPosition + (m_size * Vector3({ -0.5f, -0.5f, 0.5f }));
+    Vector3 f = m_localPosition + (m_size * Vector3({ 0.5f, -0.5f, 0.5f }));
+    Vector3 g = m_localPosition + (m_size * Vector3({ -0.5f, -0.5f, -0.5f }));
+    Vector3 h = m_localPosition + (m_size * Vector3({ 0.5f, -0.5f, -0.5f }));
 
-    Matrix m = getAbsoluteTransform();
+    Matrix m = getGlobalTransform();
     a = Matrix::multiply(m, a);
     b = Matrix::multiply(m, b);
     c = Matrix::multiply(m, c);
     d = Matrix::multiply(m, d);
-    return std::array<Vector3, 4> { a, b, c, d };
+    e = Matrix::multiply(m, e);
+    f = Matrix::multiply(m, f);
+    g = Matrix::multiply(m, g);
+    h = Matrix::multiply(m, h);
+    return std::array<Vector3, 8> { a, b, c, d, e, f, g, h };
 }
 
 void Node::addChild(const std::shared_ptr<Node>& node)
@@ -138,7 +146,7 @@ bool Node::isRemoved() const { return m_removed; }
 // private
 void Node::clone(const std::shared_ptr<const Node>& src, const std::shared_ptr<Node>& dst)
 {
-    dst->m_position = src->m_position;
+    dst->m_localPosition = src->m_localPosition;
     dst->m_size = src->m_size;
     dst->m_color = src->m_color;
 
@@ -152,9 +160,9 @@ void Node::clone(const std::shared_ptr<const Node>& src, const std::shared_ptr<N
 void Node::serialize(picojson::value::object& parent, const std::shared_ptr<Node>& node)
 {
     parent["name"] = picojson::value(std::string(node->m_name.data()));
-    parent["posX"] = picojson::value(node->m_position.x());
-    parent["posY"] = picojson::value(node->m_position.y());
-    parent["posZ"] = picojson::value(node->m_position.z());
+    parent["posX"] = picojson::value(node->m_localPosition.x());
+    parent["posY"] = picojson::value(node->m_localPosition.y());
+    parent["posZ"] = picojson::value(node->m_localPosition.z());
     parent["sizeX"] = picojson::value(node->m_size.x());
     parent["sizeY"] = picojson::value(node->m_size.y());
     parent["sizeZ"] = picojson::value(node->m_size.z());
@@ -181,7 +189,7 @@ void Node::deserialize(picojson::value::object& parent, const std::shared_ptr<No
     pos.x() = static_cast<float>(parent["posX"].get<double>());
     pos.y() = static_cast<float>(parent["posY"].get<double>());
     pos.z() = static_cast<float>(parent["posZ"].get<double>());
-    node->setPosition(pos);
+    node->setLocalPosition(pos);
 
     Vector3 size;
     size.x() = static_cast<float>(parent["sizeX"].get<double>());
@@ -205,11 +213,11 @@ void Node::deserialize(picojson::value::object& parent, const std::shared_ptr<No
 }
 Node::Node()
     : m_name()
-    , m_position()
-    , m_rotation()
+    , m_localPosition()
+    , m_localRotation()
     , m_size()
     , m_color()
-    , m_transform()
+    , m_localTransform()
     , m_isDirtyTransform(true)
     , m_parent()
     , m_children()
@@ -219,7 +227,7 @@ Node::Node()
 void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
 {
     float thickness = 0.25f;
-    renderer->pushMatrix(getTransform());
+    renderer->pushMatrix(getLocalTransform());
     {
         Vector3 offset = Vector3({ thickness / 2.0f, thickness / 2.0f, 0 });
         Vector3 center = (m_size * Vector3({ 0.5f, 0.5f, 0 })) - offset;

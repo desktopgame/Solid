@@ -253,7 +253,7 @@ void BasicEntity::update(Field& field)
         m_velocity.y() -= Field::k_gravity * dt;
     }
 
-    m_node->setPosition(getPosition());
+    m_node->setLocalPosition(getPosition());
 
     Vector3 rot = m_torque * dt;
     Vector3 oldRot = getRotation();
@@ -262,7 +262,7 @@ void BasicEntity::update(Field& field)
     newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
 
     setRotation(newRot);
-    m_node->setRotation(newRot);
+    m_node->setLocalRotation(newRot);
 }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
@@ -308,7 +308,7 @@ void BasicEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z
 // private
 void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst)
 {
-    Vector3 center = node->getPosition();
+    Vector3 center = node->getLocalPosition();
     Vector3 size = node->getSize();
 
     float minX = center.x() - (size.x() / 2.0f);
@@ -344,7 +344,7 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
 
 void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits, bool always)
 {
-    Vector3 center = node->getPosition();
+    Vector3 center = node->getLocalPosition();
     Vector3 size = node->getSize();
     Vector3 end = center + offset;
     Vector3 dir = Vector3::normalized(end - center);

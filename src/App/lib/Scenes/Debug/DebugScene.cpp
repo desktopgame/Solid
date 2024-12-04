@@ -23,7 +23,7 @@ void DebugScene::onEnter()
 
     m_rootNode = Common::Graphics::Node::create();
     m_rootNode->setName("Root");
-    m_rootNode->setPosition(Vector3({ 0, 0, 0 }));
+    m_rootNode->setLocalPosition(Vector3({ 0, 0, 0 }));
     m_rootNode->setSize(Vector3({ 10, 10, 10 }));
     m_rootNode->setColor(Vector3({ 1, 1, 1 }));
 
@@ -115,13 +115,13 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
             s_selected = node;
         }
         ImGui::InputText("Name", node->getName().data(), 16);
-        ImGui::DragFloat3("Pos", node->getPosition().data(), 0.01f);
-        ImGui::DragFloat3("Rot", node->getRotation().data(), 1.0f, 0.0f, 360.0f);
+        ImGui::DragFloat3("Pos", node->getLocalPosition().data(), 0.01f);
+        ImGui::DragFloat3("Rot", node->getLocalRotation().data(), 1.0f, 0.0f, 360.0f);
         ImGui::DragFloat3("Size", node->getSize().data(), 0.01f);
         ImGui::ColorEdit3("Color", node->getColor().data());
         if (ImGui::Button("New Node")) {
             auto child = Common::Graphics::Node::create();
-            child->setPosition(Vector3({ 0, 0, 0 }));
+            child->setLocalPosition(Vector3({ 0, 0, 0 }));
             child->setSize(Vector3({ 10, 10, 10 }));
             child->setColor(Vector3({ 1, 1, 1 }));
 
@@ -139,37 +139,37 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
         if (ImGui::Button("-X")) {
             Vector3 pos = -(parent->getSize() * Vector3({ 0.5f, 0, 0 }));
             pos.x() -= node->getSize().x() * 0.5f;
-            node->setPosition(pos);
+            node->setLocalPosition(pos);
         }
         ImGui::SameLine();
         if (ImGui::Button("+X")) {
             Vector3 pos = (parent->getSize() * Vector3({ 0.5f, 0, 0 }));
             pos.x() += node->getSize().x() * 0.5f;
-            node->setPosition(pos);
+            node->setLocalPosition(pos);
         }
         ImGui::SameLine();
         if (ImGui::Button("-Y")) {
             Vector3 pos = -(parent->getSize() * Vector3({ 0, 0.5f, 0 }));
             pos.y() -= node->getSize().y() * 0.5f;
-            node->setPosition(pos);
+            node->setLocalPosition(pos);
         }
         ImGui::SameLine();
         if (ImGui::Button("+Y")) {
             Vector3 pos = (parent->getSize() * Vector3({ 0, 0.5f, 0 }));
             pos.y() += node->getSize().y() * 0.5f;
-            node->setPosition(pos);
+            node->setLocalPosition(pos);
         }
         ImGui::SameLine();
         if (ImGui::Button("-Z")) {
             Vector3 pos = -(parent->getSize() * Vector3({ 0, 0, 0.5f }));
             pos.z() -= node->getSize().z() * 0.5f;
-            node->setPosition(pos);
+            node->setLocalPosition(pos);
         }
         ImGui::SameLine();
         if (ImGui::Button("+Z")) {
             Vector3 pos = (parent->getSize() * Vector3({ 0, 0, 0.5f }));
             pos.z() += node->getSize().z() * 0.5f;
-            node->setPosition(pos);
+            node->setLocalPosition(pos);
         }
 
         for (int32_t i = 0; i < node->getChildrenCount(); i++) {
