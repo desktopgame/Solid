@@ -38,6 +38,9 @@ public:
     Vector3 getColor() const;
     Vector3& getColor();
 
+    void rehashTransform();
+    Matrix getTransform() const;
+
     void addChild(const std::shared_ptr<Node>& node);
     std::shared_ptr<Node> getChildAt(int32_t index) const;
     int32_t getChildrenCount() const;
@@ -57,6 +60,8 @@ private:
     Vector3 m_rotation;
     Vector3 m_size;
     Vector3 m_color;
+    Matrix m_transform;
+    bool m_isDirtyTransform;
     std::weak_ptr<Node> m_parent;
     std::vector<std::shared_ptr<Node>> m_children;
     bool m_removed;

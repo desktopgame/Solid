@@ -64,21 +64,45 @@ void Node::setName(const std::array<char, 32>& name) { m_name = name; }
 std::array<char, 32> Node::getName() const { return m_name; }
 std::array<char, 32>& Node::getName() { return m_name; }
 
-void Node::setPosition(const Vector3& position) { m_position = position; }
+void Node::setPosition(const Vector3& position)
+{
+    m_isDirtyTransform = true;
+    m_position = position;
+}
 Vector3 Node::getPosition() const { return m_position; }
 Vector3& Node::getPosition() { return m_position; }
 
-void Node::setRotation(const Vector3& rotation) { m_rotation = rotation; }
+void Node::setRotation(const Vector3& rotation)
+{
+    m_isDirtyTransform = true;
+    m_rotation = rotation;
+}
 Vector3 Node::getRotation() const { return m_rotation; }
 Vector3& Node::getRotation() { return m_rotation; }
 
-void Node::setSize(const Vector3& size) { m_size = size; }
+void Node::setSize(const Vector3& size)
+{
+    m_isDirtyTransform = true;
+    m_size = size;
+}
 Vector3 Node::getSize() const { return m_size; }
 Vector3& Node::getSize() { return m_size; }
 
 void Node::setColor(const Vector3& color) { m_color = color; }
 Vector3 Node::getColor() const { return m_color; }
 Vector3& Node::getColor() { return m_color; }
+
+void Node::rehashTransform()
+{
+    if (m_isDirtyTransform) {
+        m_transform = Matrix::transform(
+            Matrix::translate(m_position),
+            Quaternion::toMatrix(Quaternion::angleAxis(m_rotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_rotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_rotation.z(), Vector3({ 0, 0, 1 }))),
+            Matrix());
+        m_isDirtyTransform = false;
+    }
+}
+Matrix Node::getTransform() const { return m_transform; }
 
 void Node::addChild(const std::shared_ptr<Node>& node)
 {
@@ -163,6 +187,8 @@ Node::Node()
     , m_rotation()
     , m_size()
     , m_color()
+    , m_transform()
+    , m_isDirtyTransform(true)
     , m_parent()
     , m_children()
     , m_removed()
@@ -170,11 +196,10 @@ Node::Node()
 }
 void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
 {
+    rehashTransform();
+
     float thickness = 0.25f;
-    renderer->pushMatrix(Matrix::transform(
-        Matrix::translate(m_position),
-        Quaternion::toMatrix(Quaternion::angleAxis(m_rotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_rotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_rotation.z(), Vector3({ 0, 0, 1 }))),
-        Matrix()));
+    renderer->pushMatrix(getTransform());
     {
         Vector3 offset = Vector3({ thickness / 2.0f, thickness / 2.0f, 0 });
         Vector3 center = (m_size * Vector3({ 0.5f, 0.5f, 0 })) - offset;
