@@ -28,7 +28,7 @@ void BasicEntity::update(Field& field)
         std::vector<IntVector3> hits;
         Vector3 offset = delta * Vector3({ 1, 0, 0 });
         Vector3 to = oldPos + offset;
-        hitTiles(field, m_node, offset, hits, false);
+        hitTiles(field, m_node, offset, hits);
 
         if (hits.size() > 0) {
             if (m_velocity.x() > 0.0f) {
@@ -99,7 +99,7 @@ void BasicEntity::update(Field& field)
         std::vector<IntVector3> hits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
         Vector3 to = oldPos + offset;
-        hitTiles(field, m_node, offset, hits, false);
+        hitTiles(field, m_node, offset, hits);
 
         if (hits.size() > 0) {
             if (m_velocity.y() > 0.0f) {
@@ -181,7 +181,7 @@ void BasicEntity::update(Field& field)
         std::vector<IntVector3> hits;
         Vector3 offset = delta * Vector3({ 0, 0, 1 });
         Vector3 to = oldPos + offset;
-        hitTiles(field, m_node, offset, hits, false);
+        hitTiles(field, m_node, offset, hits);
 
         if (hits.size() > 0) {
             if (m_velocity.z() > 0.0f) {
@@ -341,7 +341,7 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
     }
 }
 
-void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits, bool always)
+void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits)
 {
     Vector3 center = m_aabb.min + ((m_aabb.max - m_aabb.min) / 2.0f);
     Vector3 size = (m_aabb.max - m_aabb.min);
@@ -369,7 +369,7 @@ void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics:
                     }
 
                     int32_t block = field.getBlockAt(ix, iy, iz);
-                    if (always || block != 0) {
+                    if (block != 0) {
                         hits.emplace_back(IntVector3({ ix, iy, iz }));
                     }
                 }
@@ -400,7 +400,7 @@ void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics:
                 }
 
                 int32_t block = field.getBlockAt(ix, iy, iz);
-                if (always || block != 0) {
+                if (block != 0) {
                     hits.emplace_back(IntVector3({ ix, iy, iz }));
                 }
             }
@@ -412,7 +412,7 @@ void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics:
 
     for (int32_t i = 0; i < node->getChildrenCount(); i++) {
         auto c = node->getChildAt(i);
-        hitTiles(field, c, offset, hits, always);
+        hitTiles(field, c, offset, hits);
     }
 }
 
