@@ -12,6 +12,7 @@ BasicEntity::~BasicEntity() { }
 
 void BasicEntity::update(Field& field)
 {
+    markAsDirtyAABB();
     rehashAABB();
     m_onGround = false;
 
@@ -308,33 +309,31 @@ void BasicEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z
 // private
 void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst)
 {
-    Vector3 center = node->getLocalPosition();
-    Vector3 size = node->getSize();
+    std::array<Vector3, 8> edges = node->getEdges();
 
-    float minX = center.x() - (size.x() / 2.0f);
-    float maxX = center.x() + (size.x() / 2.0f);
-    float minY = center.y() - (size.y() / 2.0f);
-    float maxY = center.y() + (size.y() / 2.0f);
-    float minZ = center.z() - (size.z() / 2.0f);
-    float maxZ = center.z() + (size.z() / 2.0f);
+    for (const auto& edge : edges) {
+        float x = edge.x();
+        float y = edge.y();
+        float z = edge.z();
 
-    if (minX < dst.min.x()) {
-        dst.min.x() = minX;
-    }
-    if (maxX > dst.max.x()) {
-        dst.max.x() = maxX;
-    }
-    if (minY < dst.min.y()) {
-        dst.min.y() = minY;
-    }
-    if (maxY > dst.max.y()) {
-        dst.max.y() = maxY;
-    }
-    if (minZ < dst.min.z()) {
-        dst.min.z() = minZ;
-    }
-    if (maxZ > dst.max.z()) {
-        dst.max.z() = maxZ;
+        if (x < dst.min.x()) {
+            dst.min.x() = x;
+        }
+        if (y < dst.min.y()) {
+            dst.min.y() = y;
+        }
+        if (z < dst.min.z()) {
+            dst.min.z() = z;
+        }
+        if (x > dst.max.x()) {
+            dst.max.x() = x;
+        }
+        if (y > dst.max.y()) {
+            dst.max.y() = y;
+        }
+        if (z > dst.max.z()) {
+            dst.max.z() = z;
+        }
     }
 
     for (int32_t i = 0; i < node->getChildrenCount(); i++) {
@@ -344,8 +343,8 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
 
 void BasicEntity::hitTiles(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& hits, bool always)
 {
-    Vector3 center = node->getLocalPosition();
-    Vector3 size = node->getSize();
+    Vector3 center = m_aabb.min + ((m_aabb.max - m_aabb.min) / 2.0f);
+    Vector3 size = (m_aabb.max - m_aabb.min);
     Vector3 end = center + offset;
     Vector3 dir = Vector3::normalized(end - center);
 

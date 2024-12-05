@@ -113,14 +113,14 @@ Matrix Node::getGlobalTransform()
 }
 std::array<Vector3, 8> Node::getEdges()
 {
-    Vector3 a = m_localPosition + (m_size * Vector3({ -0.5f, 0.5f, 0.5f }));
-    Vector3 b = m_localPosition + (m_size * Vector3({ 0.5f, 0.5f, 0.5f }));
-    Vector3 c = m_localPosition + (m_size * Vector3({ -0.5f, 0.5f, -0.5f }));
-    Vector3 d = m_localPosition + (m_size * Vector3({ 0.5f, 0.5f, -0.5f }));
-    Vector3 e = m_localPosition + (m_size * Vector3({ -0.5f, -0.5f, 0.5f }));
-    Vector3 f = m_localPosition + (m_size * Vector3({ 0.5f, -0.5f, 0.5f }));
-    Vector3 g = m_localPosition + (m_size * Vector3({ -0.5f, -0.5f, -0.5f }));
-    Vector3 h = m_localPosition + (m_size * Vector3({ 0.5f, -0.5f, -0.5f }));
+    Vector3 a = (m_size * Vector3({ -0.5f, 0.5f, 0.5f }));
+    Vector3 b = (m_size * Vector3({ 0.5f, 0.5f, 0.5f }));
+    Vector3 c = (m_size * Vector3({ -0.5f, 0.5f, -0.5f }));
+    Vector3 d = (m_size * Vector3({ 0.5f, 0.5f, -0.5f }));
+    Vector3 e = (m_size * Vector3({ -0.5f, -0.5f, 0.5f }));
+    Vector3 f = (m_size * Vector3({ 0.5f, -0.5f, 0.5f }));
+    Vector3 g = (m_size * Vector3({ -0.5f, -0.5f, -0.5f }));
+    Vector3 h = (m_size * Vector3({ 0.5f, -0.5f, -0.5f }));
 
     Matrix m = getGlobalTransform();
     a = Matrix::multiply(m, a);
