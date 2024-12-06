@@ -7,11 +7,23 @@ project(
 #
 # Build Options
 #
+set(SOURCES
+    ./include/Scene.hpp
+    ./include/Scene/IScene.hpp
+    ./include/Scene/SceneManager.hpp
+    ./lib/Scene/IScene.cpp
+    ./lib/Scene/SceneManager.cpp
+)
+source_group(
+    TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+    ${SOURCES}
+)
 add_library(
     Lib-Scene
     STATIC
-    lib/Scene/IScene.cpp
-    lib/Scene/SceneManager.cpp
+    ${SOURCES}
 )
 lib_target_compile_params(Lib-Scene)
 lib_target_link_params(Lib-Scene)

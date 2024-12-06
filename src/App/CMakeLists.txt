@@ -29,22 +29,52 @@ add_subdirectory(./mod/Utils)
 #
 # Build Options
 #
+set(SOURCES
+    ./include/main.hpp
+    ./include/Common/Graphics/Node.hpp
+    ./include/Common/Graphics/NodeRegistry.hpp
+    ./include/Common/Util/FpsController.hpp
+    ./include/Scenes/Debug/DebugScene.hpp
+    ./include/Scenes/Demo/DemoScene.hpp
+    ./include/Scenes/Game/GameScene.hpp
+    ./include/Scenes/Game/System/Field.hpp
+    ./include/Scenes/Game/System/Entity.hpp
+    ./include/Scenes/Game/System/Entities/BasicEntity.hpp
+    ./include/Scenes/Game/System/Entities/PlayerEntity.hpp
+    ./include/Scenes/Game/System/Entities/EnemyEntity.hpp
+    ./include/Scenes/Game/System/Entities/SlimeEntity.hpp
+    ./include/Scenes/Game/System/Entities/ProjectileEntity.hpp
+    ./lib/main.cpp
+    ./lib/Common/Graphics/Node.cpp
+    ./lib/Common/Graphics/NodeRegistry.cpp
+    ./lib/Common/Util/FpsController.cpp
+    ./lib/Scenes/Debug/DebugScene.cpp
+    ./lib/Scenes/Demo/DemoScene.cpp
+    ./lib/Scenes/Game/GameScene.cpp
+    ./lib/Scenes/Game/System/Field.cpp
+    ./lib/Scenes/Game/System/Entity.cpp
+    ./lib/Scenes/Game/System/Entities/BasicEntity.cpp
+    ./lib/Scenes/Game/System/Entities/PlayerEntity.cpp
+    ./lib/Scenes/Game/System/Entities/EnemyEntity.cpp
+    ./lib/Scenes/Game/System/Entities/SlimeEntity.cpp
+    ./lib/Scenes/Game/System/Entities/ProjectileEntity.cpp
+)
+source_group(
+    TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+    ${SOURCES}
+)
 add_executable(
     App
-    lib/main.cpp
-    lib/Common/Graphics/Node.cpp
-    lib/Common/Graphics/NodeRegistry.cpp
-    lib/Common/Util/FpsController.cpp
-    lib/Scenes/Debug/DebugScene.cpp
-    lib/Scenes/Demo/DemoScene.cpp
-    lib/Scenes/Game/GameScene.cpp
-    lib/Scenes/Game/System/Field.cpp
-    lib/Scenes/Game/System/Entity.cpp
-    lib/Scenes/Game/System/Entities/BasicEntity.cpp
-    lib/Scenes/Game/System/Entities/PlayerEntity.cpp
-    lib/Scenes/Game/System/Entities/EnemyEntity.cpp
-    lib/Scenes/Game/System/Entities/SlimeEntity.cpp
-    lib/Scenes/Game/System/Entities/ProjectileEntity.cpp
+    ${SOURCES}
+)
+set_property(
+    TARGET
+    App
+    PROPERTY
+    VS_DEBUGGER_WORKING_DIRECTORY
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../"
 )
 app_target_compile_params(App)
 app_target_link_params(App)

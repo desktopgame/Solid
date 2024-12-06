@@ -7,14 +7,29 @@ project(
 #
 # Build Options
 #
+set(SOURCES
+    ./include/Utils.hpp
+    ./include/Utils/String.hpp
+    ./include/Utils/IO.hpp
+    ./include/Utils/Time.hpp
+    ./include/Utils/Stopwatch.hpp
+    ./include/Utils/Random.hpp
+    ./lib/Utils/String.cpp
+    ./lib/Utils/IO.cpp
+    ./lib/Utils/Time.cpp
+    ./lib/Utils/Stopwatch.cpp
+    ./lib/Utils/Random.cpp
+)
+source_group(
+    TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+    ${SOURCES}
+)
 add_library(
     Lib-Utils
     STATIC
-    lib/Utils/String.cpp
-    lib/Utils/IO.cpp
-    lib/Utils/Time.cpp
-    lib/Utils/Stopwatch.cpp
-    lib/Utils/Random.cpp
+    ${SOURCES}
 )
 lib_target_compile_params(Lib-Utils)
 lib_target_link_params(Lib-Utils)

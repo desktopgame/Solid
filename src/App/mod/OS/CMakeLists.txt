@@ -7,11 +7,23 @@ project(
 #
 # Build Options
 #
+set(SOURCES
+    ./include/OS.hpp
+    ./include/OS/Window.hpp
+    ./include/OS/Cursor.hpp
+    ./lib/OS/Window.cpp
+    ./lib/OS/Cursor.cpp
+)
+source_group(
+    TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+    ${SOURCES}
+)
 add_library(
     Lib-OS
     STATIC
-    lib/OS/Window.cpp
-    lib/OS/Cursor.cpp
+    ${SOURCES}
 )
 lib_target_compile_params(Lib-OS)
 lib_target_link_params(Lib-OS)

@@ -21,10 +21,36 @@ add_custom_target(Embed ALL
 find_package(directxtex CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(imgui CONFIG REQUIRED)
-add_library(
-    Lib-Graphics
-    STATIC
+set(SOURCES
+    ./include/Graphics.hpp
     ./include/Graphics/Metadata.hpp
+    ./include/Graphics/Device.hpp
+    ./include/Graphics/Engine.hpp
+    ./include/Graphics/Surface.hpp
+    ./include/Graphics/Shader.hpp
+    ./include/Graphics/Buffer.hpp
+    ./include/Graphics/Texture.hpp
+    ./include/Graphics/Screen.hpp
+    ./include/Graphics/Camera.hpp
+    ./include/Graphics/Polygon.hpp
+    ./include/Graphics/Renderer.hpp
+    ./include/Graphics/RenderContext.hpp
+    ./include/Graphics/UniformBuffer.hpp
+    ./include/Graphics/UniformPool.hpp
+    ./include/Graphics/VertexTexCoord2D.hpp
+    ./include/Graphics/VertexTexCoord3D.hpp
+    ./include/Graphics/VertexNormal3D.hpp
+    ./include/Graphics/VertexNormalTexCoord3D.hpp
+    ./include/Graphics/Swapchain.hpp
+    ./include/Graphics/Font.hpp
+    ./include/Graphics/FontFactory.hpp
+    ./include/Graphics/FontMap.hpp
+    ./include/Graphics/FontSprite.hpp
+    ./include/Graphics/FontMetrics.hpp
+    ./include/Graphics/GlobalLight.hpp
+    ./include/Graphics/PointLight.hpp
+    ./include/Graphics/BloomEffect.hpp
+    ./include/Graphics/MatrixStack.hpp
     ./lib/Graphics/Device.cpp
     ./lib/Graphics/Engine.cpp
     ./lib/Graphics/Surface.cpp
@@ -52,6 +78,17 @@ add_library(
     ./lib/Graphics/PointLight.cpp
     ./lib/Graphics/BloomEffect.cpp
     ./lib/Graphics/MatrixStack.cpp
+)
+source_group(
+    TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+    ${SOURCES}
+)
+add_library(
+    Lib-Graphics
+    STATIC
+    ${SOURCES}
 )
 lib_target_compile_params(Lib-Graphics)
 lib_target_link_params(Lib-Graphics)
