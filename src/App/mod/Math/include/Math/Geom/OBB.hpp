@@ -6,6 +6,6 @@ class OBB {
 public:
     Vector3 center;
     Vector3 size;
-    Vector3 rotation;
+    std::array<Vector3, 3> axes;
 };
 }
