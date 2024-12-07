@@ -34,6 +34,7 @@ protected:
     virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z);
     virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z);
     virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z);
+    virtual void onRotationStop(Field& field);
 
 private:
     class NodeHit {

@@ -1,6 +1,7 @@
 #include <Common/Graphics/Node.hpp>
 #include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <iostream>
 
 namespace App::Scenes::Game::System::Entities {
 // public
@@ -213,8 +214,43 @@ void BasicEntity::update(Field& field)
 
     newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
 
-    setRotation(newRot);
-    m_node->setLocalRotation(newRot);
+    if (m_torque.length() > 0.0f) {
+        markAsDirtyAABB();
+        rehashAABB();
+        Geom::AABB prevAABB = m_aabb;
+
+        m_aabb = prevAABB;
+        std::vector<IntVector3> prevHits;
+        hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), prevHits);
+
+        bool rotationStop = false;
+        while (true) {
+            setRotation(newRot);
+            m_node->setLocalRotation(newRot);
+
+            markAsDirtyAABB();
+            rehashAABB();
+            Geom::AABB currAABB = m_aabb;
+
+            m_aabb = currAABB;
+            std::vector<IntVector3> nextHits;
+            hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), nextHits);
+
+            if (prevHits.empty() && nextHits.empty()) {
+                break;
+            }
+            if (dt <= Mathf::Epsilon) {
+                break;
+            }
+            dt *= 0.9f;
+            rot = m_torque * dt;
+            newRot = oldRot + rot;
+            rotationStop = true;
+        }
+        if (rotationStop) {
+            onRotationStop(field);
+        }
+    }
 }
 void BasicEntity::onGui() { }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
@@ -258,6 +294,7 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
 void BasicEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) { }
 void BasicEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) { }
 void BasicEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onRotationStop(Field& field) { }
 // private
 void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst)
 {

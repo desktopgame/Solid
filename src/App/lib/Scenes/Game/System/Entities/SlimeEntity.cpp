@@ -26,10 +26,10 @@ void SlimeEntity::update(Field& field)
             Vector3 playerPos = field.getPlayer()->getPosition();
             Vector3 selfPos = getPosition();
             float distToPlayer = Vector3::distance(playerPos, selfPos);
-            if (distToPlayer < 30.0f) {
-                Vector3 dir = Vector3::normalized(playerPos - selfPos);
-                degree = (::atan2f(dir.z(), dir.x()) * Mathf::Rad2Deg);
-            }
+            // if (distToPlayer < 30.0f) {
+            //     Vector3 dir = Vector3::normalized(playerPos - selfPos);
+            //     degree = (::atan2f(dir.z(), dir.x()) * Mathf::Rad2Deg);
+            // }
 
             float x = Mathf::cos(Mathf::Deg2Rad * (float)degree);
             float z = Mathf::sin(Mathf::Deg2Rad * (float)degree);
@@ -41,12 +41,9 @@ void SlimeEntity::update(Field& field)
     }
     case State::Look: {
         float targetDegree = Mathf::normalizeDegree(m_degree + 90.0f);
-        if (Mathf::abs(m_rotation.y() - targetDegree) > 5) {
-            if (m_rotation.y() > targetDegree) {
-                setTorque(Vector3({ 0, -200, 0 }));
-            } else {
-                setTorque(Vector3({ 0, 200, 0 }));
-            }
+        float diff = Mathf::diffDegree(m_rotation.y(), targetDegree);
+        if (Mathf::abs(diff) > 5) {
+            setTorque(Vector3({ 0, 200 * Mathf::sign(diff), 0 }));
         } else {
             m_state = State::Walk;
             setTorque(Vector3({ 0, 0, 0 }));
@@ -107,6 +104,17 @@ void SlimeEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z)
 }
 void SlimeEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z)
 {
+}
+void SlimeEntity::onRotationStop(Field& field)
+{
+    if (m_state == State::Look) {
+        m_state = State::Walk;
+        float vx = Mathf::cos(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
+        float vz = Mathf::sin(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
+        m_moveDir = -Vector3({ vx, 0, vz });
+        m_timer = 0.0f;
+        setTorque(Vector3({ 0, 0, 0 }));
+    }
 }
 // private
 void SlimeEntity::stop()

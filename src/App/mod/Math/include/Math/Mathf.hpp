@@ -165,6 +165,22 @@ public:
         return a;
     }
 
+    template <typename T>
+    inline static T diffDegree(T currentDegree, T targetDegree)
+    {
+        T d = targetDegree - currentDegree;
+        d = (d + 180) % 360 - 180;
+        return d;
+    }
+
+    template <>
+    INLINE_SPEC_STATIC float diffDegree<float>(float currentDegree, float targetDegree)
+    {
+        float d = targetDegree - currentDegree;
+        d = ::fmodf((d + 180), 360.0f) - 180.0f;
+        return d;
+    }
+
 private:
     Mathf() = delete;
     ~Mathf() = delete;

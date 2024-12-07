@@ -15,6 +15,7 @@ protected:
     virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) override;
     virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) override;
     virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) override;
+    virtual void onRotationStop(Field& field) override;
 
 private:
     void stop();
