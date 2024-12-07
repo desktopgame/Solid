@@ -36,6 +36,7 @@ void BasicEntity::update(Field& field)
                 std::vector<NodeHit> strictHits;
                 hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
 
+                IntVector3 hitTile;
                 for (const auto& hit : strictHits) {
                     Geom::Plane plane;
                     plane.center = (Vector3)hit.tile * Field::k_tileSize;
@@ -49,18 +50,21 @@ void BasicEntity::update(Field& field)
                     if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
                         if (Mathf::abs(len) > Mathf::abs(maxLen)) {
                             maxLen = len;
+                            hitTile = hit.tile;
                         }
                     }
                 }
                 if (maxLen != 0.0f) {
                     newPos.x() -= maxLen + threshould;
                     m_velocity.x() = 0.0f;
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.x() < 0.0f) {
                 float maxLen = 0.0f;
                 std::vector<NodeHit> strictHits;
                 hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
 
+                IntVector3 hitTile;
                 for (const auto& hit : strictHits) {
                     Geom::Plane plane;
                     plane.center = (Vector3)hit.tile * Field::k_tileSize;
@@ -74,12 +78,14 @@ void BasicEntity::update(Field& field)
                     if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
                         if (Mathf::abs(len) > Mathf::abs(maxLen)) {
                             maxLen = len;
+                            hitTile = hit.tile;
                         }
                     }
                 }
                 if (maxLen != 0.0f) {
                     newPos.x() += maxLen + threshould;
                     m_velocity.x() = 0.0f;
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -98,6 +104,7 @@ void BasicEntity::update(Field& field)
                 std::vector<NodeHit> strictHits;
                 hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
 
+                IntVector3 hitTile;
                 for (const auto& hit : strictHits) {
                     Geom::Plane plane;
                     plane.center = (Vector3)hit.tile * Field::k_tileSize;
@@ -111,6 +118,7 @@ void BasicEntity::update(Field& field)
                     if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
                         if (Mathf::abs(len) > Mathf::abs(maxLen)) {
                             maxLen = len;
+                            hitTile = hit.tile;
                         }
                     }
                 }
@@ -118,6 +126,7 @@ void BasicEntity::update(Field& field)
                     newPos.y() += maxLen + threshould;
                     m_velocity.y() = 0.0f;
                     m_onGround = true;
+                    onCollisionFloor(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -135,6 +144,7 @@ void BasicEntity::update(Field& field)
                 std::vector<NodeHit> strictHits;
                 hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
 
+                IntVector3 hitTile;
                 for (const auto& hit : strictHits) {
                     Geom::Plane plane;
                     plane.center = (Vector3)hit.tile * Field::k_tileSize;
@@ -148,18 +158,21 @@ void BasicEntity::update(Field& field)
                     if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
                         if (Mathf::abs(len) > Mathf::abs(maxLen)) {
                             maxLen = len;
+                            hitTile = hit.tile;
                         }
                     }
                 }
                 if (maxLen != 0.0f) {
                     newPos.z() -= maxLen + threshould;
                     m_velocity.z() = 0.0f;
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             } else if (m_velocity.z() < 0.0f) {
                 float maxLen = 0.0f;
                 std::vector<NodeHit> strictHits;
                 hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
 
+                IntVector3 hitTile;
                 for (const auto& hit : strictHits) {
                     Geom::Plane plane;
                     plane.center = (Vector3)hit.tile * Field::k_tileSize;
@@ -173,12 +186,14 @@ void BasicEntity::update(Field& field)
                     if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
                         if (Mathf::abs(len) > Mathf::abs(maxLen)) {
                             maxLen = len;
+                            hitTile = hit.tile;
                         }
                     }
                 }
                 if (maxLen != 0.0f) {
                     newPos.z() += maxLen + threshould;
                     m_velocity.z() = 0.0f;
+                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
