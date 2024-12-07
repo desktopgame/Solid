@@ -24,7 +24,7 @@ void BasicEntity::update(Field& field)
     Vector3 oldPos = getPosition();
     Vector3 newPos = oldPos + delta;
 
-    // X²•ûŒü
+    // Xè»¸æ–¹å‘
     {
         std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 1, 0, 0 });
@@ -85,7 +85,7 @@ void BasicEntity::update(Field& field)
         }
     }
 
-    // Y²•ûŒü
+    // Yè»¸æ–¹å‘
     {
         std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
@@ -123,7 +123,7 @@ void BasicEntity::update(Field& field)
         }
     }
 
-    // Z²•ûŒü
+    // Zè»¸æ–¹å‘
     {
         std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 0, 0, 1 });
