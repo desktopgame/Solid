@@ -154,9 +154,9 @@ Geom::OBB Node::getOBB() const
 {
     Vector3 center = getGlobalPosition();
     Matrix m = getGlobalRotation();
-    Vector3 xAxis = Vector3({ m[0][0], m[1][0], m[2][0] });
-    Vector3 yAxis = Vector3({ m[0][1], m[1][1], m[2][1] });
-    Vector3 zAxis = Vector3({ m[0][2], m[1][2], m[2][2] });
+    Vector3 xAxis = Matrix::multiply(m, Vector3({ 1, 0, 0 }));
+    Vector3 yAxis = Matrix::multiply(m, Vector3({ 0, 1, 0 }));
+    Vector3 zAxis = Matrix::multiply(m, Vector3({ 0, 0, 1 }));
 
     Geom::OBB obb;
     obb.center = center;
