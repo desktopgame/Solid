@@ -35,8 +35,15 @@ protected:
     virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z);
 
 private:
+    class NodeHit {
+    public:
+        std::shared_ptr<Common::Graphics::Node> node;
+        IntVector3 tile;
+    };
+
     void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
     void hitTilesFuzzy(Field& field, const Vector3& offset, std::vector<IntVector3>& hits);
+    void hitTilesStrict(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits);
     static float alignTile(float a, float tileSize);
 
     std::shared_ptr<Common::Graphics::Node> m_node;

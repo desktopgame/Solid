@@ -25,224 +25,37 @@ void BasicEntity::update(Field& field)
     Vector3 newPos = oldPos + delta;
 
     {
-        std::vector<IntVector3> hits;
-        Vector3 offset = delta * Vector3({ 1, 0, 0 });
-        Vector3 to = oldPos + offset;
-        hitTilesFuzzy(field, offset, hits);
-
-        if (hits.size() > 0) {
-            if (m_velocity.x() > 0.0f) {
-                float minX = 9999.0f;
-                bool hit = false;
-                IntVector3 hitTile;
-                for (const auto& tile : hits) {
-                    float baseX = (tile.x() * Field::k_tileSize);
-                    baseX -= (Field::k_tileSize / 2.0f);
-                    if (baseX <= (to.x() - (size.x() / 2.0f))) {
-                        continue;
-                    }
-                    Segment nodeSegZ = Segment(to.z() - (size.z() / 2.0f), to.z() + (size.z() / 2.0f));
-                    Segment blockSegZ = Segment((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegZ.logicAnd(blockSegZ).distance() <= threshould) {
-                        continue;
-                    }
-                    if (Mathf::abs((to.x() + (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
-                        continue;
-                    }
-                    if (baseX < minX) {
-                        minX = baseX;
-                        hit = true;
-                        hitTile = tile;
-                    }
-                }
-                if (hit) {
-                    minX -= (size.x() / 2.0f) + ep;
-                    newPos.x() = minX;
-                    m_velocity.x() = 0.0f;
-                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
-                }
-            } else if (m_velocity.x() < 0.0f) {
-                float maxX = -9999.0f;
-                bool hit = false;
-                IntVector3 hitTile;
-                for (const auto& tile : hits) {
-                    float baseX = (tile.x() * Field::k_tileSize);
-                    baseX += (Field::k_tileSize / 2.0f);
-                    if (baseX >= (to.x() + (size.x() / 2.0f))) {
-                        continue;
-                    }
-                    Segment nodeSegZ = Segment(to.z() - (size.z() / 2.0f), to.z() + (size.z() / 2.0f));
-                    Segment blockSegZ = Segment((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegZ.logicAnd(blockSegZ).distance() <= threshould) {
-                        continue;
-                    }
-                    if (Mathf::abs((to.x() - (size.x() / 2.0f)) - ((tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
-                        continue;
-                    }
-                    if (baseX > maxX) {
-                        maxX = baseX;
-                        hit = true;
-                        hitTile = tile;
-                    }
-                }
-                if (hit) {
-                    maxX += (size.x() / 2.0f) + ep;
-                    newPos.x() = maxX;
-                    m_velocity.x() = 0.0f;
-                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
-                }
-            }
-        }
-    }
-
-    {
-        std::vector<IntVector3> hits;
+        std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
-        Vector3 to = oldPos + offset;
-        hitTilesFuzzy(field, offset, hits);
+        hitTilesFuzzy(field, offset, fuzzyHits);
 
-        if (hits.size() > 0) {
+        if (fuzzyHits.size() > 0) {
             if (m_velocity.y() > 0.0f) {
-                float minY = 9999.0f;
-                bool hit = false;
-                IntVector3 hitTile;
-                for (const auto& tile : hits) {
-                    float baseY = (tile.y() * Field::k_tileSize);
-                    baseY -= (Field::k_tileSize / 2.0f);
-                    if (baseY <= (to.y() - (size.y() / 2.0f))) {
-                        continue;
-                    }
-                    Segment nodeSegX = Segment(to.x() - (size.x() / 2.0f), to.x() + (size.x() / 2.0f));
-                    Segment blockSegX = Segment((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegX.logicAnd(blockSegX).distance() <= threshould) {
-                        continue;
-                    }
-                    Segment nodeSegZ = Segment(to.z() - (size.z() / 2.0f), to.z() + (size.z() / 2.0f));
-                    Segment blockSegZ = Segment((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegZ.logicAnd(blockSegZ).distance() <= threshould) {
-                        continue;
-                    }
-                    if (Mathf::abs((to.y() + (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
-                        continue;
-                    }
-                    if (baseY < minY) {
-                        minY = baseY;
-                        hit = true;
-                        hitTile = tile;
-                    }
-                }
-                if (hit) {
-                    minY -= (size.y() / 2.0f) + ep;
-                    newPos.y() = minY;
-                    m_velocity.y() = 0.0f;
-                    onCollisionRoof(field, hitTile.x(), hitTile.y(), hitTile.z());
-                }
             } else if (m_velocity.y() < 0.0f) {
-                float maxY = -9999.0f;
-                bool hit = false;
-                IntVector3 hitTile;
-                for (const auto& tile : hits) {
-                    float baseY = (tile.y() * Field::k_tileSize);
-                    baseY += (Field::k_tileSize / 2.0f);
-                    if (baseY >= (to.y() + (size.y() / 2.0f))) {
-                        continue;
-                    }
-                    Segment nodeSegX = Segment(to.x() - (size.x() / 2.0f), to.x() + (size.x() / 2.0f));
-                    Segment blockSegX = Segment((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegX.logicAnd(blockSegX).distance() <= threshould) {
-                        continue;
-                    }
-                    Segment nodeSegZ = Segment(to.z() - (size.z() / 2.0f), to.z() + (size.z() / 2.0f));
-                    Segment blockSegZ = Segment((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegZ.logicAnd(blockSegZ).distance() <= threshould) {
-                        continue;
-                    }
-                    if (Mathf::abs((to.y() - (size.y() / 2.0f)) - ((tile.y() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
-                        continue;
-                    }
-                    if (baseY > maxY) {
-                        maxY = baseY;
-                        hit = true;
-                        hitTile = tile;
+                float maxLen = 0.0f;
+                std::vector<NodeHit> strictHits;
+                hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
+
+                for (const auto& hit : strictHits) {
+                    Geom::Plane plane;
+                    plane.center = (Vector3)hit.tile * Field::k_tileSize;
+                    plane.center += Vector3({ 0, 0.5f, 0 }) * Field::k_tileSize;
+                    plane.normal = Vector3({ 0, 1, 0 });
+
+                    Geom::OBB obb = hit.node->getOBB();
+                    obb.center += offset;
+
+                    float len = 0.0f;
+                    if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
+                        if (Mathf::abs(len) > maxLen) {
+                            maxLen = len;
+                        }
                     }
                 }
-                if (hit) {
-                    maxY += (size.y() / 2.0f) + ep;
-                    newPos.y() = maxY;
+                if (maxLen != 0.0f) {
+                    newPos.y() += maxLen;
                     m_velocity.y() = 0.0f;
                     m_onGround = true;
-                    onCollisionFloor(field, hitTile.x(), hitTile.y(), hitTile.z());
-                }
-            }
-        }
-    }
-
-    {
-        std::vector<IntVector3> hits;
-        Vector3 offset = delta * Vector3({ 0, 0, 1 });
-        Vector3 to = oldPos + offset;
-        hitTilesFuzzy(field, offset, hits);
-
-        if (hits.size() > 0) {
-            if (m_velocity.z() > 0.0f) {
-                float minZ = 9999.0f;
-                bool hit = false;
-                IntVector3 hitTile;
-                for (const auto& tile : hits) {
-                    float baseZ = (tile.z() * Field::k_tileSize);
-                    baseZ -= (Field::k_tileSize / 2.0f);
-                    if (baseZ <= (to.z() - (size.z() / 2.0f))) {
-                        continue;
-                    }
-                    Segment nodeSegX = Segment(to.x() - (size.x() / 2.0f), to.x() + (size.x() / 2.0f));
-                    Segment blockSegX = Segment((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegX.logicAnd(blockSegX).distance() <= threshould) {
-                        continue;
-                    }
-                    if (Mathf::abs((to.z() + (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) - (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
-                        continue;
-                    }
-                    if (baseZ < minZ) {
-                        minZ = baseZ;
-                        hit = true;
-                        hitTile = tile;
-                    }
-                }
-                if (hit) {
-                    minZ -= (size.z() / 2.0f) + ep;
-                    newPos.z() = minZ;
-                    m_velocity.z() = 0.0f;
-                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
-                }
-            } else if (m_velocity.z() < 0.0f) {
-                float maxZ = -9999.0f;
-                bool hit = false;
-                IntVector3 hitTile;
-                for (const auto& tile : hits) {
-                    float baseZ = (tile.z() * Field::k_tileSize);
-                    baseZ += (Field::k_tileSize / 2.0f);
-                    if (baseZ >= (to.z() + (size.z() / 2.0f))) {
-                        continue;
-                    }
-                    if (Mathf::abs((to.z() - (size.z() / 2.0f)) - ((tile.z() * Field::k_tileSize) + (Field::k_tileSize / 2.0f))) >= (Field::k_tileSize - threshould)) {
-                        continue;
-                    }
-                    Segment nodeSegX = Segment(to.x() - (size.x() / 2.0f), to.x() + (size.x() / 2.0f));
-                    Segment blockSegX = Segment((tile.x() * Field::k_tileSize) - (Field::k_tileSize / 2.0f), (tile.x() * Field::k_tileSize) + (Field::k_tileSize / 2.0f));
-                    if (nodeSegX.logicAnd(blockSegX).distance() <= threshould) {
-                        continue;
-                    }
-                    if (baseZ > maxZ) {
-                        maxZ = baseZ;
-                        hit = true;
-                        hitTile = tile;
-                    }
-                }
-                if (hit) {
-                    maxZ += (size.z() / 2.0f) + ep;
-                    newPos.z() = maxZ;
-                    m_velocity.z() = 0.0f;
-                    onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
                 }
             }
         }
@@ -409,6 +222,39 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
 
     center += (dir * Field::k_tileSize);
     distance += Field::k_tileSize;
+}
+
+void BasicEntity::hitTilesStrict(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits)
+{
+    Geom::OBB nodeOBB = node->getOBB();
+    nodeOBB.center += offset;
+
+    for (const auto& checkTile : checkTiles) {
+        if (!field.hasBlockAt(checkTile.x(), checkTile.y(), checkTile.z())) {
+            continue;
+        }
+
+        Geom::OBB checkTileOBB;
+        checkTileOBB.center = (Vector3)checkTile * Field::k_tileSize;
+        checkTileOBB.axes = std::array<Vector3, 3> {
+            Vector3({ 1, 0, 0 }),
+            Vector3({ 0, 1, 0 }),
+            Vector3({ 0, 0, 1 }),
+        };
+        checkTileOBB.size = Vector3({ 1, 1, 1 }) * Field::k_tileSize;
+
+        bool isHit = Geom::Collision::testOBBAndOBB(nodeOBB, checkTileOBB);
+        if (isHit) {
+            NodeHit hit;
+            hit.node = node;
+            hit.tile = checkTile;
+            hits.emplace_back(hit);
+        }
+    }
+    for (int32_t i = 0; i < node->getChildrenCount(); i++) {
+        auto c = node->getChildAt(i);
+        hitTilesStrict(field, c, offset, checkTiles, hits);
+    }
 }
 
 float BasicEntity::alignTile(float a, float tileSize)
