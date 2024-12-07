@@ -71,6 +71,14 @@ void Node::setLocalPosition(const Vector3& localPosition)
 }
 Vector3 Node::getLocalPosition() const { return m_localPosition; }
 Vector3& Node::getLocalPosition() { return m_localPosition; }
+Vector3 Node::getGlobalPosition() const
+{
+    auto sp = m_parent.lock();
+    if (sp) {
+        return sp->getGlobalPosition() + m_localPosition;
+    }
+    return m_localPosition;
+}
 
 void Node::setLocalRotation(const Vector3& localRotation)
 {
@@ -79,6 +87,15 @@ void Node::setLocalRotation(const Vector3& localRotation)
 }
 Vector3 Node::getLocalRotation() const { return m_localRotation; }
 Vector3& Node::getLocalRotation() { return m_localRotation; }
+Matrix Node::getGlobalRotation() const
+{
+    Matrix m = Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 })));
+    auto sp = m_parent.lock();
+    if (sp) {
+        return m * sp->getGlobalRotation();
+    }
+    return m;
+}
 
 void Node::setSize(const Vector3& size)
 {
@@ -132,6 +149,20 @@ std::array<Vector3, 8> Node::getEdges()
     g = Matrix::multiply(m, g);
     h = Matrix::multiply(m, h);
     return std::array<Vector3, 8> { a, b, c, d, e, f, g, h };
+}
+Geom::OBB Node::getOBB() const
+{
+    Vector3 center = getGlobalPosition();
+    Matrix m = getGlobalRotation();
+    Vector3 xAxis = Vector3({ m[0][0], m[1][0], m[2][0] });
+    Vector3 yAxis = Vector3({ m[0][1], m[1][1], m[2][1] });
+    Vector3 zAxis = Vector3({ m[0][2], m[1][2], m[2][2] });
+
+    Geom::OBB obb;
+    obb.center = center;
+    obb.axes = std::array<Vector3, 3> { xAxis, yAxis, zAxis };
+    obb.size = m_size;
+    return obb;
 }
 
 void Node::addChild(const std::shared_ptr<Node>& node)
