@@ -2,9 +2,11 @@
 #include <Math/Vector.hpp>
 
 namespace Lib::Math::Geom {
-class AABB {
+template <typename T>
+class AABBT {
 public:
-    Vector3 min;
-    Vector3 max;
+    VectorT<T, 3> min;
+    VectorT<T, 3> max;
 };
+using AABB = AABBT<float>;
 }
