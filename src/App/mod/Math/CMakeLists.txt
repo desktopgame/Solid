@@ -18,6 +18,7 @@ set(SOURCES
     ./include/Math/Geom/AABB.hpp
     ./include/Math/Geom/OBB.hpp
     ./include/Math/Geom/Collision.hpp
+    ./include/Math/Geom/Plane.hpp
 )
 source_group(
     TREE
