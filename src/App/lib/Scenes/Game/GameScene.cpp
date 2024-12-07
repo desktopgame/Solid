@@ -54,24 +54,7 @@ void GameScene::onUpdate()
 
 void GameScene::onGui()
 {
-    ImGui::Begin("Light");
-    ImGui::DragFloat3("GlobalLight", m_globalLightDir.data(), 0.001f, -1.0f, 1.0f);
-    ImGui::End();
-
-    ImGui::Begin("Entity");
-    Vector3 vel = m_debugEntity->getVelocity();
-    if (ImGui::DragFloat3("Velocity", vel.data(), 0.01f)) {
-        m_debugEntity->setVelocity(vel);
-    }
-    Vector3 pos = m_debugEntity->getPosition();
-    if (ImGui::DragFloat3("Position", pos.data(), 0.01f)) {
-        m_debugEntity->setPosition(pos);
-    }
-    if (ImGui::Button("Jump")) {
-        m_debugEntity->setVelocity(Vector3({ 0, 100, 0 }));
-    }
-
-    ImGui::End();
+    m_field->onGui();
 }
 
 void GameScene::onDraw3D()

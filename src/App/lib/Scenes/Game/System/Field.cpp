@@ -1,6 +1,7 @@
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <imgui.h>
 
 namespace App::Scenes::Game::System {
 // public
@@ -74,6 +75,31 @@ void Field::update()
     for (auto& entity : m_entities) {
         entity->update(self);
     }
+}
+void Field::onGui()
+{
+    ImGui::Begin("Field");
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+    if (m_player) {
+        if (ImGui::TreeNodeEx("Player", flags)) {
+            m_player->onGui();
+            ImGui::TreePop();
+        }
+    }
+
+    int32_t index = 0;
+    for (const auto& entity : m_entities) {
+        char buf[16];
+        ::memset(buf, '\0', 16);
+        ::sprintf(buf, "Entity[%d]", index);
+        index += 1;
+
+        if (ImGui::TreeNodeEx(buf, flags)) {
+            entity->onGui();
+            ImGui::TreePop();
+        }
+    }
+    ImGui::End();
 }
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {

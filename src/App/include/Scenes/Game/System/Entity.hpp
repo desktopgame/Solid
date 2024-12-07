@@ -9,6 +9,7 @@ public:
     virtual ~Entity();
 
     virtual void update(Field& field) = 0;
+    virtual void onGui() = 0;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) = 0;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) = 0;
 

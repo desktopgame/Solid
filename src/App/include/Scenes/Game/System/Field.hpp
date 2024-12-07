@@ -21,6 +21,7 @@ public:
     void load(const std::string& file);
 
     void update();
+    void onGui();
     void draw3D(const std::shared_ptr<Renderer>& renderer);
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 

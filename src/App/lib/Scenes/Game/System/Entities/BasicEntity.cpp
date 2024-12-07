@@ -201,6 +201,7 @@ void BasicEntity::update(Field& field)
     setRotation(newRot);
     m_node->setLocalRotation(newRot);
 }
+void BasicEntity::onGui() { }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     m_node->draw(renderer);
