@@ -1,5 +1,6 @@
 #pragma once
 #include <Math/Geom/AABB.hpp>
+#include <Math/Geom/Collision.hpp>
 #include <Math/Geom/OBB.hpp>
 #include <Math/Mathf.hpp>
 #include <Math/Matrix.hpp>
