@@ -14,12 +14,12 @@ public:
         // see: http://marupeke296.com/COL_3D_No13_OBBvsOBB.html
         // 各方向ベクトルの確保
         // （N***:標準化方向ベクトル）
-        VectorT<T, 3> NAe1 = obb1.axes.at(0), Ae1 = NAe1 * obb1.size.at(0);
-        VectorT<T, 3> NAe2 = obb1.axes.at(1), Ae2 = NAe2 * obb1.size.at(1);
-        VectorT<T, 3> NAe3 = obb1.axes.at(2), Ae3 = NAe3 * obb1.size.at(2);
-        VectorT<T, 3> NBe1 = obb2.axes.at(0), Be1 = NBe1 * obb2.size.at(0);
-        VectorT<T, 3> NBe2 = obb2.axes.at(1), Be2 = NBe2 * obb2.size.at(1);
-        VectorT<T, 3> NBe3 = obb2.axes.at(2), Be3 = NBe3 * obb2.size.at(2);
+        VectorT<T, 3> NAe1 = obb1.axes.at(0), Ae1 = NAe1 * obb1.size.at(0) / 2.0f;
+        VectorT<T, 3> NAe2 = obb1.axes.at(1), Ae2 = NAe2 * obb1.size.at(1) / 2.0f;
+        VectorT<T, 3> NAe3 = obb1.axes.at(2), Ae3 = NAe3 * obb1.size.at(2) / 2.0f;
+        VectorT<T, 3> NBe1 = obb2.axes.at(0), Be1 = NBe1 * obb2.size.at(0) / 2.0f;
+        VectorT<T, 3> NBe2 = obb2.axes.at(1), Be2 = NBe2 * obb2.size.at(1) / 2.0f;
+        VectorT<T, 3> NBe3 = obb2.axes.at(2), Be3 = NBe3 * obb2.size.at(2) / 2.0f;
         VectorT<T, 3> Interval = obb1.center - obb2.center;
 
         // 分離軸 : Ae1
@@ -148,11 +148,11 @@ public:
         // 平面の法線に対するOBBの射影線の長さを算出
         float r = 0.0f; // 近接距離
         VectorT<T, 3> PlaneNormal; // 平面の法線ベクトル
-        plane.GetNormal_W(&PlaneNormal);
+        PlaneNormal = plane.normal;
         int i;
         for (i = 0; i < 3; i++) {
             VectorT<T, 3> Direct = obb.axes.at(i); // OBBの1つの軸ベクトル
-            r += Mathf::abs(VectorT<T, 3>::dot(&(Direct * obb.size.at(i)), &PlaneNormal));
+            r += Mathf::abs(VectorT<T, 3>::dot((Direct * obb.size.at(i) / 2.0f), PlaneNormal));
         }
 
         // 平面とOBBの距離を算出
