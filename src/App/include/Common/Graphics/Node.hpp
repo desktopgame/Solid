@@ -29,7 +29,6 @@ public:
     void setLocalRotation(const Vector3& localRotation);
     Vector3 getLocalRotation() const;
     Matrix getGlobalRotation() const;
-    Quaternion getGlobalRotationByQuaternion() const;
 
     void setSize(const Vector3& size);
     Vector3 getSize() const;
