@@ -20,6 +20,9 @@ Field::Field(
     , m_instanceBuffers()
     , m_indexLength()
     , m_instanceCount()
+#if _DEBUG
+    , m_debugDrawField(true)
+#endif
 {
 }
 
@@ -78,7 +81,10 @@ void Field::update()
 }
 void Field::onGui()
 {
+#if _DEBUG
     ImGui::Begin("Field");
+    ImGui::Checkbox("Draw", &m_debugDrawField);
+
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     if (m_player) {
         if (ImGui::TreeNodeEx("Player", flags)) {
@@ -100,6 +106,7 @@ void Field::onGui()
         }
     }
     ImGui::End();
+#endif
 }
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
@@ -122,15 +129,19 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 
     ub->setPS(0, m_normalTexture);
     ub->setPS(1, m_borderTexture);
-    Engine::getInstance()->getDevice()->getSurface()->render(
-        rc,
-        ub,
-        m_vertexBuffer,
-        m_indexBuffer,
-        m_indexLength,
-        m_instanceBuffers,
-        m_instanceCount);
-
+#if _DEBUG
+    if (m_debugDrawField)
+#endif
+    {
+        Engine::getInstance()->getDevice()->getSurface()->render(
+            rc,
+            ub,
+            m_vertexBuffer,
+            m_indexBuffer,
+            m_indexLength,
+            m_instanceBuffers,
+            m_instanceCount);
+    }
     m_player->draw3D(renderer);
     for (auto& entity : m_entities) {
         entity->draw3D(renderer);

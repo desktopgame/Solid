@@ -160,5 +160,9 @@ private:
     std::vector<std::shared_ptr<Buffer>> m_instanceBuffers;
     int32_t m_indexLength;
     int32_t m_instanceCount;
+
+#if _DEBUG
+    bool m_debugDrawField;
+#endif
 };
 }

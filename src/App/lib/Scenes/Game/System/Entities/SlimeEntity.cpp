@@ -2,6 +2,7 @@
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entities/SlimeEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <imgui.h>
 
 namespace App::Scenes::Game::System::Entities {
 // public
@@ -58,7 +59,8 @@ void SlimeEntity::update(Field& field)
         }
         break;
     }
-    case State::Walk: {
+    case State::Walk:
+    case State::Back: {
         m_timer += Time::deltaTime();
         if (m_timer < 2.0f) {
             Vector3 vel = getVelocity() * Vector3({ 0, 1, 0 });
@@ -79,6 +81,34 @@ void SlimeEntity::update(Field& field)
 
     BasicEntity::update(field);
 }
+void SlimeEntity::onGui()
+{
+    switch (m_state) {
+    case State::Wait:
+        ImGui::LabelText("State", "Wait");
+        break;
+    case State::Look:
+        ImGui::LabelText("State", "Look");
+        break;
+    case State::Walk:
+        ImGui::LabelText("State", "Walk");
+        break;
+    case State::Back:
+        ImGui::LabelText("State", "Back");
+        break;
+    }
+}
+void SlimeEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
+{
+    {
+        float vx = Mathf::cos(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
+        float vz = Mathf::sin(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
+        Vector3 v = Vector3({ vx, 0, vz });
+        renderer->drawBox(m_position, Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 0, 0, 1 }), false);
+        renderer->drawBox(m_position + (v * 15.0f), Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 0, 0, 1 }), false);
+    }
+    BasicEntity::draw3D(renderer);
+}
 // protected
 SlimeEntity::SlimeEntity()
     : EnemyEntity(Common::Graphics::NodeRegistry::s_slimeNode->clone())
@@ -97,6 +127,8 @@ void SlimeEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z)
 {
     if (m_state == State::Walk) {
         stop();
+    } else if (m_state == State::Back) {
+        m_moveDir = -m_moveDir;
     }
 }
 void SlimeEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z)
@@ -108,11 +140,12 @@ void SlimeEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z
 void SlimeEntity::onRotationStop(Field& field)
 {
     if (m_state == State::Look) {
-        m_state = State::Walk;
+        m_state = State::Back;
         float vx = Mathf::cos(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
         float vz = Mathf::sin(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
         m_moveDir = -Vector3({ vx, 0, vz });
         m_timer = 0.0f;
+        m_jump = false;
         setTorque(Vector3({ 0, 0, 0 }));
     }
 }
@@ -120,6 +153,7 @@ void SlimeEntity::onRotationStop(Field& field)
 void SlimeEntity::stop()
 {
     m_state = State::Wait;
+    m_timer = 0.0f;
     m_waitTime = m_random.range(1.0f, 3.0f);
 
     Vector3 vel = getVelocity();

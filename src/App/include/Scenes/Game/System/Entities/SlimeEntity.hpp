@@ -8,6 +8,8 @@ public:
     virtual ~SlimeEntity();
 
     virtual void update(Field& field) override;
+    virtual void onGui() override;
+    virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
 
 protected:
     SlimeEntity();
@@ -24,6 +26,7 @@ private:
         Wait = 0,
         Look,
         Walk,
+        Back,
         Jump
     };
 
