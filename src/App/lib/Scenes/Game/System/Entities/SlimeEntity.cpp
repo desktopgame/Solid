@@ -27,10 +27,10 @@ void SlimeEntity::update(Field& field)
             Vector3 playerPos = field.getPlayer()->getPosition();
             Vector3 selfPos = getPosition();
             float distToPlayer = Vector3::distance(playerPos, selfPos);
-            // if (distToPlayer < 30.0f) {
-            //     Vector3 dir = Vector3::normalized(playerPos - selfPos);
-            //     degree = (::atan2f(dir.z(), dir.x()) * Mathf::Rad2Deg);
-            // }
+            if (distToPlayer < 30.0f) {
+                Vector3 dir = Vector3::normalized(playerPos - selfPos);
+                degree = (::atan2f(dir.z(), dir.x()) * Mathf::Rad2Deg);
+            }
 
             float x = Mathf::cos(Mathf::Deg2Rad * (float)degree);
             float z = Mathf::sin(Mathf::Deg2Rad * (float)degree);
