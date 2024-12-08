@@ -98,17 +98,6 @@ void SlimeEntity::onGui()
         break;
     }
 }
-void SlimeEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
-{
-    {
-        float vx = Mathf::cos(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
-        float vz = Mathf::sin(Mathf::normalizeDegree(m_rotation.y() - 90.0f) * Mathf::Deg2Rad);
-        Vector3 v = Vector3({ vx, 0, vz });
-        renderer->drawBox(m_position, Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 0, 0, 1 }), false);
-        renderer->drawBox(m_position + (v * 15.0f), Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 0, 0, 1 }), false);
-    }
-    BasicEntity::draw3D(renderer);
-}
 // protected
 SlimeEntity::SlimeEntity()
     : EnemyEntity(Common::Graphics::NodeRegistry::s_slimeNode->clone())
