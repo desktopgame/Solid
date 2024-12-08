@@ -101,6 +101,34 @@ void BasicEntity::update(Field& field)
 
         if (fuzzyHits.size() > 0) {
             if (m_velocity.y() > 0.0f) {
+                float maxLen = 0.0f;
+                std::vector<NodeHit> strictHits;
+                hitTilesStrict(field, m_node, offset, fuzzyHits, strictHits);
+
+                IntVector3 hitTile;
+                for (const auto& hit : strictHits) {
+                    Geom::Plane plane;
+                    plane.center = (Vector3)hit.tile * Field::k_tileSize;
+                    plane.center += Vector3({ 0, -0.5f, 0 }) * Field::k_tileSize;
+                    plane.normal = Vector3({ 0, -1, 0 });
+
+                    Geom::OBB obb = hit.node->getOBB();
+                    obb.center += offset;
+
+                    float len = 0.0f;
+                    if (Geom::Collision::testOBBAndPlane(obb, plane, len)) {
+                        if (Mathf::abs(len) > Mathf::abs(maxLen)) {
+                            maxLen = len;
+                            hitTile = hit.tile;
+                        }
+                    }
+                }
+                if (maxLen != 0.0f) {
+                    newPos.y() -= maxLen + threshould;
+                    m_velocity.y() = 0.0f;
+                    m_onGround = true;
+                    onCollisionRoof(field, hitTile.x(), hitTile.y(), hitTile.z());
+                }
             } else if (m_velocity.y() < 0.0f) {
                 float maxLen = 0.0f;
                 std::vector<NodeHit> strictHits;
