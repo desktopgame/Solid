@@ -28,15 +28,6 @@ void DemoScene::onEnter()
     m_globalLightDir = Vector3({ 1, 1, 0 });
     m_pointLightPositions.clear();
     m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
-
-    if (!m_node1) {
-        m_node1 = Common::Graphics::Node::deserialize("./assets/Models/sample.json");
-        m_node1->setLocalPosition(Vector3({ -10, 20, 20 }));
-    }
-    if (!m_node2) {
-        m_node2 = Common::Graphics::Node::deserialize("./assets/Models/sample.json");
-        m_node1->setLocalPosition(Vector3({ 10, 20, 20 }));
-    }
 }
 void DemoScene::onExit()
 {
@@ -93,9 +84,6 @@ void DemoScene::onDraw3D()
     m_renderer->drawPlane(Vector3({ 10, 0, 20 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), true);
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), false);
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
-
-    m_node1->draw(m_renderer);
-    m_node2->draw(m_renderer);
 }
 
 void DemoScene::onDraw2D()
