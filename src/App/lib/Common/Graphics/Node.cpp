@@ -42,6 +42,11 @@ void Node::validate()
     if (m_isInvalid) {
         m_isInvalid = false;
 
+        m_localTransform = Matrix::transform(
+            Matrix::translate(m_localPosition),
+            Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
+            Matrix());
+
         for (const auto& c : m_children) {
             c->validate();
         }
@@ -121,17 +126,7 @@ Vector3 Node::getSize() const { return m_size; }
 void Node::setColor(const Vector3& color) { m_color = color; }
 Vector3 Node::getColor() const { return m_color; }
 
-Matrix Node::getLocalTransform()
-{
-    if (m_isInvalid) {
-        m_localTransform = Matrix::transform(
-            Matrix::translate(m_localPosition),
-            Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
-            Matrix());
-        m_isInvalid = false;
-    }
-    return m_localTransform;
-}
+Matrix Node::getLocalTransform() const { return m_localTransform; }
 Matrix Node::getGlobalTransform()
 {
     auto sp = m_parent.lock();

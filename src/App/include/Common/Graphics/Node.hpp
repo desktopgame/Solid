@@ -39,7 +39,7 @@ public:
     void setColor(const Vector3& color);
     Vector3 getColor() const;
 
-    Matrix getLocalTransform();
+    Matrix getLocalTransform() const;
     Matrix getGlobalTransform();
     std::array<Vector3, 8> getEdges();
     Geom::OBB getOBB();
