@@ -42,10 +42,7 @@ void Node::validate()
     if (m_isInvalid) {
         m_isInvalid = false;
 
-        m_localTransform = Matrix::transform(
-            Matrix::translate(m_localPosition),
-            Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
-            Matrix());
+        m_localTransform = computeLocalTransform();
         m_globalTransform = computeGlobalTransform();
         m_edges = computeEdges();
 
@@ -129,6 +126,13 @@ void Node::setColor(const Vector3& color) { m_color = color; }
 Vector3 Node::getColor() const { return m_color; }
 
 Matrix Node::getLocalTransform() const { return m_localTransform; }
+Matrix Node::computeLocalTransform()
+{
+    return Matrix::transform(
+        Matrix::translate(m_localPosition),
+        Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
+        Matrix());
+}
 Matrix Node::getGlobalTransform() const { return m_globalTransform; }
 Matrix Node::computeGlobalTransform()
 {

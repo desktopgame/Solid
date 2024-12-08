@@ -40,6 +40,7 @@ public:
     Vector3 getColor() const;
 
     Matrix getLocalTransform() const;
+    Matrix computeLocalTransform();
     Matrix getGlobalTransform() const;
     Matrix computeGlobalTransform();
     std::array<Vector3, 8> getEdges() const;
