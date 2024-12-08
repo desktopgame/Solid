@@ -45,6 +45,7 @@ void Node::validate()
         m_localTransform = computeLocalTransform();
         m_globalTransform = computeGlobalTransform();
         m_edges = computeEdges();
+        m_obb = computeOBB();
 
         for (const auto& c : m_children) {
             c->validate();
@@ -165,7 +166,8 @@ std::array<Vector3, 8> Node::computeEdges()
     h = Matrix::multiply(m, h);
     return std::array<Vector3, 8> { a, b, c, d, e, f, g, h };
 }
-Geom::OBB Node::getOBB()
+Geom::OBB Node::getOBB() const { return m_obb; }
+Geom::OBB Node::computeOBB()
 {
     Vector3 center = getGlobalPosition();
     Matrix m = getGlobalRotation();
