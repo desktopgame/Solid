@@ -24,11 +24,12 @@ public:
 
     void setLocalPosition(const Vector3& localPosition);
     Vector3 getLocalPosition() const;
-    Vector3 getGlobalPosition() const;
+    Vector3 getGlobalPosition();
 
     void setLocalRotation(const Vector3& localRotation);
     Vector3 getLocalRotation() const;
     Matrix getGlobalRotation() const;
+    Quaternion getGlobalRotationByQuaternion() const;
 
     void setSize(const Vector3& size);
     Vector3 getSize() const;
@@ -39,7 +40,7 @@ public:
     Matrix getLocalTransform();
     Matrix getGlobalTransform();
     std::array<Vector3, 8> getEdges();
-    Geom::OBB getOBB() const;
+    Geom::OBB getOBB();
 
     void addChild(const std::shared_ptr<Node>& node);
     std::shared_ptr<Node> getChildAt(int32_t index) const;

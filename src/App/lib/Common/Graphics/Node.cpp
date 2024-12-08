@@ -70,13 +70,9 @@ void Node::setLocalPosition(const Vector3& localPosition)
     m_localPosition = localPosition;
 }
 Vector3 Node::getLocalPosition() const { return m_localPosition; }
-Vector3 Node::getGlobalPosition() const
+Vector3 Node::getGlobalPosition()
 {
-    auto sp = m_parent.lock();
-    if (sp) {
-        return sp->getGlobalPosition() + m_localPosition;
-    }
-    return m_localPosition;
+    return Matrix::multiply(getGlobalTransform(), Vector3({ 0, 0, 0 }));
 }
 
 void Node::setLocalRotation(const Vector3& localRotation)
@@ -146,7 +142,7 @@ std::array<Vector3, 8> Node::getEdges()
     h = Matrix::multiply(m, h);
     return std::array<Vector3, 8> { a, b, c, d, e, f, g, h };
 }
-Geom::OBB Node::getOBB() const
+Geom::OBB Node::getOBB()
 {
     Vector3 center = getGlobalPosition();
     Matrix m = getGlobalRotation();
