@@ -28,6 +28,26 @@ void Node::draw(const std::shared_ptr<Renderer>& renderer)
 
 void Node::removeFromParent() { m_removed = true; }
 
+void Node::invalidate()
+{
+    m_isInvalid = true;
+
+    for (const auto& c : m_children) {
+        c->invalidate();
+    }
+}
+
+void Node::validate()
+{
+    if (m_isInvalid) {
+        m_isInvalid = false;
+
+        for (const auto& c : m_children) {
+            c->validate();
+        }
+    }
+}
+
 std::shared_ptr<Node> Node::clone() const
 {
     auto c = create();
@@ -66,7 +86,7 @@ std::array<char, 32>& Node::getName() { return m_name; }
 
 void Node::setLocalPosition(const Vector3& localPosition)
 {
-    m_isDirtyTransform = true;
+    invalidate();
     m_localPosition = localPosition;
 }
 Vector3 Node::getLocalPosition() const { return m_localPosition; }
@@ -77,7 +97,7 @@ Vector3 Node::getGlobalPosition()
 
 void Node::setLocalRotation(const Vector3& localRotation)
 {
-    m_isDirtyTransform = true;
+    invalidate();
     m_localRotation = localRotation;
 }
 Vector3 Node::getLocalRotation() const { return m_localRotation; }
@@ -93,7 +113,7 @@ Matrix Node::getGlobalRotation() const
 
 void Node::setSize(const Vector3& size)
 {
-    m_isDirtyTransform = true;
+    invalidate();
     m_size = size;
 }
 Vector3 Node::getSize() const { return m_size; }
@@ -103,12 +123,12 @@ Vector3 Node::getColor() const { return m_color; }
 
 Matrix Node::getLocalTransform()
 {
-    if (m_isDirtyTransform) {
+    if (m_isInvalid) {
         m_localTransform = Matrix::transform(
             Matrix::translate(m_localPosition),
             Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
             Matrix());
-        m_isDirtyTransform = false;
+        m_isInvalid = false;
     }
     return m_localTransform;
 }
@@ -241,7 +261,7 @@ Node::Node()
     , m_size()
     , m_color()
     , m_localTransform()
-    , m_isDirtyTransform(true)
+    , m_isInvalid(true)
     , m_parent()
     , m_children()
     , m_removed()

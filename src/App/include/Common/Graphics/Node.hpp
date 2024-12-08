@@ -12,6 +12,9 @@ public:
     void draw(const std::shared_ptr<Renderer>& renderer);
     void removeFromParent();
 
+    void invalidate();
+    void validate();
+
     std::shared_ptr<Node> clone() const;
 
     static void serialize(const std::string& file, const std::shared_ptr<Node>& node);
@@ -61,7 +64,7 @@ private:
     Vector3 m_size;
     Vector3 m_color;
     Matrix m_localTransform;
-    bool m_isDirtyTransform;
+    bool m_isInvalid;
     std::weak_ptr<Node> m_parent;
     std::vector<std::shared_ptr<Node>> m_children;
     bool m_removed;
