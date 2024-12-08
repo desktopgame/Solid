@@ -47,6 +47,7 @@ void Node::validate()
             Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 }))),
             Matrix());
         m_globalTransform = computeGlobalTransform();
+        m_edges = computeEdges();
 
         for (const auto& c : m_children) {
             c->validate();
@@ -137,7 +138,8 @@ Matrix Node::computeGlobalTransform()
     }
     return getLocalTransform();
 }
-std::array<Vector3, 8> Node::getEdges()
+std::array<Vector3, 8> Node::getEdges() const { return m_edges; }
+std::array<Vector3, 8> Node::computeEdges()
 {
     Vector3 a = (m_size * Vector3({ -0.5f, 0.5f, 0.5f }));
     Vector3 b = (m_size * Vector3({ 0.5f, 0.5f, 0.5f }));

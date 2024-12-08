@@ -42,7 +42,8 @@ public:
     Matrix getLocalTransform() const;
     Matrix getGlobalTransform() const;
     Matrix computeGlobalTransform();
-    std::array<Vector3, 8> getEdges();
+    std::array<Vector3, 8> getEdges() const;
+    std::array<Vector3, 8> computeEdges();
     Geom::OBB getOBB();
 
     void addChild(const std::shared_ptr<Node>& node);
@@ -66,6 +67,7 @@ private:
     Vector3 m_color;
     Matrix m_localTransform;
     Matrix m_globalTransform;
+    std::array<Vector3, 8> m_edges;
     bool m_isInvalid;
     std::weak_ptr<Node> m_parent;
     std::vector<std::shared_ptr<Node>> m_children;
