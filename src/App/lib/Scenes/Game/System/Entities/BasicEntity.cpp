@@ -13,6 +13,7 @@ BasicEntity::~BasicEntity() { }
 
 void BasicEntity::update(Field& field)
 {
+    m_node->validate();
     markAsDirtyAABB();
     rehashAABB();
     m_onGround = false;
@@ -207,6 +208,7 @@ void BasicEntity::update(Field& field)
     }
 
     m_node->setLocalPosition(getPosition());
+    m_node->validate();
 
     Vector3 rot = m_torque * dt;
     Vector3 oldRot = getRotation();
