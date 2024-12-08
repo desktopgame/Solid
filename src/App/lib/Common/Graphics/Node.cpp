@@ -70,7 +70,6 @@ void Node::setLocalPosition(const Vector3& localPosition)
     m_localPosition = localPosition;
 }
 Vector3 Node::getLocalPosition() const { return m_localPosition; }
-Vector3& Node::getLocalPosition() { return m_localPosition; }
 Vector3 Node::getGlobalPosition() const
 {
     auto sp = m_parent.lock();
@@ -86,7 +85,6 @@ void Node::setLocalRotation(const Vector3& localRotation)
     m_localRotation = localRotation;
 }
 Vector3 Node::getLocalRotation() const { return m_localRotation; }
-Vector3& Node::getLocalRotation() { return m_localRotation; }
 Matrix Node::getGlobalRotation() const
 {
     Matrix m = Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 })));
@@ -103,11 +101,9 @@ void Node::setSize(const Vector3& size)
     m_size = size;
 }
 Vector3 Node::getSize() const { return m_size; }
-Vector3& Node::getSize() { return m_size; }
 
 void Node::setColor(const Vector3& color) { m_color = color; }
 Vector3 Node::getColor() const { return m_color; }
-Vector3& Node::getColor() { return m_color; }
 
 Matrix Node::getLocalTransform()
 {

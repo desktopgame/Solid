@@ -115,10 +115,26 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
             s_selected = node;
         }
         ImGui::InputText("Name", node->getName().data(), 16);
-        ImGui::DragFloat3("Pos", node->getLocalPosition().data(), 0.01f);
-        ImGui::DragFloat3("Rot", node->getLocalRotation().data(), 1.0f, 0.0f, 360.0f);
-        ImGui::DragFloat3("Size", node->getSize().data(), 0.01f);
-        ImGui::ColorEdit3("Color", node->getColor().data());
+
+        Vector3 localPos = node->getLocalPosition();
+        if (ImGui::DragFloat3("Pos", localPos.data(), 0.01f)) {
+            node->setLocalPosition(localPos);
+        }
+
+        Vector3 localRot = node->getLocalRotation();
+        if (ImGui::DragFloat3("Rot", localRot.data(), 1.0f, 0.0f, 360.0f)) {
+            node->setLocalRotation(localRot);
+        }
+
+        Vector3 size = node->getSize();
+        if (ImGui::DragFloat3("Size", size.data(), 0.01f)) {
+            node->setSize(size);
+        }
+
+        Vector3 color = node->getColor();
+        if (ImGui::ColorEdit3("Color", color.data())) {
+            node->setColor(color);
+        }
         if (ImGui::Button("New Node")) {
             auto child = Common::Graphics::Node::create();
             child->setLocalPosition(Vector3({ 0, 0, 0 }));
