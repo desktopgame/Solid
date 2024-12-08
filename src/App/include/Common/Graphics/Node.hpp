@@ -40,7 +40,8 @@ public:
     Vector3 getColor() const;
 
     Matrix getLocalTransform() const;
-    Matrix getGlobalTransform();
+    Matrix getGlobalTransform() const;
+    Matrix computeGlobalTransform();
     std::array<Vector3, 8> getEdges();
     Geom::OBB getOBB();
 
@@ -64,6 +65,7 @@ private:
     Vector3 m_size;
     Vector3 m_color;
     Matrix m_localTransform;
+    Matrix m_globalTransform;
     bool m_isInvalid;
     std::weak_ptr<Node> m_parent;
     std::vector<std::shared_ptr<Node>> m_children;
