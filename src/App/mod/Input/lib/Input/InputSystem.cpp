@@ -88,6 +88,9 @@ InputSystem::InputSystem()
 
 void InputSystem::handleEvent(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+    if (m_shutdowned) {
+        return;
+    }
     m_keyboard->handleEvent(hwnd, msg, wparam, lparam);
     m_mouse->handleEvent(hwnd, msg, wparam, lparam);
 }
