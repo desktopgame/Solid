@@ -50,7 +50,11 @@ void runAllTests()
             if (!basicEntity) {
                 continue;
             }
-            assert(Geom::Collision::testAABBAndAABB(basicEntity->getAABB(), fieldAABB));
+            bool isHit = Geom::Collision::testAABBAndAABB(basicEntity->getAABB(), fieldAABB);
+            if (!isHit) {
+                std::cout << "Position: " << basicEntity->getPosition() << std::endl;
+            }
+            assert(isHit);
         }
     }
 }
