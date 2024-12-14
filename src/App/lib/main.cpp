@@ -71,9 +71,11 @@ static int appMain(int argc, char* argv[])
 static int appTest(int argc, char* argv[])
 {
     auto engine = Engine::getInstance()->startup(argc, argv);
+    auto inputSystem = InputSystem::getInstance()->startup(engine->getWindow());
     Graphics::NodeRegistry::initialize();
     runAllTests();
     Graphics::NodeRegistry::destroy();
+    inputSystem->shutdown();
     engine->shutdown();
     return 0;
 }
