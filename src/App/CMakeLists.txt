@@ -100,3 +100,8 @@ target_link_libraries(
     Lib-Scene
     Lib-Utils
 )
+
+enable_testing()
+add_subdirectory(./test)
+add_test(Test "${CMAKE_CURRENT_BINARY_DIR}/test/App-Test.exe")
+add_custom_target(Test COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test/App-Test.exe")

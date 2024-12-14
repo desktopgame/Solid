@@ -13,6 +13,7 @@ using namespace App::Common;
 using namespace App::Scenes;
 
 // Lib
+#include <iostream>
 #include <library.hpp>
 
 static int appMain(int argc, char* argv[])
@@ -66,11 +67,23 @@ static int appMain(int argc, char* argv[])
     return 0;
 }
 
+#ifdef _TEST
+static int appTest(int argc, char* argv[])
+{
+    std::cout << "test" << std::endl;
+    return 0;
+}
+#endif
+
 int main(int argc, char* argv[])
 {
 #if _DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     // _CrtSetBreakAlloc(1441);
 #endif
+#ifdef _TEST
+    return appTest(argc, argv);
+#else
     return appMain(argc, argv);
+#endif
 }

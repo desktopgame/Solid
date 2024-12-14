@@ -1,0 +1,34 @@
+cmake_minimum_required(VERSION 3.10)
+project(App-Test CXX)
+
+set(LIBS)
+foreach(FILE ${SOURCES})
+    list(APPEND LIBS "../${FILE}")
+endforeach()
+
+add_executable(App-Test ${LIBS})
+target_compile_definitions(App-Test PRIVATE _TEST)
+target_compile_options(App-Test PRIVATE $<$<BOOL:${MSVC}>: /utf-8>)
+target_compile_features(App-Test PRIVATE cxx_std_17)
+target_include_directories(
+    App-Test
+    PRIVATE
+    "../include"
+    "${MODS}/Input/include"
+    "${MODS}/Graphics/include"
+    "${MODS}/Math/include"
+    "${MODS}/OS/include"
+    "${MODS}/Scene/include"
+    "${MODS}/Utils/include"
+)
+target_link_libraries(
+    App-Test
+    PRIVATE
+    Lib-Json
+    Lib-Input
+    Lib-Math
+    Lib-Graphics
+    Lib-OS
+    Lib-Scene
+    Lib-Utils
+)
