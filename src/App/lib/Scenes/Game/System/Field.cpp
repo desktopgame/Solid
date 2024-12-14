@@ -55,9 +55,9 @@ void Field::load(const std::string& file)
     m_tileTransform.normalVectorTable = k_normalVectorTable;
     m_tilePallet.table = k_palletTable;
 
-    for (int32_t x = 0; x < k_fieldSize; x++) {
-        for (int32_t y = 0; y < k_fieldSize; y++) {
-            for (int32_t z = 0; z < k_fieldSize; z++) {
+    for (int32_t x = 0; x < k_fieldSizeX; x++) {
+        for (int32_t y = 0; y < k_fieldSizeY; y++) {
+            for (int32_t z = 0; z < k_fieldSizeZ; z++) {
                 m_blocks[x][y][z] = 0;
             }
         }
@@ -157,13 +157,13 @@ void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
 
 bool Field::hasBlockAt(int32_t x, int32_t y, int32_t z) const
 {
-    if (x >= k_fieldSize || x < 0) {
+    if (x >= k_fieldSizeX || x < 0) {
         return false;
     }
-    if (y >= k_fieldSize || y < 0) {
+    if (y >= k_fieldSizeY || y < 0) {
         return false;
     }
-    if (z >= k_fieldSize || z < 0) {
+    if (z >= k_fieldSizeZ || z < 0) {
         return false;
     }
     return true;

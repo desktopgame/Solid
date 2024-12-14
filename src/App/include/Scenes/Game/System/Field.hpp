@@ -10,7 +10,9 @@ namespace Entities {
 }
 class Field {
 public:
-    static inline constexpr int32_t k_fieldSize = 40;
+    static inline constexpr int32_t k_fieldSizeX = 40;
+    static inline constexpr int32_t k_fieldSizeY = 16;
+    static inline constexpr int32_t k_fieldSizeZ = 40;
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
 
@@ -147,7 +149,7 @@ private:
         Vector4({ 0.9490196078431372f, 0.9490196078431372f, 0.8549019607843137f, 1.0f }),
     };
 
-    std::array<std::array<std::array<int32_t, k_fieldSize>, k_fieldSize>, k_fieldSize> m_blocks;
+    std::array<std::array<std::array<int32_t, k_fieldSizeX>, k_fieldSizeY>, k_fieldSizeZ> m_blocks;
     std::shared_ptr<Entities::PlayerEntity> m_player;
     std::vector<std::shared_ptr<Entity>> m_entities;
 
