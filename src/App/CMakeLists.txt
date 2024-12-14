@@ -31,6 +31,7 @@ add_subdirectory(./mod/Utils)
 #
 set(SOURCES
     ./include/main.hpp
+    ./include/test.hpp
     ./include/Common/Graphics/Node.hpp
     ./include/Common/Graphics/NodeRegistry.hpp
     ./include/Common/Util/FpsController.hpp
@@ -45,6 +46,7 @@ set(SOURCES
     ./include/Scenes/Game/System/Entities/SlimeEntity.hpp
     ./include/Scenes/Game/System/Entities/ProjectileEntity.hpp
     ./lib/main.cpp
+    ./lib/test.cpp
     ./lib/Common/Graphics/Node.cpp
     ./lib/Common/Graphics/NodeRegistry.cpp
     ./lib/Common/Util/FpsController.cpp

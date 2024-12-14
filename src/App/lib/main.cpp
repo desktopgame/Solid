@@ -9,11 +9,11 @@
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
+#include <test.hpp>
 using namespace App::Common;
 using namespace App::Scenes;
 
 // Lib
-#include <iostream>
 #include <library.hpp>
 
 static int appMain(int argc, char* argv[])
@@ -70,7 +70,11 @@ static int appMain(int argc, char* argv[])
 #ifdef _TEST
 static int appTest(int argc, char* argv[])
 {
-    std::cout << "test" << std::endl;
+    auto engine = Engine::getInstance()->startup(argc, argv);
+    Graphics::NodeRegistry::initialize();
+    runAllTests();
+    Graphics::NodeRegistry::destroy();
+    engine->shutdown();
     return 0;
 }
 #endif
