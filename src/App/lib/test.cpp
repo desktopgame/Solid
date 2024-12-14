@@ -24,7 +24,8 @@ void runAllTests()
     }
     auto player = System::Entities::PlayerEntity::create(
         Common::Graphics::Node::deserialize("assets\\Models\\player.json"));
-    player->setPosition(Vector3({ 80, 20, 80 }));
+    player->setPosition(Vector3({ 999, 999, 999 }));
+    player->setReceiveGravity(false);
     field->setPlayer(player);
 
     float elapsed = 0.0f;
