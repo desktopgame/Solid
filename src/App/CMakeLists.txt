@@ -103,5 +103,5 @@ target_link_libraries(
 
 enable_testing()
 add_subdirectory(./test)
-add_test(Test "${CMAKE_CURRENT_BINARY_DIR}/test/App-Test.exe")
+add_test(NAME Test COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test/App-Test.exe" WORKING_DIRECTORY ${REPOSITORY_ROOT})
 add_custom_target(Test COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test/App-Test.exe")
