@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "compileCommands": "../../build/compile_commands.json",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "defines": ["_DEBUG", "_TEST"]
         }
     ],
     "version": 4
