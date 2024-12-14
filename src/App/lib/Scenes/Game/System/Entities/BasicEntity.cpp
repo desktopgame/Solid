@@ -19,9 +19,7 @@ void BasicEntity::update(Field& field)
     m_onGround = false;
 
     float dt = Time::deltaTime();
-    float ep = Mathf::Epsilon;
     float threshould = 0.001f;
-    Vector3 size = m_aabb.max - m_aabb.min;
     Vector3 delta = m_velocity * dt;
     Vector3 oldPos = getPosition();
     Vector3 newPos = oldPos + delta;

@@ -96,6 +96,8 @@ void SlimeEntity::onGui()
     case State::Back:
         ImGui::LabelText("State", "Back");
         break;
+    default:
+        break;
     }
 }
 // protected
