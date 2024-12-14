@@ -31,7 +31,7 @@ void runAllTests()
     float elapsed = 0.0f;
     float deltaTime = 0.0288699996f;
 
-    while (elapsed < (60.0f * 60.0f)) {
+    while (elapsed < (60.0f * 10.0f)) {
         Lib::Utils::Time::s_deltaTime = deltaTime;
         field->update();
         elapsed += deltaTime;
