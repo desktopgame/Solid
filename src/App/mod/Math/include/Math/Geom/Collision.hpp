@@ -9,6 +9,24 @@ namespace Lib::Math::Geom {
 class Collision {
 public:
     template <typename T>
+    inline static bool testAABBAndAABB(const AABBT<T>& aabb1, const AABBT<T>& aabb2)
+    {
+        T maxX1 = aabb1.max.x();
+        T maxY1 = aabb1.max.y();
+        T maxZ1 = aabb1.max.z();
+        T minX1 = aabb1.min.x();
+        T minY1 = aabb1.min.y();
+        T minZ1 = aabb1.min.z();
+        T maxX2 = aabb2.max.x();
+        T maxY2 = aabb2.max.y();
+        T maxZ2 = aabb2.max.z();
+        T minX2 = aabb2.min.x();
+        T minY2 = aabb2.min.y();
+        T minZ2 = aabb2.min.z();
+        return (maxX1 > minX2 && minX1 < maxX2 && maxY1 > minY2 && minY1 < maxY2 && maxZ1 > minZ2 && minZ1 < maxZ2);
+    }
+
+    template <typename T>
     inline static bool testOBBAndOBB(const OBBT<T>& obb1, const OBBT<T>& obb2)
     {
         // see: http://marupeke296.com/COL_3D_No13_OBBvsOBB.html
