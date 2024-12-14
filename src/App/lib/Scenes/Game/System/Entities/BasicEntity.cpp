@@ -257,6 +257,7 @@ void BasicEntity::update(Field& field)
         while (true) {
             setRotation(newRot);
             m_node->setLocalRotation(newRot);
+            m_node->validate();
 
             markAsDirtyAABB();
             rehashAABB();
@@ -270,11 +271,14 @@ void BasicEntity::update(Field& field)
                 break;
             }
             if (dt <= Mathf::Epsilon) {
+                setRotation(oldRot);
+                m_node->setLocalRotation(oldRot);
                 break;
             }
             dt *= 0.9f;
             rot = m_torque * dt;
             newRot = oldRot + rot;
+            newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
             rotationStop = true;
         }
         if (rotationStop) {
