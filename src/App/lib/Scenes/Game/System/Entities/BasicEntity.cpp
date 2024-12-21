@@ -305,12 +305,16 @@ void BasicEntity::update(Field& field)
         markAsDirtyAABB();
         rehashAABB();
 
-        std::vector<IntVector3> prevHits;
-        hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), prevHits);
+        float low = 0.0f;
+        float high = 1.0f;
+        const int32_t maxIterations = 10;
 
-        bool rotationStop = false;
-        float step = dt / 20.0f;
-        while (true) {
+        float best = 0.0f;
+        for (int32_t i = 0; i < maxIterations; i++) {
+            float mid = (low + high) * 0.5f;
+            newRot = oldRot + (m_torque * dt * mid);
+            newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
+
             setRotation(newRot);
             m_node->setLocalRotation(newRot);
             m_node->validate();
@@ -318,25 +322,39 @@ void BasicEntity::update(Field& field)
             markAsDirtyAABB();
             rehashAABB();
 
-            std::vector<IntVector3> nextHits;
-            hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), nextHits);
+            std::vector<IntVector3> hits;
+            hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), hits);
 
-            if (prevHits.empty() && nextHits.empty()) {
-                break;
+            if (!hits.empty()) {
+                high = mid;
+            } else {
+                low = mid;
+                best = mid;
             }
-            dt = Mathf::max(dt - step, 0.0f);
-            if (dt <= Mathf::Epsilon) {
-                setRotation(oldRot);
-                m_node->setLocalRotation(oldRot);
-                break;
-            }
-            rot = m_torque * dt;
-            newRot = oldRot + rot;
-            newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
-            rotationStop = true;
         }
-        if (rotationStop) {
+
+        if (best < 0.0001f) {
+            best = 0.0f;
+        }
+
+        newRot = oldRot + (m_torque * dt * best);
+        newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
+        setRotation(newRot);
+        m_node->setLocalRotation(newRot);
+        m_node->validate();
+
+        markAsDirtyAABB();
+        rehashAABB();
+
+        if (best == 0.0f) {
             onRotationStop(field);
+        }
+
+        std::vector<IntVector3> hits;
+        hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), hits);
+
+        if (!hits.empty()) {
+            rehashAABB();
         }
     }
 }
