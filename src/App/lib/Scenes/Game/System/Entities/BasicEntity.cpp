@@ -308,6 +308,7 @@ void BasicEntity::update(Field& field)
         float low = 0.0f;
         float high = 1.0f;
         const int32_t maxIterations = 10;
+        const float gap = 0.1f;
 
         float best = 0.0f;
         for (int32_t i = 0; i < maxIterations; i++) {
@@ -321,6 +322,8 @@ void BasicEntity::update(Field& field)
 
             markAsDirtyAABB();
             rehashAABB();
+            m_aabb.min -= Vector3({ gap, gap, gap });
+            m_aabb.max += Vector3({ gap, gap, gap });
 
             std::vector<IntVector3> hits;
             hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), hits);
