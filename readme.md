@@ -53,7 +53,7 @@ ninja -C build
 ````
 
 ### VisualStudio
-VisualStudioの場合、 `App` という名前になっている構成で実行ファイルをビルドできます。
+VisualStudioの場合、 `App` という名前になっているプロジェクトで実行ファイルをビルドできます。
 
 ### CLion
 CLionの場合、 `App` という名前になっている構成で実行ファイルをビルドできます。
