@@ -349,13 +349,6 @@ void BasicEntity::update(Field& field)
         if (best == 0.0f) {
             onRotationStop(field);
         }
-
-        std::vector<IntVector3> hits;
-        hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), hits);
-
-        if (!hits.empty()) {
-            rehashAABB();
-        }
     }
 }
 void BasicEntity::onGui() { }
