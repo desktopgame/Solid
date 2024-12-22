@@ -36,7 +36,7 @@ void runAllTests()
     fieldAABB.min = (Vector3({ 0, 0, 0 }) * System::Field::k_tileSize) - (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
     fieldAABB.max = (Vector3({ System::Field::k_fieldSizeX, System::Field::k_fieldSizeY, System::Field::k_fieldSizeZ }) * System::Field::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
 
-    while (elapsed < (60.0f * 10.0f)) {
+    while (elapsed < (60.0f * 60.0f * 24.0f)) {
         Lib::Utils::Time::s_deltaTime = deltaTime;
         field->update();
         elapsed += deltaTime;
@@ -55,6 +55,12 @@ void runAllTests()
                 std::cout << "Position: " << basicEntity->getPosition() << std::endl;
             }
             assert(isHit);
+
+            bool highJump = basicEntity->getPosition().y() > 20.0f;
+            if (highJump) {
+                std::cout << "Position: " << basicEntity->getPosition() << std::endl;
+            }
+            assert(!highJump);
         }
     }
 }
