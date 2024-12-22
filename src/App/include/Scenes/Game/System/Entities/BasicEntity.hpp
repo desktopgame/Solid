@@ -56,5 +56,7 @@ private:
     Vector3 m_torque;
     bool m_receiveGravity;
     bool m_onGround;
+    std::vector<IntVector3> m_fuzzyHitCache;
+    std::vector<NodeHit> m_strictHitCache;
 };
 }

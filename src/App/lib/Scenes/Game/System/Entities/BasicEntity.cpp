@@ -26,24 +26,24 @@ void BasicEntity::update(Field& field)
 
     // X軸方向
     {
-        std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 1, 0, 0 });
-        hitTilesFuzzy(field, offset, fuzzyHits);
+        m_fuzzyHitCache.clear();
+        hitTilesFuzzy(field, offset, m_fuzzyHitCache);
 
-        if (fuzzyHits.size() > 0) {
+        if (m_fuzzyHitCache.size() > 0) {
             if (m_velocity.x() > 0.0f) {
                 Vector3 totalOffset = offset;
                 while (true) {
                     float maxLen = 0.0f;
 
-                    fuzzyHits.clear();
-                    hitTilesFuzzy(field, totalOffset, fuzzyHits);
+                    m_fuzzyHitCache.clear();
+                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
 
-                    std::vector<NodeHit> strictHits;
-                    hitTilesStrict(field, m_node, totalOffset, fuzzyHits, strictHits);
+                    m_strictHitCache.clear();
+                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
-                    for (const auto& hit : strictHits) {
+                    for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
                         plane.center = (Vector3)hit.tile * Field::k_tileSize;
                         plane.center += Vector3({ -0.5f, 0, 0 }) * Field::k_tileSize;
@@ -74,14 +74,14 @@ void BasicEntity::update(Field& field)
                 while (true) {
                     float maxLen = 0.0f;
 
-                    fuzzyHits.clear();
-                    hitTilesFuzzy(field, totalOffset, fuzzyHits);
+                    m_fuzzyHitCache.clear();
+                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
 
-                    std::vector<NodeHit> strictHits;
-                    hitTilesStrict(field, m_node, totalOffset, fuzzyHits, strictHits);
+                    m_strictHitCache.clear();
+                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
-                    for (const auto& hit : strictHits) {
+                    for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
                         plane.center = (Vector3)hit.tile * Field::k_tileSize;
                         plane.center += Vector3({ 0.5f, 0, 0 }) * Field::k_tileSize;
@@ -113,24 +113,25 @@ void BasicEntity::update(Field& field)
 
     // Y軸方向
     {
-        std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
-        hitTilesFuzzy(field, offset, fuzzyHits);
 
-        if (fuzzyHits.size() > 0) {
+        m_fuzzyHitCache.clear();
+        hitTilesFuzzy(field, offset, m_fuzzyHitCache);
+
+        if (m_fuzzyHitCache.size() > 0) {
             if (m_velocity.y() > 0.0f) {
                 Vector3 totalOffset = offset;
                 while (true) {
                     float maxLen = 0.0f;
 
-                    fuzzyHits.clear();
-                    hitTilesFuzzy(field, totalOffset, fuzzyHits);
+                    m_fuzzyHitCache.clear();
+                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
 
-                    std::vector<NodeHit> strictHits;
-                    hitTilesStrict(field, m_node, totalOffset, fuzzyHits, strictHits);
+                    m_strictHitCache.clear();
+                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
-                    for (const auto& hit : strictHits) {
+                    for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
                         plane.center = (Vector3)hit.tile * Field::k_tileSize;
                         plane.center += Vector3({ 0, -0.5f, 0 }) * Field::k_tileSize;
@@ -161,14 +162,14 @@ void BasicEntity::update(Field& field)
                 while (true) {
                     float maxLen = 0.0f;
 
-                    fuzzyHits.clear();
-                    hitTilesFuzzy(field, totalOffset, fuzzyHits);
+                    m_fuzzyHitCache.clear();
+                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
 
-                    std::vector<NodeHit> strictHits;
-                    hitTilesStrict(field, m_node, totalOffset, fuzzyHits, strictHits);
+                    m_strictHitCache.clear();
+                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
-                    for (const auto& hit : strictHits) {
+                    for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
                         plane.center = (Vector3)hit.tile * Field::k_tileSize;
                         plane.center += Vector3({ 0, 0.5f, 0 }) * Field::k_tileSize;
@@ -201,24 +202,24 @@ void BasicEntity::update(Field& field)
 
     // Z軸方向
     {
-        std::vector<IntVector3> fuzzyHits;
         Vector3 offset = delta * Vector3({ 0, 0, 1 });
-        hitTilesFuzzy(field, offset, fuzzyHits);
+        m_fuzzyHitCache.clear();
+        hitTilesFuzzy(field, offset, m_fuzzyHitCache);
 
-        if (fuzzyHits.size() > 0) {
+        if (m_fuzzyHitCache.size() > 0) {
             if (m_velocity.z() > 0.0f) {
                 Vector3 totalOffset = offset;
                 while (true) {
                     float maxLen = 0.0f;
 
-                    fuzzyHits.clear();
-                    hitTilesFuzzy(field, totalOffset, fuzzyHits);
+                    m_fuzzyHitCache.clear();
+                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
 
-                    std::vector<NodeHit> strictHits;
-                    hitTilesStrict(field, m_node, totalOffset, fuzzyHits, strictHits);
+                    m_strictHitCache.clear();
+                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
-                    for (const auto& hit : strictHits) {
+                    for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
                         plane.center = (Vector3)hit.tile * Field::k_tileSize;
                         plane.center += Vector3({ 0, 0, -0.5f }) * Field::k_tileSize;
@@ -249,14 +250,14 @@ void BasicEntity::update(Field& field)
                 while (true) {
                     float maxLen = 0.0f;
 
-                    fuzzyHits.clear();
-                    hitTilesFuzzy(field, totalOffset, fuzzyHits);
+                    m_fuzzyHitCache.clear();
+                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
 
-                    std::vector<NodeHit> strictHits;
-                    hitTilesStrict(field, m_node, totalOffset, fuzzyHits, strictHits);
+                    m_strictHitCache.clear();
+                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
-                    for (const auto& hit : strictHits) {
+                    for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
                         plane.center = (Vector3)hit.tile * Field::k_tileSize;
                         plane.center += Vector3({ 0, 0, 0.5f }) * Field::k_tileSize;
@@ -322,13 +323,11 @@ void BasicEntity::update(Field& field)
 
             markAsDirtyAABB();
             rehashAABB();
-            m_aabb.min -= Vector3({ gap, gap, gap });
-            m_aabb.max += Vector3({ gap, gap, gap });
 
-            std::vector<IntVector3> hits;
-            hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), hits);
+            m_fuzzyHitCache.clear();
+            hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), m_fuzzyHitCache);
 
-            if (!hits.empty()) {
+            if (!m_fuzzyHitCache.empty()) {
                 high = mid;
             } else {
                 low = mid;
