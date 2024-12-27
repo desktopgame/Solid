@@ -321,7 +321,6 @@ void BasicEntity::update(Field& field)
         float low = 0.0f;
         float high = 1.0f;
         const int32_t maxIterations = 10;
-        const float gap = 0.1f;
 
         float best = 0.0f;
         for (int32_t i = 0; i < maxIterations; i++) {
