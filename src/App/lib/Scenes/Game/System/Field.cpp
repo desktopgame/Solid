@@ -1,6 +1,7 @@
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <algorithm>
 #include <imgui.h>
 
 namespace App::Scenes::Game::System {
@@ -78,6 +79,11 @@ void Field::update()
     for (auto& entity : m_entities) {
         entity->update(self);
     }
+
+    auto iter = std::remove_if(m_entities.begin(), m_entities.end(), [](const auto& e) -> bool {
+        return e->isDead();
+    });
+    m_entities.erase(iter, m_entities.end());
 }
 void Field::onGui()
 {
