@@ -30,6 +30,8 @@ public:
 
 protected:
     BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node);
+    void onPositionChanged(const Vector3& position) override;
+    void onRotationChanged(const Vector3& rotation) override;
 
     virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z);
     virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z);

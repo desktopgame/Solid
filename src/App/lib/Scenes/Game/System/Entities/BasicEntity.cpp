@@ -404,6 +404,9 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_receiveGravity(true)
 {
 }
+
+void BasicEntity::onPositionChanged(const Vector3& position) { m_node->setLocalPosition(position); }
+void BasicEntity::onRotationChanged(const Vector3& rotation) { m_node->setLocalRotation(rotation); }
 void BasicEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) { }
 void BasicEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) { }
 void BasicEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) { }
