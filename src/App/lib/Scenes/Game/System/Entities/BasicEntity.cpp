@@ -369,6 +369,8 @@ void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 
+std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const { return m_node; }
+
 void BasicEntity::markAsDirtyAABB() { m_dirtyAABB = true; }
 void BasicEntity::rehashAABB()
 {

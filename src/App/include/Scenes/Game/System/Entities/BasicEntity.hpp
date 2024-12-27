@@ -13,6 +13,8 @@ public:
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
+    std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const;
+
     void markAsDirtyAABB();
     void rehashAABB();
     Geom::AABB getAABB() const;
