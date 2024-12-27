@@ -27,7 +27,7 @@ void DebugScene::onEnter()
     m_rootNode->setSize(Vector3({ 10, 10, 10 }));
     m_rootNode->setColor(Vector3({ 1, 1, 1 }));
 
-    std::string ioFileName = "./rawdata/Models/sample.json";
+    std::string ioFileName = "./rawdata/Models/Sample.json";
     std::fill(m_ioFileName.begin(), m_ioFileName.end(), '\0');
     std::copy(ioFileName.begin(), ioFileName.end(), m_ioFileName.begin());
 

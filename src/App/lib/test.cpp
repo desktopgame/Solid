@@ -24,7 +24,7 @@ static void physicsTest()
         field->spwan(enemy);
     }
     auto player = System::Entities::PlayerEntity::create(
-        Common::Graphics::Node::deserialize("assets\\Models\\player.json"));
+        Common::Graphics::Node::deserialize("assets\\Models\\Player.json"));
     player->setPosition(Vector3({ 999, 999, 999 }));
     player->setReceiveGravity(false);
     field->setPlayer(player);

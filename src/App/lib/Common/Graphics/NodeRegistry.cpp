@@ -6,7 +6,7 @@ std::shared_ptr<Node> NodeRegistry::s_slimeNode;
 
 void NodeRegistry::initialize()
 {
-    s_slimeNode = Common::Graphics::Node::deserialize("./assets/Models/sample.json");
+    s_slimeNode = Common::Graphics::Node::deserialize("./assets/Models/Sample.json");
 }
 void NodeRegistry::destroy()
 {
