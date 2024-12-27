@@ -287,22 +287,22 @@ void BasicEntity::update(Field& field)
         }
     }
 
-    setPosition(newPos);
-    m_node->setLocalPosition(getPosition());
-    m_node->validate();
-    markAsDirtyAABB();
-    rehashAABB();
+    // めりこみのチェック
+    Geom::AABB saveAABB = m_aabb;
+    m_aabb.min += newPos - oldPos;
+    m_aabb.max += newPos - oldPos;
 
     std::vector<IntVector3> tmpHits;
     hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), tmpHits);
 
     if (!tmpHits.empty()) {
-        setPosition(oldPos);
-        m_node->setLocalPosition(getPosition());
-        m_node->validate();
-        markAsDirtyAABB();
-        rehashAABB();
+        newPos = oldPos;
     }
+    m_aabb = saveAABB;
+
+    setPosition(newPos);
+    m_node->setLocalPosition(getPosition());
+    m_node->validate();
 
     if (m_receiveGravity) {
         m_velocity.y() -= Field::k_gravity * dt;
@@ -315,6 +315,9 @@ void BasicEntity::update(Field& field)
     newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
 
     if (m_torque.length() > 0.0f) {
+        markAsDirtyAABB();
+        rehashAABB();
+
         float low = 0.0f;
         float high = 1.0f;
         const int32_t maxIterations = 10;
