@@ -11,7 +11,7 @@
 using namespace App;
 using namespace App::Scenes::Game;
 
-void runAllTests()
+static void physicsTest()
 {
     auto normalTex = Texture::create("./assets/tileNormal2.png");
     auto borderTex = Texture::create("./assets/tileBorder.png");
@@ -63,5 +63,10 @@ void runAllTests()
             assert(!highJump);
         }
     }
+}
+
+void runAllTests()
+{
+    physicsTest();
 }
 #endif
