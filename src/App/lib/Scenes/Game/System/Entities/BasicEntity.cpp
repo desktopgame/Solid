@@ -297,6 +297,7 @@ void BasicEntity::update(Field& field)
 
     if (!tmpHits.empty()) {
         newPos = oldPos;
+        m_velocity = Vector3({ 0, 0, 0 });
     }
     m_aabb = saveAABB;
 
