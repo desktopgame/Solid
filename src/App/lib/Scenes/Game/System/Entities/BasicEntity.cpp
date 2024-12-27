@@ -302,7 +302,6 @@ void BasicEntity::update(Field& field)
     m_aabb = saveAABB;
 
     setPosition(newPos);
-    m_node->setLocalPosition(getPosition());
     m_node->validate();
 
     if (m_receiveGravity) {
@@ -330,7 +329,6 @@ void BasicEntity::update(Field& field)
             newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
 
             setRotation(newRot);
-            m_node->setLocalRotation(newRot);
             m_node->validate();
 
             markAsDirtyAABB();
@@ -354,7 +352,6 @@ void BasicEntity::update(Field& field)
         newRot = oldRot + (m_torque * dt * best);
         newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
         setRotation(newRot);
-        m_node->setLocalRotation(newRot);
         m_node->validate();
 
         markAsDirtyAABB();
