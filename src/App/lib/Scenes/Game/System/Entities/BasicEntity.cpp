@@ -288,13 +288,25 @@ void BasicEntity::update(Field& field)
     }
 
     setPosition(newPos);
+    m_node->setLocalPosition(getPosition());
+    m_node->validate();
+    markAsDirtyAABB();
+    rehashAABB();
+
+    std::vector<IntVector3> tmpHits;
+    hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), tmpHits);
+
+    if (!tmpHits.empty()) {
+        setPosition(oldPos);
+        m_node->setLocalPosition(getPosition());
+        m_node->validate();
+        markAsDirtyAABB();
+        rehashAABB();
+    }
 
     if (m_receiveGravity) {
         m_velocity.y() -= Field::k_gravity * dt;
     }
-
-    m_node->setLocalPosition(getPosition());
-    m_node->validate();
 
     Vector3 rot = m_torque * dt;
     Vector3 oldRot = getRotation();
@@ -303,9 +315,6 @@ void BasicEntity::update(Field& field)
     newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
 
     if (m_torque.length() > 0.0f) {
-        markAsDirtyAABB();
-        rehashAABB();
-
         float low = 0.0f;
         float high = 1.0f;
         const int32_t maxIterations = 10;
