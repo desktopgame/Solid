@@ -28,6 +28,9 @@ public:
 protected:
     Entity();
 
+    virtual void onPositionChanged(const Vector3& position);
+    virtual void onRotationChanged(const Vector3& rotation);
+
     int32_t m_maximumHP;
     int32_t m_currentHP;
     Vector3 m_position;

@@ -17,10 +17,18 @@ int32_t Entity::getMaximumHP() const { return m_maximumHP; }
 int32_t Entity::getCurrentHP() const { return m_currentHP; }
 bool Entity::isDead() const { return m_currentHP == 0; }
 
-void Entity::setPosition(const Vector3& position) { m_position = position; }
+void Entity::setPosition(const Vector3& position)
+{
+    m_position = position;
+    onPositionChanged(position);
+}
 Vector3 Entity::getPosition() const { return m_position; }
 
-void Entity::setRotation(const Vector3& rotation) { m_rotation = rotation; }
+void Entity::setRotation(const Vector3& rotation)
+{
+    m_rotation = rotation;
+    onRotationChanged(rotation);
+}
 Vector3 Entity::getRotation() const { return m_rotation; }
 
 // protected
@@ -31,4 +39,6 @@ Entity::Entity()
     , m_rotation()
 {
 }
+void Entity::onPositionChanged(const Vector3& position) { }
+void Entity::onRotationChanged(const Vector3& rotation) { }
 }
