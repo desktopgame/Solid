@@ -9,6 +9,9 @@ public:
 
     virtual void update(Field& field) override;
 
+    void setOwner(const std::weak_ptr<Entity>& owner);
+    std::shared_ptr<Entity> getOwner() const;
+
     void setDirection(const Vector3& direction);
     Vector3 getDirection() const;
 
@@ -22,6 +25,7 @@ protected:
     virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) override;
     virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) override;
 
+    std::weak_ptr<Entity> m_owner;
     Vector3 m_direction;
     float m_speed;
 

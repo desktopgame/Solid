@@ -14,6 +14,9 @@ void ProjectileEntity::update(Field& field)
     BasicEntity::update(field);
 }
 
+void ProjectileEntity::setOwner(const std::weak_ptr<Entity>& owner) { m_owner = owner; }
+std::shared_ptr<Entity> ProjectileEntity::getOwner() const { return m_owner.lock(); }
+
 void ProjectileEntity::setDirection(const Vector3& direction) { m_direction = direction; }
 Vector3 ProjectileEntity::getDirection() const { return m_direction; }
 
