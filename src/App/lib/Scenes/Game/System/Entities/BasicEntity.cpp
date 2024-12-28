@@ -368,7 +368,9 @@ void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
     m_node->draw(renderer);
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
-void BasicEntity::onHitEntity(const std::shared_ptr<Entity>& entity) { }
+void BasicEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity) { }
+void BasicEntity::onHitStayEntity(const std::shared_ptr<Entity>& entity) { }
+void BasicEntity::onHitExitEntity(const std::shared_ptr<Entity>& entity) { }
 
 std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const { return m_node; }
 Geom::OBB BasicEntity::getOBB() const { return m_node->getOBB(); }

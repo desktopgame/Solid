@@ -12,7 +12,9 @@ public:
     virtual void onGui() override;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
-    virtual void onHitEntity(const std::shared_ptr<Entity>& entity) override;
+    virtual void onHitEnterEntity(const std::shared_ptr<Entity>& entity) override;
+    virtual void onHitStayEntity(const std::shared_ptr<Entity>& entity) override;
+    virtual void onHitExitEntity(const std::shared_ptr<Entity>& entity) override;
 
     std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const;
     Geom::OBB getOBB() const override;
