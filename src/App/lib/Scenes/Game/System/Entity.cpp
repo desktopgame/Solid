@@ -4,6 +4,23 @@ namespace App::Scenes::Game::System {
 // public
 Entity::~Entity() { }
 
+void Entity::addHitEntity(const std::shared_ptr<Entity>& entity)
+{
+    if (!isHitOnEntity(entity)) {
+        m_hitTable.emplace_back(entity);
+    }
+}
+void Entity::removeHitEntity(const std::shared_ptr<Entity>& entity)
+{
+    auto iter = std::remove(m_hitTable.begin(), m_hitTable.end(), entity);
+    m_hitTable.erase(iter, m_hitTable.end());
+}
+bool Entity::isHitOnEntity(const std::shared_ptr<Entity>& entity) const
+{
+    auto iter = std::find(m_hitTable.begin(), m_hitTable.end(), entity);
+    return iter != m_hitTable.end();
+}
+
 void Entity::damage(int32_t power)
 {
     int32_t hp = m_currentHP - power;
@@ -53,7 +70,8 @@ Vector3 Entity::getRotation() const { return m_rotation; }
 
 // protected
 Entity::Entity()
-    : m_maximumHP(10)
+    : m_hitTable()
+    , m_maximumHP(10)
     , m_currentHP(10)
     , m_position()
     , m_rotation()
