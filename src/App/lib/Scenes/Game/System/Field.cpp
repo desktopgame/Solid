@@ -80,6 +80,42 @@ void Field::update()
         entity->update(self);
     }
 
+    for (int32_t i = 0; i < static_cast<int32_t>(m_entities.size()); i++) {
+        auto me = m_entities.at(i);
+        Geom::AABB meAABB = me->getAABB();
+        Geom::OBB meOBB = me->getOBB();
+
+        for (int32_t j = 0; j < static_cast<int32_t>(m_entities.size()); j++) {
+            if (i == j) {
+                continue;
+            }
+            auto other = m_entities.at(j);
+            Geom::AABB otherAABB = other->getAABB();
+
+            bool hitEntity = false;
+            if (Geom::Collision::testAABBAndAABB(meAABB, otherAABB)) {
+                Geom::OBB otherOBB = other->getOBB();
+
+                if (Geom::Collision::testOBBAndOBB(meOBB, otherOBB)) {
+                    hitEntity = true;
+                }
+            }
+
+            if (me->isHitOnEntity(other)) {
+                if (hitEntity) {
+                    me->onHitStayEntity(other);
+                } else {
+                    me->onHitExitEntity(other);
+                    me->removeHitEntity(other);
+                }
+            } else {
+                if (hitEntity) {
+                    me->onHitEnterEntity(other);
+                }
+            }
+        }
+    }
+
     auto iter = std::remove_if(m_entities.begin(), m_entities.end(), [](const auto& e) -> bool {
         return e->isDead();
     });
