@@ -12,12 +12,14 @@ public:
     virtual void onGui() override;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
+    virtual void onHitEntity(const std::shared_ptr<Entity>& entity) override;
 
     std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const;
+    Geom::OBB getOBB() const override;
 
     void markAsDirtyAABB();
     void rehashAABB();
-    Geom::AABB getAABB() const;
+    Geom::AABB getAABB() const override;
 
     void setVelocity(const Vector3& velocity);
     Vector3 getVelocity() const;
