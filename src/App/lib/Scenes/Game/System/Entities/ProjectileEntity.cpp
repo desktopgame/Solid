@@ -13,6 +13,15 @@ void ProjectileEntity::update(Field& field)
     setVelocity(m_direction * m_speed);
     BasicEntity::update(field);
 }
+void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
+{
+    auto owner = m_owner.lock();
+    if (owner != nullptr && owner == entity) {
+        return;
+    }
+
+    entity->damage(100);
+}
 
 void ProjectileEntity::setOwner(const std::weak_ptr<Entity>& owner) { m_owner = owner; }
 std::shared_ptr<Entity> ProjectileEntity::getOwner() const { return m_owner.lock(); }

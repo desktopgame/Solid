@@ -8,6 +8,7 @@ public:
     virtual ~ProjectileEntity();
 
     virtual void update(Field& field) override;
+    virtual void onHitEnterEntity(const std::shared_ptr<Entity>& entity) override;
 
     void setOwner(const std::weak_ptr<Entity>& owner);
     std::shared_ptr<Entity> getOwner() const;

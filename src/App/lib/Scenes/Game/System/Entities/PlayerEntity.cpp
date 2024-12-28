@@ -1,4 +1,7 @@
+#include <Common/Graphics/NodeRegistry.hpp>
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
+#include <Scenes/Game/System/Entities/ProjectileEntity.hpp>
+#include <Scenes/Game/System/Field.hpp>
 
 namespace App::Scenes::Game::System::Entities {
 // public
@@ -64,6 +67,15 @@ void PlayerEntity::update(Field& field)
             Cursor::show();
             Cursor::unlock();
         }
+    }
+
+    if (mouse->isTrigger(Mouse::Button::Left)) {
+        auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_slimeNode->clone());
+        proj->setOwner(shared_from_this());
+        proj->setPosition(getPosition() + Vector3({ 0, 5, 0 }));
+        proj->setDirection(forward);
+        proj->setSpeed(200);
+        field.spwan(proj);
     }
 
     BasicEntity::update(field);
