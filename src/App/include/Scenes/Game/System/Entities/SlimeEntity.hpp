@@ -7,7 +7,7 @@ public:
     static std::shared_ptr<SlimeEntity> create();
     virtual ~SlimeEntity();
 
-    virtual void update(Field& field) override;
+    virtual void idle(Field& field) override;
     virtual void onGui() override;
 
 protected:

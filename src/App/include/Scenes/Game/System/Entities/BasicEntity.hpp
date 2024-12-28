@@ -8,6 +8,7 @@ public:
     static std::shared_ptr<BasicEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);
     virtual ~BasicEntity();
 
+    virtual void idle(Field& field);
     virtual void update(Field& field) override;
     virtual void onGui() override;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;

@@ -11,8 +11,13 @@ std::shared_ptr<BasicEntity> BasicEntity::create(const std::shared_ptr<Common::G
 }
 BasicEntity::~BasicEntity() { }
 
+void BasicEntity::idle(Field& field)
+{
+}
 void BasicEntity::update(Field& field)
 {
+    idle(field);
+
     m_node->validate();
     markAsDirtyAABB();
     rehashAABB();

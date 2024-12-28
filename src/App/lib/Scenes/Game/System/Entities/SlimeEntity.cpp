@@ -13,7 +13,7 @@ std::shared_ptr<SlimeEntity> SlimeEntity::create()
 SlimeEntity::~SlimeEntity()
 {
 }
-void SlimeEntity::update(Field& field)
+void SlimeEntity::idle(Field& field)
 {
     switch (m_state) {
     case State::Wait: {
@@ -78,8 +78,6 @@ void SlimeEntity::update(Field& field)
         break;
     }
     }
-
-    BasicEntity::update(field);
 }
 void SlimeEntity::onGui()
 {

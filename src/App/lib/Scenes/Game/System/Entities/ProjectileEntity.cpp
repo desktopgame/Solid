@@ -8,10 +8,9 @@ std::shared_ptr<ProjectileEntity> ProjectileEntity::create(const std::shared_ptr
 }
 ProjectileEntity::~ProjectileEntity() { }
 
-void ProjectileEntity::update(Field& field)
+void ProjectileEntity::idle(Field& field)
 {
     setVelocity(m_direction * m_speed);
-    BasicEntity::update(field);
 }
 void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
 {

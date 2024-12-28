@@ -7,7 +7,7 @@ public:
     static std::shared_ptr<ProjectileEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);
     virtual ~ProjectileEntity();
 
-    virtual void update(Field& field) override;
+    virtual void idle(Field& field) override;
     virtual void onHitEnterEntity(const std::shared_ptr<Entity>& entity) override;
 
     void setOwner(const std::weak_ptr<Entity>& owner);
