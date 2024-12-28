@@ -20,7 +20,16 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
         return;
     }
 
-    entity->damage(100);
+    entity->damage(1);
+    m_currentHP = 0;
+
+    auto basicEntity = std::dynamic_pointer_cast<BasicEntity>(entity);
+    if (basicEntity) {
+        Vector3 vel = basicEntity->getVelocity();
+        vel.x() = m_direction.x() * 20.0f;
+        vel.z() = m_direction.z() * 20.0f;
+        basicEntity->setVelocity(vel);
+    }
 }
 
 void ProjectileEntity::setOwner(const std::weak_ptr<Entity>& owner) { m_owner = owner; }
