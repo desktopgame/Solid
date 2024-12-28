@@ -16,14 +16,31 @@ void BasicEntity::idle(Field& field)
 }
 void BasicEntity::update(Field& field)
 {
-    idle(field);
+    float dt = Time::deltaTime();
+    if (m_knockbackPlaying) {
+        float t = m_knockbackElapsed / m_knockbackDuration;
+        m_knockbackElapsed += dt;
+
+        float power = 1.0f - t;
+        m_velocity.x() += m_knockbackDirection.x() * (m_knockbackSpeed * power * dt);
+        m_velocity.z() += m_knockbackDirection.z() * (m_knockbackSpeed * power * dt);
+
+        if (t >= 1.0f) {
+            m_knockbackPlaying = false;
+            m_knockbackElapsed = 0.0f;
+            m_velocity.x() = 0.0f;
+            m_velocity.z() = 0.0f;
+            idle(field);
+        }
+    } else {
+        idle(field);
+    }
 
     m_node->validate();
     markAsDirtyAABB();
     rehashAABB();
     m_onGround = false;
 
-    float dt = Time::deltaTime();
     float threshould = 0.001f;
     Vector3 delta = m_velocity * dt;
     Vector3 oldPos = getPosition();
@@ -377,6 +394,16 @@ void BasicEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity) { }
 void BasicEntity::onHitStayEntity(const std::shared_ptr<Entity>& entity) { }
 void BasicEntity::onHitExitEntity(const std::shared_ptr<Entity>& entity) { }
 
+void BasicEntity::knockback(const Vector3& direction, float speed, float duration)
+{
+    if (!m_knockbackPlaying) {
+        m_knockbackDirection = direction;
+        m_knockbackSpeed = speed;
+        m_knockbackDuration = duration;
+        m_knockbackPlaying = true;
+    }
+}
+
 std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const { return m_node; }
 Geom::OBB BasicEntity::getOBB() const { return m_node->getOBB(); }
 
@@ -405,6 +432,12 @@ bool BasicEntity::isOnGround() const { return m_onGround; }
 // protected
 BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : m_node(node)
+    , m_groundTile()
+    , m_knockbackDirection()
+    , m_knockbackSpeed()
+    , m_knockbackElapsed()
+    , m_knockbackDuration()
+    , m_knockbackPlaying()
     , m_aabb()
     , m_dirtyAABB(true)
     , m_velocity()

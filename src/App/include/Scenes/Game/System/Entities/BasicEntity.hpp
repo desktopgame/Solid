@@ -17,6 +17,8 @@ public:
     virtual void onHitStayEntity(const std::shared_ptr<Entity>& entity) override;
     virtual void onHitExitEntity(const std::shared_ptr<Entity>& entity) override;
 
+    void knockback(const Vector3& direction, float speed, float duration);
+
     std::shared_ptr<Common::Graphics::Node> getNode() const;
     Geom::OBB getOBB() const override;
 
@@ -59,6 +61,11 @@ private:
 
     std::shared_ptr<Common::Graphics::Node> m_node;
     IntVector3 m_groundTile;
+    Vector3 m_knockbackDirection;
+    float m_knockbackSpeed;
+    float m_knockbackElapsed;
+    float m_knockbackDuration;
+    bool m_knockbackPlaying;
     Geom::AABB m_aabb;
     bool m_dirtyAABB;
     Vector3 m_velocity;

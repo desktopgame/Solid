@@ -24,10 +24,7 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
 
     auto basicEntity = std::dynamic_pointer_cast<BasicEntity>(entity);
     if (basicEntity) {
-        Vector3 vel = basicEntity->getVelocity();
-        vel.x() = m_direction.x() * 20.0f;
-        vel.z() = m_direction.z() * 20.0f;
-        basicEntity->setVelocity(vel);
+        basicEntity->knockback(m_direction, 500.0f, 0.25f);
     }
 }
 
