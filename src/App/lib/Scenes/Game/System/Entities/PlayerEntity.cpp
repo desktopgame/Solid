@@ -77,7 +77,13 @@ void PlayerEntity::idle(Field& field)
         proj->setSpeed(200);
         field.spwan(proj);
     }
+}
+void PlayerEntity::update(Field& field)
+{
+    BasicEntity::update(field);
 
+    auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
+    auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
     Camera::position(getPosition());
     Camera::lookAt(getPosition() + forward);
     Camera::depthRange(0.1f, 1000.0f);
