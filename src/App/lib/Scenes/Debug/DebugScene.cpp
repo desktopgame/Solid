@@ -59,7 +59,7 @@ void DebugScene::onGui()
     ImGui::End();
 
     ImGui::Begin("IO");
-    ImGui::InputText("File", m_ioFileName.data(), 32);
+    ImGui::InputText("File", m_ioFileName.data(), 64);
     if (ImGui::Button("Serialize")) {
         Common::Graphics::Node::serialize(std::string(m_ioFileName.data()), m_rootNode);
     }

@@ -29,7 +29,7 @@ private:
 
     Common::Util::FpsController m_fpsController;
     std::shared_ptr<Common::Graphics::Node> m_rootNode;
-    std::array<char, 32> m_ioFileName;
+    std::array<char, 64> m_ioFileName;
     std::string m_nextScene;
 
     std::shared_ptr<Renderer> m_renderer;
