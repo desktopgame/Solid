@@ -36,7 +36,10 @@ static void physicsTest()
     fieldAABB.min = (Vector3({ 0, 0, 0 }) * System::Field::k_tileSize) - (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
     fieldAABB.max = (Vector3({ System::Field::k_fieldSizeX, System::Field::k_fieldSizeY, System::Field::k_fieldSizeZ }) * System::Field::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
 
-    while (elapsed < (60.0f * 60.0f * 24.0f)) {
+    // 長すぎるとCIがタイムアウトするのでほどほどに
+    const float duration = (60.0f * 60.0f * 1.0f);
+
+    while (elapsed < duration) {
         Lib::Utils::Time::s_deltaTime = deltaTime;
         field->update();
         elapsed += deltaTime;
