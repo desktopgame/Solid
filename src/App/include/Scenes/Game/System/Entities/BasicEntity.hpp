@@ -16,7 +16,7 @@ public:
     virtual void onHitStayEntity(const std::shared_ptr<Entity>& entity) override;
     virtual void onHitExitEntity(const std::shared_ptr<Entity>& entity) override;
 
-    std::shared_ptr<Common::Graphics::Node> BasicEntity::getNode() const;
+    std::shared_ptr<Common::Graphics::Node> getNode() const;
     Geom::OBB getOBB() const override;
 
     void markAsDirtyAABB();
