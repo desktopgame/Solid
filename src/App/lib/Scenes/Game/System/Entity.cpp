@@ -13,6 +13,26 @@ void Entity::damage(int32_t power)
     m_currentHP = hp;
 }
 
+Geom::OBB Entity::getOBB() const
+{
+    Geom::OBB obb;
+    obb.axes = std::array<Vector3, 3> {
+        Vector3({ 1, 0, 0 }),
+        Vector3({ 0, 1, 0 }),
+        Vector3({ 0, 0, 1 })
+    };
+    obb.center = Vector3({ 0, 0, 0 });
+    obb.size = Vector3({ 0, 0, 0 });
+    return obb;
+}
+Geom::AABB Entity::getAABB() const
+{
+    Geom::AABB aabb;
+    aabb.min = Vector3({ 0, 0, 0 });
+    aabb.max = Vector3({ 0, 0, 0 });
+    return aabb;
+}
+
 int32_t Entity::getMaximumHP() const { return m_maximumHP; }
 int32_t Entity::getCurrentHP() const { return m_currentHP; }
 bool Entity::isDead() const { return m_currentHP == 0; }

@@ -12,8 +12,12 @@ public:
     virtual void onGui() = 0;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) = 0;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) = 0;
+    virtual void onHitEntity(const std::shared_ptr<Entity>& entity) = 0;
 
     void damage(int32_t power);
+
+    virtual Geom::OBB getOBB() const;
+    virtual Geom::AABB getAABB() const;
 
     int32_t getMaximumHP() const;
     int32_t getCurrentHP() const;
