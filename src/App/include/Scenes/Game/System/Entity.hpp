@@ -4,7 +4,7 @@
 
 namespace App::Scenes::Game::System {
 class Field;
-class Entity {
+class Entity : public std::enable_shared_from_this<Entity> {
 public:
     virtual ~Entity();
 
