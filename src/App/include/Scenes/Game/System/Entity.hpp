@@ -4,6 +4,7 @@
 
 namespace App::Scenes::Game::System {
 class Field;
+class DamageSource;
 class Entity : public std::enable_shared_from_this<Entity> {
 public:
     virtual ~Entity();
@@ -20,7 +21,7 @@ public:
     virtual void onHitStayEntity(const std::shared_ptr<Entity>& entity) = 0;
     virtual void onHitExitEntity(const std::shared_ptr<Entity>& entity) = 0;
 
-    void damage(int32_t power);
+    void damage(const std::shared_ptr<DamageSource>& damageSource);
 
     virtual Geom::OBB getOBB() const;
     virtual Geom::AABB getAABB() const;

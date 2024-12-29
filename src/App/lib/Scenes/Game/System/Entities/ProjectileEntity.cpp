@@ -1,3 +1,4 @@
+#include <Scenes/Game/System/DamageSource.hpp>
 #include <Scenes/Game/System/Entities/ProjectileEntity.hpp>
 
 namespace App::Scenes::Game::System::Entities {
@@ -19,7 +20,7 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
         return;
     }
 
-    entity->damage(1);
+    entity->damage(DamageSource::create(shared_from_this(), 1));
     m_currentHP = 0;
 
     auto basicEntity = std::dynamic_pointer_cast<BasicEntity>(entity);

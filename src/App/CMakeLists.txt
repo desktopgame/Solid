@@ -40,6 +40,7 @@ set(SOURCES
     ./include/Scenes/Game/GameScene.hpp
     ./include/Scenes/Game/System/Field.hpp
     ./include/Scenes/Game/System/Entity.hpp
+    ./include/Scenes/Game/System/DamageSource.hpp
     ./include/Scenes/Game/System/Entities/BasicEntity.hpp
     ./include/Scenes/Game/System/Entities/PlayerEntity.hpp
     ./include/Scenes/Game/System/Entities/EnemyEntity.hpp
@@ -55,6 +56,7 @@ set(SOURCES
     ./lib/Scenes/Game/GameScene.cpp
     ./lib/Scenes/Game/System/Field.cpp
     ./lib/Scenes/Game/System/Entity.cpp
+    ./lib/Scenes/Game/System/DamageSource.cpp
     ./lib/Scenes/Game/System/Entities/BasicEntity.cpp
     ./lib/Scenes/Game/System/Entities/PlayerEntity.cpp
     ./lib/Scenes/Game/System/Entities/EnemyEntity.cpp

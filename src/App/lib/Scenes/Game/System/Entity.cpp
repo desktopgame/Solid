@@ -1,3 +1,4 @@
+#include <Scenes/Game/System/DamageSource.hpp>
 #include <Scenes/Game/System/Entity.hpp>
 
 namespace App::Scenes::Game::System {
@@ -21,9 +22,9 @@ bool Entity::isHitOnEntity(const std::shared_ptr<Entity>& entity) const
     return iter != m_hitTable.end();
 }
 
-void Entity::damage(int32_t power)
+void Entity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
-    int32_t hp = m_currentHP - power;
+    int32_t hp = m_currentHP - damageSource->getPower();
     if (hp < 0) {
         hp = 0;
     }
