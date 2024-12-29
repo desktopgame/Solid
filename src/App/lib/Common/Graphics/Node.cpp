@@ -20,10 +20,10 @@ void Node::update()
     m_children.erase(iter, m_children.end());
 }
 
-void Node::draw(const std::shared_ptr<Renderer>& renderer)
+void Node::draw(const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor)
 {
     auto sp = m_parent.lock();
-    draw(sp, renderer);
+    draw(sp, renderer, blendColor);
 }
 
 void Node::removeFromParent() { m_removed = true; }
@@ -272,73 +272,78 @@ Node::Node()
     , m_removed()
 {
 }
-void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer)
+void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor)
 {
     float thickness = 0.25f;
+    Vector4 color = Vector4(m_color, 1.0f);
+    color.x() = Mathf::clamp(0.0f, 1.0f, color.x() + blendColor.x());
+    color.y() = Mathf::clamp(0.0f, 1.0f, color.y() + blendColor.y());
+    color.z() = Mathf::clamp(0.0f, 1.0f, color.z() + blendColor.z());
+
     renderer->pushMatrix(getLocalTransform());
     {
         Vector3 offset = Vector3({ thickness / 2.0f, thickness / 2.0f, 0 });
         Vector3 center = (m_size * Vector3({ 0.5f, 0.5f, 0 })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ -thickness / 2.0f, thickness / 2.0f, 0 });
         Vector3 center = (m_size * Vector3({ -0.5f, 0.5f, 0 })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ thickness / 2.0f, -thickness / 2.0f, 0 });
         Vector3 center = (m_size * Vector3({ 0.5f, -0.5f, 0 })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ -thickness / 2.0f, -thickness / 2.0f, 0 });
         Vector3 center = (m_size * Vector3({ -0.5f, -0.5f, 0 })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, thickness, m_size.z() }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ thickness / 2.0f, 0, thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ 0.5f, 0, 0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ thickness / 2.0f, 0, -thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ 0.5f, 0, -0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ -thickness / 2.0f, 0, thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ -0.5f, 0, 0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ -thickness / 2.0f, 0, -thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ -0.5f, 0, -0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ thickness, m_size.y(), thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ 0, thickness / 2.0f, thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ 0, 0.5f, 0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ 0, -thickness / 2.0f, thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ 0, -0.5f, 0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ 0, thickness / 2.0f, -thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ 0, 0.5f, -0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), color, false);
     }
     {
         Vector3 offset = Vector3({ 0, -thickness / 2.0f, -thickness / 2.0f });
         Vector3 center = (m_size * Vector3({ 0, -0.5f, -0.5f })) - offset;
-        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), Vector4(m_color, 1), false);
+        renderer->drawBox(center, Vector3({ m_size.x(), thickness, thickness }), Quaternion(), color, false);
     }
 
     for (const auto& c : m_children) {
-        c->draw(shared_from_this(), renderer);
+        c->draw(shared_from_this(), renderer, blendColor);
     }
     renderer->popMatrix();
 }

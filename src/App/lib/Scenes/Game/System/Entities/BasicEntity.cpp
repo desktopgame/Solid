@@ -387,7 +387,7 @@ void BasicEntity::update(Field& field)
 void BasicEntity::onGui() { }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
-    m_node->draw(renderer);
+    m_node->draw(renderer, Vector3({ 0, 0, 0 }));
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 void BasicEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity) { }
