@@ -1,3 +1,4 @@
+#include <Common/Graphics/Node.hpp>
 #include <Common/Graphics/NodeRegistry.hpp>
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entities/ProjectileEntity.hpp>
@@ -70,9 +71,10 @@ void PlayerEntity::idle(Field& field)
     }
 
     if (mouse->isTrigger(Mouse::Button::Left)) {
-        auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_slimeNode->clone());
+        auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_bulletNode->clone());
         proj->setOwner(shared_from_this());
         proj->setPosition(getPosition() + Vector3({ 0, 5, 0 }));
+        proj->setRotation(Vector3({ m_cameraAngleX, Mathf::normalizeDegree(-m_cameraAngleY), 0.0f }));
         proj->setDirection(forward);
         proj->setSpeed(200);
         field.spwan(proj);

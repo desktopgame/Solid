@@ -3,7 +3,6 @@
 #include <string>
 #include <unordered_map>
 
-
 namespace App::Common::Graphics {
 class Node;
 class NodeRegistry {
@@ -12,6 +11,7 @@ public:
     static void destroy();
 
     static std::shared_ptr<Node> s_slimeNode;
+    static std::shared_ptr<Node> s_bulletNode;
 
 private:
     NodeRegistry() = delete;
