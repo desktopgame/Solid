@@ -36,6 +36,15 @@ void BasicEntity::update(Field& field)
         idle(field);
     }
 
+    if (m_damagePlaying) {
+        float t = m_damageElapsed / m_damageDuration;
+        m_damageElapsed += dt;
+
+        if (t >= 1.0f) {
+            m_damagePlaying = false;
+        }
+    }
+
     m_node->validate();
     markAsDirtyAABB();
     rehashAABB();
@@ -387,12 +396,26 @@ void BasicEntity::update(Field& field)
 void BasicEntity::onGui() { }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
-    m_node->draw(renderer, Vector3({ 0, 0, 0 }));
+    Vector3 blendColor = Vector3({ 0, 0, 0 });
+    if (m_damagePlaying) {
+        blendColor.x() = m_damageElapsed / m_damageDuration;
+    }
+    m_node->draw(renderer, blendColor);
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 void BasicEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity) { }
 void BasicEntity::onHitStayEntity(const std::shared_ptr<Entity>& entity) { }
 void BasicEntity::onHitExitEntity(const std::shared_ptr<Entity>& entity) { }
+
+void BasicEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
+{
+    if (!m_damagePlaying) {
+        m_damageElapsed = 0.0f;
+        m_damageDuration = 1.0f;
+        m_damagePlaying = true;
+        BasicEntity::damage(damageSource);
+    }
+}
 
 void BasicEntity::knockback(const Vector3& direction, float speed, float duration)
 {
@@ -438,6 +461,9 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_knockbackElapsed()
     , m_knockbackDuration()
     , m_knockbackPlaying()
+    , m_damageElapsed()
+    , m_damageDuration()
+    , m_damagePlaying()
     , m_aabb()
     , m_dirtyAABB(true)
     , m_velocity()
