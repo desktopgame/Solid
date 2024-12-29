@@ -88,7 +88,7 @@ void DebugScene::onDraw3D()
     PointLight::setCount(0);
     m_renderer->drawBox(Vector3({ 0, 0, 0 }), Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 1, 1, 1 }), false);
 
-    m_rootNode->draw(m_renderer, Vector3({ 0, 0, 0 }));
+    m_rootNode->draw(m_renderer, Vector3({ 0, 0, 0 }), 0.0f);
 }
 
 void DebugScene::onDraw2D()
@@ -196,6 +196,6 @@ void DebugScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& pare
 }
 void DebugScene::drawNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node, const std::shared_ptr<Renderer>& renderer)
 {
-    node->draw(renderer, Vector3({ 0, 0, 0 }));
+    node->draw(renderer, Vector3({ 0, 0, 0 }), 0.0f);
 }
 }

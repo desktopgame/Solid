@@ -9,7 +9,7 @@ public:
     static std::shared_ptr<Node> create();
 
     void update();
-    void draw(const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor);
+    void draw(const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor, float blendRate);
     void removeFromParent();
 
     void invalidate();
@@ -60,7 +60,7 @@ private:
     static void deserialize(picojson::value::object& parent, const std::shared_ptr<Node>& node);
 
     Node();
-    void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor);
+    void draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor, float blendRate);
 
     std::array<char, 32> m_name;
     Vector3 m_localPosition;

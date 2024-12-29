@@ -20,10 +20,10 @@ void Node::update()
     m_children.erase(iter, m_children.end());
 }
 
-void Node::draw(const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor)
+void Node::draw(const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor, float blendRate)
 {
     auto sp = m_parent.lock();
-    draw(sp, renderer, blendColor);
+    draw(sp, renderer, blendColor, blendRate);
 }
 
 void Node::removeFromParent() { m_removed = true; }
@@ -272,13 +272,13 @@ Node::Node()
     , m_removed()
 {
 }
-void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor)
+void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Renderer>& renderer, const Vector3& blendColor, float blendRate)
 {
     float thickness = 0.25f;
     Vector4 color = Vector4(m_color, 1.0f);
-    color.x() = Mathf::clamp(0.0f, 1.0f, color.x() + blendColor.x());
-    color.y() = Mathf::clamp(0.0f, 1.0f, color.y() + blendColor.y());
-    color.z() = Mathf::clamp(0.0f, 1.0f, color.z() + blendColor.z());
+    color.x() = Mathf::clamp(0.0f, 1.0f, (1.0f - blendRate) * color.x() + (blendRate * blendColor.x()));
+    color.y() = Mathf::clamp(0.0f, 1.0f, (1.0f - blendRate) * color.y() + (blendRate * blendColor.y()));
+    color.z() = Mathf::clamp(0.0f, 1.0f, (1.0f - blendRate) * color.z() + (blendRate * blendColor.z()));
 
     renderer->pushMatrix(getLocalTransform());
     {
@@ -343,7 +343,7 @@ void Node::draw(const std::shared_ptr<Node>& parent, const std::shared_ptr<Rende
     }
 
     for (const auto& c : m_children) {
-        c->draw(shared_from_this(), renderer, blendColor);
+        c->draw(shared_from_this(), renderer, blendColor, blendRate);
     }
     renderer->popMatrix();
 }

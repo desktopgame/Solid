@@ -396,11 +396,15 @@ void BasicEntity::update(Field& field)
 void BasicEntity::onGui() { }
 void BasicEntity::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
-    Vector3 blendColor = Vector3({ 0, 0, 0 });
+    Vector3 blendColor = Vector3({ 1, 1, 1 });
+    float blendRate = 0.0f;
     if (m_damagePlaying) {
-        blendColor.x() = m_damageElapsed / m_damageDuration;
+        blendColor.x() = 1.0f;
+        blendColor.y() = 0.0f;
+        blendColor.z() = 0.0f;
+        blendRate = m_damageElapsed / m_damageDuration;
     }
-    m_node->draw(renderer, blendColor);
+    m_node->draw(renderer, blendColor, blendRate);
 }
 void BasicEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 void BasicEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity) { }
@@ -411,9 +415,9 @@ void BasicEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
     if (!m_damagePlaying) {
         m_damageElapsed = 0.0f;
-        m_damageDuration = 1.0f;
+        m_damageDuration = 0.25f;
         m_damagePlaying = true;
-        BasicEntity::damage(damageSource);
+        Entity::damage(damageSource);
     }
 }
 
