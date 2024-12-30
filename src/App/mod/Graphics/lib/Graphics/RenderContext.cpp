@@ -220,6 +220,7 @@ void RenderContext::initialize()
         ::sprintf(psName, "RC[%d]_PS", i);
         rc->m_pShader = Shader::compile("ps_5_0", "psMain", program.psCode, psName);
         rc->m_pShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
+
         if (program.csCode != nullptr) {
             char csName[16];
             ::memset(csName, '\0', 16);
