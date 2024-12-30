@@ -368,15 +368,30 @@ void RenderContext::initialize()
             std::vector<D3D12_DESCRIPTOR_RANGE> computeDescTableRange;
             int32_t csSRV = 0;
             int32_t csCBV = 0;
+            int32_t csUAV = 0;
             for (int32_t csUniform = 0; csUniform < static_cast<int32_t>(program.csUniforms.size()); csUniform++) {
                 Metadata::Uniform u = program.csUniforms.at(csUniform);
-                bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
                 computeDescTableRange.push_back({});
                 computeDescTableRange.at(csUniform).NumDescriptors = 1;
-                computeDescTableRange.at(csUniform).RangeType = isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-                computeDescTableRange.at(csUniform).BaseShaderRegister = isShaderResource ? csSRV : csCBV;
                 computeDescTableRange.at(csUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-                (isShaderResource ? csSRV : csCBV)++;
+
+                switch (u.type) {
+                case Metadata::Uniform::Type::CBV:
+                    computeDescTableRange.at(csUniform).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+                    computeDescTableRange.at(csUniform).BaseShaderRegister = csCBV;
+                    csCBV++;
+                    break;
+                case Metadata::Uniform::Type::SRV:
+                    computeDescTableRange.at(csUniform).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+                    computeDescTableRange.at(csUniform).BaseShaderRegister = csSRV;
+                    csSRV++;
+                    break;
+                case Metadata::Uniform::Type::UAV:
+                    computeDescTableRange.at(csUniform).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+                    computeDescTableRange.at(csUniform).BaseShaderRegister = csUAV;
+                    csUAV++;
+                    break;
+                }
             }
 
             std::vector<D3D12_ROOT_PARAMETER> computeRootParam;
