@@ -9,6 +9,7 @@
 #include <Graphics/VertexNormalTexCoord3D.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
+#include <cassert>
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
@@ -296,6 +297,7 @@ void RenderContext::initialize()
         for (int32_t psUniform = 0; psUniform < program.psUniforms.size(); psUniform++) {
             Metadata::Uniform u = program.psUniforms.at(psUniform);
             bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
+            assert(u.type != Metadata::Uniform::Type::UAV);
             descTableRange.push_back({});
             descTableRange.at(offset + psUniform).NumDescriptors = 1;
             descTableRange.at(offset + psUniform).RangeType = isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
