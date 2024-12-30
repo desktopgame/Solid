@@ -1,11 +1,13 @@
 InputLayout=VertexNormal3D
 PrimitiveType=Triangles
 IsWireframe=false
-InstanceBufferCount=0
+InstanceBufferCount=1
+InstanceBuffer[0]=Vector3
 UseGeometryShader=false
 UseComputeShader=true
-VS.UniformCount=1
-VS.Uniform[0]=UVector4
+VS.UniformCount=2
+VS.Uniform[0]=UCamera
+VS.Uniform[1]=UVector4
 VS.Code=ParticleInstance3D.vs
 PS.UniformCount=0
 PS.Code=ParticleInstance3D.ps

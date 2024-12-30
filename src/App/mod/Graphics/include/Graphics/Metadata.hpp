@@ -1003,6 +1003,7 @@ namespace Lib::Graphics::Metadata {
             Reflect::InputLayout::VertexNormal3D,
             // instanceBufferLayout
             std::vector<Reflect::InstanceBufferType> {
+                Reflect::InstanceBufferType::Vector3,
             },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
@@ -1035,6 +1036,7 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UCamera), false },
                 Uniform { sizeof(Reflect::UVector4), false },
             },
             // gs
