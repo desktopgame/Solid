@@ -21,6 +21,8 @@ namespace Lib::Graphics::Metadata {
         std::vector<Uniform> gsUniforms;
         const char* psCode;
         std::vector<Uniform> psUniforms;
+        const char* csCode;
+        std::vector<Uniform> csUniforms;
     };
 
     enum ProgramTable : int32_t {
@@ -92,6 +94,11 @@ namespace Lib::Graphics::Metadata {
             // psUniforms
             std::vector<Uniform> {
             },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
+            },
         },
         Program {
             // inputLayout
@@ -159,6 +166,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { 0, true },
             },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
+            },
         },
         Program {
             // inputLayout
@@ -221,6 +233,11 @@ namespace Lib::Graphics::Metadata {
             // psUniforms
             std::vector<Uniform> {
                 Uniform { 0, true },
+            },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
             },
         },
         Program {
@@ -291,6 +308,11 @@ namespace Lib::Graphics::Metadata {
             "}\n"
             ,
             // psUniforms
+            std::vector<Uniform> {
+            },
+            // cs
+            nullptr,
+            // csUniforms
             std::vector<Uniform> {
             },
         },
@@ -371,6 +393,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { 0, true },
             },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
+            },
         },
         Program {
             // inputLayout
@@ -436,6 +463,11 @@ namespace Lib::Graphics::Metadata {
             "}\n"
             ,
             // psUniforms
+            std::vector<Uniform> {
+            },
+            // cs
+            nullptr,
+            // csUniforms
             std::vector<Uniform> {
             },
         },
@@ -576,6 +608,11 @@ namespace Lib::Graphics::Metadata {
             // psUniforms
             std::vector<Uniform> {
             },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
+            },
         },
         Program {
             // inputLayout
@@ -646,6 +683,11 @@ namespace Lib::Graphics::Metadata {
             "}\n"
             ,
             // psUniforms
+            std::vector<Uniform> {
+            },
+            // cs
+            nullptr,
+            // csUniforms
             std::vector<Uniform> {
             },
         },
@@ -726,6 +768,11 @@ namespace Lib::Graphics::Metadata {
             // psUniforms
             std::vector<Uniform> {
                 Uniform { 0, true },
+            },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
             },
         },
         Program {
@@ -943,6 +990,11 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { 0, true },
                 Uniform { 0, true },
+            },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
             },
         },
     };

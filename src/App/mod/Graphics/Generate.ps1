@@ -37,6 +37,8 @@ Write-Output "        const char* gsCode;"
 Write-Output "        std::vector<Uniform> gsUniforms;"
 Write-Output "        const char* psCode;"
 Write-Output "        std::vector<Uniform> psUniforms;"
+Write-Output "        const char* csCode;"
+Write-Output "        std::vector<Uniform> csUniforms;"
 Write-Output "    };"
 Write-Output ""
 
@@ -142,6 +144,29 @@ foreach ($properties in $propertiesList) {
         }
     }
     Write-Output "            },"
+
+    if ((GetOrThrow $properties "UseComputeShader") -eq "true") {
+        Write-Output "            // cs"
+        $csCode = (GetOrThrow $properties "CS.Code")
+        foreach ($csLine in Get-Content $("./embed/$csCode") -Encoding UTF8) {
+            Write-Output ('            "{0}\n"' -f $csLine)
+        }
+        Write-Output ('            ,')
+        Write-Output "            // csUniforms"
+        Write-Output "            std::vector<Uniform> {"
+        $csUniformCount = [int](GetOrThrow $properties "CS.UniformCount")
+        for ($i = 0; $i -lt $csUniformCount; $i++) {
+            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("CS.Uniform[$i]")))
+        }
+        Write-Output "            },"
+    } else {
+        Write-Output "            // cs"
+        Write-Output ('            nullptr,')
+        Write-Output "            // csUniforms"
+        Write-Output "            std::vector<Uniform> {"
+        Write-Output "            },"
+    }
+
     Write-Output "        },"
 }
 Write-Output "    };"

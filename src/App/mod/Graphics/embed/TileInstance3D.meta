@@ -4,6 +4,7 @@ IsWireframe=false
 InstanceBufferCount=1
 InstanceBuffer[0]=Vector4
 UseGeometryShader=false
+UseComputeShader=false
 VS.UniformCount=4
 VS.Uniform[0]=UCamera
 VS.Uniform[1]=UTileTransform
