@@ -1070,7 +1070,24 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
             },
             // cs
-            "test\n"
+            "struct InstanceData {\n"
+            "    float3 offset;\n"
+            "    float3 velocity;\n"
+            "};\n"
+            "\n"
+            "RWStructuredBuffer<InstanceData> instanceBuffer : register(u0);\n"
+            "\n"
+            "cbuffer Constants : register(b0) {\n"
+            "    float deltaTime;\n"
+            "}\n"
+            "\n"
+            "[numthreads(256, 1, 1)]\n"
+            "void csMain(uint3 dispatchThreadId : SV_DispatchThreadID) {\n"
+            "    uint id = dispatchThreadId.x;\n"
+            "    InstanceData data = instanceBuffer[id];\n"
+            "    data.offset += data.velocity * deltaTime;\n"
+            "    instanceBuffer[id] = data;\n"
+            "}\n"
             ,
             // csUniforms
             std::vector<Uniform> {
