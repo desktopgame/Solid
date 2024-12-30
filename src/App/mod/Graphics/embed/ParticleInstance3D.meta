@@ -1,0 +1,14 @@
+InputLayout=VertexNormal3D
+PrimitiveType=Triangles
+IsWireframe=false
+InstanceBufferCount=0
+UseGeometryShader=false
+UseComputeShader=true
+VS.UniformCount=1
+VS.Uniform[0]=UVector4
+VS.Code=ParticleInstance3D.vs
+PS.UniformCount=0
+PS.Code=ParticleInstance3D.ps
+CS.UniformCount=1
+CS.Uniform[0]=UFloat
+CS.Code=ParticleInstance3D.cs

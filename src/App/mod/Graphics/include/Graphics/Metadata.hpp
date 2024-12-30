@@ -36,6 +36,7 @@ namespace Lib::Graphics::Metadata {
         MeshInstanceColor3D,
         MeshInstanceTexture3D,
         TileInstance3D,
+        ParticleInstance3D,
         Count
     };
 
@@ -997,6 +998,83 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
             },
         },
+        Program {
+            // inputLayout
+            Reflect::InputLayout::VertexNormal3D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
+            // isWireframe
+            false,
+            // vs
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float3 wpos : POSITION;\n"
+            "    float3 normal : NORMAL;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "cbuffer cbuff0 : register(b0) {\n"
+            "    matrix modelMatrix;\n"
+            "    matrix viewMatrix;\n"
+            "    matrix projectionMatrix;\n"
+            "}\n"
+            "cbuffer cbuff1 : register(b1) { float4 color; }\n"
+            "\n"
+            "Output vsMain(float3 pos : POSITION, float3 normal : NORMAL, float3 offset : INSTANCE0) {\n"
+            "    Output output;\n"
+            "    output.svpos = mul(modelMatrix, float4(pos + offset, 1));\n"
+            "    output.svpos = mul(viewMatrix, output.svpos);\n"
+            "    output.svpos = mul(projectionMatrix, output.svpos);\n"
+            "    output.wpos = mul(modelMatrix, float4(pos + offset, 1));\n"
+            "    output.normal = normal;\n"
+            "    output.color = color;\n"
+            "    return output;\n"
+            "}\n"
+            ,
+            // vsUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UVector4), false },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
+            // ps
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float3 wpos : POSITION;\n"
+            "    float3 normal : NORMAL;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "struct PSOutput\n"
+            "{\n"
+            "    float4 outPosition : SV_Target0;\n"
+            "    float4 outNormal : SV_Target1;\n"
+            "    float4 outColor : SV_Target2;\n"
+            "};\n"
+            "\n"
+            "PSOutput psMain(Output input) : SV_TARGET {\n"
+            "    PSOutput output;\n"
+            "    output.outPosition = float4(input.wpos, 1);\n"
+            "    output.outNormal = float4(input.normal, 1);\n"
+            "    output.outColor = input.color;\n"
+            "    return output;\n"
+            "}\n"
+            ,
+            // psUniforms
+            std::vector<Uniform> {
+            },
+            // cs
+            "test\n"
+            ,
+            // csUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UFloat), false },
+            },
+        },
     };
 
     template<int32_t N>
@@ -1061,6 +1139,12 @@ namespace Lib::Graphics::Metadata {
 
     template<>
     class Signature<ProgramTable::TileInstance3D> {
+    public:
+        static inline void set() { }
+    };
+
+    template<>
+    class Signature<ProgramTable::ParticleInstance3D> {
     public:
         static inline void set() { }
     };
