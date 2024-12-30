@@ -21,8 +21,13 @@ Write-Output ""
 Write-Output "namespace Lib::Graphics::Metadata {"
 Write-Output "    class Uniform {"
 Write-Output "    public:"
+Write-Output "        enum Type : uint32_t {"
+Write-Output "            CBV = 0,"
+Write-Output "            SRV,"
+Write-Output "            UAV,"
+Write-Output "        };"
 Write-Output "        size_t size;"
-Write-Output "        bool isShaderResource;"
+Write-Output "        Type type;"
 Write-Output "    };"
 Write-Output ""
 Write-Output "    class Program {"
@@ -100,7 +105,7 @@ foreach ($properties in $propertiesList) {
     Write-Output "            std::vector<Uniform> {"
     $vsUniformCount = [int](GetOrThrow $properties "VS.UniformCount")
     for ($i = 0; $i -lt $vsUniformCOunt; $i++) {
-        Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("VS.Uniform[$i]")))
+        Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f (GetOrThrow $properties $("VS.Uniform[$i]")))
     }
     Write-Output "            },"
 
@@ -115,7 +120,7 @@ foreach ($properties in $propertiesList) {
         Write-Output "            std::vector<Uniform> {"
         $gsUniformCount = [int](GetOrThrow $properties "GS.UniformCount")
         for ($i = 0; $i -lt $gsUniformCOunt; $i++) {
-            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("GS.Uniform[$i]")))
+            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f (GetOrThrow $properties $("GS.Uniform[$i]")))
         }
         Write-Output "            },"
     } else {
@@ -138,9 +143,9 @@ foreach ($properties in $propertiesList) {
     for ($i = 0; $i -lt $psUniformCOunt; $i++) {
         $psUniform = (GetOrThrow $properties $("PS.Uniform[$i]"))
         if ($psUniform -eq "Texture") {
-            Write-Output "                Uniform { 0, true },"
+            Write-Output "                Uniform { 0, Uniform::Type::SRV },"
         } else {
-            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f $psUniform)
+            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f $psUniform)
         }
     }
     Write-Output "            },"
@@ -156,7 +161,7 @@ foreach ($properties in $propertiesList) {
         Write-Output "            std::vector<Uniform> {"
         $csUniformCount = [int](GetOrThrow $properties "CS.UniformCount")
         for ($i = 0; $i -lt $csUniformCount; $i++) {
-            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), false }}," -f (GetOrThrow $properties $("CS.Uniform[$i]")))
+            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f (GetOrThrow $properties $("CS.Uniform[$i]")))
         }
         Write-Output "            },"
     } else {

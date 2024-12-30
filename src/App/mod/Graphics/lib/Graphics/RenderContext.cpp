@@ -294,12 +294,13 @@ void RenderContext::initialize()
         offset = static_cast<int32_t>(program.vsUniforms.size()) + static_cast<int32_t>(program.gsUniforms.size());
         for (int32_t psUniform = 0; psUniform < program.psUniforms.size(); psUniform++) {
             Metadata::Uniform u = program.psUniforms.at(psUniform);
+            bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
             descTableRange.push_back({});
             descTableRange.at(offset + psUniform).NumDescriptors = 1;
-            descTableRange.at(offset + psUniform).RangeType = u.isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-            descTableRange.at(offset + psUniform).BaseShaderRegister = u.isShaderResource ? psSRV : psCBV;
+            descTableRange.at(offset + psUniform).RangeType = isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+            descTableRange.at(offset + psUniform).BaseShaderRegister = isShaderResource ? psSRV : psCBV;
             descTableRange.at(offset + psUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-            (u.isShaderResource ? psSRV : psCBV)++;
+            (isShaderResource ? psSRV : psCBV)++;
         }
 
         std::vector<D3D12_ROOT_PARAMETER> rootParam;
@@ -368,12 +369,13 @@ void RenderContext::initialize()
             int32_t csCBV = 0;
             for (int32_t csUniform = 0; csUniform < static_cast<int32_t>(program.csUniforms.size()); csUniform++) {
                 Metadata::Uniform u = program.csUniforms.at(csUniform);
+                bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
                 computeDescTableRange.push_back({});
                 computeDescTableRange.at(csUniform).NumDescriptors = 1;
-                computeDescTableRange.at(csUniform).RangeType = u.isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-                computeDescTableRange.at(csUniform).BaseShaderRegister = u.isShaderResource ? csSRV : csCBV;
+                computeDescTableRange.at(csUniform).RangeType = isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+                computeDescTableRange.at(csUniform).BaseShaderRegister = isShaderResource ? csSRV : csCBV;
                 computeDescTableRange.at(csUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-                (u.isShaderResource ? csSRV : csCBV)++;
+                (isShaderResource ? csSRV : csCBV)++;
             }
 
             std::vector<D3D12_ROOT_PARAMETER> computeRootParam;

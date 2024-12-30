@@ -36,7 +36,8 @@ void UniformBuffer::setPS(int32_t index, const void* data)
         throw std::logic_error("uniform is out of range.");
     }
     Metadata::Uniform u = Metadata::k_programs.at(m_entry).psUniforms.at(index);
-    if (u.isShaderResource) {
+    bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
+    if (isShaderResource) {
         throw std::logic_error("uniform is require texture.");
     } else {
         void* outData;
@@ -53,7 +54,8 @@ void UniformBuffer::setPS(int32_t index, const std::shared_ptr<Texture>& texture
         throw std::logic_error("uniform is out of range.");
     }
     Metadata::Uniform u = Metadata::k_programs.at(m_entry).psUniforms.at(index);
-    if (u.isShaderResource) {
+    bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
+    if (isShaderResource) {
         auto device = Engine::getInstance()->getDevice()->getID3D12Device();
         uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -183,8 +185,9 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
     }
     for (int32_t i = 0; i < program.psUniforms.size(); i++) {
         Metadata::Uniform u = program.psUniforms.at(i);
+        bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
 
-        if (u.isShaderResource) {
+        if (isShaderResource) {
             m_psResources.emplace_back(nullptr);
         } else {
             D3D12_HEAP_PROPERTIES cbHeapProps = {};

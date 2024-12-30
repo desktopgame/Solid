@@ -5,8 +5,13 @@
 namespace Lib::Graphics::Metadata {
     class Uniform {
     public:
+        enum Type : uint32_t {
+            CBV = 0,
+            SRV,
+            UAV,
+        };
         size_t size;
-        bool isShaderResource;
+        Type type;
     };
 
     class Program {
@@ -74,8 +79,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -136,8 +141,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -165,7 +170,7 @@ namespace Lib::Graphics::Metadata {
             ,
             // psUniforms
             std::vector<Uniform> {
-                Uniform { 0, true },
+                Uniform { 0, Uniform::Type::SRV },
             },
             // cs
             nullptr,
@@ -208,8 +213,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -233,7 +238,7 @@ namespace Lib::Graphics::Metadata {
             ,
             // psUniforms
             std::vector<Uniform> {
-                Uniform { 0, true },
+                Uniform { 0, Uniform::Type::SRV },
             },
             // cs
             nullptr,
@@ -278,8 +283,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -356,8 +361,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -392,7 +397,7 @@ namespace Lib::Graphics::Metadata {
             ,
             // psUniforms
             std::vector<Uniform> {
-                Uniform { 0, true },
+                Uniform { 0, Uniform::Type::SRV },
             },
             // cs
             nullptr,
@@ -435,8 +440,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -507,8 +512,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             "struct GSInput {\n"
@@ -582,9 +587,9 @@ namespace Lib::Graphics::Metadata {
             ,
             // gsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UFloat), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UFloat), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // ps
             "struct Output {\n"
@@ -653,8 +658,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -732,8 +737,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -768,7 +773,7 @@ namespace Lib::Graphics::Metadata {
             ,
             // psUniforms
             std::vector<Uniform> {
-                Uniform { 0, true },
+                Uniform { 0, Uniform::Type::SRV },
             },
             // cs
             nullptr,
@@ -867,10 +872,10 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UTileTransform), false },
-                Uniform { sizeof(Reflect::UTilePallet), false },
-                Uniform { sizeof(Reflect::UVector3), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UTileTransform), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UTilePallet), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector3), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -989,8 +994,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // psUniforms
             std::vector<Uniform> {
-                Uniform { 0, true },
-                Uniform { 0, true },
+                Uniform { 0, Uniform::Type::SRV },
+                Uniform { 0, Uniform::Type::SRV },
             },
             // cs
             nullptr,
@@ -1036,8 +1041,8 @@ namespace Lib::Graphics::Metadata {
             ,
             // vsUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UCamera), false },
-                Uniform { sizeof(Reflect::UVector4), false },
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -1091,7 +1096,7 @@ namespace Lib::Graphics::Metadata {
             ,
             // csUniforms
             std::vector<Uniform> {
-                Uniform { sizeof(Reflect::UFloat), false },
+                Uniform { sizeof(Reflect::UFloat), Uniform::Type::CBV },
             },
         },
     };
