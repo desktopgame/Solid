@@ -220,6 +220,12 @@ void RenderContext::initialize()
         ::sprintf(psName, "RC[%d]_PS", i);
         rc->m_pShader = Shader::compile("ps_5_0", "psMain", program.psCode, psName);
         rc->m_pShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
+        if (program.csCode != nullptr) {
+            char csName[16];
+            ::memset(csName, '\0', 16);
+            ::sprintf(csName, "RC[%d]_CS", i);
+            rc->m_cShader = Shader::compile("cs_5_0", "csMain", program.csCode, csName);
+        }
         // rasterize
         psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
         psoDesc.RasterizerState.MultisampleEnable = false;
@@ -353,6 +359,71 @@ void RenderContext::initialize()
         psoDesc.pRootSignature = rc->m_rootSignature.Get();
         if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&rc->m_pipelineState)))) {
             throw std::runtime_error("failed CreateGraphicsPipelineState()");
+        }
+        // compute pipeline state
+        if (rc->m_cShader) {
+            // root signature
+            std::vector<D3D12_DESCRIPTOR_RANGE> computeDescTableRange;
+            int32_t csSRV = 0;
+            int32_t csCBV = 0;
+            for (int32_t csUniform = 0; csUniform < static_cast<int32_t>(program.csUniforms.size()); csUniform++) {
+                Metadata::Uniform u = program.csUniforms.at(csUniform);
+                computeDescTableRange.push_back({});
+                computeDescTableRange.at(csUniform).NumDescriptors = 1;
+                computeDescTableRange.at(csUniform).RangeType = u.isShaderResource ? D3D12_DESCRIPTOR_RANGE_TYPE_SRV : D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+                computeDescTableRange.at(csUniform).BaseShaderRegister = u.isShaderResource ? csSRV : csCBV;
+                computeDescTableRange.at(csUniform).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+                (u.isShaderResource ? csSRV : csCBV)++;
+            }
+
+            std::vector<D3D12_ROOT_PARAMETER> computeRootParam;
+            for (int32_t csUniform = 0; csUniform < static_cast<int32_t>(program.csUniforms.size()); csUniform++) {
+                computeRootParam.push_back({});
+                computeRootParam.at(csUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+                computeRootParam.at(csUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+                computeRootParam.at(csUniform).DescriptorTable.pDescriptorRanges = &descTableRange.at(csUniform);
+                computeRootParam.at(csUniform).DescriptorTable.NumDescriptorRanges = 1;
+            }
+
+            std::vector<D3D12_STATIC_SAMPLER_DESC> computeSamplerDescs(csSRV);
+            for (int32_t sampler = 0; sampler < csSRV; sampler++) {
+                D3D12_STATIC_SAMPLER_DESC& samplerDesc = computeSamplerDescs.at(sampler);
+                samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+                samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+                samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+                samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+                samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+                samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+                samplerDesc.MinLOD = 0.0f;
+                samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+                samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+                samplerDesc.ShaderRegister = sampler;
+            }
+
+            D3D12_ROOT_SIGNATURE_DESC computeRootSignatureDesc = {};
+            computeRootSignatureDesc.pParameters = computeRootParam.data();
+            computeRootSignatureDesc.NumParameters = computeRootParam.size();
+            computeRootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+            computeRootSignatureDesc.pStaticSamplers = computeSamplerDescs.data();
+            computeRootSignatureDesc.NumStaticSamplers = csSRV;
+            ComPtr<ID3DBlob> computeRootSigBlob = nullptr;
+            ComPtr<ID3DBlob> computeErrorBlob = nullptr;
+            if (FAILED(D3D12SerializeRootSignature(&computeRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &computeRootSigBlob, &computeErrorBlob))) {
+                throw std::runtime_error("failed D3D12SerializeRootSignature()");
+            }
+            if (FAILED(device->CreateRootSignature(0, computeRootSigBlob->GetBufferPointer(), computeRootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rc->m_computeRootSignature)))) {
+                throw std::runtime_error("failed CreateRootSignature()");
+            }
+
+            D3D12_COMPUTE_PIPELINE_STATE_DESC computePsoDesc {};
+            rc->m_cShader->getD3D12_SHADER_BYTECODE(computePsoDesc.CS);
+            computePsoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+            computePsoDesc.NodeMask = 0;
+            computePsoDesc.pRootSignature = rc->m_computeRootSignature.Get();
+
+            if (FAILED(device->CreateComputePipelineState(&computePsoDesc, IID_PPV_ARGS(&rc->m_computePipelineState)))) {
+                throw std::runtime_error("failed CreateComputePipelineState()");
+            }
         }
     }
 }

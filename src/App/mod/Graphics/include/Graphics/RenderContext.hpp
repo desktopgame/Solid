@@ -42,9 +42,13 @@ private:
     std::shared_ptr<Shader> m_vShader;
     std::shared_ptr<Shader> m_gShader;
     std::shared_ptr<Shader> m_pShader;
+    std::shared_ptr<Shader> m_cShader;
 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> m_computePipelineState;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> m_computeRootSignature;
 
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
