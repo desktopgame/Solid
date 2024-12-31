@@ -41,6 +41,8 @@ set(SOURCES
     ./include/Graphics/VertexTexCoord3D.hpp
     ./include/Graphics/VertexNormal3D.hpp
     ./include/Graphics/VertexNormalTexCoord3D.hpp
+    ./include/Graphics/VertexParticle2D.hpp
+    ./include/Graphics/VertexParticle3D.hpp
     ./include/Graphics/Swapchain.hpp
     ./include/Graphics/Font.hpp
     ./include/Graphics/FontFactory.hpp
@@ -68,6 +70,8 @@ set(SOURCES
     ./lib/Graphics/VertexTexCoord3D.cpp
     ./lib/Graphics/VertexNormal3D.cpp
     ./lib/Graphics/VertexNormalTexCoord3D.cpp
+    ./lib/Graphics/VertexParticle2D.cpp
+    ./lib/Graphics/VertexParticle3D.cpp
     ./lib/Graphics/Swapchain.cpp
     ./lib/Graphics/Font.cpp
     ./lib/Graphics/FontFactory.cpp
