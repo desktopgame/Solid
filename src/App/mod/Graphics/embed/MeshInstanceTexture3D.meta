@@ -10,5 +10,5 @@ VS.Uniform[0]=UCamera
 VS.Uniform[1]=UVector4
 VS.Code=MeshInstanceTexture3D.vs
 PS.UniformCount=1
-PS.Uniform[0]=Texture
+PS.Uniform[0]=UTexture
 PS.Code=MeshInstanceTexture3D.ps

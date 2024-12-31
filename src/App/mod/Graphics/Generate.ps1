@@ -142,7 +142,7 @@ foreach ($properties in $propertiesList) {
     $psUniformCount = [int](GetOrThrow $properties "PS.UniformCount")
     for ($i = 0; $i -lt $psUniformCOunt; $i++) {
         $psUniform = (GetOrThrow $properties $("PS.Uniform[$i]"))
-        if ($psUniform -eq "Texture") {
+        if ($psUniform -eq "UTexture") {
             Write-Output "                Uniform { 0, Uniform::Type::SRV },"
         } else {
             Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f $psUniform)
