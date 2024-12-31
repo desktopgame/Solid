@@ -72,6 +72,7 @@ void Buffer::update(const void* data)
     m_version++;
 }
 
+Buffer::Type Buffer::getType() const { return m_type; }
 size_t Buffer::getSize() const
 {
     return m_size;

@@ -18,6 +18,7 @@ public:
     void allocate(size_t size);
     void update(const void* data);
 
+    Type getType() const;
     size_t getSize() const;
     int32_t getVersion() const;
 
