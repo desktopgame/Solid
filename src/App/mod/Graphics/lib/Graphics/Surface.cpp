@@ -171,6 +171,15 @@ void Surface::present()
     UniformPool::releaseAll();
 }
 
+void Surface::compute(const std::shared_ptr<RenderContext>& rc,
+    const std::shared_ptr<UniformBuffer>& ub,
+    int32_t threadGroupCountX,
+    int32_t threadGroupCountY,
+    int32_t threadGroupCountZ)
+{
+    rc->compute(m_commandList, ub, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+}
+
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,

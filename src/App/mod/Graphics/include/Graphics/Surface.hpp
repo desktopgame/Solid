@@ -31,6 +31,12 @@ public:
 
     void present();
 
+    void compute(const std::shared_ptr<RenderContext>& rc,
+        const std::shared_ptr<UniformBuffer>& ub,
+        int32_t threadGroupCountX,
+        int32_t threadGroupCountY,
+        int32_t threadGroupCountZ);
+
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
