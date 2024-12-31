@@ -14,6 +14,13 @@ public:
     static std::shared_ptr<RenderContext> get(Metadata::ProgramTable entry);
 
 #if SOLID_ENABLE_INTERNAL
+    void compute(
+        const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+        const std::shared_ptr<UniformBuffer>& ub,
+        int32_t threadGroupCountX,
+        int32_t threadGroupCountY,
+        int32_t threadGroupCountZ);
+
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
         const std::shared_ptr<UniformBuffer>& ub,

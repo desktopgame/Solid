@@ -50,6 +50,36 @@ std::shared_ptr<RenderContext> RenderContext::get(Metadata::ProgramTable entry)
     return s_table.at(entry);
 }
 // internal
+void RenderContext::compute(
+    const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
+    const std::shared_ptr<UniformBuffer>& ub,
+    int32_t threadGroupCountX,
+    int32_t threadGroupCountY,
+    int32_t threadGroupCountZ)
+{
+    if (!m_computePipelineState || !m_computeRootSignature) {
+        return;
+    }
+    const Metadata::Program& program = Metadata::k_programs.at(m_entry);
+    cmdList->SetPipelineState(m_computePipelineState.Get());
+    cmdList->SetComputeRootSignature(m_computeRootSignature.Get());
+
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+    auto descriptorHeap = ub->getID3D12DescriptorHeap();
+    uint64_t incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+    cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
+    D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+
+    int32_t start = program.vsUniforms.size() + program.gsUniforms.size() + program.psUniforms.size();
+    for (int32_t i = 0; i < program.csUniforms.size(); i++) {
+        cmdList->SetGraphicsRootDescriptorTable(start + i, heapHandle);
+        heapHandle.ptr += incrementSize;
+    }
+
+    cmdList->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+}
+
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
