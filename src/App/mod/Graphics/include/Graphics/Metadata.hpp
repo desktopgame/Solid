@@ -1008,7 +1008,7 @@ namespace Lib::Graphics::Metadata {
             Reflect::InputLayout::VertexNormal3D,
             // instanceBufferLayout
             std::vector<Reflect::InstanceBufferType> {
-                Reflect::InstanceBufferType::Vector3,
+                Reflect::InstanceBufferType::VertexParticle3D,
             },
             // primitiveType
             Reflect::PrimitiveType::Triangles,
@@ -1028,7 +1028,7 @@ namespace Lib::Graphics::Metadata {
             "}\n"
             "cbuffer cbuff1 : register(b1) { float4 color; }\n"
             "\n"
-            "Output vsMain(float3 pos : POSITION, float3 normal : NORMAL, float3 offset : INSTANCE0) {\n"
+            "Output vsMain(float3 pos : POSITION, float3 normal : NORMAL, float3 offset : OFFSET, float3 velocity : VELOCITY) {\n"
             "    Output output;\n"
             "    output.svpos = mul(modelMatrix, float4(pos + offset, 1));\n"
             "    output.svpos = mul(viewMatrix, output.svpos);\n"
@@ -1076,8 +1076,8 @@ namespace Lib::Graphics::Metadata {
             },
             // cs
             "struct InstanceData {\n"
-            "    float3 offset;\n"
-            "    float3 velocity;\n"
+            "    float3 offset : OFFSET;\n"
+            "    float3 velocity : VELOCITY;\n"
             "};\n"
             "\n"
             "RWStructuredBuffer<InstanceData> instanceBuffer : register(u0);\n"
@@ -1097,6 +1097,7 @@ namespace Lib::Graphics::Metadata {
             // csUniforms
             std::vector<Uniform> {
                 Uniform { sizeof(Reflect::UFloat), Uniform::Type::CBV },
+                Uniform { Reflect::InstanceBufferSize[static_cast<int32_t>(Reflect::InstanceBufferType::VertexParticle3D)], Uniform::Type::UAV },
             },
         },
     };

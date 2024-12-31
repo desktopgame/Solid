@@ -1,6 +1,6 @@
 struct InstanceData {
-    float3 offset;
-    float3 velocity;
+    float3 offset : OFFSET;
+    float3 velocity : VELOCITY;
 };
 
 RWStructuredBuffer<InstanceData> instanceBuffer : register(u0);

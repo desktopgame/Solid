@@ -11,7 +11,7 @@ cbuffer cbuff0 : register(b0) {
 }
 cbuffer cbuff1 : register(b1) { float4 color; }
 
-Output vsMain(float3 pos : POSITION, float3 normal : NORMAL, float3 offset : INSTANCE0) {
+Output vsMain(float3 pos : POSITION, float3 normal : NORMAL, float3 offset : OFFSET, float3 velocity : VELOCITY) {
     Output output;
     output.svpos = mul(modelMatrix, float4(pos + offset, 1));
     output.svpos = mul(viewMatrix, output.svpos);

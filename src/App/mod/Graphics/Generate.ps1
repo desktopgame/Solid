@@ -161,7 +161,16 @@ foreach ($properties in $propertiesList) {
         Write-Output "            std::vector<Uniform> {"
         $csUniformCount = [int](GetOrThrow $properties "CS.UniformCount")
         for ($i = 0; $i -lt $csUniformCount; $i++) {
-            Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f (GetOrThrow $properties $("CS.Uniform[$i]")))
+            $csUniform = (GetOrThrow $properties $("CS.Uniform[$i]"))
+            $pattern = "UInstance<([^>]+)>"
+            if ($csUniform -eq "UTexture") {
+                Write-Output "                Uniform { 0, Uniform::Type::SRV },"
+            } elseif ($csUniform -match $pattern) {
+                $innerType = $matches[1]
+                Write-Output ("                Uniform {{ Reflect::InstanceBufferSize[static_cast<int32_t>(Reflect::InstanceBufferType::{0})], Uniform::Type::UAV }}," -f $innerType)
+            } else {
+                Write-Output ("                Uniform {{ sizeof(Reflect::{0}), Uniform::Type::CBV }}," -f $csUniform)
+            }
         }
         Write-Output "            },"
     } else {
