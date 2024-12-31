@@ -22,7 +22,6 @@ Buffer::~Buffer()
 void Buffer::allocate(size_t size)
 {
     assert(size > 0);
-    bool isReadWriteBuffer = m_type == Type::ReadWrite;
     D3D12_HEAP_PROPERTIES heapProps = {};
     heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -35,7 +34,6 @@ void Buffer::allocate(size_t size)
     resDesc.MipLevels = 1;
     resDesc.Format = DXGI_FORMAT_UNKNOWN;
     resDesc.SampleDesc.Count = 1;
-    resDesc.Flags = isReadWriteBuffer ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
     resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
     D3D12_RESOURCE_STATES initState = {};
