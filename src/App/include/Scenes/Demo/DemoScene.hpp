@@ -31,7 +31,9 @@ private:
 
     std::shared_ptr<Buffer> m_particleVertexBuffer;
     std::shared_ptr<Buffer> m_particleIndexBuffer;
+    std::shared_ptr<Buffer> m_particleInstanceSourceBuffer;
     std::shared_ptr<Buffer> m_particleInstanceBuffer;
+    DualBuffer m_particleDualBuffer;
 
     std::shared_ptr<Renderer> m_renderer;
 };
