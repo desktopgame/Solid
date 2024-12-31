@@ -7,12 +7,16 @@
 
 namespace Lib::Graphics {
 class Texture;
+class Buffer;
 class UniformBuffer {
 public:
     void setVS(int32_t index, const void* data);
     void setGS(int32_t index, const void* data);
     void setPS(int32_t index, const void* data);
     void setPS(int32_t index, const std::shared_ptr<Texture>& texture);
+    void setCS(int32_t index, const void* data);
+    void setCS(int32_t index, const std::shared_ptr<Texture>& texture);
+    void setCS(int32_t index, const std::shared_ptr<Buffer>& buffer);
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
@@ -31,5 +35,6 @@ private:
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_vsResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gsResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_psResources;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_csResources;
 };
 }

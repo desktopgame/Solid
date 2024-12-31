@@ -1,3 +1,4 @@
+#include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Texture.hpp>
@@ -72,6 +73,73 @@ void UniformBuffer::setPS(int32_t index, const std::shared_ptr<Texture>& texture
         device->CreateShaderResourceView(texBuff.Get(), &srvDesc, heapHandle);
     } else {
         throw std::logic_error("uniform is require constant.");
+    }
+}
+
+void UniformBuffer::setCS(int32_t index, const void* data)
+{
+    if (index >= Metadata::k_programs.at(m_entry).csUniforms.size()) {
+        throw std::logic_error("uniform is out of range.");
+    }
+    void* outData;
+    ComPtr<ID3D12Resource> resource = m_csResources.at(index);
+    resource->Map(0, nullptr, (void**)&outData);
+    ::memcpy(outData, data, Metadata::k_programs.at(m_entry).csUniforms.at(index).size);
+    resource->Unmap(0, nullptr);
+}
+
+void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Texture>& texture)
+{
+    if (index >= Metadata::k_programs.at(m_entry).csUniforms.size()) {
+        throw std::logic_error("uniform is out of range.");
+    }
+    Metadata::Uniform u = Metadata::k_programs.at(m_entry).csUniforms.at(index);
+    bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
+    if (isShaderResource) {
+        auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+        uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).csUniforms.size() * unitSize;
+        heapHandle.ptr += index * unitSize;
+
+        D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+        srvDesc.Format = Texture::encodeFormat(texture->getFormat());
+        srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+        srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MipLevels = 1;
+
+        auto texBuff = std::any_cast<ComPtr<ID3D12Resource>>(texture->getID3D12Resource());
+        device->CreateShaderResourceView(texBuff.Get(), &srvDesc, heapHandle);
+    } else {
+        throw std::logic_error("uniform is require constant.");
+    }
+}
+
+void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
+{
+    if (index >= Metadata::k_programs.at(m_entry).csUniforms.size()) {
+        throw std::logic_error("uniform is out of range.");
+    }
+    Metadata::Uniform u = Metadata::k_programs.at(m_entry).csUniforms.at(index);
+    bool isUnorderdAccessView = u.type == Metadata::Uniform::Type::UAV;
+    if (isUnorderdAccessView) {
+        auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+        uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).csUniforms.size() * unitSize;
+        heapHandle.ptr += index * unitSize;
+
+        D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+        uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+        uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+        uavDesc.Buffer.FirstElement = 0;
+        uavDesc.Buffer.NumElements = buffer->getSize() / u.size;
+        uavDesc.Buffer.StructureByteStride = u.size;
+        uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
+
+        device->CreateUnorderedAccessView(buffer->getID3D12Resource().Get(), nullptr, &uavDesc, heapHandle);
+    } else {
+        throw std::logic_error("uniform is require buffer.");
     }
 }
 // internal
@@ -222,6 +290,52 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
             device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
         }
         heapHandle.ptr += unitSize;
+    }
+    for (int32_t i = 0; i < program.csUniforms.size(); i++) {
+        Metadata::Uniform u = program.csUniforms.at(i);
+
+        switch (u.type) {
+        case Metadata::Uniform::Type::CBV: {
+
+            D3D12_HEAP_PROPERTIES cbHeapProps = {};
+            cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+            cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+            cbHeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+            D3D12_RESOURCE_DESC cbResDesc = {};
+            cbResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+            cbResDesc.Width = u.size;
+            cbResDesc.Height = 1;
+            cbResDesc.DepthOrArraySize = 1;
+            cbResDesc.MipLevels = 1;
+            cbResDesc.Format = DXGI_FORMAT_UNKNOWN;
+            cbResDesc.SampleDesc.Count = 1;
+            cbResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+            cbResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+            m_csResources.emplace_back(nullptr);
+            if (FAILED(device->CreateCommittedResource(
+                    &cbHeapProps,
+                    D3D12_HEAP_FLAG_NONE,
+                    &cbResDesc,
+                    D3D12_RESOURCE_STATE_GENERIC_READ,
+                    nullptr,
+                    IID_PPV_ARGS(&m_csResources.back())))) {
+                throw std::runtime_error("failed CreateCommittedResource()");
+            }
+
+            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
+            cbvColorDesc.BufferLocation = m_csResources.back()->GetGPUVirtualAddress();
+            cbvColorDesc.SizeInBytes = u.size;
+            device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+            break;
+        }
+        case Metadata::Uniform::Type::SRV:
+            m_csResources.emplace_back(nullptr);
+            break;
+        case Metadata::Uniform::Type::UAV:
+            m_csResources.emplace_back(nullptr);
+            break;
+        }
     }
 }
 }
