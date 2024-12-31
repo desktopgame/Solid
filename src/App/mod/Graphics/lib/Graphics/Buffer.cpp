@@ -109,6 +109,18 @@ void Buffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>
     cmdList->ResourceBarrier(1, &barrier);
 }
 
+void Buffer::stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    if (m_type != Type::ReadWrite) {
+        throw std::logic_error("failed CopyResource()");
+    }
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+    barrier.UAV.pResource = m_resource.Get();
+
+    cmdList->ResourceBarrier(1, &barrier);
+}
+
 void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Buffer>& dst)
 {
     if (m_type != Type::Vertex || dst->m_type != Type::ReadWrite) {

@@ -22,6 +22,9 @@ public:
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
     void destroy();
 
+    void stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> getID3D12DescriptorHeap() const;
 #endif
 
@@ -36,5 +39,6 @@ private:
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gsResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_psResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_csResources;
+    std::vector<std::shared_ptr<Buffer>> m_uavBuffers;
 };
 }

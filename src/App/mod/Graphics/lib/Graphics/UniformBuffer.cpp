@@ -146,6 +146,11 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
         uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
         device->CreateUnorderedAccessView(buffer->getID3D12Resource().Get(), nullptr, &uavDesc, heapHandle);
+
+        while (m_uavBuffers.size() < index + 1) {
+            m_uavBuffers.emplace_back(nullptr);
+        }
+        m_uavBuffers.at(index) = buffer;
     } else {
         throw std::logic_error("uniform is require buffer.");
     }
@@ -162,6 +167,31 @@ void UniformBuffer::destroy()
 {
 }
 
+void UniformBuffer::stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    for (auto uavBuffer : m_uavBuffers) {
+        if (uavBuffer) {
+            uavBuffer->stateUAV(cmdList);
+        }
+    }
+}
+void UniformBuffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    for (auto uavBuffer : m_uavBuffers) {
+        if (uavBuffer) {
+            uavBuffer->stateCommon(cmdList);
+        }
+    }
+}
+void UniformBuffer::stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    for (auto uavBuffer : m_uavBuffers) {
+        if (uavBuffer) {
+            uavBuffer->stateSync(cmdList);
+        }
+    }
+}
+
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> UniformBuffer::getID3D12DescriptorHeap() const
 {
     return m_descriptorHeap;
@@ -174,6 +204,7 @@ UniformBuffer::UniformBuffer()
     , m_gsResources()
     , m_psResources()
     , m_csResources()
+    , m_uavBuffers()
 {
 }
 
