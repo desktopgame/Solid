@@ -126,6 +126,9 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
     Metadata::Uniform u = Metadata::k_programs.at(m_entry).csUniforms.at(index);
     bool isUnorderdAccessView = u.type == Metadata::Uniform::Type::UAV;
     if (isUnorderdAccessView) {
+        if (buffer->getType() != Buffer::Type::ReadWrite) {
+            throw std::logic_error("buffer is not read write type.");
+        }
         auto device = Engine::getInstance()->getDevice()->getID3D12Device();
         uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
