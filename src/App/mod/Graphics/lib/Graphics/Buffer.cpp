@@ -83,7 +83,19 @@ void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
     if (m_type != Type::Vertex || dst->m_type != Type::ReadWrite) {
         throw std::logic_error("failed CopyResource()");
     }
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = dst->m_resource.Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+    cmdList->ResourceBarrier(1, &barrier);
     cmdList->CopyResource(dst->m_resource.Get(), m_resource.Get());
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    cmdList->ResourceBarrier(1, &barrier);
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Buffer::getID3D12Resource() const
