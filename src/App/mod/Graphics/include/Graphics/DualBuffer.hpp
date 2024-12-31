@@ -11,6 +11,8 @@ class DualBuffer {
 public:
     explicit DualBuffer(const std::shared_ptr<Buffer>& cpuBuffer, const std::shared_ptr<Buffer>& gpuBuffer);
 
+    void reset(const std::shared_ptr<Buffer>& cpuBuffer, const std::shared_ptr<Buffer>& gpuBuffer);
+
     std::shared_ptr<Buffer> getCpuBuffer() const;
     std::shared_ptr<Buffer> getGpuBuffer() const;
 
