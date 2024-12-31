@@ -126,7 +126,7 @@ void DemoScene::onDraw3D()
 
     auto ub = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D);
     Reflect::UCamera uCamera;
-    uCamera.modelMatrix = Matrix();
+    uCamera.modelMatrix = Matrix::scale(Vector3({ 0.1f, 0.1f, 0.1f }));
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
     ub->setVS(0, &uCamera);
@@ -136,7 +136,7 @@ void DemoScene::onDraw3D()
     ub->setVS(1, &uColor);
 
     Reflect::UFloat uDeltatime;
-    uDeltatime.value = Time::deltaTime();
+    uDeltatime.value = Time::deltaTime() * 10.0f;
     ub->setCS(0, &uDeltatime);
     ub->setCS(1, m_particleInstanceBuffer);
 
@@ -144,8 +144,7 @@ void DemoScene::onDraw3D()
 
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     surface->sync(m_particleDualBuffer);
-    surface->compute(rc, ub, 3000 / 256, 1, 1);
-    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<Buffer>> { m_particleInstanceBuffer }, 3000);
+    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<Buffer>> { m_particleInstanceBuffer }, 3000, (3000 + 255), 1, 1);
 }
 
 void DemoScene::onDraw2D()
