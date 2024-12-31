@@ -75,7 +75,7 @@ void RenderContext::compute(
     heapHandle.ptr += program.psUniforms.size() * incrementSize;
 
     for (int32_t i = 0; i < program.csUniforms.size(); i++) {
-        cmdList->SetGraphicsRootDescriptorTable(i, heapHandle);
+        cmdList->SetComputeRootDescriptorTable(i, heapHandle);
         heapHandle.ptr += incrementSize;
     }
 
