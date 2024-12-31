@@ -190,47 +190,54 @@ void RenderContext::init(Metadata::ProgramTable entry)
                 D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
         break;
     }
+    int32_t particleSemanticIndex = 0;
+    int32_t instanceSemanticIndex = 0;
     for (int32_t i = 0; i < static_cast<int32_t>(program.instanceBufferLayout.size()); i++) {
         Reflect::InstanceBufferType instBufType = program.instanceBufferLayout.at(i);
 
         switch (instBufType) {
         case Reflect::InstanceBufferType::Vector2:
             inputLayout.push_back(
-                { "INSTANCE", (UINT)i, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
+                { "INSTANCE", (UINT)instanceSemanticIndex, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
                     D3D12_APPEND_ALIGNED_ELEMENT,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            instanceSemanticIndex++;
             break;
         case Reflect::InstanceBufferType::Vector3:
             inputLayout.push_back(
-                { "INSTANCE", (UINT)i, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
+                { "INSTANCE", (UINT)instanceSemanticIndex, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
                     D3D12_APPEND_ALIGNED_ELEMENT,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            instanceSemanticIndex++;
             break;
         case Reflect::InstanceBufferType::Vector4:
             inputLayout.push_back(
-                { "INSTANCE", (UINT)i, DXGI_FORMAT_R32G32B32A32_FLOAT, (UINT)(i + 1),
+                { "INSTANCE", (UINT)instanceSemanticIndex, DXGI_FORMAT_R32G32B32A32_FLOAT, (UINT)(i + 1),
                     D3D12_APPEND_ALIGNED_ELEMENT,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            instanceSemanticIndex++;
             break;
         case Reflect::InstanceBufferType::VertexParticle2D:
             inputLayout.push_back(
-                { "OFFSET", (UINT)i, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
+                { "OFFSET", (UINT)particleSemanticIndex, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
                     0,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
             inputLayout.push_back(
-                { "VELOCITY", (UINT)i, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
+                { "VELOCITY", (UINT)particleSemanticIndex, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
                     8,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            particleSemanticIndex++;
             break;
         case Reflect::InstanceBufferType::VertexParticle3D:
             inputLayout.push_back(
-                { "OFFSET", (UINT)i, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
+                { "OFFSET", (UINT)particleSemanticIndex, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
                     0,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
             inputLayout.push_back(
-                { "VELOCITY", (UINT)i, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
+                { "VELOCITY", (UINT)particleSemanticIndex, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
                     12,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            particleSemanticIndex++;
             break;
         case Reflect::InstanceBufferType::Count:
             // unreachable
