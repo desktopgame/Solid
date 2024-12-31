@@ -177,15 +177,6 @@ void Surface::sync(DualBuffer& dualBuffer)
     dualBuffer.sync(m_commandList);
 }
 
-void Surface::compute(const std::shared_ptr<RenderContext>& rc,
-    const std::shared_ptr<UniformBuffer>& ub,
-    int32_t threadGroupCountX,
-    int32_t threadGroupCountY,
-    int32_t threadGroupCountZ)
-{
-    rc->compute(m_commandList, ub, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
-}
-
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
@@ -207,6 +198,27 @@ void Surface::render(
 {
     rc->render(m_commandList, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
 }
+
+void Surface::render(
+    const std::shared_ptr<RenderContext>& rc,
+    const std::shared_ptr<UniformBuffer>& ub,
+    const std::shared_ptr<Buffer>& vertex,
+    const std::shared_ptr<Buffer>& index,
+    int32_t indexLength,
+    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    int32_t instanceCount,
+    int32_t threadGroupCountX,
+    int32_t threadGroupCountY,
+    int32_t threadGroupCountZ)
+{
+    ub->stateUAV(m_commandList);
+    rc->compute(m_commandList, ub, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+    ub->stateSync(m_commandList);
+    ub->stateCommon(m_commandList);
+
+    render(rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
+}
+
 // internal
 std::shared_ptr<Surface> Surface::create(
     const Microsoft::WRL::ComPtr<ID3D12Device>& device,

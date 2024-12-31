@@ -34,12 +34,6 @@ public:
 
     void sync(DualBuffer& dualBuffer);
 
-    void compute(const std::shared_ptr<RenderContext>& rc,
-        const std::shared_ptr<UniformBuffer>& ub,
-        int32_t threadGroupCountX,
-        int32_t threadGroupCountY,
-        int32_t threadGroupCountZ);
-
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
@@ -55,6 +49,18 @@ public:
         int32_t indexLength,
         const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
         int32_t instanceCount);
+
+    void render(
+        const std::shared_ptr<RenderContext>& rc,
+        const std::shared_ptr<UniformBuffer>& ub,
+        const std::shared_ptr<Buffer>& vertex,
+        const std::shared_ptr<Buffer>& index,
+        int32_t indexLength,
+        const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+        int32_t instanceCount,
+        int32_t threadGroupCountX,
+        int32_t threadGroupCountY,
+        int32_t threadGroupCountZ);
 
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<Surface> create(
