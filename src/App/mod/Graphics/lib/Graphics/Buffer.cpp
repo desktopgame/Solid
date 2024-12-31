@@ -78,6 +78,14 @@ size_t Buffer::getSize() const
     return m_size;
 }
 // internal
+void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Buffer>& dst)
+{
+    if (m_type != Type::Vertex || dst->m_type != Type::ReadWrite) {
+        throw std::logic_error("failed CopyResource()");
+    }
+    cmdList->CopyResource(dst->m_resource.Get(), m_resource.Get());
+}
+
 Microsoft::WRL::ComPtr<ID3D12Resource> Buffer::getID3D12Resource() const
 {
     return m_resource;
