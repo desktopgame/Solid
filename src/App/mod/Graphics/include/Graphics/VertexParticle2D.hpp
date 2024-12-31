@@ -7,7 +7,7 @@ struct VertexParticle2D {
     Math::Vector2 velocity;
 
     explicit VertexParticle2D() = default;
-    explicit VertexParticle2D(const Math::Vector2& position, const Math::Vector2& velocity);
+    explicit VertexParticle2D(const Math::Vector2& offset, const Math::Vector2& velocity);
     explicit VertexParticle2D(float x, float y, float vx, float vy);
 };
 }

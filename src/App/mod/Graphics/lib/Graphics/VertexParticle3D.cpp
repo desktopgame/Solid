@@ -1,8 +1,8 @@
 #include <Graphics/VertexParticle3D.hpp>
 
 namespace Lib::Graphics {
-VertexParticle3D::VertexParticle3D(const Math::Vector3& position, const Math::Vector3& velocity)
-    : offset(position)
+VertexParticle3D::VertexParticle3D(const Math::Vector3& offset, const Math::Vector3& velocity)
+    : offset(offset)
     , velocity(velocity)
 {
 }
