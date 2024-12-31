@@ -5,7 +5,7 @@
 namespace Lib::Graphics::Metadata {
     class Uniform {
     public:
-        enum Type : uint32_t {
+        enum class Type : uint32_t {
             CBV = 0,
             SRV,
             UAV,
