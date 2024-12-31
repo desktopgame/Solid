@@ -3,6 +3,7 @@
 #include <Graphics/Camera.hpp>
 #include <Graphics/Color.hpp>
 #include <Graphics/Device.hpp>
+#include <Graphics/DualBuffer.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Font.hpp>
 #include <Graphics/FontFactory.hpp>
@@ -19,5 +20,7 @@
 #include <Graphics/Texture.hpp>
 #include <Graphics/UniformBuffer.hpp>
 #include <Graphics/UniformPool.hpp>
+#include <Graphics/VertexParticle2D.hpp>
+#include <Graphics/VertexParticle3D.hpp>
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
