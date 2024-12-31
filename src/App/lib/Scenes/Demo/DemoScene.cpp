@@ -13,6 +13,9 @@ DemoScene::DemoScene()
     , m_pointLightPos({ 0, 0, 0 })
     , m_pointLightPositions()
     , m_sceneCompleted()
+    , m_particleVertexBuffer()
+    , m_particleIndexBuffer()
+    , m_particleInstanceBuffer()
     , m_renderer()
 {
 }
@@ -21,6 +24,33 @@ DemoScene::~DemoScene() { }
 void DemoScene::onEnter()
 {
     auto tex = Texture::create("./assets/tileNormal2.png");
+    if (!m_particleVertexBuffer || !m_particleIndexBuffer) {
+        std::vector<Vector3> vertices;
+        std::vector<uint32_t> indices;
+        Polygon::generateBox(vertices, indices);
+
+        m_particleVertexBuffer = Buffer::create(Buffer::Type::Vertex);
+        m_particleVertexBuffer->allocate(sizeof(Vector3) * vertices.size());
+        m_particleVertexBuffer->update(vertices.data());
+
+        m_particleIndexBuffer = Buffer::create(Buffer::Type::Vertex);
+        m_particleIndexBuffer->allocate(sizeof(uint32_t) * indices.size());
+        m_particleIndexBuffer->update(indices.data());
+
+        m_particleInstanceBuffer = Buffer::create(Buffer::Type::ReadWrite);
+        std::vector<VertexParticle3D> particles(3000);
+        Random random;
+        for (int32_t i = 0; i < 3000; i++) {
+            VertexParticle3D& particle = particles.at(i);
+            float fx = random.range(0.0f, 1.0f);
+            float fy = random.range(0.0f, 1.0f);
+            float fz = random.range(0.0f, 1.0f);
+            particle.velocity = Vector3::normalized(Vector3({ fx, fy, fz }));
+            particle.offset = Vector3({ 0, 0, 0 });
+        }
+        m_particleInstanceBuffer->allocate(sizeof(VertexParticle3D) * particles.size());
+        m_particleInstanceBuffer->update(particles.data());
+    }
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
@@ -84,6 +114,15 @@ void DemoScene::onDraw3D()
     m_renderer->drawPlane(Vector3({ 10, 0, 20 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), true);
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), false);
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
+
+    auto ub = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D);
+    Reflect::UFloat uDeltatime;
+    uDeltatime.value = Time::deltaTime();
+    ub->setCS(0, &uDeltatime);
+    ub->setCS(1, m_particleInstanceBuffer);
+
+    auto rc = RenderContext::get(Metadata::ProgramTable::ParticleInstance3D);
+    Engine::getInstance()->getDevice()->getSurface()->compute(rc, ub, 3000 / 256, 1, 1);
 }
 
 void DemoScene::onDraw2D()

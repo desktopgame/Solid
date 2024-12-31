@@ -29,6 +29,10 @@ private:
     std::vector<Vector3> m_pointLightPositions;
     bool m_sceneCompleted;
 
+    std::shared_ptr<Buffer> m_particleVertexBuffer;
+    std::shared_ptr<Buffer> m_particleIndexBuffer;
+    std::shared_ptr<Buffer> m_particleInstanceBuffer;
+
     std::shared_ptr<Renderer> m_renderer;
 };
 }
