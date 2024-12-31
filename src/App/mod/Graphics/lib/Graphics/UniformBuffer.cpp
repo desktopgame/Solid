@@ -184,7 +184,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
-    descHeapDesc.NumDescriptors = program.vsUniforms.size() + program.gsUniforms.size() + program.psUniforms.size();
+    descHeapDesc.NumDescriptors = program.vsUniforms.size() + program.gsUniforms.size() + program.psUniforms.size() + program.csUniforms.size();
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&m_descriptorHeap)))) {
         throw std::runtime_error("failed CreateDescriptorHeap()");
