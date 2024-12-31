@@ -334,8 +334,8 @@ void Renderer::initRect()
     if (m_rectObject.rc != nullptr) {
         return;
     }
-    m_rectObject.vertexBuffer = Buffer::create();
-    m_rectObject.indexBuffer = Buffer::create();
+    m_rectObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_rectObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<Math::Vector2> vertices;
     std::vector<uint32_t> indices;
     Polygon::generateRect(vertices, indices);
@@ -352,8 +352,8 @@ void Renderer::initCircle()
     if (m_circleObject.rc != nullptr) {
         return;
     }
-    m_circleObject.vertexBuffer = Buffer::create();
-    m_circleObject.indexBuffer = Buffer::create();
+    m_circleObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_circleObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<Math::Vector2> vertices;
     std::vector<uint32_t> indices;
     Polygon::generateCircle(vertices, indices);
@@ -370,8 +370,8 @@ void Renderer::initSprite()
     if (m_spriteObject.rc != nullptr) {
         return;
     }
-    m_spriteObject.vertexBuffer = Buffer::create();
-    m_spriteObject.indexBuffer = Buffer::create();
+    m_spriteObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_spriteObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
     Polygon::generateRect(vertices, indices);
@@ -388,8 +388,8 @@ void Renderer::initText()
     if (m_textObject.rc != nullptr) {
         return;
     }
-    m_textObject.vertexBuffer = Buffer::create();
-    m_textObject.indexBuffer = Buffer::create();
+    m_textObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_textObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
     Polygon::generateRect(vertices, indices);
@@ -406,8 +406,8 @@ void Renderer::initPlane(Object& dst, bool isWireframe)
     if (dst.rc != nullptr) {
         return;
     }
-    dst.vertexBuffer = Buffer::create();
-    dst.indexBuffer = Buffer::create();
+    dst.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    dst.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<uint32_t> indices;
     if (isWireframe) {
         std::vector<Math::Vector3> vertices;
@@ -436,8 +436,8 @@ void Renderer::initPlaneLine()
     if (m_planeLineObject.rc != nullptr) {
         return;
     }
-    m_planeLineObject.vertexBuffer = Buffer::create();
-    m_planeLineObject.indexBuffer = Buffer::create();
+    m_planeLineObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_planeLineObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<uint32_t> indices;
     std::vector<Math::Vector3> vertices;
     Polygon::generatePlane(vertices, indices);
@@ -454,8 +454,8 @@ void Renderer::initPlaneTexture()
     if (m_planeTextureObject.rc != nullptr) {
         return;
     }
-    m_planeTextureObject.vertexBuffer = Buffer::create();
-    m_planeTextureObject.indexBuffer = Buffer::create();
+    m_planeTextureObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_planeTextureObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<VertexNormalTexCoord3D> vertices;
     std::vector<uint32_t> indices;
     Polygon::generatePlane(vertices, indices);
@@ -472,8 +472,8 @@ void Renderer::initBox(Object& dst, bool isWireframe)
     if (dst.rc != nullptr) {
         return;
     }
-    dst.vertexBuffer = Buffer::create();
-    dst.indexBuffer = Buffer::create();
+    dst.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    dst.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<uint32_t> indices;
     if (isWireframe) {
         std::vector<Math::Vector3> vertices;
@@ -501,8 +501,8 @@ void Renderer::initBoxLine()
     if (m_boxLineObject.rc != nullptr) {
         return;
     }
-    m_boxLineObject.vertexBuffer = Buffer::create();
-    m_boxLineObject.indexBuffer = Buffer::create();
+    m_boxLineObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_boxLineObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<uint32_t> indices;
     std::vector<Math::Vector3> vertices;
     Polygon::generateBox(vertices, indices);
@@ -519,8 +519,8 @@ void Renderer::initBoxTexture()
     if (m_boxTextureObject.rc != nullptr) {
         return;
     }
-    m_boxTextureObject.vertexBuffer = Buffer::create();
-    m_boxTextureObject.indexBuffer = Buffer::create();
+    m_boxTextureObject.vertexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_boxTextureObject.indexBuffer = Buffer::create(Buffer::Type::Vertex);
     std::vector<VertexNormalTexCoord3D> vertices;
     std::vector<uint32_t> indices;
     Polygon::generateBox(vertices, indices);
