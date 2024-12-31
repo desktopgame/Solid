@@ -1,6 +1,7 @@
 #include <Graphics/BloomEffect.hpp>
 #include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
+#include <Graphics/DualBuffer.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/PointLight.hpp>
 #include <Graphics/RenderContext.hpp>
@@ -169,6 +170,11 @@ void Surface::present()
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
 
     UniformPool::releaseAll();
+}
+
+void Surface::sync(DualBuffer& dualBuffer)
+{
+    dualBuffer.sync(m_commandList);
 }
 
 void Surface::compute(const std::shared_ptr<RenderContext>& rc,

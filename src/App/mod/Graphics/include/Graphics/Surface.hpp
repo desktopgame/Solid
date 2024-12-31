@@ -16,6 +16,7 @@ class Swapchain;
 class TileBatch;
 class RenderContext;
 class UniformBuffer;
+class DualBuffer;
 class Surface {
 public:
     ~Surface();
@@ -30,6 +31,8 @@ public:
     void end2D();
 
     void present();
+
+    void sync(DualBuffer& dualBuffer);
 
     void compute(const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
