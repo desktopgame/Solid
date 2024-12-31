@@ -30,7 +30,7 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
     sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
-    SceneManager sceneManager(sceneMap, "Debug");
+    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Debug");
 
     Graphics::NodeRegistry::initialize();
 
@@ -41,18 +41,18 @@ static int appMain(int argc, char* argv[])
         running = window->peekMessage();
         inputSystem->sync();
 
-        sceneManager.onUpdate();
+        sceneManager->onUpdate();
 
         surface->beginGui();
-        sceneManager.onGui();
+        sceneManager->onGui();
         surface->endGui();
 
         surface->begin3D();
-        sceneManager.onDraw3D();
+        sceneManager->onDraw3D();
         surface->end3D();
 
         surface->begin2D();
-        sceneManager.onDraw2D();
+        sceneManager->onDraw2D();
         surface->end2D();
 
         surface->present();
@@ -61,6 +61,9 @@ static int appMain(int argc, char* argv[])
     }
 
     Graphics::NodeRegistry::destroy();
+
+    sceneManager = nullptr;
+    sceneMap.clear();
 
     inputSystem->shutdown();
     engine->shutdown();
