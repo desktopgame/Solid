@@ -70,10 +70,12 @@ void RenderContext::compute(
 
     cmdList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+    heapHandle.ptr += program.vsUniforms.size() * incrementSize;
+    heapHandle.ptr += program.gsUniforms.size() * incrementSize;
+    heapHandle.ptr += program.psUniforms.size() * incrementSize;
 
-    int32_t start = program.vsUniforms.size() + program.gsUniforms.size() + program.psUniforms.size();
     for (int32_t i = 0; i < program.csUniforms.size(); i++) {
-        cmdList->SetGraphicsRootDescriptorTable(start + i, heapHandle);
+        cmdList->SetGraphicsRootDescriptorTable(i, heapHandle);
         heapHandle.ptr += incrementSize;
     }
 
