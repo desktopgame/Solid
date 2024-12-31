@@ -19,6 +19,7 @@ public:
     void update(const void* data);
 
     size_t getSize() const;
+    int32_t getVersion() const;
 
 #if SOLID_ENABLE_INTERNAL
     void transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Buffer>& dst);
@@ -30,6 +31,7 @@ private:
 
     Type m_type;
     size_t m_size;
+    int32_t m_version;
 
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_resource;

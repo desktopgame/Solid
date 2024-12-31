@@ -69,12 +69,14 @@ void Buffer::update(const void* data)
     }
     ::memcpy(outData, data, m_size);
     m_resource->Unmap(0, nullptr);
+    m_version++;
 }
 
 size_t Buffer::getSize() const
 {
     return m_size;
 }
+int32_t Buffer::getVersion() const { return m_version; }
 // internal
 void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Buffer>& dst)
 {
@@ -102,7 +104,10 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Buffer::getID3D12Resource() const
 }
 // private
 Buffer::Buffer()
-    : m_size(0)
+    : m_type()
+    , m_size(0)
+    , m_version()
+    , m_device()
     , m_resource()
 {
 }
