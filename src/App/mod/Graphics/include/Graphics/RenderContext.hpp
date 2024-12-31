@@ -35,6 +35,7 @@ public:
 #endif
 private:
     RenderContext();
+    void init(Metadata::ProgramTable entry);
 
     static std::vector<std::shared_ptr<RenderContext>> s_table;
 
