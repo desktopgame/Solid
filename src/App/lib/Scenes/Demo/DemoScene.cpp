@@ -18,6 +18,7 @@ DemoScene::DemoScene()
     , m_particleInstanceSourceBuffer()
     , m_particleInstanceBuffer()
     , m_particleDualBuffer(nullptr, nullptr)
+    , m_particleIndexLength()
     , m_renderer()
 {
 }
@@ -27,15 +28,16 @@ void DemoScene::onEnter()
 {
     auto tex = Texture::create("./assets/tileNormal2.png");
     if (!m_particleVertexBuffer || !m_particleIndexBuffer) {
-        std::vector<Vector3> vertices;
+        std::vector<VertexNormal3D> vertices;
         std::vector<uint32_t> indices;
         Polygon::generateBox(vertices, indices);
 
         m_particleVertexBuffer = Buffer::create(Buffer::Type::Vertex);
-        m_particleVertexBuffer->allocate(sizeof(Vector3) * vertices.size());
+        m_particleVertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
         m_particleVertexBuffer->update(vertices.data());
 
         m_particleIndexBuffer = Buffer::create(Buffer::Type::Vertex);
+        m_particleIndexLength = static_cast<int32_t>(indices.size());
         m_particleIndexBuffer->allocate(sizeof(uint32_t) * indices.size());
         m_particleIndexBuffer->update(indices.data());
 
@@ -123,6 +125,16 @@ void DemoScene::onDraw3D()
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
 
     auto ub = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D);
+    Reflect::UCamera uCamera;
+    uCamera.modelMatrix = Matrix();
+    uCamera.viewMatrix = Camera::getLookAtMatrix();
+    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
+    ub->setVS(0, &uCamera);
+
+    Reflect::UVector4 uColor;
+    uColor.value = Vector4({ 1, 1, 1, 1 });
+    ub->setVS(1, &uColor);
+
     Reflect::UFloat uDeltatime;
     uDeltatime.value = Time::deltaTime();
     ub->setCS(0, &uDeltatime);
@@ -133,6 +145,7 @@ void DemoScene::onDraw3D()
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     surface->sync(m_particleDualBuffer);
     surface->compute(rc, ub, 3000 / 256, 1, 1);
+    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<Buffer>> { m_particleInstanceBuffer }, 3000);
 }
 
 void DemoScene::onDraw2D()

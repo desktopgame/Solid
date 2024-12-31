@@ -34,6 +34,7 @@ private:
     std::shared_ptr<Buffer> m_particleInstanceSourceBuffer;
     std::shared_ptr<Buffer> m_particleInstanceBuffer;
     DualBuffer m_particleDualBuffer;
+    int32_t m_particleIndexLength;
 
     std::shared_ptr<Renderer> m_renderer;
 };
