@@ -46,7 +46,7 @@ void Buffer::allocate(size_t size)
     case Type::ReadWrite:
         heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
         resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-        initState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+        initState = D3D12_RESOURCE_STATE_COMMON;
         break;
     }
     if (FAILED(m_device->CreateCommittedResource(
@@ -79,6 +79,36 @@ size_t Buffer::getSize() const
 }
 int32_t Buffer::getVersion() const { return m_version; }
 // internal
+void Buffer::stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    if (m_type != Type::ReadWrite) {
+        throw std::logic_error("failed CopyResource()");
+    }
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_resource.Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+    cmdList->ResourceBarrier(1, &barrier);
+}
+
+void Buffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    if (m_type != Type::ReadWrite) {
+        throw std::logic_error("failed CopyResource()");
+    }
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = m_resource.Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+    cmdList->ResourceBarrier(1, &barrier);
+}
+
 void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Buffer>& dst)
 {
     if (m_type != Type::Vertex || dst->m_type != Type::ReadWrite) {
@@ -87,7 +117,7 @@ void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrier.Transition.pResource = dst->m_resource.Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
     barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
@@ -95,7 +125,7 @@ void Buffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
     cmdList->CopyResource(dst->m_resource.Get(), m_resource.Get());
 
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
     cmdList->ResourceBarrier(1, &barrier);
 }
 

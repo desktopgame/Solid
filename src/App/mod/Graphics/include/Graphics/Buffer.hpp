@@ -23,6 +23,9 @@ public:
     int32_t getVersion() const;
 
 #if SOLID_ENABLE_INTERNAL
+    void stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
     void transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<Buffer>& dst);
     Microsoft::WRL::ComPtr<ID3D12Resource> getID3D12Resource() const;
 #endif
