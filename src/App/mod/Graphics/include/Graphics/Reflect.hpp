@@ -1,4 +1,6 @@
 #pragma once
+#include <Graphics/VertexParticle2D.hpp>
+#include <Graphics/VertexParticle3D.hpp>
 #include <Math/Matrix.hpp>
 #include <Math/Vector.hpp>
 #include <vector>
@@ -17,6 +19,17 @@ enum class InstanceBufferType {
     Vector2,
     Vector3,
     Vector4,
+    VertexParticle2D,
+    VertexParticle3D,
+    Count
+};
+
+inline constexpr std::array<size_t, static_cast<int32_t>(InstanceBufferType::Count)> InstanceBufferSize {
+    sizeof(Math::Vector2),
+    sizeof(Math::Vector3),
+    sizeof(Math::Vector4),
+    sizeof(VertexParticle2D),
+    sizeof(VertexParticle3D),
 };
 
 enum class PrimitiveType {
