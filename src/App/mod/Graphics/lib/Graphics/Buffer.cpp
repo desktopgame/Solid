@@ -7,9 +7,10 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<Buffer> Buffer::create()
+std::shared_ptr<Buffer> Buffer::create(Type type)
 {
     auto buffer = std::shared_ptr<Buffer>(new Buffer());
+    buffer->m_type = type;
     buffer->m_device = Engine::getInstance()->getDevice()->getID3D12Device();
     return buffer;
 }
@@ -21,6 +22,7 @@ Buffer::~Buffer()
 void Buffer::allocate(size_t size)
 {
     assert(size > 0);
+    bool isReadWriteBuffer = m_type == Type::ReadWrite;
     D3D12_HEAP_PROPERTIES heapProps = {};
     heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -33,13 +35,27 @@ void Buffer::allocate(size_t size)
     resDesc.MipLevels = 1;
     resDesc.Format = DXGI_FORMAT_UNKNOWN;
     resDesc.SampleDesc.Count = 1;
-    resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    resDesc.Flags = isReadWriteBuffer ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
     resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+    D3D12_RESOURCE_STATES initState = {};
+    switch (m_type) {
+    case Type::Vertex:
+        heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+        resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+        initState = D3D12_RESOURCE_STATE_GENERIC_READ;
+        break;
+    case Type::ReadWrite:
+        heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+        resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+        initState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+        break;
+    }
     if (FAILED(m_device->CreateCommittedResource(
             &heapProps,
             D3D12_HEAP_FLAG_NONE,
             &resDesc,
-            D3D12_RESOURCE_STATE_GENERIC_READ,
+            initState,
             nullptr,
             IID_PPV_ARGS(&m_resource)))) {
         throw std::runtime_error("failed CreateCommittedResource()");

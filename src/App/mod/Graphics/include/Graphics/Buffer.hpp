@@ -7,7 +7,12 @@
 namespace Lib::Graphics {
 class Buffer {
 public:
-    static std::shared_ptr<Buffer> create();
+    enum class Type {
+        Vertex,
+        ReadWrite
+    };
+
+    static std::shared_ptr<Buffer> create(Type type);
     ~Buffer();
 
     void allocate(size_t size);
@@ -22,6 +27,7 @@ public:
 private:
     Buffer();
 
+    Type m_type;
     size_t m_size;
 
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
