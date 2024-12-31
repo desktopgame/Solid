@@ -160,6 +160,12 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> UniformBuffer::getID3D12DescriptorH
 }
 // private
 UniformBuffer::UniformBuffer()
+    : m_entry()
+    , m_descriptorHeap()
+    , m_vsResources()
+    , m_gsResources()
+    , m_psResources()
+    , m_csResources()
 {
 }
 
