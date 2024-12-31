@@ -197,6 +197,29 @@ void RenderContext::initialize()
                         D3D12_APPEND_ALIGNED_ELEMENT,
                         D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
                 break;
+            case Reflect::InstanceBufferType::VertexParticle2D:
+                inputLayout.push_back(
+                    { "OFFSET", (UINT)i, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
+                        0,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                inputLayout.push_back(
+                    { "VELOCITY", (UINT)i, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
+                        8,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                break;
+            case Reflect::InstanceBufferType::VertexParticle3D:
+                inputLayout.push_back(
+                    { "OFFSET", (UINT)i, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
+                        0,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                inputLayout.push_back(
+                    { "VELOCITY", (UINT)i, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
+                        12,
+                        D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+                break;
+            case Reflect::InstanceBufferType::Count:
+                // unreachable
+                break;
             }
         }
         psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
@@ -401,7 +424,7 @@ void RenderContext::initialize()
                 computeRootParam.push_back({});
                 computeRootParam.at(csUniform).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
                 computeRootParam.at(csUniform).ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-                computeRootParam.at(csUniform).DescriptorTable.pDescriptorRanges = &descTableRange.at(csUniform);
+                computeRootParam.at(csUniform).DescriptorTable.pDescriptorRanges = &computeDescTableRange.at(csUniform);
                 computeRootParam.at(csUniform).DescriptorTable.NumDescriptorRanges = 1;
             }
 
@@ -517,23 +540,12 @@ void RenderContext::render(
 
     for (int32_t i = 0; i < instanceBufferCount; i++) {
         std::shared_ptr<Buffer> instBuffer = instanceBuffers[i];
+        Reflect::InstanceBufferType instBufType = program.instanceBufferLayout.at(i);
 
-        size_t instStride = 0;
-        switch (program.instanceBufferLayout.at(i)) {
-        case Reflect::InstanceBufferType::Vector2:
-            instStride = sizeof(Math::Vector2);
-            break;
-        case Reflect::InstanceBufferType::Vector3:
-            instStride = sizeof(Math::Vector3);
-            break;
-        case Reflect::InstanceBufferType::Vector4:
-            instStride = sizeof(Math::Vector4);
-            break;
-        }
         D3D12_VERTEX_BUFFER_VIEW instView = {};
         instView.BufferLocation = instBuffer->getID3D12Resource()->GetGPUVirtualAddress();
         instView.SizeInBytes = instBuffer->getSize();
-        instView.StrideInBytes = static_cast<UINT>(instStride);
+        instView.StrideInBytes = static_cast<UINT>(Reflect::InstanceBufferSize[static_cast<int32_t>(instBufType)]);
         cmdList->IASetVertexBuffers(i + 1, 1, &instView);
     }
 
