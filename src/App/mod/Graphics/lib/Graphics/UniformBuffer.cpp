@@ -61,6 +61,7 @@ void UniformBuffer::setPS(int32_t index, const std::shared_ptr<Texture>& texture
         uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
         heapHandle.ptr += Metadata::k_programs.at(m_entry).vsUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).gsUniforms.size() * unitSize;
         heapHandle.ptr += index * unitSize;
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -99,7 +100,9 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Texture>& texture
         auto device = Engine::getInstance()->getDevice()->getID3D12Device();
         uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-        heapHandle.ptr += Metadata::k_programs.at(m_entry).csUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).vsUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).gsUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).psUniforms.size() * unitSize;
         heapHandle.ptr += index * unitSize;
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -126,7 +129,9 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
         auto device = Engine::getInstance()->getDevice()->getID3D12Device();
         uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-        heapHandle.ptr += Metadata::k_programs.at(m_entry).csUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).vsUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).gsUniforms.size() * unitSize;
+        heapHandle.ptr += Metadata::k_programs.at(m_entry).psUniforms.size() * unitSize;
         heapHandle.ptr += index * unitSize;
 
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
