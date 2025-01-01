@@ -126,6 +126,7 @@ private:
         }
         m_initialized = true;
 
+        // TODO: ParticleSystem側で生成して使いまわす
         m_vertexBuffer = CpuBuffer::create();
         m_indexBuffer = CpuBuffer::create();
         m_instanceBuffer = DualBuffer::create();
