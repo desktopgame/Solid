@@ -26,17 +26,17 @@ public:
     }
 
 protected:
-    void batch(std::array<VertexParticle3D, NumParticles>& particles, const SphericalParticleOption& option) override
+    void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<SphericalParticleOption>& params) override
     {
         Random random;
         for (auto& particle : particles) {
             float fx = random.range(-1.0f, 1.0f);
             float fy = random.range(-1.0f, 1.0f);
             float fz = random.range(-1.0f, 1.0f);
-            float speed = random.range(option.minSpeed, option.maxSpeed);
+            float speed = random.range(params.options.minSpeed, params.options.maxSpeed);
             Vector3 direction = Vector3::normalized(Vector3({ fx, fy, fz }));
 
-            particle.offset = option.collisionPoint;
+            particle.offset = params.options.collisionPoint;
             particle.velocity = direction * speed;
         }
     }

@@ -5,6 +5,21 @@
 
 namespace App::Common::Graphics {
 template <typename T>
+class ParticleParameter {
+public:
+    Vector3 color;
+    Vector3 scale;
+    T options;
+
+    explicit ParticleParameter(const Vector3& color, const Vector3& scale, const T& options)
+        : color(color)
+        , scale(scale)
+        , options(options)
+    {
+    }
+};
+
+template <typename T>
 class Particle {
 public:
     static inline constexpr int32_t NumParticles = 4096;
@@ -20,11 +35,13 @@ public:
     }
     virtual ~Particle() = default;
 
-    void initialize(const T& args)
+    void initialize(const ParticleParameter<T>& params)
     {
         baseInit();
 
-        batch(m_particles, args);
+        batch(m_particles, params);
+        m_color = params.color;
+        m_scale = params.scale;
         m_instanceBuffer->update(m_particles.data());
         m_uniformBuffer = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D)->owned();
     }
@@ -32,17 +49,17 @@ public:
     void draw()
     {
         Reflect::UCamera uCamera;
-        uCamera.modelMatrix = Matrix::scale(Vector3({ 0.1f, 0.1f, 0.1f }));
+        uCamera.modelMatrix = Matrix::scale(m_scale);
         uCamera.viewMatrix = Camera::getLookAtMatrix();
         uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
         m_uniformBuffer->setVS(0, &uCamera);
 
         Reflect::UVector4 uColor;
-        uColor.value = Vector4({ 1, 1, 1, 1 });
+        uColor.value = Vector4(m_color, 1.0f);
         m_uniformBuffer->setVS(1, &uColor);
 
         Reflect::UFloat uDeltatime;
-        uDeltatime.value = Time::deltaTime() * 10.0f;
+        uDeltatime.value = Time::deltaTime();
         m_uniformBuffer->setCS(0, &uDeltatime);
         m_uniformBuffer->setCS(1, m_instanceBuffer->getGpuBuffer());
 
@@ -64,7 +81,7 @@ public:
     }
 
 protected:
-    virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const T& args) = 0;
+    virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<T>& params) = 0;
 
 private:
     std::shared_ptr<CpuBuffer> m_vertexBuffer;
@@ -73,6 +90,8 @@ private:
     std::array<VertexParticle3D, NumParticles> m_particles;
     std::shared_ptr<UniformBuffer> m_uniformBuffer;
     int32_t m_indexLength;
+    Vector3 m_color;
+    Vector3 m_scale;
     bool m_initialized;
 
     void baseInit()
