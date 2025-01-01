@@ -16,6 +16,7 @@ void DualBuffer::allocate(size_t size)
     m_gpuBuffer = GpuBuffer::create();
 
     m_cpuBuffer->allocate(size);
+    m_gpuBuffer->allocate(size);
 }
 
 void DualBuffer::update(const void* data)
