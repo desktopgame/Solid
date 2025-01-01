@@ -35,6 +35,8 @@ public:
 
     static void draw();
 
+    static void stop();
+
     static void destroy();
 
 private:

@@ -43,6 +43,21 @@ void ParticleSystem::draw()
     }
 }
 
+void ParticleSystem::stop()
+{
+    for (int32_t i = 0; i < static_cast<int32_t>(IParticle::Type::Count); i++) {
+        std::vector<std::shared_ptr<IParticle>>& src = s_usedTable.at(i);
+        std::vector<std::shared_ptr<IParticle>>& dst = s_freeTable.at(i);
+
+        for (auto& s : src) {
+            s->destroy();
+            dst.emplace_back(s);
+        }
+
+        src.clear();
+    }
+}
+
 void ParticleSystem::destroy()
 {
     s_freeTable.clear();
