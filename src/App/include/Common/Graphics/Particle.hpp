@@ -9,11 +9,13 @@ class ParticleParameter {
 public:
     Vector3 color;
     Vector3 scale;
+    float lifetime;
     T options;
 
-    explicit ParticleParameter(const Vector3& color, const Vector3& scale, const T& options)
+    explicit ParticleParameter(const Vector3& color, const Vector3& scale, float lifetime, const T& options)
         : color(color)
         , scale(scale)
+        , lifetime(lifetime)
         , options(options)
     {
     }
@@ -42,8 +44,17 @@ public:
         batch(m_particles, params);
         m_color = params.color;
         m_scale = params.scale;
+        m_lifetime = params.lifetime;
+        m_elapsed = 0.0f;
         m_instanceBuffer->update(m_particles.data());
         m_uniformBuffer = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D)->owned();
+    }
+
+    void update()
+    {
+        if (!isExpired()) {
+            m_elapsed += Time::deltaTime();
+        }
     }
 
     void draw()
@@ -80,6 +91,8 @@ public:
         }
     }
 
+    bool isExpired() { return m_elapsed >= m_lifetime; }
+
 protected:
     virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<T>& params) = 0;
 
@@ -92,6 +105,8 @@ private:
     int32_t m_indexLength;
     Vector3 m_color;
     Vector3 m_scale;
+    float m_lifetime;
+    float m_elapsed;
     bool m_initialized;
 
     void baseInit()
