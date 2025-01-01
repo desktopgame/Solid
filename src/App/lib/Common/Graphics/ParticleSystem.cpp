@@ -23,6 +23,7 @@ void ParticleSystem::draw()
 
         for (auto& s : src) {
             if (s->isExpired()) {
+                s->destroy();
                 dst.emplace_back(s);
             }
         }

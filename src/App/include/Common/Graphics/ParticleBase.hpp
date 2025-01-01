@@ -141,7 +141,7 @@ private:
         m_indexBuffer->update(indices.data());
         m_indexLength = static_cast<int32_t>(indices.size());
 
-        m_instanceBuffer->allocate(sizeof(VertexNormal3D) * NumParticles);
+        m_instanceBuffer->allocate(sizeof(VertexParticle3D) * NumParticles);
     }
 };
 }

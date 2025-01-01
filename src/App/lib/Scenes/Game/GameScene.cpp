@@ -1,4 +1,5 @@
 #include <Common/Graphics/NodeRegistry.hpp>
+#include <Common/Graphics/ParticleSystem.hpp>
 #include <Scenes/Game/GameScene.hpp>
 #include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <Scenes/Game/System/Entities/SlimeEntity.hpp>
@@ -70,6 +71,7 @@ void GameScene::onDraw3D()
     PointLight::set(2, Vector3({ 60, 10, 60 }), 10, 20);
 
     m_field->draw3D(m_renderer);
+    Common::Graphics::ParticleSystem::draw();
 }
 
 void GameScene::onDraw2D()
