@@ -5,18 +5,47 @@ namespace App::Common::Graphics {
 std::vector<std::shared_ptr<Telop>> TelopSystem::s_freeTable;
 std::vector<std::shared_ptr<Telop>> TelopSystem::s_usedTable;
 
-void TelopSystem::initialize() { }
+std::shared_ptr<FontMap> TelopSystem::s_fontMap;
+std::shared_ptr<CpuBuffer> TelopSystem::s_vertexBuffer;
+std::shared_ptr<CpuBuffer> TelopSystem::s_indexBuffer;
+int32_t TelopSystem::s_indexLength;
 
-void TelopSystem::request(const std::string& text, const Vector3& position, const Vector3& color, float duration)
+void TelopSystem::initialize()
+{
+    s_fontMap = FontFactory::getInstance()->load("./assets/NotoSansJP-Regular.ttf");
+
+    std::vector<VertexTexCoord2D> vertices;
+    std::vector<uint32_t> indices;
+    Polygon::generateRect(vertices, indices);
+
+    s_vertexBuffer = CpuBuffer::create();
+    s_vertexBuffer->allocate(sizeof(VertexTexCoord2D) * vertices.size());
+    s_vertexBuffer->update(vertices.data());
+
+    s_indexBuffer = CpuBuffer::create();
+    s_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    s_indexBuffer->update(indices.data());
+    s_indexLength = indices.size();
+}
+
+void TelopSystem::request(const std::u16string& text, const Vector3& position, const Vector3& color, float duration)
 {
     if (s_freeTable.size() > 0) {
         std::shared_ptr<Telop> telop = s_freeTable.back();
+        telop->text = text;
+        telop->position = position;
+        telop->color = color;
+        telop->duration = duration;
         s_freeTable.pop_back();
 
         telop->initialize();
         s_usedTable.emplace_back(telop);
     } else {
         std::shared_ptr<Telop> telop = std::make_shared<Telop>();
+        telop->text = text;
+        telop->position = position;
+        telop->color = color;
+        telop->duration = duration;
 
         telop->initialize();
         s_usedTable.emplace_back(telop);
@@ -45,7 +74,7 @@ void TelopSystem::draw()
     src.erase(iter, src.end());
 
     for (auto& telop : s_usedTable) {
-        telop->update();
+        telop->draw(s_fontMap, s_vertexBuffer, s_indexBuffer, s_indexLength);
     }
 }
 
