@@ -1,5 +1,6 @@
 #include <Common/Graphics/NodeRegistry.hpp>
 #include <Common/Graphics/ParticleSystem.hpp>
+#include <Common/Graphics/TelopSystem.hpp>
 #include <Scenes/Game/GameScene.hpp>
 #include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <Scenes/Game/System/Entities/SlimeEntity.hpp>
@@ -77,6 +78,7 @@ void GameScene::onDraw3D()
 void GameScene::onDraw2D()
 {
     m_field->draw2D(m_renderer);
+    Common::Graphics::TelopSystem::draw();
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)
