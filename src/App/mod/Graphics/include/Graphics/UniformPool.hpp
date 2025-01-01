@@ -8,6 +8,7 @@ class UniformBuffer;
 class UniformPool {
 public:
     static std::shared_ptr<UniformBuffer> rent(Metadata::ProgramTable entry);
+    static void release(const std::shared_ptr<UniformBuffer>& ub);
     static void releaseAll();
 
 #if SOLID_ENABLE_INTERNAL

@@ -8,7 +8,7 @@
 namespace Lib::Graphics {
 class Texture;
 class GpuBuffer;
-class UniformBuffer {
+class UniformBuffer : public std::enable_shared_from_this<UniformBuffer> {
 public:
     void setVS(int32_t index, const void* data);
     void setGS(int32_t index, const void* data);
@@ -18,10 +18,16 @@ public:
     void setCS(int32_t index, const std::shared_ptr<Texture>& texture);
     void setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
 
+    std::shared_ptr<UniformBuffer> owned();
+    bool isOwned() const;
+
+    Metadata::ProgramTable getEntry() const;
+
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
     void destroy();
 
+    void reset();
     void beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
     void endCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
     void syncCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
@@ -40,5 +46,6 @@ private:
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_psResources;
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_csResources;
     std::vector<std::shared_ptr<GpuBuffer>> m_uavBuffers;
+    bool m_owned;
 };
 }

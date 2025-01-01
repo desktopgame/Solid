@@ -155,6 +155,18 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffe
         throw std::logic_error("uniform is require buffer.");
     }
 }
+
+std::shared_ptr<UniformBuffer> UniformBuffer::owned()
+{
+    if (m_owned) {
+        throw std::logic_error("already owned.");
+    }
+    m_owned = true;
+    return shared_from_this();
+}
+bool UniformBuffer::isOwned() const { return m_owned; }
+
+Metadata::ProgramTable UniformBuffer::getEntry() const { return m_entry; }
 // internal
 std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entry)
 {
@@ -166,6 +178,8 @@ std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entr
 void UniformBuffer::destroy()
 {
 }
+
+void UniformBuffer::reset() { m_owned = false; }
 
 void UniformBuffer::beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
