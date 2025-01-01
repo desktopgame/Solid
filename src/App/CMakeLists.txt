@@ -38,6 +38,8 @@ set(SOURCES
     ./include/Common/Graphics/ParticleBase.hpp
     ./include/Common/Graphics/ParticleSystem.hpp
     ./include/Common/Graphics/SphericalParticle.hpp
+    ./include/Common/Graphics/Telop.hpp
+    ./include/Common/Graphics/TelopSystem.hpp
     ./include/Common/Util/FpsController.hpp
     ./include/Scenes/Debug/DebugScene.hpp
     ./include/Scenes/Demo/DemoScene.hpp
@@ -55,6 +57,8 @@ set(SOURCES
     ./lib/Common/Graphics/Node.cpp
     ./lib/Common/Graphics/NodeRegistry.cpp
     ./lib/Common/Graphics/ParticleSystem.cpp
+    ./lib/Common/Graphics/Telop.cpp
+    ./lib/Common/Graphics/TelopSystem.cpp
     ./lib/Common/Util/FpsController.cpp
     ./lib/Scenes/Debug/DebugScene.cpp
     ./lib/Scenes/Demo/DemoScene.cpp

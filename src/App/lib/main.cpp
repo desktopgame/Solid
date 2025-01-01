@@ -7,6 +7,7 @@
 // App
 #include <Common/Graphics/NodeRegistry.hpp>
 #include <Common/Graphics/ParticleSystem.hpp>
+#include <Common/Graphics/TelopSystem.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
@@ -35,6 +36,7 @@ static int appMain(int argc, char* argv[])
 
     Graphics::NodeRegistry::initialize();
     Graphics::ParticleSystem::initialize();
+    Graphics::TelopSystem::initialize();
 
     window->show();
     bool running = true;
@@ -62,6 +64,7 @@ static int appMain(int argc, char* argv[])
         Time::sync();
     }
 
+    Graphics::TelopSystem::destroy();
     Graphics::ParticleSystem::destroy();
     Graphics::NodeRegistry::destroy();
 
