@@ -180,8 +180,8 @@ void Surface::sync(DualBuffer& dualBuffer)
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<CpuBuffer>& vertex,
-    const std::shared_ptr<CpuBuffer>& index,
+    const std::shared_ptr<IBuffer>& vertex,
+    const std::shared_ptr<IBuffer>& index,
     int32_t indexLength)
 {
     rc->render(m_commandList, ub, vertex, index, indexLength);
@@ -190,10 +190,10 @@ void Surface::render(
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<CpuBuffer>& vertex,
-    const std::shared_ptr<CpuBuffer>& index,
+    const std::shared_ptr<IBuffer>& vertex,
+    const std::shared_ptr<IBuffer>& index,
     int32_t indexLength,
-    const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
+    const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
     int32_t instanceCount)
 {
     rc->render(m_commandList, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
@@ -202,10 +202,10 @@ void Surface::render(
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<CpuBuffer>& vertex,
-    const std::shared_ptr<CpuBuffer>& index,
+    const std::shared_ptr<IBuffer>& vertex,
+    const std::shared_ptr<IBuffer>& index,
     int32_t indexLength,
-    const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
+    const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
     int32_t instanceCount,
     int32_t threadGroupCountX,
     int32_t threadGroupCountY,

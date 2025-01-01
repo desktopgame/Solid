@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphics/Device.hpp>
+#include <Graphics/IBuffer.hpp>
 #include <Math/Vector.hpp>
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -9,7 +10,6 @@
 
 namespace Lib::Graphics {
 class Device;
-class CpuBuffer;
 class Constant;
 class Shader;
 class Swapchain;
@@ -37,26 +37,26 @@ public:
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<CpuBuffer>& vertex,
-        const std::shared_ptr<CpuBuffer>& index,
+        const std::shared_ptr<IBuffer>& vertex,
+        const std::shared_ptr<IBuffer>& index,
         int32_t indexLength);
 
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<CpuBuffer>& vertex,
-        const std::shared_ptr<CpuBuffer>& index,
+        const std::shared_ptr<IBuffer>& vertex,
+        const std::shared_ptr<IBuffer>& index,
         int32_t indexLength,
-        const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
+        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
         int32_t instanceCount);
 
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<CpuBuffer>& vertex,
-        const std::shared_ptr<CpuBuffer>& index,
+        const std::shared_ptr<IBuffer>& vertex,
+        const std::shared_ptr<IBuffer>& index,
         int32_t indexLength,
-        const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
+        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
         int32_t instanceCount,
         int32_t threadGroupCountX,
         int32_t threadGroupCountY,

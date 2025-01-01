@@ -1,11 +1,12 @@
 #pragma once
+#include <Graphics/IBuffer.hpp>
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <memory>
 #include <wrl/client.h>
 
 namespace Lib::Graphics {
-class CpuBuffer {
+class CpuBuffer : public IBuffer {
 public:
     static std::shared_ptr<CpuBuffer> create();
     ~CpuBuffer();
@@ -13,11 +14,11 @@ public:
     void allocate(size_t size);
     void update(const void* data);
 
-    size_t getSize() const;
+    size_t getSize() const override;
     int32_t getVersion() const;
 
 #if SOLID_ENABLE_INTERNAL
-    Microsoft::WRL::ComPtr<ID3D12Resource> getID3D12Resource() const;
+    Microsoft::WRL::ComPtr<ID3D12Resource> getID3D12Resource() const override;
 #endif
 
 private:

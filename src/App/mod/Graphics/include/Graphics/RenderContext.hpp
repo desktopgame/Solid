@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/IBuffer.hpp>
 #include <Graphics/Metadata.hpp>
 #include <d3d12.h>
 #include <memory>
@@ -8,7 +9,6 @@
 namespace Lib::Graphics {
 class Shader;
 class UniformBuffer;
-class CpuBuffer;
 class RenderContext {
 public:
     static std::shared_ptr<RenderContext> get(Metadata::ProgramTable entry);
@@ -24,17 +24,17 @@ public:
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<CpuBuffer>& vertexBuffer,
-        const std::shared_ptr<CpuBuffer>& indexBuffer,
+        const std::shared_ptr<IBuffer>& vertexBuffer,
+        const std::shared_ptr<IBuffer>& indexBuffer,
         int32_t indexLength);
 
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<CpuBuffer>& vertexBuffer,
-        const std::shared_ptr<CpuBuffer>& indexBuffer,
+        const std::shared_ptr<IBuffer>& vertexBuffer,
+        const std::shared_ptr<IBuffer>& indexBuffer,
         int32_t indexLength,
-        const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
+        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
         int32_t instanceCount);
 
     static void initialize();
@@ -61,10 +61,10 @@ private:
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
         const std::shared_ptr<UniformBuffer>& ub,
-        const std::shared_ptr<CpuBuffer>& vertexBuffer,
-        const std::shared_ptr<CpuBuffer>& indexBuffer,
+        const std::shared_ptr<IBuffer>& vertexBuffer,
+        const std::shared_ptr<IBuffer>& indexBuffer,
         int32_t indexLength,
-        const std::shared_ptr<CpuBuffer>* instanceBuffers,
+        const std::shared_ptr<IBuffer>* instanceBuffers,
         int32_t instanceBufferCount,
         int32_t instanceCount);
 };

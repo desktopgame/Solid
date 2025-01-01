@@ -85,8 +85,8 @@ void RenderContext::compute(
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<CpuBuffer>& vertexBuffer,
-    const std::shared_ptr<CpuBuffer>& indexBuffer,
+    const std::shared_ptr<IBuffer>& vertexBuffer,
+    const std::shared_ptr<IBuffer>& indexBuffer,
     int32_t indexLength)
 {
     render(cmdList,
@@ -102,10 +102,10 @@ void RenderContext::render(
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<CpuBuffer>& vertexBuffer,
-    const std::shared_ptr<CpuBuffer>& indexBuffer,
+    const std::shared_ptr<IBuffer>& vertexBuffer,
+    const std::shared_ptr<IBuffer>& indexBuffer,
     int32_t indexLength,
-    const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
+    const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
     int32_t instanceCount)
 {
     render(cmdList,
@@ -527,10 +527,10 @@ void RenderContext::init(Metadata::ProgramTable entry)
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<CpuBuffer>& vertexBuffer,
-    const std::shared_ptr<CpuBuffer>& indexBuffer,
+    const std::shared_ptr<IBuffer>& vertexBuffer,
+    const std::shared_ptr<IBuffer>& indexBuffer,
     int32_t indexLength,
-    const std::shared_ptr<CpuBuffer>* instanceBuffers,
+    const std::shared_ptr<IBuffer>* instanceBuffers,
     int32_t instanceBufferCount,
     int32_t instanceCount)
 {
@@ -583,7 +583,7 @@ void RenderContext::render(
     cmdList->IASetVertexBuffers(0, 1, &vbView);
 
     for (int32_t i = 0; i < instanceBufferCount; i++) {
-        std::shared_ptr<CpuBuffer> instBuffer = instanceBuffers[i];
+        std::shared_ptr<IBuffer> instBuffer = instanceBuffers[i];
         Reflect::InstanceBufferType instBufType = program.instanceBufferLayout.at(i);
 
         D3D12_VERTEX_BUFFER_VIEW instView = {};

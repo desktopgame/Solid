@@ -144,7 +144,7 @@ void DemoScene::onDraw3D()
 
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     surface->sync(m_particleDualBuffer);
-    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<Buffer>> { m_particleInstanceBuffer }, 3000, (3000 + 255), 1, 1);
+    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<IBuffer>> { m_particleInstanceBuffer }, 3000, (3000 + 255), 1, 1);
 }
 
 void DemoScene::onDraw2D()
