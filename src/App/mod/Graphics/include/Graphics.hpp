@@ -9,6 +9,7 @@
 #include <Graphics/FontFactory.hpp>
 #include <Graphics/FontMap.hpp>
 #include <Graphics/FontMetrics.hpp>
+#include <Graphics/FontSprite.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/GpuBuffer.hpp>
 #include <Graphics/IBuffer.hpp>
