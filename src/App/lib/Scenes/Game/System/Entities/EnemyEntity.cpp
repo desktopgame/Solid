@@ -1,5 +1,6 @@
 #include <Common/Graphics/ParticleSystem.hpp>
 #include <Common/Graphics/SphericalParticle.hpp>
+#include <Common/Graphics/TelopSystem.hpp>
 #include <Scenes/Game/System/Entities/EnemyEntity.hpp>
 
 namespace App::Scenes::Game::System::Entities {
@@ -9,6 +10,12 @@ EnemyEntity::~EnemyEntity() { }
 EnemyEntity::EnemyEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : BasicEntity(node)
 {
+}
+
+void EnemyEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
+{
+    BasicEntity::damage(damageSource);
+    Common::Graphics::TelopSystem::request(u"A", m_position, Vector3({ 1, 1, 1 }), 10.0f);
 }
 
 void EnemyEntity::onDead(const std::shared_ptr<DamageSource>& damageSource)
