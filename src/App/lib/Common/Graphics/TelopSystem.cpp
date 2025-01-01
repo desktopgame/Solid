@@ -10,12 +10,16 @@ void TelopSystem::initialize() { }
 void TelopSystem::request(const std::string& text, const Vector3& position, const Vector3& color, float duration)
 {
     if (s_freeTable.size() > 0) {
-        std::shared_ptr<Telop> ub = s_freeTable.back();
+        std::shared_ptr<Telop> telop = s_freeTable.back();
         s_freeTable.pop_back();
-        s_usedTable.emplace_back(ub);
+
+        telop->initialize();
+        s_usedTable.emplace_back(telop);
     } else {
-        std::shared_ptr<Telop> ub = std::make_shared<Telop>();
-        s_usedTable.emplace_back(ub);
+        std::shared_ptr<Telop> telop = std::make_shared<Telop>();
+
+        telop->initialize();
+        s_usedTable.emplace_back(telop);
     }
 }
 

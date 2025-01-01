@@ -7,6 +7,7 @@ class Telop {
 public:
     explicit Telop();
 
+    void initialize();
     void update();
     void draw();
     void destroy();

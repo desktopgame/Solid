@@ -11,8 +11,16 @@ Telop::Telop()
 {
 }
 
+void Telop::initialize()
+{
+    m_elapsed = 0.0f;
+}
+
 void Telop::update()
 {
+    if (!isExpired()) {
+        m_elapsed += Time::deltaTime();
+    }
 }
 
 void Telop::draw()
