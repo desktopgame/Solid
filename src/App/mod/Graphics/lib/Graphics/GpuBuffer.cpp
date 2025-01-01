@@ -21,7 +21,6 @@ void GpuBuffer::allocate(size_t size)
 {
     assert(size > 0);
     D3D12_HEAP_PROPERTIES heapProps = {};
-    heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
     heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
     heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
