@@ -1,6 +1,7 @@
 #include <Graphics/CpuBuffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/GpuBuffer.hpp>
 #include <cassert>
 #include <stdexcept>
 
@@ -66,6 +67,23 @@ size_t CpuBuffer::getSize() const
 }
 int32_t CpuBuffer::getVersion() const { return m_version; }
 // internal
+void CpuBuffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<GpuBuffer>& dst)
+{
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = dst->getID3D12Resource().Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+    cmdList->ResourceBarrier(1, &barrier);
+    cmdList->CopyResource(dst->getID3D12Resource().Get(), m_resource.Get());
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+    cmdList->ResourceBarrier(1, &barrier);
+}
+
 Microsoft::WRL::ComPtr<ID3D12Resource> CpuBuffer::getID3D12Resource() const
 {
     return m_resource;

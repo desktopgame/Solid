@@ -23,7 +23,7 @@ std::shared_ptr<GpuBuffer> DualBuffer::getGpuBuffer() const { return m_gpuBuffer
 void DualBuffer::sync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     if (m_version == 0 || m_version != m_cpuBuffer->getVersion()) {
-        //    m_cpuBuffer->transport(cmdList, m_gpuBuffer);
+        m_cpuBuffer->transport(cmdList, m_gpuBuffer);
     }
     m_version = m_cpuBuffer->getVersion();
 }
