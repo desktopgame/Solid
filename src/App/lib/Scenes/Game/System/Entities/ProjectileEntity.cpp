@@ -1,3 +1,5 @@
+#include <Common/Graphics/ParticleSystem.hpp>
+#include <Common/Graphics/SphericalParticle.hpp>
 #include <Scenes/Game/System/DamageSource.hpp>
 #include <Scenes/Game/System/Entities/ProjectileEntity.hpp>
 
@@ -22,6 +24,13 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
 
     entity->damage(DamageSource::create(shared_from_this(), 1));
     m_currentHP = 0;
+
+    Common::Graphics::ParticleSystem::emit<Common::Graphics::SphericalParticle>(Common::Graphics::ParticleParameter<Common::Graphics::SphericalParticleOption>(
+        Vector3({ 1.0f, 0.0f, 0.0f }),
+        Vector3({ 1.0f, 1.0f, 1.0f }),
+        0.25f,
+        1.0f,
+        Common::Graphics::SphericalParticleOption(m_position, 1.0f, 20.0f)));
 
     auto basicEntity = std::dynamic_pointer_cast<BasicEntity>(entity);
     if (basicEntity) {
