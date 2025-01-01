@@ -54,7 +54,7 @@ size_t GpuBuffer::getSize() const
     return m_size;
 }
 // internal
-void GpuBuffer::stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void GpuBuffer::beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -66,7 +66,7 @@ void GpuBuffer::stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>
     cmdList->ResourceBarrier(1, &barrier);
 }
 
-void GpuBuffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void GpuBuffer::endCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -78,7 +78,7 @@ void GpuBuffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandLi
     cmdList->ResourceBarrier(1, &barrier);
 }
 
-void GpuBuffer::stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void GpuBuffer::syncCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     D3D12_RESOURCE_BARRIER barrier = {};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;

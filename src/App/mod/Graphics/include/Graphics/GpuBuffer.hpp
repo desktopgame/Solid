@@ -15,9 +15,9 @@ public:
     size_t getSize() const override;
 
 #if SOLID_ENABLE_INTERNAL
-    void stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
-    void stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
-    void stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void endCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void syncCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
     Microsoft::WRL::ComPtr<ID3D12Resource> getID3D12Resource() const override;
 #endif
 

@@ -211,10 +211,10 @@ void Surface::render(
     int32_t threadGroupCountY,
     int32_t threadGroupCountZ)
 {
-    ub->stateUAV(m_commandList);
+    ub->beginCompute(m_commandList);
     rc->compute(m_commandList, ub, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
-    ub->stateSync(m_commandList);
-    ub->stateCommon(m_commandList);
+    ub->syncCompute(m_commandList);
+    ub->endCompute(m_commandList);
 
     render(rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
 }

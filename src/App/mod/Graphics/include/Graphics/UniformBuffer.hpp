@@ -22,9 +22,9 @@ public:
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
     void destroy();
 
-    void stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
-    void stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
-    void stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void endCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
+    void syncCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> getID3D12DescriptorHeap() const;
 #endif
 

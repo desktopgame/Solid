@@ -167,27 +167,27 @@ void UniformBuffer::destroy()
 {
 }
 
-void UniformBuffer::stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void UniformBuffer::beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     for (auto uavBuffer : m_uavBuffers) {
         if (uavBuffer) {
-            uavBuffer->stateUAV(cmdList);
+            uavBuffer->beginCompute(cmdList);
         }
     }
 }
-void UniformBuffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void UniformBuffer::endCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     for (auto uavBuffer : m_uavBuffers) {
         if (uavBuffer) {
-            uavBuffer->stateCommon(cmdList);
+            uavBuffer->endCompute(cmdList);
         }
     }
 }
-void UniformBuffer::stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void UniformBuffer::syncCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     for (auto uavBuffer : m_uavBuffers) {
         if (uavBuffer) {
-            uavBuffer->stateSync(cmdList);
+            uavBuffer->syncCompute(cmdList);
         }
     }
 }
