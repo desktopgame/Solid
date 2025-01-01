@@ -258,6 +258,10 @@ void RenderContext::init(Metadata::ProgramTable entry)
                 { "VELOCITY", (UINT)particleSemanticIndex, DXGI_FORMAT_R32G32_FLOAT, (UINT)(i + 1),
                     8,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            inputLayout.push_back(
+                { "LIFETIME", (UINT)particleSemanticIndex, DXGI_FORMAT_R32_FLOAT, (UINT)(i + 1),
+                    12,
+                    D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
             particleSemanticIndex++;
             break;
         case Reflect::InstanceBufferType::VertexParticle3D:
@@ -268,6 +272,10 @@ void RenderContext::init(Metadata::ProgramTable entry)
             inputLayout.push_back(
                 { "VELOCITY", (UINT)particleSemanticIndex, DXGI_FORMAT_R32G32B32_FLOAT, (UINT)(i + 1),
                     12,
+                    D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
+            inputLayout.push_back(
+                { "LIFETIME", (UINT)particleSemanticIndex, DXGI_FORMAT_R32_FLOAT, (UINT)(i + 1),
+                    24,
                     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 });
             particleSemanticIndex++;
             break;

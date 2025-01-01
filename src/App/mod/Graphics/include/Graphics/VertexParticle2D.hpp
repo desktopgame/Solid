@@ -5,9 +5,10 @@ namespace Lib::Graphics {
 struct VertexParticle2D {
     Math::Vector2 offset;
     Math::Vector2 velocity;
+    float lifetime;
 
     explicit VertexParticle2D() = default;
-    explicit VertexParticle2D(const Math::Vector2& offset, const Math::Vector2& velocity);
-    explicit VertexParticle2D(float x, float y, float vx, float vy);
+    explicit VertexParticle2D(const Math::Vector2& offset, const Math::Vector2& velocity, float lifetime);
+    explicit VertexParticle2D(float x, float y, float vx, float vy, float lifetime);
 };
 }
