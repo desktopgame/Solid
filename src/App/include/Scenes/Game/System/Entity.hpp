@@ -39,6 +39,7 @@ public:
 protected:
     Entity();
 
+    virtual void onDead(const std::shared_ptr<DamageSource>& damageSource);
     virtual void onPositionChanged(const Vector3& position);
     virtual void onRotationChanged(const Vector3& rotation);
 

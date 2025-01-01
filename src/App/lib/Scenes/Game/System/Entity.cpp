@@ -24,11 +24,16 @@ bool Entity::isHitOnEntity(const std::shared_ptr<Entity>& entity) const
 
 void Entity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
+    bool isAlive = m_currentHP > 0;
     int32_t hp = m_currentHP - damageSource->getPower();
     if (hp < 0) {
         hp = 0;
     }
     m_currentHP = hp;
+
+    if (isAlive && m_currentHP == 0) {
+        onDead(damageSource);
+    }
 }
 
 Geom::OBB Entity::getOBB() const
@@ -76,6 +81,9 @@ Entity::Entity()
     , m_currentHP(10)
     , m_position()
     , m_rotation()
+{
+}
+void Entity::onDead(const std::shared_ptr<DamageSource>& damageSource)
 {
 }
 void Entity::onPositionChanged(const Vector3& position) { }
