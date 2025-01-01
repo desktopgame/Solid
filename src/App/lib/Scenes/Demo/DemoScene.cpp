@@ -15,9 +15,7 @@ DemoScene::DemoScene()
     , m_sceneCompleted()
     , m_particleVertexBuffer()
     , m_particleIndexBuffer()
-    , m_particleInstanceSourceBuffer()
-    , m_particleInstanceBuffer()
-    , m_particleDualBuffer(nullptr, nullptr)
+    , m_particleDualBuffer()
     , m_particleIndexLength()
     , m_renderer()
 {
@@ -41,7 +39,7 @@ void DemoScene::onEnter()
         m_particleIndexBuffer->allocate(sizeof(uint32_t) * indices.size());
         m_particleIndexBuffer->update(indices.data());
 
-        m_particleInstanceSourceBuffer = CpuBuffer::create();
+        m_particleDualBuffer = DualBuffer::create();
         std::vector<VertexParticle3D> particles(3000);
         Random random;
         for (int32_t i = 0; i < 3000; i++) {
@@ -52,13 +50,8 @@ void DemoScene::onEnter()
             particle.velocity = Vector3::normalized(Vector3({ fx, fy, fz }));
             particle.offset = Vector3({ 0, 0, 0 });
         }
-        m_particleInstanceSourceBuffer->allocate(sizeof(VertexParticle3D) * particles.size());
-        m_particleInstanceSourceBuffer->update(particles.data());
-
-        m_particleInstanceBuffer = GpuBuffer::create();
-        m_particleInstanceBuffer->allocate(m_particleInstanceSourceBuffer->getSize());
-
-        m_particleDualBuffer.reset(m_particleInstanceSourceBuffer, m_particleInstanceBuffer);
+        m_particleDualBuffer->allocate(sizeof(VertexParticle3D) * particles.size());
+        m_particleDualBuffer->update(particles.data());
     }
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
@@ -138,13 +131,13 @@ void DemoScene::onDraw3D()
     Reflect::UFloat uDeltatime;
     uDeltatime.value = Time::deltaTime() * 10.0f;
     ub->setCS(0, &uDeltatime);
-    ub->setCS(1, m_particleInstanceBuffer);
+    ub->setCS(1, m_particleDualBuffer->getGpuBuffer());
 
     auto rc = RenderContext::get(Metadata::ProgramTable::ParticleInstance3D);
 
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     surface->sync(m_particleDualBuffer);
-    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<IBuffer>> { m_particleInstanceBuffer }, 3000, (3000 + 255), 1, 1);
+    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<IBuffer>> { m_particleDualBuffer }, 3000, (3000 + 255), 1, 1);
 }
 
 void DemoScene::onDraw2D()

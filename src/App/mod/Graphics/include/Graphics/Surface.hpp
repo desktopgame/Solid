@@ -32,7 +32,7 @@ public:
 
     void present();
 
-    void sync(DualBuffer& dualBuffer);
+    void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
 
     void render(
         const std::shared_ptr<RenderContext>& rc,

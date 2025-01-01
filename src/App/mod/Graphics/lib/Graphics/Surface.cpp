@@ -172,9 +172,9 @@ void Surface::present()
     UniformPool::releaseAll();
 }
 
-void Surface::sync(DualBuffer& dualBuffer)
+void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
 {
-    dualBuffer.sync(m_commandList);
+    dualBuffer->sync(m_commandList);
 }
 
 void Surface::render(
