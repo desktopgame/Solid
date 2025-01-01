@@ -219,6 +219,7 @@ UniformBuffer::UniformBuffer()
     , m_psResources()
     , m_csResources()
     , m_uavBuffers()
+    , m_owned(false)
 {
 }
 

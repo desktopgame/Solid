@@ -34,6 +34,8 @@ set(SOURCES
     ./include/test.hpp
     ./include/Common/Graphics/Node.hpp
     ./include/Common/Graphics/NodeRegistry.hpp
+    ./include/Common/Graphics/Particle.hpp
+    ./include/Common/Graphics/SphericalParticle.hpp
     ./include/Common/Util/FpsController.hpp
     ./include/Scenes/Debug/DebugScene.hpp
     ./include/Scenes/Demo/DemoScene.hpp

@@ -13,10 +13,8 @@ DemoScene::DemoScene()
     , m_pointLightPos({ 0, 0, 0 })
     , m_pointLightPositions()
     , m_sceneCompleted()
-    , m_particleVertexBuffer()
-    , m_particleIndexBuffer()
-    , m_particleDualBuffer()
-    , m_particleIndexLength()
+    , m_particle()
+    , m_isDrawParticle()
     , m_renderer()
 {
 }
@@ -25,33 +23,9 @@ DemoScene::~DemoScene() { }
 void DemoScene::onEnter()
 {
     auto tex = Texture::create("./assets/tileNormal2.png");
-    if (!m_particleVertexBuffer || !m_particleIndexBuffer) {
-        std::vector<VertexNormal3D> vertices;
-        std::vector<uint32_t> indices;
-        Polygon::generateBox(vertices, indices);
-
-        m_particleVertexBuffer = CpuBuffer::create();
-        m_particleVertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
-        m_particleVertexBuffer->update(vertices.data());
-
-        m_particleIndexBuffer = CpuBuffer::create();
-        m_particleIndexLength = static_cast<int32_t>(indices.size());
-        m_particleIndexBuffer->allocate(sizeof(uint32_t) * indices.size());
-        m_particleIndexBuffer->update(indices.data());
-
-        m_particleDualBuffer = DualBuffer::create();
-        std::vector<VertexParticle3D> particles(3000);
-        Random random;
-        for (int32_t i = 0; i < 3000; i++) {
-            VertexParticle3D& particle = particles.at(i);
-            float fx = random.range(0.0f, 1.0f);
-            float fy = random.range(0.0f, 1.0f);
-            float fz = random.range(0.0f, 1.0f);
-            particle.velocity = Vector3::normalized(Vector3({ fx, fy, fz }));
-            particle.offset = Vector3({ 0, 0, 0 });
-        }
-        m_particleDualBuffer->allocate(sizeof(VertexParticle3D) * particles.size());
-        m_particleDualBuffer->update(particles.data());
+    if (!m_particle) {
+        m_particle = std::make_shared<Common::Graphics::SphericalParticle>();
+        m_particle->initialize(Common::Graphics::SphericalParticleOption(Vector3({ 0, 0, 0 }), 0, 0));
     }
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
@@ -63,6 +37,7 @@ void DemoScene::onEnter()
 }
 void DemoScene::onExit()
 {
+    m_particle = nullptr;
 }
 
 void DemoScene::onUpdate()
@@ -76,6 +51,7 @@ void DemoScene::onGui()
     ImGui::SeparatorText("General");
     ImGui::Checkbox("Draw2D", &m_isDraw2D);
     ImGui::Checkbox("Draw3D", &m_isDraw3D);
+    ImGui::Checkbox("DrawParticle", &m_isDrawParticle);
     ImGui::SeparatorText("Light");
     ImGui::DragFloat3("GlobalLightDir", m_globalLightDir.data(), 0.01f);
     for (int32_t i = 0; i < m_pointLightPositions.size(); i++) {
@@ -117,27 +93,9 @@ void DemoScene::onDraw3D()
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), false);
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
 
-    auto ub = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D);
-    Reflect::UCamera uCamera;
-    uCamera.modelMatrix = Matrix::scale(Vector3({ 0.1f, 0.1f, 0.1f }));
-    uCamera.viewMatrix = Camera::getLookAtMatrix();
-    uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
-
-    Reflect::UVector4 uColor;
-    uColor.value = Vector4({ 1, 1, 1, 1 });
-    ub->setVS(1, &uColor);
-
-    Reflect::UFloat uDeltatime;
-    uDeltatime.value = Time::deltaTime() * 10.0f;
-    ub->setCS(0, &uDeltatime);
-    ub->setCS(1, m_particleDualBuffer->getGpuBuffer());
-
-    auto rc = RenderContext::get(Metadata::ProgramTable::ParticleInstance3D);
-
-    auto surface = Engine::getInstance()->getDevice()->getSurface();
-    surface->sync(m_particleDualBuffer);
-    surface->render(rc, ub, m_particleVertexBuffer, m_particleIndexBuffer, m_particleIndexLength, std::vector<std::shared_ptr<IBuffer>> { m_particleDualBuffer }, 3000, (3000 + 255), 1, 1);
+    if (m_isDrawParticle) {
+        m_particle->draw();
+    }
 }
 
 void DemoScene::onDraw2D()

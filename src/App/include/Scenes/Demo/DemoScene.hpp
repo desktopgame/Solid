@@ -1,4 +1,5 @@
 #pragma once
+#include <Common/Graphics/SphericalParticle.hpp>
 #include <Common/Util/FpsController.hpp>
 #include <library.hpp>
 #include <memory>
@@ -29,10 +30,8 @@ private:
     std::vector<Vector3> m_pointLightPositions;
     bool m_sceneCompleted;
 
-    std::shared_ptr<CpuBuffer> m_particleVertexBuffer;
-    std::shared_ptr<CpuBuffer> m_particleIndexBuffer;
-    std::shared_ptr<DualBuffer> m_particleDualBuffer;
-    int32_t m_particleIndexLength;
+    std::shared_ptr<Common::Graphics::SphericalParticle> m_particle;
+    bool m_isDrawParticle;
 
     std::shared_ptr<Renderer> m_renderer;
 };
