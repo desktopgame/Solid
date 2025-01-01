@@ -7,11 +7,9 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<CpuBuffer> CpuBuffer::create(Type type)
+std::shared_ptr<CpuBuffer> CpuBuffer::create()
 {
     auto cpuBuffer = std::shared_ptr<CpuBuffer>(new CpuBuffer());
-    cpuBuffer->m_type = type;
-    cpuBuffer->m_device = Engine::getInstance()->getDevice()->getID3D12Device();
     return cpuBuffer;
 }
 
@@ -26,6 +24,7 @@ void CpuBuffer::allocate(size_t size)
     heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
     heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     D3D12_RESOURCE_DESC resDesc = {};
     resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
     resDesc.Width = size;
@@ -35,21 +34,11 @@ void CpuBuffer::allocate(size_t size)
     resDesc.Format = DXGI_FORMAT_UNKNOWN;
     resDesc.SampleDesc.Count = 1;
     resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-    D3D12_RESOURCE_STATES initState = {};
-    switch (m_type) {
-    case Type::Vertex:
-        heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-        resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        initState = D3D12_RESOURCE_STATE_GENERIC_READ;
-        break;
-    case Type::ReadWrite:
-        heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
-        resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-        initState = D3D12_RESOURCE_STATE_COMMON;
-        break;
-    }
-    if (FAILED(m_device->CreateCommittedResource(
+    auto device = Engine::getInstance()->getDevice()->getID3D12Device();
+    D3D12_RESOURCE_STATES initState = D3D12_RESOURCE_STATE_GENERIC_READ;
+    if (FAILED(device->CreateCommittedResource(
             &heapProps,
             D3D12_HEAP_FLAG_NONE,
             &resDesc,
@@ -72,85 +61,20 @@ void CpuBuffer::update(const void* data)
     m_version++;
 }
 
-CpuBuffer::Type CpuBuffer::getType() const { return m_type; }
 size_t CpuBuffer::getSize() const
 {
     return m_size;
 }
 int32_t CpuBuffer::getVersion() const { return m_version; }
 // internal
-void CpuBuffer::stateUAV(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
-{
-    if (m_type != Type::ReadWrite) {
-        throw std::logic_error("failed CopyResource()");
-    }
-    D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Transition.pResource = m_resource.Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-    cmdList->ResourceBarrier(1, &barrier);
-}
-
-void CpuBuffer::stateCommon(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
-{
-    if (m_type != Type::ReadWrite) {
-        throw std::logic_error("failed CopyResource()");
-    }
-    D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Transition.pResource = m_resource.Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-    cmdList->ResourceBarrier(1, &barrier);
-}
-
-void CpuBuffer::stateSync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
-{
-    if (m_type != Type::ReadWrite) {
-        throw std::logic_error("failed CopyResource()");
-    }
-    D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
-    barrier.UAV.pResource = m_resource.Get();
-
-    cmdList->ResourceBarrier(1, &barrier);
-}
-
-void CpuBuffer::transport(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList, const std::shared_ptr<CpuBuffer>& dst)
-{
-    if (m_type != Type::Vertex || dst->m_type != Type::ReadWrite) {
-        throw std::logic_error("failed CopyResource()");
-    }
-    D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Transition.pResource = dst->m_resource.Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-    cmdList->ResourceBarrier(1, &barrier);
-    cmdList->CopyResource(dst->m_resource.Get(), m_resource.Get());
-
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
-    cmdList->ResourceBarrier(1, &barrier);
-}
-
 Microsoft::WRL::ComPtr<ID3D12Resource> CpuBuffer::getID3D12Resource() const
 {
     return m_resource;
 }
 // private
 CpuBuffer::CpuBuffer()
-    : m_type()
-    , m_size(0)
+    : m_size(0)
     , m_version()
-    , m_device()
     , m_resource()
 {
 }
