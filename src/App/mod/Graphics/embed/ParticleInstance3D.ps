@@ -3,6 +3,7 @@ struct Output {
     float3 wpos : POSITION;
     float3 normal : NORMAL;
     float4 color : COLOR;
+    float lifetime : LIFETIME;
 };
 struct PSOutput
 {
@@ -12,6 +13,9 @@ struct PSOutput
 };
 
 PSOutput psMain(Output input) : SV_TARGET {
+    if (input.lifetime <= 0) {
+        discard;
+    }
     PSOutput output;
     output.outPosition = float4(input.wpos, 1);
     output.outNormal = float4(input.normal, 1);
