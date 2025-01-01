@@ -27,9 +27,9 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
 
     Common::Graphics::ParticleSystem::emit<Common::Graphics::SphericalParticle>(Common::Graphics::ParticleParameter<Common::Graphics::SphericalParticleOption>(
         Vector3({ 1.0f, 0.0f, 0.0f }),
-        Vector3({ 1.0f, 1.0f, 1.0f }),
+        Vector3({ 0.1f, 0.1f, 0.1f }),
         0.25f,
-        1.0f,
+        0.5f,
         Common::Graphics::SphericalParticleOption(m_position, 1.0f, 20.0f)));
 
     auto basicEntity = std::dynamic_pointer_cast<BasicEntity>(entity);
