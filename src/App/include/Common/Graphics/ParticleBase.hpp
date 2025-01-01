@@ -30,12 +30,12 @@ public:
 };
 
 template <typename T>
-class Particle : public IParticle {
+class ParticleBase : public IParticle {
 public:
     static inline constexpr int32_t NumParticles = 4096;
     using OptionType = T;
 
-    explicit Particle()
+    explicit ParticleBase()
         : m_vertexBuffer()
         , m_indexBuffer()
         , m_instanceBuffer()
@@ -44,7 +44,7 @@ public:
         , m_initialized(false)
     {
     }
-    virtual ~Particle() = default;
+    virtual ~ParticleBase() = default;
 
     void initialize(const ParticleParameter<T>& params)
     {

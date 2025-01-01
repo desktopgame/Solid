@@ -1,5 +1,5 @@
 #pragma once
-#include <Common/Graphics/Particle.hpp>
+#include <Common/Graphics/ParticleBase.hpp>
 #include <library.hpp>
 #include <random>
 
@@ -18,10 +18,10 @@ struct SphericalParticleOption {
     }
 };
 
-class SphericalParticle : public Particle<SphericalParticleOption> {
+class SphericalParticle : public ParticleBase<SphericalParticleOption> {
 public:
     explicit SphericalParticle()
-        : Particle()
+        : ParticleBase()
     {
     }
 
