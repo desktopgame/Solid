@@ -33,10 +33,11 @@ protected:
             float fx = random.range(-1.0f, 1.0f);
             float fy = random.range(-1.0f, 1.0f);
             float fz = random.range(-1.0f, 1.0f);
+            float speed = random.range(option.minSpeed, option.maxSpeed);
             Vector3 direction = Vector3::normalized(Vector3({ fx, fy, fz }));
 
             particle.offset = option.collisionPoint;
-            particle.velocity = direction;
+            particle.velocity = direction * speed;
         }
     }
 };

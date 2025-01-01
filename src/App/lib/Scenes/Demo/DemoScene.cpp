@@ -25,7 +25,7 @@ void DemoScene::onEnter()
     auto tex = Texture::create("./assets/tileNormal2.png");
     if (!m_particle) {
         m_particle = std::make_shared<Common::Graphics::SphericalParticle>();
-        m_particle->initialize(Common::Graphics::SphericalParticleOption(Vector3({ 0, 0, 0 }), 0, 0));
+        m_particle->initialize(Common::Graphics::SphericalParticleOption(Vector3({ 0, 0, 0 }), 1.0f, 20.0f));
     }
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
