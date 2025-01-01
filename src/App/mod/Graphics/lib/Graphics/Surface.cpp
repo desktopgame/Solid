@@ -1,5 +1,5 @@
 #include <Graphics/BloomEffect.hpp>
-#include <Graphics/Buffer.hpp>
+#include <Graphics/CpuBuffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/DualBuffer.hpp>
 #include <Graphics/GlobalLight.hpp>
@@ -180,8 +180,8 @@ void Surface::sync(DualBuffer& dualBuffer)
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>& vertex,
-    const std::shared_ptr<Buffer>& index,
+    const std::shared_ptr<CpuBuffer>& vertex,
+    const std::shared_ptr<CpuBuffer>& index,
     int32_t indexLength)
 {
     rc->render(m_commandList, ub, vertex, index, indexLength);
@@ -190,10 +190,10 @@ void Surface::render(
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>& vertex,
-    const std::shared_ptr<Buffer>& index,
+    const std::shared_ptr<CpuBuffer>& vertex,
+    const std::shared_ptr<CpuBuffer>& index,
     int32_t indexLength,
-    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
     int32_t instanceCount)
 {
     rc->render(m_commandList, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
@@ -202,10 +202,10 @@ void Surface::render(
 void Surface::render(
     const std::shared_ptr<RenderContext>& rc,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>& vertex,
-    const std::shared_ptr<Buffer>& index,
+    const std::shared_ptr<CpuBuffer>& vertex,
+    const std::shared_ptr<CpuBuffer>& index,
     int32_t indexLength,
-    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
     int32_t instanceCount,
     int32_t threadGroupCountX,
     int32_t threadGroupCountY,

@@ -29,10 +29,10 @@ private:
     std::vector<Vector3> m_pointLightPositions;
     bool m_sceneCompleted;
 
-    std::shared_ptr<Buffer> m_particleVertexBuffer;
-    std::shared_ptr<Buffer> m_particleIndexBuffer;
-    std::shared_ptr<Buffer> m_particleInstanceSourceBuffer;
-    std::shared_ptr<Buffer> m_particleInstanceBuffer;
+    std::shared_ptr<CpuBuffer> m_particleVertexBuffer;
+    std::shared_ptr<CpuBuffer> m_particleIndexBuffer;
+    std::shared_ptr<CpuBuffer> m_particleInstanceSourceBuffer;
+    std::shared_ptr<GpuBuffer> m_particleInstanceBuffer;
     DualBuffer m_particleDualBuffer;
     int32_t m_particleIndexLength;
 

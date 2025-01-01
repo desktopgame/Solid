@@ -1,5 +1,5 @@
 #include <Graphics/BloomEffect.hpp>
-#include <Graphics/Buffer.hpp>
+#include <Graphics/CpuBuffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/Shader.hpp>

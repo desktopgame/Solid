@@ -10,7 +10,7 @@
 namespace Lib::Graphics {
 class Device;
 class Shader;
-class Buffer;
+class CpuBuffer;
 class PointLight {
 public:
     static inline constexpr int32_t k_maxCount = 50;

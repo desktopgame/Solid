@@ -1,5 +1,5 @@
-#include <Graphics/Buffer.hpp>
 #include <Graphics/Camera.hpp>
+#include <Graphics/CpuBuffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/PointLight.hpp>
 #include <Graphics/Shader.hpp>
@@ -7,6 +7,7 @@
 #include <Math/Matrix.hpp>
 #include <Utils/String.hpp>
 #include <stdexcept>
+
 
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;

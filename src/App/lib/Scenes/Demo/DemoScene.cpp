@@ -32,16 +32,16 @@ void DemoScene::onEnter()
         std::vector<uint32_t> indices;
         Polygon::generateBox(vertices, indices);
 
-        m_particleVertexBuffer = Buffer::create(Buffer::Type::Vertex);
+        m_particleVertexBuffer = CpuBuffer::create();
         m_particleVertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
         m_particleVertexBuffer->update(vertices.data());
 
-        m_particleIndexBuffer = Buffer::create(Buffer::Type::Vertex);
+        m_particleIndexBuffer = CpuBuffer::create();
         m_particleIndexLength = static_cast<int32_t>(indices.size());
         m_particleIndexBuffer->allocate(sizeof(uint32_t) * indices.size());
         m_particleIndexBuffer->update(indices.data());
 
-        m_particleInstanceSourceBuffer = Buffer::create(Buffer::Type::Vertex);
+        m_particleInstanceSourceBuffer = CpuBuffer::create();
         std::vector<VertexParticle3D> particles(3000);
         Random random;
         for (int32_t i = 0; i < 3000; i++) {
@@ -55,7 +55,7 @@ void DemoScene::onEnter()
         m_particleInstanceSourceBuffer->allocate(sizeof(VertexParticle3D) * particles.size());
         m_particleInstanceSourceBuffer->update(particles.data());
 
-        m_particleInstanceBuffer = Buffer::create(Buffer::Type::ReadWrite);
+        m_particleInstanceBuffer = GpuBuffer::create();
         m_particleInstanceBuffer->allocate(m_particleInstanceSourceBuffer->getSize());
 
         m_particleDualBuffer.reset(m_particleInstanceSourceBuffer, m_particleInstanceBuffer);

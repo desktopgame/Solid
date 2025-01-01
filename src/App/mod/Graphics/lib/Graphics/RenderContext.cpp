@@ -1,4 +1,4 @@
-#include <Graphics/Buffer.hpp>
+#include <Graphics/CpuBuffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
 #include <Graphics/Metadata.hpp>
@@ -85,8 +85,8 @@ void RenderContext::compute(
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>& vertexBuffer,
-    const std::shared_ptr<Buffer>& indexBuffer,
+    const std::shared_ptr<CpuBuffer>& vertexBuffer,
+    const std::shared_ptr<CpuBuffer>& indexBuffer,
     int32_t indexLength)
 {
     render(cmdList,
@@ -102,10 +102,10 @@ void RenderContext::render(
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>& vertexBuffer,
-    const std::shared_ptr<Buffer>& indexBuffer,
+    const std::shared_ptr<CpuBuffer>& vertexBuffer,
+    const std::shared_ptr<CpuBuffer>& indexBuffer,
     int32_t indexLength,
-    const std::vector<std::shared_ptr<Buffer>>& instanceBuffers,
+    const std::vector<std::shared_ptr<CpuBuffer>>& instanceBuffers,
     int32_t instanceCount)
 {
     render(cmdList,
@@ -527,10 +527,10 @@ void RenderContext::init(Metadata::ProgramTable entry)
 void RenderContext::render(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
     const std::shared_ptr<UniformBuffer>& ub,
-    const std::shared_ptr<Buffer>& vertexBuffer,
-    const std::shared_ptr<Buffer>& indexBuffer,
+    const std::shared_ptr<CpuBuffer>& vertexBuffer,
+    const std::shared_ptr<CpuBuffer>& indexBuffer,
     int32_t indexLength,
-    const std::shared_ptr<Buffer>* instanceBuffers,
+    const std::shared_ptr<CpuBuffer>* instanceBuffers,
     int32_t instanceBufferCount,
     int32_t instanceCount)
 {
@@ -583,7 +583,7 @@ void RenderContext::render(
     cmdList->IASetVertexBuffers(0, 1, &vbView);
 
     for (int32_t i = 0; i < instanceBufferCount; i++) {
-        std::shared_ptr<Buffer> instBuffer = instanceBuffers[i];
+        std::shared_ptr<CpuBuffer> instBuffer = instanceBuffers[i];
         Reflect::InstanceBufferType instBufType = program.instanceBufferLayout.at(i);
 
         D3D12_VERTEX_BUFFER_VIEW instView = {};

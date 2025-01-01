@@ -8,7 +8,7 @@
 #include <memory>
 
 namespace Lib::Graphics {
-class Buffer;
+class CpuBuffer;
 class Texture;
 class TileBatch;
 class RenderContext;
@@ -53,8 +53,8 @@ private:
     public:
         explicit Object() = default;
         std::shared_ptr<RenderContext> rc;
-        std::shared_ptr<Buffer> vertexBuffer;
-        std::shared_ptr<Buffer> indexBuffer;
+        std::shared_ptr<CpuBuffer> vertexBuffer;
+        std::shared_ptr<CpuBuffer> indexBuffer;
         int32_t indexLength;
     };
 

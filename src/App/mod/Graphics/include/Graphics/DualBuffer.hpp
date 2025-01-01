@@ -5,16 +5,17 @@
 #include <wrl/client.h>
 
 namespace Lib::Graphics {
-class Buffer;
+class CpuBuffer;
+class GpuBuffer;
 
 class DualBuffer {
 public:
-    explicit DualBuffer(const std::shared_ptr<Buffer>& cpuBuffer, const std::shared_ptr<Buffer>& gpuBuffer);
+    explicit DualBuffer(const std::shared_ptr<CpuBuffer>& cpuBuffer, const std::shared_ptr<GpuBuffer>& gpuBuffer);
 
-    void reset(const std::shared_ptr<Buffer>& cpuBuffer, const std::shared_ptr<Buffer>& gpuBuffer);
+    void reset(const std::shared_ptr<CpuBuffer>& cpuBuffer, const std::shared_ptr<GpuBuffer>& gpuBuffer);
 
-    std::shared_ptr<Buffer> getCpuBuffer() const;
-    std::shared_ptr<Buffer> getGpuBuffer() const;
+    std::shared_ptr<CpuBuffer> getCpuBuffer() const;
+    std::shared_ptr<GpuBuffer> getGpuBuffer() const;
 
 #if SOLID_ENABLE_INTERNAL
     void sync(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
@@ -22,7 +23,7 @@ public:
 
 private:
     int32_t m_version;
-    std::shared_ptr<Buffer> m_cpuBuffer;
-    std::shared_ptr<Buffer> m_gpuBuffer;
+    std::shared_ptr<CpuBuffer> m_cpuBuffer;
+    std::shared_ptr<GpuBuffer> m_gpuBuffer;
 };
 }

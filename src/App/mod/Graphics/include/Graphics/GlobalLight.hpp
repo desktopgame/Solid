@@ -9,7 +9,7 @@
 namespace Lib::Graphics {
 class Device;
 class Shader;
-class Buffer;
+class CpuBuffer;
 class GlobalLight {
 public:
     static inline constexpr int32_t k_maxCount = 1;

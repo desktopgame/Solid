@@ -29,8 +29,8 @@ Field::Field(
 
 void Field::load(const std::string& file)
 {
-    m_vertexBuffer = Buffer::create(Buffer::Type::Vertex);
-    m_indexBuffer = Buffer::create(Buffer::Type::Vertex);
+    m_vertexBuffer = CpuBuffer::create();
+    m_indexBuffer = CpuBuffer::create();
 
     std::vector<VertexNormalTexCoord3D> vertices;
     std::vector<uint32_t> indices;
@@ -43,7 +43,7 @@ void Field::load(const std::string& file)
     m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_indexBuffer->update(indices.data());
 
-    auto instBuf = Buffer::create(Buffer::Type::Vertex);
+    auto instBuf = CpuBuffer::create();
     std::vector<Vector4> instances;
     IO::deserializeTile(file, instances, 1.0f);
     instBuf->allocate(sizeof(Vector4) * instances.size());

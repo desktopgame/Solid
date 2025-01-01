@@ -1,6 +1,6 @@
-#include <Graphics/Buffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/Engine.hpp>
+#include <Graphics/GpuBuffer.hpp>
 #include <Graphics/Texture.hpp>
 #include <Graphics/UniformBuffer.hpp>
 
@@ -118,7 +118,7 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Texture>& texture
     }
 }
 
-void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
+void UniformBuffer::setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
 {
     if (index >= Metadata::k_programs.at(m_entry).csUniforms.size()) {
         throw std::logic_error("uniform is out of range.");
@@ -126,9 +126,6 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
     Metadata::Uniform u = Metadata::k_programs.at(m_entry).csUniforms.at(index);
     bool isUnorderdAccessView = u.type == Metadata::Uniform::Type::UAV;
     if (isUnorderdAccessView) {
-        if (buffer->getType() != Buffer::Type::ReadWrite) {
-            throw std::logic_error("buffer is not read write type.");
-        }
         if (index < m_uavBuffers.size() && m_uavBuffers.at(index) == buffer) {
             return;
         }
