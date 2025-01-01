@@ -129,6 +129,9 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<Buffer>& buffer)
         if (buffer->getType() != Buffer::Type::ReadWrite) {
             throw std::logic_error("buffer is not read write type.");
         }
+        if (index < m_uavBuffers.size() && m_uavBuffers.at(index) == buffer) {
+            return;
+        }
         auto device = Engine::getInstance()->getDevice()->getID3D12Device();
         uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
