@@ -52,6 +52,7 @@ set(SOURCES
     ./include/Graphics/PointLight.hpp
     ./include/Graphics/BloomEffect.hpp
     ./include/Graphics/MatrixStack.hpp
+    ./include/Graphics/IBuffer.hpp
     ./include/Graphics/CpuBuffer.hpp
     ./include/Graphics/GpuBuffer.hpp
     ./include/Graphics/DualBuffer.hpp

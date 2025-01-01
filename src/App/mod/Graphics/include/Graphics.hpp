@@ -11,6 +11,7 @@
 #include <Graphics/FontMetrics.hpp>
 #include <Graphics/GlobalLight.hpp>
 #include <Graphics/GpuBuffer.hpp>
+#include <Graphics/IBuffer.hpp>
 #include <Graphics/PointLight.hpp>
 #include <Graphics/Polygon.hpp>
 #include <Graphics/RenderContext.hpp>
