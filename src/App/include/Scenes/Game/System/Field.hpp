@@ -159,7 +159,7 @@ private:
     std::shared_ptr<CpuBuffer> m_indexBuffer;
     Reflect::UTileTransform m_tileTransform;
     Reflect::UTilePallet m_tilePallet;
-    std::vector<std::shared_ptr<CpuBuffer>> m_instanceBuffers;
+    std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
     int32_t m_indexLength;
     int32_t m_instanceCount;
 
