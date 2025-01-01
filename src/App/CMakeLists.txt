@@ -34,7 +34,9 @@ set(SOURCES
     ./include/test.hpp
     ./include/Common/Graphics/Node.hpp
     ./include/Common/Graphics/NodeRegistry.hpp
+    ./include/Common/Graphics/IParticle.hpp
     ./include/Common/Graphics/Particle.hpp
+    ./include/Common/Graphics/ParticleSystem.hpp
     ./include/Common/Graphics/SphericalParticle.hpp
     ./include/Common/Util/FpsController.hpp
     ./include/Scenes/Debug/DebugScene.hpp
@@ -52,6 +54,7 @@ set(SOURCES
     ./lib/test.cpp
     ./lib/Common/Graphics/Node.cpp
     ./lib/Common/Graphics/NodeRegistry.cpp
+    ./lib/Common/Graphics/ParticleSystem.cpp
     ./lib/Common/Util/FpsController.cpp
     ./lib/Scenes/Debug/DebugScene.cpp
     ./lib/Scenes/Demo/DemoScene.cpp

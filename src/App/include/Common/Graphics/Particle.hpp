@@ -1,4 +1,5 @@
 #pragma once
+#include <Common/Graphics/IParticle.hpp>
 #include <cstdint>
 #include <library.hpp>
 #include <memory>
@@ -29,9 +30,10 @@ public:
 };
 
 template <typename T>
-class Particle {
+class Particle : public IParticle {
 public:
     static inline constexpr int32_t NumParticles = 4096;
+    using OptionType = T;
 
     explicit Particle()
         : m_vertexBuffer()
@@ -57,14 +59,14 @@ public:
         m_uniformBuffer = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D)->owned();
     }
 
-    void update()
+    void update() override
     {
         if (!isExpired()) {
             m_elapsed += Time::deltaTime();
         }
     }
 
-    void draw()
+    void draw() override
     {
         Reflect::UCamera uCamera;
         uCamera.modelMatrix = Matrix::scale(m_scale);
@@ -90,7 +92,7 @@ public:
         surface->render(rc, m_uniformBuffer, m_vertexBuffer, m_indexBuffer, m_indexLength, std::vector<std::shared_ptr<IBuffer>> { m_instanceBuffer }, NumParticles, threads, 1, 1);
     }
 
-    void destroy()
+    void destroy() override
     {
         if (m_uniformBuffer) {
             UniformPool::release(m_uniformBuffer);
@@ -98,7 +100,7 @@ public:
         }
     }
 
-    bool isExpired() { return m_elapsed >= m_lifetime; }
+    bool isExpired() const override { return m_elapsed >= m_lifetime; }
 
 protected:
     virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<T>& params) = 0;
