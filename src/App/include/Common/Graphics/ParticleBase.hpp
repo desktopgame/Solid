@@ -103,8 +103,6 @@ public:
 
     bool isExpired() const override { return m_elapsed >= m_lifetime; }
 
-    virtual IParticle::Type getType() const { return IParticle::Type::None; }
-
 protected:
     virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<T>& params) = 0;
 

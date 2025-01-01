@@ -17,7 +17,6 @@ public:
     virtual void draw() = 0;
     virtual void destroy() = 0;
     virtual bool isExpired() const = 0;
-    virtual Type getType() const = 0;
 
 private:
 };
