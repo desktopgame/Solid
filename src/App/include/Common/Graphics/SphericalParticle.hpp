@@ -38,7 +38,7 @@ protected:
 
             particle.offset = params.options.collisionPoint;
             particle.velocity = direction * speed;
-            particle.lifetime = params.lifetime;
+            particle.lifetime = random.range(params.minLifetime, params.maxLifetime);
         }
     }
 };

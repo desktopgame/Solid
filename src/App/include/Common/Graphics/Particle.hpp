@@ -9,13 +9,20 @@ class ParticleParameter {
 public:
     Vector3 color;
     Vector3 scale;
-    float lifetime;
+    float minLifetime;
+    float maxLifetime;
     T options;
 
-    explicit ParticleParameter(const Vector3& color, const Vector3& scale, float lifetime, const T& options)
+    explicit ParticleParameter(
+        const Vector3& color,
+        const Vector3& scale,
+        float minLifetime,
+        float maxLifetime,
+        const T& options)
         : color(color)
         , scale(scale)
-        , lifetime(lifetime)
+        , minLifetime(minLifetime)
+        , maxLifetime(maxLifetime)
         , options(options)
     {
     }
@@ -44,7 +51,7 @@ public:
         batch(m_particles, params);
         m_color = params.color;
         m_scale = params.scale;
-        m_lifetime = params.lifetime;
+        m_lifetime = params.maxLifetime;
         m_elapsed = 0.0f;
         m_instanceBuffer->update(m_particles.data());
         m_uniformBuffer = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D)->owned();

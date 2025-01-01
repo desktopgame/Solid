@@ -28,6 +28,7 @@ void DemoScene::onEnter()
         m_particle->initialize(Common::Graphics::ParticleParameter(
             Vector3({ 1, 0, 0 }),
             Vector3({ 0.1f, 0.1f, 0.1f }),
+            0.25f,
             1.0f,
             Common::Graphics::SphericalParticleOption(Vector3({ 0, 0, 0 }), 1.0f, 20.0f)));
     }
