@@ -53,6 +53,8 @@ set(SOURCES
     ./include/Graphics/PointLight.hpp
     ./include/Graphics/BloomEffect.hpp
     ./include/Graphics/MatrixStack.hpp
+    ./include/Graphics/CpuBuffer.hpp
+    ./include/Graphics/GpuBuffer.hpp
     ./include/Graphics/DualBuffer.hpp
     ./lib/Graphics/Device.cpp
     ./lib/Graphics/Engine.cpp
@@ -83,6 +85,8 @@ set(SOURCES
     ./lib/Graphics/PointLight.cpp
     ./lib/Graphics/BloomEffect.cpp
     ./lib/Graphics/MatrixStack.cpp
+    ./lib/Graphics/CpuBuffer.cpp
+    ./lib/Graphics/GpuBuffer.cpp
     ./lib/Graphics/DualBuffer.cpp
 )
 source_group(
