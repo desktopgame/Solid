@@ -1,7 +1,7 @@
 #pragma once
-#include <Graphics/Buffer.hpp>
 #include <Graphics/Camera.hpp>
 #include <Graphics/Color.hpp>
+#include <Graphics/CpuBuffer.hpp>
 #include <Graphics/Device.hpp>
 #include <Graphics/DualBuffer.hpp>
 #include <Graphics/Engine.hpp>
@@ -10,6 +10,7 @@
 #include <Graphics/FontMap.hpp>
 #include <Graphics/FontMetrics.hpp>
 #include <Graphics/GlobalLight.hpp>
+#include <Graphics/GpuBuffer.hpp>
 #include <Graphics/PointLight.hpp>
 #include <Graphics/Polygon.hpp>
 #include <Graphics/RenderContext.hpp>

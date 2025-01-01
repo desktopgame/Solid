@@ -28,7 +28,6 @@ set(SOURCES
     ./include/Graphics/Engine.hpp
     ./include/Graphics/Surface.hpp
     ./include/Graphics/Shader.hpp
-    ./include/Graphics/Buffer.hpp
     ./include/Graphics/Texture.hpp
     ./include/Graphics/Screen.hpp
     ./include/Graphics/Camera.hpp
@@ -60,7 +59,6 @@ set(SOURCES
     ./lib/Graphics/Engine.cpp
     ./lib/Graphics/Surface.cpp
     ./lib/Graphics/Shader.cpp
-    ./lib/Graphics/Buffer.cpp
     ./lib/Graphics/Texture.cpp
     ./lib/Graphics/Screen.cpp
     ./lib/Graphics/Camera.cpp
