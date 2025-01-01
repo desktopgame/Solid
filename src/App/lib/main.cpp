@@ -6,6 +6,7 @@
 
 // App
 #include <Common/Graphics/NodeRegistry.hpp>
+#include <Common/Graphics/ParticleSystem.hpp>
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
@@ -33,6 +34,7 @@ static int appMain(int argc, char* argv[])
     std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Debug");
 
     Graphics::NodeRegistry::initialize();
+    Graphics::ParticleSystem::initialize();
 
     window->show();
     bool running = true;
@@ -60,6 +62,7 @@ static int appMain(int argc, char* argv[])
         Time::sync();
     }
 
+    Graphics::ParticleSystem::destroy();
     Graphics::NodeRegistry::destroy();
 
     sceneManager = nullptr;

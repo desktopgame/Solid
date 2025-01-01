@@ -10,16 +10,19 @@ struct SphericalParticleOption {
     float minSpeed;
     float maxSpeed;
 
-    SphericalParticleOption(const Vector3& point, float min, float max)
+    SphericalParticleOption(const Vector3& point, float minSpeed, float maxSpeed)
         : collisionPoint(point)
-        , minSpeed(min)
-        , maxSpeed(max)
+        , minSpeed(minSpeed)
+        , maxSpeed(maxSpeed)
     {
     }
 };
 
 class SphericalParticle : public ParticleBase<SphericalParticleOption> {
 public:
+    using Option = SphericalParticleOption;
+    static inline constexpr IParticle::Type Type = IParticle::Type::Spherical;
+
     explicit SphericalParticle()
         : ParticleBase()
     {

@@ -6,7 +6,8 @@ class IParticle {
 public:
     enum class Type : int32_t {
         None = 0,
-        Spherical
+        Spherical,
+        Count
     };
 
     explicit IParticle() = default;

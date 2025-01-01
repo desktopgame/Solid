@@ -1,4 +1,5 @@
 #pragma once
+#include <Common/Graphics/ParticleSystem.hpp>
 #include <Common/Graphics/SphericalParticle.hpp>
 #include <Common/Util/FpsController.hpp>
 #include <library.hpp>
@@ -29,10 +30,6 @@ private:
     Vector3 m_pointLightPos;
     std::vector<Vector3> m_pointLightPositions;
     bool m_sceneCompleted;
-
-    std::shared_ptr<Common::Graphics::SphericalParticle> m_particle;
-    bool m_isDrawParticle;
-
     std::shared_ptr<Renderer> m_renderer;
 };
 }

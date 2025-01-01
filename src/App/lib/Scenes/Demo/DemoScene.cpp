@@ -1,4 +1,6 @@
 #include <Common/Graphics/Node.hpp>
+#include <Common/Graphics/ParticleSystem.hpp>
+#include <Common/Graphics/SphericalParticle.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <cmath>
 #include <imgui.h>
@@ -13,8 +15,6 @@ DemoScene::DemoScene()
     , m_pointLightPos({ 0, 0, 0 })
     , m_pointLightPositions()
     , m_sceneCompleted()
-    , m_particle()
-    , m_isDrawParticle()
     , m_renderer()
 {
 }
@@ -23,15 +23,6 @@ DemoScene::~DemoScene() { }
 void DemoScene::onEnter()
 {
     auto tex = Texture::create("./assets/tileNormal2.png");
-    if (!m_particle) {
-        m_particle = std::make_shared<Common::Graphics::SphericalParticle>();
-        m_particle->initialize(Common::Graphics::ParticleParameter(
-            Vector3({ 1, 0, 0 }),
-            Vector3({ 0.1f, 0.1f, 0.1f }),
-            0.25f,
-            1.0f,
-            Common::Graphics::SphericalParticleOption(Vector3({ 0, 0, 0 }), 1.0f, 20.0f)));
-    }
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
@@ -42,7 +33,6 @@ void DemoScene::onEnter()
 }
 void DemoScene::onExit()
 {
-    m_particle = nullptr;
 }
 
 void DemoScene::onUpdate()
@@ -56,7 +46,6 @@ void DemoScene::onGui()
     ImGui::SeparatorText("General");
     ImGui::Checkbox("Draw2D", &m_isDraw2D);
     ImGui::Checkbox("Draw3D", &m_isDraw3D);
-    ImGui::Checkbox("DrawParticle", &m_isDrawParticle);
     ImGui::SeparatorText("Light");
     ImGui::DragFloat3("GlobalLightDir", m_globalLightDir.data(), 0.01f);
     for (int32_t i = 0; i < m_pointLightPositions.size(); i++) {
@@ -67,6 +56,15 @@ void DemoScene::onGui()
     ImGui::DragFloat3("Next PointLight", m_pointLightPos.data(), 0.01f);
     if (ImGui::Button("Add PointLight")) {
         m_pointLightPositions.push_back(m_pointLightPos);
+    }
+    if (ImGui::Button("Show Particle")) {
+
+        Common::Graphics::ParticleSystem::emit<Common::Graphics::SphericalParticle>(Common::Graphics::ParticleParameter<Common::Graphics::SphericalParticleOption>(
+            Vector3({ 1.0f, 0.0f, 0.0f }),
+            Vector3({ 0.01f, 0.01f, 0.01f }),
+            0.25f,
+            1.0f,
+            Common::Graphics::SphericalParticleOption(Vector3({ 0.0f, 0.0f, 0.0f }), 1.0f, 20.0f)));
     }
     ImGui::SeparatorText("Scene Transition");
     if (ImGui::Button("Exit")) {
@@ -97,10 +95,7 @@ void DemoScene::onDraw3D()
     m_renderer->drawPlane(Vector3({ 10, 0, 20 }), Vector2({ 10, 10 }), q, Vector4({ 1, 1, 1, 1 }), true);
     m_renderer->drawBox(Vector3({ 25, 0, 10 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), false);
     m_renderer->drawBox(Vector3({ 25, 0, 20 }), Vector3({ 5, 5, 5 }), q, Vector4({ 1, 1, 1, 1 }), true);
-
-    if (m_isDrawParticle) {
-        m_particle->draw();
-    }
+    Common::Graphics::ParticleSystem::draw();
 }
 
 void DemoScene::onDraw2D()

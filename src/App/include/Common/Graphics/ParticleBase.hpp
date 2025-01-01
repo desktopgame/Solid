@@ -33,7 +33,8 @@ template <typename T>
 class ParticleBase : public IParticle {
 public:
     static inline constexpr int32_t NumParticles = 4096;
-    using OptionType = T;
+    using Option = T;
+    static inline constexpr IParticle::Type Type = IParticle::Type::None;
 
     explicit ParticleBase()
         : m_vertexBuffer()
