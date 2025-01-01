@@ -26,7 +26,7 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
     m_currentHP = 0;
 
     Common::Graphics::ParticleSystem::emit<Common::Graphics::SphericalParticle>(Common::Graphics::ParticleParameter<Common::Graphics::SphericalParticleOption>(
-        Vector3({ 1.0f, 0.0f, 0.0f }),
+        Vector3({ 1.0f, 1.0f, 0.0f }),
         Vector3({ 0.1f, 0.1f, 0.1f }),
         0.25f,
         0.5f,
