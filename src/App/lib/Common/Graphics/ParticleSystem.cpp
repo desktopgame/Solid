@@ -3,8 +3,25 @@
 namespace App::Common::Graphics {
 std::vector<std::vector<std::shared_ptr<IParticle>>> ParticleSystem::s_freeTable(static_cast<int32_t>(IParticle::Type::Count));
 std::vector<std::vector<std::shared_ptr<IParticle>>> ParticleSystem::s_usedTable(static_cast<int32_t>(IParticle::Type::Count));
+
+std::shared_ptr<CpuBuffer> ParticleSystem::s_vertexBuffer;
+std::shared_ptr<CpuBuffer> ParticleSystem::s_indexBuffer;
+int32_t ParticleSystem::s_indexLength;
+
 void ParticleSystem::initialize()
 {
+    std::vector<VertexNormal3D> vertices;
+    std::vector<uint32_t> indices;
+    Polygon::generateBox(vertices, indices);
+
+    s_vertexBuffer = CpuBuffer::create();
+    s_vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
+    s_vertexBuffer->update(vertices.data());
+
+    s_indexBuffer = CpuBuffer::create();
+    s_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
+    s_indexBuffer->update(indices.data());
+    s_indexLength = static_cast<int32_t>(indices.size());
 }
 
 void ParticleSystem::draw()
@@ -38,7 +55,7 @@ void ParticleSystem::draw()
         std::vector<std::shared_ptr<IParticle>>& particles = s_usedTable.at(i);
 
         for (auto& particle : particles) {
-            particle->draw();
+            particle->draw(s_vertexBuffer, s_indexBuffer, s_indexLength);
         }
     }
 }
@@ -62,5 +79,8 @@ void ParticleSystem::destroy()
 {
     s_freeTable.clear();
     s_usedTable.clear();
+
+    s_vertexBuffer = nullptr;
+    s_indexBuffer = nullptr;
 }
 }

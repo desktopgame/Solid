@@ -44,5 +44,9 @@ private:
 
     static std::vector<std::vector<std::shared_ptr<IParticle>>> s_freeTable;
     static std::vector<std::vector<std::shared_ptr<IParticle>>> s_usedTable;
+
+    static std::shared_ptr<CpuBuffer> s_vertexBuffer;
+    static std::shared_ptr<CpuBuffer> s_indexBuffer;
+    static int32_t s_indexLength;
 };
 }
