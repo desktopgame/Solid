@@ -10,6 +10,7 @@ FieldGenerator::Room::Room()
     , index()
     , linkTo()
     , isGarbage()
+    , isNoLink()
 {
 }
 
@@ -132,6 +133,25 @@ void FieldGenerator::generate()
     });
     rooms.erase(iter, rooms.end());
 
+    // お互いにリンクしていたら片方を非リンク
+    for (int32_t i = 0; i < static_cast<int32_t>(rooms.size()); i++) {
+        auto& room = rooms.at(i);
+
+        for (int32_t j = 0; j < static_cast<int32_t>(rooms.size()); j++) {
+            if (i == j) {
+                continue;
+            }
+            auto& otherRoom = rooms.at(j);
+
+            if (room.index == otherRoom.linkTo && room.linkTo == otherRoom.index) {
+                if (!room.isNoLink && !otherRoom.isNoLink) {
+                    int32_t n = rand.range(0, 1);
+                    (n == 0 ? room : otherRoom).isNoLink = true;
+                }
+            }
+        }
+    }
+
     // ブロック座標を記憶する配列を確保
     std::array<std::array<std::array<bool, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
     for (int32_t x = 0; x < k_sizeX; x++) {
@@ -143,6 +163,10 @@ void FieldGenerator::generate()
 
     // 道を作成
     for (const auto& room : rooms) {
+        if (room.isNoLink) {
+            continue;
+        }
+
         auto iter = std::find_if(rooms.begin(), rooms.end(), [room](const auto& e) -> bool {
             return room.linkTo == e.index;
         });

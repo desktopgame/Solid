@@ -20,6 +20,7 @@ private:
         int32_t index;
         int32_t linkTo;
         bool isGarbage;
+        bool isNoLink;
     };
 
     std::vector<Vector4> m_tiles;
