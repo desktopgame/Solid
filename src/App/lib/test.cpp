@@ -16,7 +16,7 @@ static void physicsTest()
     auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
     auto borderTex = Texture::create("./assets/Textures/tileBorder.png");
     auto field = std::make_shared<System::Field>(normalTex, borderTex);
-    field->load("assets\\Stages\\stage_base.csv");
+    field->load("./assets/Stages/stage_base.csv");
 
     for (int32_t i = 0; i < 10; i++) {
         auto enemy = System::Entities::SlimeEntity::create();
@@ -24,7 +24,7 @@ static void physicsTest()
         field->spwan(enemy);
     }
     auto player = System::Entities::PlayerEntity::create(
-        Common::Graphics::Node::deserialize("assets\\Models\\Player.json"));
+        Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
     player->setPosition(Vector3({ 999, 999, 999 }));
     player->setReceiveGravity(false);
     field->setPlayer(player);

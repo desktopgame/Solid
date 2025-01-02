@@ -28,7 +28,7 @@ void GameScene::onEnter()
         auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
         auto borderTex = Texture::create("./assets/Textures/tileBorder.png");
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
-        m_field->load("assets\\Stages\\stage_base.csv");
+        m_field->load("./assets/Stages/stage_base.csv");
 
         for (int32_t i = 0; i < 10; i++) {
             m_debugEntity = System::Entities::SlimeEntity::create();
@@ -36,7 +36,7 @@ void GameScene::onEnter()
             m_field->spwan(m_debugEntity);
         }
         m_debugPlayer = System::Entities::PlayerEntity::create(
-            Common::Graphics::Node::deserialize("assets\\Models\\Player.json"));
+            Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
         m_debugPlayer->setPosition(Vector3({ 80, 20, 80 }));
         m_field->setPlayer(m_debugPlayer);
     }
