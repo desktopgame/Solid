@@ -40,6 +40,9 @@ void GameScene::onEnter()
         m_debugPlayer->setPosition(Vector3({ 80, 20, 80 }));
         m_field->setPlayer(m_debugPlayer);
     }
+    if (!m_aimTexture) {
+        m_aimTexture = Texture::create("./assets/Textures/aim.png");
+    }
     if (Cursor::isVisible()) {
         Cursor::hide();
         Cursor::lock(Engine::getInstance()->getWindow());
@@ -79,6 +82,7 @@ void GameScene::onDraw2D()
 {
     m_field->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
+    m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)
