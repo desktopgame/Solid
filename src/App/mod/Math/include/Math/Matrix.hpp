@@ -157,6 +157,18 @@ struct MatrixT {
             (r3.at(0) * b.at(0)) + (r3.at(1) * b.at(1)) + (r3.at(2) * b.at(2)) + r3.at(3) });
     }
 
+    static VectorT<T, 4> multiply(const MatrixT<T>& a, const VectorT<T, 4>& b)
+    {
+        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.column(0);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.column(1);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r3 = a.column(2);
+        std::array<std::reference_wrapper<const T>, ColumnNum> r4 = a.column(3);
+        return VectorT<T, 4>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + (r1.at(2) * b.at(2)) + (r1.at(3) * b.at(3)),
+            (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + (r2.at(2) * b.at(2)) + (r2.at(3) * b.at(3)),
+            (r3.at(0) * b.at(0)) + (r3.at(1) * b.at(1)) + (r3.at(2) * b.at(2)) + (r3.at(3) * b.at(3)),
+            (r4.at(0) * b.at(0)) + (r4.at(1) * b.at(1)) + (r4.at(2) * b.at(2)) + (r4.at(3) * b.at(3)) });
+    }
+
     static MatrixT<T> translate(VectorT<T, 3> v)
     {
         MatrixT<T> m;
