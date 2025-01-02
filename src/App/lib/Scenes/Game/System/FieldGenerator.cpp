@@ -158,6 +158,12 @@ void FieldGenerator::generate()
         int32_t x = startX;
         while (x != endX && x >= 0 && x < k_sizeX) {
             table[x][0][startZ] = true;
+            if (startZ - 1 >= 0) {
+                table[x][0][startZ - 1] = true;
+            }
+            if (startZ + 1 < k_sizeZ) {
+                table[x][0][startZ + 1] = true;
+            }
             x += (x < endX) ? 1 : -1;
         }
 
@@ -165,6 +171,12 @@ void FieldGenerator::generate()
         int32_t z = startZ;
         while (z != endZ && z >= 0 && z < k_sizeZ) {
             table[endX][0][z] = true;
+            if (endX - 1 >= 0) {
+                table[endX - 1][0][z] = true;
+            }
+            if (endX + 1 < k_sizeX) {
+                table[endX + 1][0][z] = true;
+            }
             z += (z < endZ) ? 1 : -1;
         }
     }
