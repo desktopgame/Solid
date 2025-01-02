@@ -59,6 +59,10 @@ void FieldGenerator::generate()
         Room room;
         int32_t roomSizeXZ = rand.range(10, 20);
         int32_t roomSizeY = rand.range(10, 20);
+
+        if (roomSizeXZ % 2 == 0) {
+            roomSizeXZ++;
+        }
         room.size = IntVector3({ roomSizeXZ, roomSizeY, roomSizeXZ });
 
         std::vector<IntVector3> candidates;
