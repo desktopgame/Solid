@@ -37,6 +37,29 @@
             "options": {
                 "cwd": ".\\build\\Solid"
             }
-        }
+        },
+        // アセットのインポートタスク
+        // rawdataには編集可能な状態でデータを置き、assetsには最適化された状態で出力する
+        {
+            "label": "Import",
+            "type": "shell",
+            "dependsOn": [
+                "Import vox",
+                "Import model",
+            ],
+            "dependsOrder": "parallel"
+        },
+        {
+            "label": "Import vox",
+            "type": "shell",
+            "command": "python .\\scripts\\vox_importer.py",
+            "hide": true
+        },
+        {
+            "label": "Import model",
+            "type": "shell",
+            "command": "python .\\scripts\\model_importer.py",
+            "hide": true
+        },
     ]
 }
