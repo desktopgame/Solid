@@ -10,9 +10,9 @@ namespace Entities {
 }
 class Field {
 public:
-    static inline constexpr int32_t k_fieldSizeX = 40;
+    static inline constexpr int32_t k_fieldSizeX = 64;
     static inline constexpr int32_t k_fieldSizeY = 16;
-    static inline constexpr int32_t k_fieldSizeZ = 40;
+    static inline constexpr int32_t k_fieldSizeZ = 64;
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
 
