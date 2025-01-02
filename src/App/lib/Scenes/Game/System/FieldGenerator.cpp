@@ -101,9 +101,9 @@ void FieldGenerator::generate()
 
     // どの部屋につながるかを設定
     for (int32_t i = 0; i < static_cast<int32_t>(rooms.size()); i++) {
-        int32_t linkTo = rand.range(0, static_cast<int32_t>(rooms.size()));
+        int32_t linkTo = rand.range(0, static_cast<int32_t>(rooms.size() - 1));
         while (linkTo == i) {
-            linkTo = rand.range(0, static_cast<int32_t>(rooms.size()));
+            linkTo = rand.range(0, static_cast<int32_t>(rooms.size() - 1));
         }
         rooms.at(i).linkTo = linkTo;
     }
