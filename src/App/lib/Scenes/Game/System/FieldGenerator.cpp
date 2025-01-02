@@ -91,7 +91,7 @@ void FieldGenerator::generate()
         }
 
         if (!candidates.empty()) {
-            room.center = candidates.at(rand.range(0, static_cast<int32_t>(candidates.size())));
+            room.center = candidates.at(rand.range(0, static_cast<int32_t>(candidates.size() - 1)));
             room.index = static_cast<int32_t>(rooms.size());
             rooms.emplace_back(room);
         }
@@ -138,6 +138,34 @@ void FieldGenerator::generate()
         for (int32_t y = 0; y < k_sizeY; y++) {
             std::array<bool, Field::k_fieldSizeZ>& a = table[x][y];
             std::fill(a.begin(), a.end(), false);
+        }
+    }
+
+    // 道を作成
+    for (const auto& room : rooms) {
+        auto iter = std::find_if(rooms.begin(), rooms.end(), [room](const auto& e) -> bool {
+            return room.linkTo == e.index;
+        });
+        const Room& targetRoom = *iter;
+
+        // 現在の部屋とリンク先の部屋の中心座標
+        int32_t startX = room.center.x();
+        int32_t startZ = room.center.z();
+        int32_t endX = targetRoom.center.x();
+        int32_t endZ = targetRoom.center.z();
+
+        // X方向に廊下を生成
+        int32_t x = startX;
+        while (x != endX && x >= 0 && x < k_sizeX) {
+            table[x][0][startZ] = true;
+            x += (x < endX) ? 1 : -1;
+        }
+
+        // Z方向に廊下を生成
+        int32_t z = startZ;
+        while (z != endZ && z >= 0 && z < k_sizeZ) {
+            table[endX][0][z] = true;
+            z += (z < endZ) ? 1 : -1;
         }
     }
 
