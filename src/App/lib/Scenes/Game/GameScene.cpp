@@ -25,8 +25,8 @@ void GameScene::onEnter()
         m_renderer = std::make_shared<Renderer>();
     }
     if (!m_field) {
-        auto normalTex = Texture::create("./assets/tileNormal2.png");
-        auto borderTex = Texture::create("./assets/tileBorder.png");
+        auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
+        auto borderTex = Texture::create("./assets/Textures/tileBorder.png");
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->load("assets\\Stages\\stage_base.csv");
 

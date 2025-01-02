@@ -12,7 +12,7 @@ int32_t TelopSystem::s_indexLength;
 
 void TelopSystem::initialize()
 {
-    s_fontMap = FontFactory::getInstance()->load("./assets/NotoSansJP-Regular.ttf");
+    s_fontMap = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
     s_fontMap->load(Telop::k_fontSize, u"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほられるれろまみうめもやゆよらりるれろわをん");
     s_fontMap->load(Telop::k_fontSize, u"0123456789");
     s_fontMap->load(Telop::k_fontSize, u"abcdefghijklmnopqrstuvwxyz");

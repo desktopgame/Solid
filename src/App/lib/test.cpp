@@ -13,8 +13,8 @@ using namespace App::Scenes::Game;
 
 static void physicsTest()
 {
-    auto normalTex = Texture::create("./assets/tileNormal2.png");
-    auto borderTex = Texture::create("./assets/tileBorder.png");
+    auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
+    auto borderTex = Texture::create("./assets/Textures/tileBorder.png");
     auto field = std::make_shared<System::Field>(normalTex, borderTex);
     field->load("assets\\Stages\\stage_base.csv");
 
