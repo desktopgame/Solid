@@ -190,15 +190,18 @@ void FieldGenerator::generate()
         int32_t endX = targetRoom.center.x();
         int32_t endZ = targetRoom.center.z();
 
+        std::vector<IntVector3> route;
+
         // X方向に廊下を生成
         int32_t x = startX;
         while (x != endX && x >= 0 && x < k_sizeX) {
+            route.emplace_back(IntVector3({ x, 0, startZ }));
             table[x][0][startZ] = true;
             if (startZ - 1 >= 0) {
-                table[x][0][startZ - 1] = true;
+                route.emplace_back(IntVector3({ x, 0, startZ - 1 }));
             }
             if (startZ + 1 < k_sizeZ) {
-                table[x][0][startZ + 1] = true;
+                route.emplace_back(IntVector3({ x, 0, startZ + 1 }));
             }
             x += (x < endX) ? 1 : -1;
         }
@@ -206,14 +209,19 @@ void FieldGenerator::generate()
         // Z方向に廊下を生成
         int32_t z = startZ;
         while (z != endZ && z >= 0 && z < k_sizeZ) {
-            table[endX][0][z] = true;
+            route.emplace_back(IntVector3({ endX, 0, z }));
             if (endX - 1 >= 0) {
-                table[endX - 1][0][z] = true;
+                route.emplace_back(IntVector3({ endX - 1, 0, z }));
             }
             if (endX + 1 < k_sizeX) {
-                table[endX + 1][0][z] = true;
+                route.emplace_back(IntVector3({ endX + 1, 0, z }));
             }
             z += (z < endZ) ? 1 : -1;
+        }
+
+        // 実際に配置
+        for (const auto& r : route) {
+            table[r.x()][r.y()][r.z()] = true;
         }
     }
 
