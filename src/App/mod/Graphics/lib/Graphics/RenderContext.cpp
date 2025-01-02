@@ -322,7 +322,7 @@ void RenderContext::init(Metadata::ProgramTable entry)
     // depth
     psoDesc.DepthStencilState.DepthEnable = depthTest;
     psoDesc.DepthStencilState.DepthWriteMask = depthWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
-    psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+    psoDesc.DepthStencilState.DepthFunc = depthTest ? D3D12_COMPARISON_FUNC_LESS : D3D12_COMPARISON_FUNC_ALWAYS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     // blend
     psoDesc.BlendState.AlphaToCoverageEnable = false;

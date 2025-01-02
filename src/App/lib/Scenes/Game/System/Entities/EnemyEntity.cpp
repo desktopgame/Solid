@@ -15,7 +15,7 @@ EnemyEntity::EnemyEntity(const std::shared_ptr<Common::Graphics::Node>& node)
 void EnemyEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
     BasicEntity::damage(damageSource);
-    Common::Graphics::TelopSystem::request(u"A", m_position, Vector3({ 1, 1, 1 }), 10.0f);
+    Common::Graphics::TelopSystem::request(u"A", m_position, Vector3({ 1, 0, 0 }), 1.0f);
 }
 
 void EnemyEntity::onDead(const std::shared_ptr<DamageSource>& damageSource)
