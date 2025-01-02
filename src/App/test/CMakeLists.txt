@@ -14,7 +14,7 @@ set_property(
     VS_DEBUGGER_WORKING_DIRECTORY
     ${REPOSITORY_ROOT}
 )
-target_compile_definitions(App-Test PRIVATE _TEST)
+target_compile_definitions(App-Test PRIVATE _TEST NOMINMAX)
 target_compile_options(App-Test PRIVATE $<$<BOOL:${MSVC}>: /utf-8>)
 target_compile_features(App-Test PRIVATE cxx_std_17)
 target_include_directories(
