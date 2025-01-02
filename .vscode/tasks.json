@@ -46,6 +46,8 @@
             "dependsOn": [
                 "Import vox",
                 "Import model",
+                "Import texture",
+                "Import font",
             ],
             "dependsOrder": "parallel"
         },
@@ -59,6 +61,18 @@
             "label": "Import model",
             "type": "shell",
             "command": "python .\\scripts\\model_importer.py",
+            "hide": true
+        },
+        {
+            "label": "Import texture",
+            "type": "shell",
+            "command": "python .\\scripts\\texture_importer.py",
+            "hide": true
+        },
+        {
+            "label": "Import font",
+            "type": "shell",
+            "command": "python .\\scripts\\font_importer.py",
             "hide": true
         },
     ]
