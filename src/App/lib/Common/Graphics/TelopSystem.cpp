@@ -99,5 +99,8 @@ void TelopSystem::destroy()
 {
     s_freeTable.clear();
     s_usedTable.clear();
+
+    s_vertexBuffer = nullptr;
+    s_indexBuffer = nullptr;
 }
 }
