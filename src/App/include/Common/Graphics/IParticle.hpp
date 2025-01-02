@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <library.hpp>
 
 namespace App::Common::Graphics {
 class IParticle {
@@ -14,7 +15,7 @@ public:
     virtual ~IParticle() = default;
 
     virtual void update() = 0;
-    virtual void draw() = 0;
+    virtual void draw(const std::shared_ptr<CpuBuffer>& vertexBuffer, const std::shared_ptr<CpuBuffer>& indexBuffer, int32_t indexLength) = 0;
     virtual void destroy() = 0;
     virtual bool isExpired() const = 0;
 

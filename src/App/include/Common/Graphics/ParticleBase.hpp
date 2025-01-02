@@ -37,9 +37,7 @@ public:
     static inline constexpr IParticle::Type Type = IParticle::Type::None;
 
     explicit ParticleBase()
-        : m_vertexBuffer()
-        , m_indexBuffer()
-        , m_instanceBuffer()
+        : m_instanceBuffer()
         , m_particles()
         , m_indexLength()
         , m_initialized(false)
@@ -67,7 +65,7 @@ public:
         }
     }
 
-    void draw() override
+    void draw(const std::shared_ptr<CpuBuffer>& vertexBuffer, const std::shared_ptr<CpuBuffer>& indexBuffer, int32_t indexLength) override
     {
         Reflect::UCamera uCamera;
         uCamera.modelMatrix = Matrix::scale(m_scale);
@@ -90,7 +88,7 @@ public:
         surface->sync(m_instanceBuffer);
 
         int32_t threads = (NumParticles + 255) / 256;
-        surface->render(rc, m_uniformBuffer, m_vertexBuffer, m_indexBuffer, m_indexLength, std::vector<std::shared_ptr<IBuffer>> { m_instanceBuffer }, NumParticles, threads, 1, 1);
+        surface->render(rc, m_uniformBuffer, vertexBuffer, indexBuffer, indexLength, std::vector<std::shared_ptr<IBuffer>> { m_instanceBuffer }, NumParticles, threads, 1, 1);
     }
 
     void destroy() override
@@ -107,8 +105,6 @@ protected:
     virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<T>& params) = 0;
 
 private:
-    std::shared_ptr<CpuBuffer> m_vertexBuffer;
-    std::shared_ptr<CpuBuffer> m_indexBuffer;
     std::shared_ptr<DualBuffer> m_instanceBuffer;
     std::array<VertexParticle3D, NumParticles> m_particles;
     std::shared_ptr<UniformBuffer> m_uniformBuffer;
@@ -126,22 +122,7 @@ private:
         }
         m_initialized = true;
 
-        // TODO: ParticleSystem側で生成して使いまわす
-        m_vertexBuffer = CpuBuffer::create();
-        m_indexBuffer = CpuBuffer::create();
         m_instanceBuffer = DualBuffer::create();
-
-        std::vector<VertexNormal3D> vertices;
-        std::vector<uint32_t> indices;
-        Polygon::generateBox(vertices, indices);
-
-        m_vertexBuffer->allocate(sizeof(VertexNormal3D) * vertices.size());
-        m_vertexBuffer->update(vertices.data());
-
-        m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
-        m_indexBuffer->update(indices.data());
-        m_indexLength = static_cast<int32_t>(indices.size());
-
         m_instanceBuffer->allocate(sizeof(VertexParticle3D) * NumParticles);
     }
 };
