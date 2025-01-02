@@ -41,7 +41,7 @@ void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<
     // 長さを測って左端にオフセット
     float stringWidth = 0.0f;
     for (char16_t c : text) {
-        stringWidth += fontMap->load(32, c)->metrics.size.x();
+        stringWidth += fontMap->load(k_fontSize, c)->metrics.size.x();
     }
     screenX -= (stringWidth / 2.0f);
     // フォントを描画
@@ -49,7 +49,7 @@ void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     float offsetY = (m_elapsed / duration) * 100.0f;
     for (char16_t c : text) {
-        auto fontSprite = fontMap->load(32, c);
+        auto fontSprite = fontMap->load(k_fontSize, c);
         auto ub = UniformPool::rent(Metadata::Text2D);
 
         auto modelMatrix = Matrix::transform(

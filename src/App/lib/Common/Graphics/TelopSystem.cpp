@@ -13,6 +13,10 @@ int32_t TelopSystem::s_indexLength;
 void TelopSystem::initialize()
 {
     s_fontMap = FontFactory::getInstance()->load("./assets/NotoSansJP-Regular.ttf");
+    s_fontMap->load(Telop::k_fontSize, u"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほられるれろまみうめもやゆよらりるれろわをん");
+    s_fontMap->load(Telop::k_fontSize, u"0123456789");
+    s_fontMap->load(Telop::k_fontSize, u"abcdefghijklmnopqrstuvwxyz");
+    s_fontMap->load(Telop::k_fontSize, u"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;

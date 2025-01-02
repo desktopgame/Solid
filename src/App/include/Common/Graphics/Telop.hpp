@@ -5,6 +5,8 @@
 namespace App::Common::Graphics {
 class Telop {
 public:
+    static inline constexpr int32_t k_fontSize = 32;
+
     explicit Telop();
 
     void initialize();
