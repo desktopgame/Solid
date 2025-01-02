@@ -26,6 +26,7 @@ void Telop::update()
 
 void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<CpuBuffer>& vertexBuffer, const std::shared_ptr<CpuBuffer>& indexBuffer, int32_t indexLength)
 {
+    // ワールド空間をスクリーン空間に変換
     Vector4 ndcPos = Vector4(position, 1.0f);
     ndcPos = Matrix::multiply(Camera::getLookAtMatrix(), ndcPos);
     ndcPos = Matrix::multiply(Camera::getPerspectiveMatrix(), ndcPos);
@@ -37,7 +38,13 @@ void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<
 
     float screenX = (ndcPos.x() * 0.5f) * Screen::getWidth();
     float screenY = -(ndcPos.y() * 0.5f) * Screen::getHeight();
-
+    // 長さを測って左端にオフセット
+    float stringWidth = 0.0f;
+    for (char16_t c : text) {
+        stringWidth += fontMap->load(32, c)->metrics.size.x();
+    }
+    screenX -= (stringWidth / 2.0f);
+    // フォントを描画
     auto rc = RenderContext::get(Metadata::ProgramTable::Text2D);
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     float offsetY = (m_elapsed / duration) * 100.0f;
