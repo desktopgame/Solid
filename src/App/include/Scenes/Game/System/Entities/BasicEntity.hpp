@@ -16,7 +16,7 @@ public:
     virtual void onHitEnterEntity(const std::shared_ptr<Entity>& entity) override;
     virtual void onHitStayEntity(const std::shared_ptr<Entity>& entity) override;
     virtual void onHitExitEntity(const std::shared_ptr<Entity>& entity) override;
-    virtual void damage(const std::shared_ptr<DamageSource>& damageSource) override;
+    virtual bool damage(const std::shared_ptr<DamageSource>& damageSource) override;
 
     void knockback(const Vector3& direction, float speed, float duration);
 

@@ -5,7 +5,7 @@ namespace App::Scenes::Game::System::Entities {
 class EnemyEntity : public BasicEntity {
 public:
     virtual ~EnemyEntity();
-    virtual void damage(const std::shared_ptr<DamageSource>& damageSource) override;
+    virtual bool damage(const std::shared_ptr<DamageSource>& damageSource) override;
 
 protected:
     EnemyEntity(const std::shared_ptr<Common::Graphics::Node>& node);

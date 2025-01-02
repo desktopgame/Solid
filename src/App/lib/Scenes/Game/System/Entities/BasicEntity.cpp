@@ -411,14 +411,15 @@ void BasicEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity) { }
 void BasicEntity::onHitStayEntity(const std::shared_ptr<Entity>& entity) { }
 void BasicEntity::onHitExitEntity(const std::shared_ptr<Entity>& entity) { }
 
-void BasicEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
+bool BasicEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
     if (!m_damagePlaying) {
         m_damageElapsed = 0.0f;
         m_damageDuration = 0.25f;
         m_damagePlaying = true;
-        Entity::damage(damageSource);
+        return Entity::damage(damageSource);
     }
+    return false;
 }
 
 void BasicEntity::knockback(const Vector3& direction, float speed, float duration)

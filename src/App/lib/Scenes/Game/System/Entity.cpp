@@ -22,7 +22,7 @@ bool Entity::isHitOnEntity(const std::shared_ptr<Entity>& entity) const
     return iter != m_hitTable.end();
 }
 
-void Entity::damage(const std::shared_ptr<DamageSource>& damageSource)
+bool Entity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
     bool isAlive = m_currentHP > 0;
     int32_t hp = m_currentHP - damageSource->getPower();
@@ -34,6 +34,7 @@ void Entity::damage(const std::shared_ptr<DamageSource>& damageSource)
     if (isAlive && m_currentHP == 0) {
         onDead(damageSource);
     }
+    return isAlive;
 }
 
 Geom::OBB Entity::getOBB() const
