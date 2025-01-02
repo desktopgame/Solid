@@ -42,6 +42,7 @@ void FieldGenerator::generate()
     Random rand;
 
     int32_t roomCount = rand.range(10, 20);
+    // かさならない位置に部屋を作成
     for (int32_t i = 0; i < roomCount; i++) {
         Room room;
         int32_t roomSizeXZ = rand.range(10, 20);
@@ -96,6 +97,7 @@ void FieldGenerator::generate()
         }
     }
 
+    // どの部屋につながるかを設定
     for (int32_t i = 0; i < static_cast<int32_t>(rooms.size()); i++) {
         int32_t linkTo = rand.range(0, static_cast<int32_t>(rooms.size()));
         while (linkTo == i) {
@@ -104,6 +106,7 @@ void FieldGenerator::generate()
         rooms.at(i).linkTo = linkTo;
     }
 
+    // 孤立した部屋をマーク
     for (int32_t i = 0; i < static_cast<int32_t>(rooms.size()); i++) {
         auto& room = rooms.at(i);
 
@@ -123,11 +126,13 @@ void FieldGenerator::generate()
         }
     }
 
+    // 孤立した部屋を削除
     auto iter = std::remove_if(rooms.begin(), rooms.end(), [](const auto& e) -> bool {
         return e.isGarbage;
     });
     rooms.erase(iter, rooms.end());
 
+    // ブロック座標を記憶する配列を確保
     std::array<std::array<std::array<bool, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
     for (int32_t x = 0; x < k_sizeX; x++) {
         for (int32_t y = 0; y < k_sizeY; y++) {
@@ -136,6 +141,7 @@ void FieldGenerator::generate()
         }
     }
 
+    // ルームの床にブロックを配置
     for (const auto& room : rooms) {
         for (int32_t x = 0; x < room.size.x(); x++) {
             for (int32_t z = 0; z < room.size.z(); z++) {
@@ -146,6 +152,7 @@ void FieldGenerator::generate()
         }
     }
 
+    // 配置ブロック座標にタイルを六面分配置
     m_tiles.clear();
     for (int32_t x = 0; x < k_sizeX; x++) {
         for (int32_t y = 0; y < k_sizeY; y++) {
