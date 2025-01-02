@@ -15,6 +15,16 @@ FieldGenerator::Room::Room()
 {
 }
 
+bool FieldGenerator::Room::isContains(const IntVector3& at) const
+{
+    int32_t selfMinX = center.x() - (size.x() / 2);
+    int32_t selfMaxX = center.x() + (size.x() / 2);
+    int32_t selfMinZ = center.z() - (size.z() / 2);
+    int32_t selfMaxZ = center.z() + (size.z() / 2);
+    bool cX = at.x() >= selfMinX && at.x() < selfMaxX;
+    bool cZ = at.z() >= selfMinZ && at.z() < selfMaxZ;
+    return cX && cZ;
+}
 bool FieldGenerator::Room::isOverwrap(const Room& other) const
 {
     int32_t selfMinX = center.x() - (size.x() / 2) - 5;
