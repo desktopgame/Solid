@@ -26,29 +26,27 @@ void Telop::update()
 
 void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<CpuBuffer>& vertexBuffer, const std::shared_ptr<CpuBuffer>& indexBuffer, int32_t indexLength)
 {
+    Vector4 ndcPos = Vector4(position, 1.0f);
+    ndcPos = Matrix::multiply(Camera::getLookAtMatrix(), ndcPos);
+    ndcPos = Matrix::multiply(Camera::getPerspectiveMatrix(), ndcPos);
+
+    if (ndcPos.w() != 0.0f) {
+        ndcPos.x() /= ndcPos.w();
+        ndcPos.y() /= ndcPos.w();
+    }
+
+    float screenX = (ndcPos.x() * 0.5f) * Screen::getWidth();
+    float screenY = -(ndcPos.y() * 0.5f) * Screen::getHeight();
+
     auto rc = RenderContext::get(Metadata::ProgramTable::Text2D);
     auto surface = Engine::getInstance()->getDevice()->getSurface();
-    Vector2 offset;
+    float offsetY = (m_elapsed / duration) * 100.0f;
     for (char16_t c : text) {
-        auto fontSprite = fontMap->load(20, c);
-
+        auto fontSprite = fontMap->load(32, c);
         auto ub = UniformPool::rent(Metadata::Text2D);
 
-        Vector4 ndcPos = Vector4(position, 1.0f);
-        ndcPos = Matrix::multiply(Camera::getLookAtMatrix(), ndcPos);
-        ndcPos = Matrix::multiply(Camera::getPerspectiveMatrix(), ndcPos);
-
-        if (ndcPos.w() != 0.0f) {
-            ndcPos.x() /= ndcPos.w();
-            ndcPos.y() /= ndcPos.w();
-        }
-
-        float screenX = (ndcPos.x() * 0.5f) * Screen::getWidth();
-        float screenY = -(ndcPos.y() * 0.5f) * Screen::getHeight();
-        screenY += (m_elapsed / duration) * 100.0f;
-
         auto modelMatrix = Matrix::transform(
-            Matrix::translate(Vector3({ screenX, screenY, 0.0f })),
+            Matrix::translate(Vector3({ screenX, screenY + offsetY, 0.0f })),
             Matrix(),
             Matrix::scale(Vector3({ static_cast<float>(fontSprite->metrics.size.x()), static_cast<float>(fontSprite->metrics.size.y()), 1.0f })));
         Reflect::UCamera uCamera;
@@ -62,6 +60,7 @@ void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<
         ub->setVS(1, &uColor);
         ub->setPS(0, fontSprite->texture);
         surface->render(rc, ub, vertexBuffer, indexBuffer, indexLength);
+        screenX += fontSprite->metrics.size.x();
     }
 }
 
