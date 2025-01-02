@@ -1,6 +1,7 @@
 #include <Scenes/Game/System/Field.hpp>
 #include <Scenes/Game/System/FieldGenerator.hpp>
 #include <algorithm>
+#include <cassert>
 
 namespace App::Scenes::Game::System {
 // Room
@@ -170,6 +171,7 @@ void FieldGenerator::generate()
         auto iter = std::find_if(rooms.begin(), rooms.end(), [room](const auto& e) -> bool {
             return room.linkTo == e.index;
         });
+        assert(iter != rooms.end());
         const Room& targetRoom = *iter;
 
         // 現在の部屋とリンク先の部屋の中心座標
