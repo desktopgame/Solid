@@ -209,14 +209,61 @@ void FieldGenerator::generate()
             groups.emplace_back(markers);
         }
     }
+    for (auto& group : groups) {
+        auto iter = std::remove_if(group.begin(), group.end(), [&rooms](const auto& e) -> bool {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [e](const auto& r) -> bool {
+                return r.index == e;
+            });
+            return iter == rooms.end();
+        });
+        group.erase(iter, group.end());
+    }
 
     // 孤島をつなぐ
     for (int32_t i = 0; i < static_cast<int32_t>(groups.size()); i++) {
         if (i + 1 >= static_cast<int32_t>(groups.size())) {
             break;
         }
-        int32_t src = groups.at(i).at(rand.range(0, static_cast<int32_t>(groups.at(i).size() - 1)));
-        int32_t dst = groups.at(i + 1).at(rand.range(0, static_cast<int32_t>(groups.at(i + 1).size() - 1)));
+        int32_t srcIndex = groups.at(i).at(rand.range(0, static_cast<int32_t>(groups.at(i).size() - 1)));
+        int32_t dstIndex = groups.at(i + 1).at(rand.range(0, static_cast<int32_t>(groups.at(i + 1).size() - 1)));
+
+        auto& src = *std::find_if(rooms.begin(), rooms.end(), [srcIndex](const auto& e) -> bool {
+            return e.index == srcIndex;
+        });
+        auto& dst = *std::find_if(rooms.begin(), rooms.end(), [dstIndex](const auto& e) -> bool {
+            return e.index == dstIndex;
+        });
+
+        int32_t startX = src.center.x();
+        int32_t startZ = src.center.z();
+        int32_t endX = dst.center.x();
+        int32_t endZ = dst.center.z();
+
+        // X方向に廊下を生成
+        int32_t x = startX;
+        while (x != endX && x >= 0 && x < k_sizeX) {
+            table[x][0][startZ] = true;
+            if (startZ - 1 >= 0) {
+                table[x][0][startZ - 1] = true;
+            }
+            if (startZ + 1 < k_sizeZ) {
+                table[x][0][startZ + 1] = true;
+            }
+            x += (x < endX) ? 1 : -1;
+        }
+
+        // Z方向に廊下を生成
+        int32_t z = startZ;
+        while (z != endZ && z >= 0 && z < k_sizeZ) {
+            table[endX][0][z] = true;
+            if (endX - 1 >= 0) {
+                table[endX - 1][0][z] = true;
+            }
+            if (endX + 1 < k_sizeX) {
+                table[endX + 1][0][z] = true;
+            }
+            z += (z < endZ) ? 1 : -1;
+        }
     }
 
     // 配置ブロック座標にタイルを六面分配置
