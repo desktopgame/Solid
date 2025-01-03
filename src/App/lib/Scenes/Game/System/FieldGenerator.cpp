@@ -42,7 +42,6 @@ bool FieldGenerator::Room::isOverwrap(const Room& other) const
 }
 // public
 FieldGenerator::FieldGenerator() { }
-// private
 void FieldGenerator::generate()
 {
     const int32_t k_sizeX = Field::k_fieldSizeX;
@@ -189,6 +188,37 @@ void FieldGenerator::generate()
         }
     }
 
+    // 孤島を見つける
+    std::vector<std::vector<int32_t>> groups;
+    std::vector<int32_t> temp;
+    for (int32_t i = 0; i < 9; i++) {
+        std::vector<int32_t> markers = markRecursive(i, rooms);
+
+        int32_t count = 0;
+        for (int32_t m : markers) {
+            for (int32_t t : temp) {
+                if (t == m) {
+                    count++;
+                }
+            }
+        }
+        if (count != static_cast<int32_t>(markers.size())) {
+            for (int32_t m : markers) {
+                temp.emplace_back(m);
+            }
+            groups.emplace_back(markers);
+        }
+    }
+
+    // 孤島をつなぐ
+    for (int32_t i = 0; i < static_cast<int32_t>(groups.size()); i++) {
+        if (i + 1 >= static_cast<int32_t>(groups.size())) {
+            break;
+        }
+        int32_t src = groups.at(i).at(rand.range(0, static_cast<int32_t>(groups.at(i).size() - 1)));
+        int32_t dst = groups.at(i + 1).at(rand.range(0, static_cast<int32_t>(groups.at(i + 1).size() - 1)));
+    }
+
     // 配置ブロック座標にタイルを六面分配置
     m_tiles.clear();
     for (int32_t x = 0; x < k_sizeX; x++) {
@@ -208,4 +238,60 @@ void FieldGenerator::generate()
     }
 }
 const std::vector<Vector4>& FieldGenerator::getTiles() const { return m_tiles; }
+// private
+void FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit)
+{
+    if (std::find(visit.begin(), visit.end(), index) != visit.end()) {
+        return;
+    }
+    visit.emplace_back(index);
+
+    // 通路を繋ぐ
+    for (auto& room : rooms) {
+        int32_t left = room.index - 1;
+        int32_t right = room.index + 1;
+        int32_t top = room.index - 3;
+        int32_t bottom = room.index + 3;
+
+        if (left >= 0 && left < 9 && room.index % 3 > 0) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [left](const auto& e) -> bool {
+                return e.index == left;
+            });
+            if (iter != rooms.end()) {
+                markRecursive(left, rooms, visit);
+            }
+        }
+        if (right >= 0 && right < 9 && room.index % 3 == 1) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
+                return e.index == right;
+            });
+            if (iter != rooms.end()) {
+                markRecursive(right, rooms, visit);
+            }
+        }
+        if (top >= 0 && top < 9 && room.index >= 3) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [top](const auto& e) -> bool {
+                return e.index == top;
+            });
+            if (iter != rooms.end()) {
+                markRecursive(top, rooms, visit);
+            }
+        }
+        if (bottom >= 0 && bottom < 9 && room.index <= 5) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [bottom](const auto& e) -> bool {
+                return e.index == bottom;
+            });
+            if (iter != rooms.end()) {
+                markRecursive(bottom, rooms, visit);
+            }
+        }
+    }
+}
+
+std::vector<int32_t> FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms)
+{
+    std::vector<int32_t> temp;
+    markRecursive(index, rooms, temp);
+    return temp;
+}
 }

@@ -23,6 +23,9 @@ private:
         bool connected;
     };
 
+    static void markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit);
+    static std::vector<int32_t> markRecursive(int32_t index, const std::vector<Room>& rooms);
+
     std::vector<Vector4> m_tiles;
 };
 }
