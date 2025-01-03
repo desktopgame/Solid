@@ -219,6 +219,11 @@ void FieldGenerator::generate()
         group.erase(iter, group.end());
     }
 
+    auto groupIter = std::remove_if(groups.begin(), groups.end(), [](const auto& e) -> bool {
+        return e.empty();
+    });
+    groups.erase(groupIter, groups.end());
+
     // 孤島をつなぐ
     for (int32_t i = 0; i < static_cast<int32_t>(groups.size()); i++) {
         if (i + 1 >= static_cast<int32_t>(groups.size())) {
