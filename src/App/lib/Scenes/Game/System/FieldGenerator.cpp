@@ -99,6 +99,24 @@ void FieldGenerator::generate()
                 int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
                 int32_t tileZ = (room.center.z() - (room.size.z() / 2)) + z;
                 table[tileX][0][tileZ] = 1;
+                table[tileX][Field::k_fieldSizeY - 1][tileZ] = 1;
+            }
+        }
+        for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+            int32_t minX = (room.center.x() - (room.size.x() / 2));
+            int32_t maxX = (room.center.x() + (room.size.x() / 2));
+            int32_t minZ = (room.center.z() - (room.size.z() / 2));
+            int32_t maxZ = (room.center.z() + (room.size.z() / 2));
+
+            for (int32_t x = 0; x < room.size.x(); x++) {
+                int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
+                table[tileX][y][minZ] = 1;
+                table[tileX][y][maxZ] = 1;
+            }
+            for (int32_t z = 0; z < room.size.z(); z++) {
+                int32_t tileZ = (room.center.z() - (room.size.z() / 2)) + z;
+                table[minX][y][tileZ] = 1;
+                table[maxX][y][tileZ] = 1;
             }
         }
     }
@@ -123,6 +141,10 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x <= maxX; x++) {
+                    for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+                        table[x][y][neighbor.center.z() - 2] = 1;
+                        table[x][y][neighbor.center.z() + 2] = 1;
+                    }
                     table[x][0][neighbor.center.z() - 1] = 1;
                     table[x][0][neighbor.center.z()] = 1;
                     table[x][0][neighbor.center.z() + 1] = 1;
@@ -142,6 +164,10 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x <= maxX; x++) {
+                    for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+                        table[x][y][neighbor.center.z() - 2] = 1;
+                        table[x][y][neighbor.center.z() + 2] = 1;
+                    }
                     table[x][0][neighbor.center.z() - 1] = 1;
                     table[x][0][neighbor.center.z()] = 1;
                     table[x][0][neighbor.center.z() + 1] = 1;
@@ -161,6 +187,10 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
+                    for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+                        table[neighbor.center.x() - 2][y][z] = 1;
+                        table[neighbor.center.x() + 2][y][z] = 1;
+                    }
                     table[neighbor.center.x() - 1][0][z] = 1;
                     table[neighbor.center.x()][0][z] = 1;
                     table[neighbor.center.x() + 1][0][z] = 1;
@@ -180,6 +210,10 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
+                    for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+                        table[neighbor.center.x() - 2][y][z] = 1;
+                        table[neighbor.center.x() + 2][y][z] = 1;
+                    }
                     table[neighbor.center.x() - 1][0][z] = 1;
                     table[neighbor.center.x()][0][z] = 1;
                     table[neighbor.center.x() + 1][0][z] = 1;
@@ -252,6 +286,14 @@ void FieldGenerator::generate()
             if (startZ + 1 < k_sizeZ) {
                 table[x][0][startZ + 1] = 1;
             }
+            for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+                if (startZ - 1 >= 0) {
+                    table[x][y][startZ - 1] = 1;
+                }
+                if (startZ + 1 < k_sizeZ) {
+                    table[x][y][startZ + 1] = 1;
+                }
+            }
             x += (x < endX) ? 1 : -1;
         }
 
@@ -264,6 +306,14 @@ void FieldGenerator::generate()
             }
             if (endX + 1 < k_sizeX) {
                 table[endX + 1][0][z] = 1;
+            }
+            for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
+                if (endX - 1 >= 0) {
+                    table[endX - 1][y][z] = 1;
+                }
+                if (endX + 1 < k_sizeX) {
+                    table[endX + 1][y][z] = 1;
+                }
             }
             z += (z < endZ) ? 1 : -1;
         }
