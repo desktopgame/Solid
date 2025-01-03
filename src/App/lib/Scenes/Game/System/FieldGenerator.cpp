@@ -73,7 +73,7 @@ void FieldGenerator::generate()
     }
 
     // 部屋をランダムに消す
-    int32_t removeN = rand.range(1, 3);
+    int32_t removeN = rand.range(2, 5);
     for (int32_t i = 0; i < removeN; i++) {
         int32_t r = rand.range(0, static_cast<int32_t>(rooms.size() - 1));
         rooms.at(r).removed = true;
