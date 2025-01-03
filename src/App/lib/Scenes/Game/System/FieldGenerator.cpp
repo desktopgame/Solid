@@ -190,22 +190,20 @@ void FieldGenerator::generate()
 
     // 孤島を見つける
     std::vector<std::vector<int32_t>> groups;
-    std::vector<int32_t> temp;
-    for (int32_t i = 0; i < 9; i++) {
-        std::vector<int32_t> markers = markRecursive(i, rooms);
+    for (const auto& room : rooms) {
+        std::vector<int32_t> markers = markRecursive(room.index, rooms);
 
         int32_t count = 0;
         for (int32_t m : markers) {
-            for (int32_t t : temp) {
-                if (t == m) {
-                    count++;
+            for (const auto& group : groups) {
+                for (int32_t t : group) {
+                    if (t == m) {
+                        count++;
+                    }
                 }
             }
         }
-        if (count != static_cast<int32_t>(markers.size())) {
-            for (int32_t m : markers) {
-                temp.emplace_back(m);
-            }
+        if (count == 0) {
             groups.emplace_back(markers);
         }
     }
@@ -299,43 +297,44 @@ void FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms
     visit.emplace_back(index);
 
     // 通路を繋ぐ
-    for (auto& room : rooms) {
-        int32_t left = room.index - 1;
-        int32_t right = room.index + 1;
-        int32_t top = room.index - 3;
-        int32_t bottom = room.index + 3;
+    auto& room = *std::find_if(rooms.begin(), rooms.end(), [index](const auto& e) -> bool {
+        return e.index == index;
+    });
+    int32_t left = room.index - 1;
+    int32_t right = room.index + 1;
+    int32_t top = room.index - 3;
+    int32_t bottom = room.index + 3;
 
-        if (left >= 0 && left < 9 && room.index % 3 > 0) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [left](const auto& e) -> bool {
-                return e.index == left;
-            });
-            if (iter != rooms.end()) {
-                markRecursive(left, rooms, visit);
-            }
+    if (left >= 0 && left < 9 && room.index % 3 > 0) {
+        auto iter = std::find_if(rooms.begin(), rooms.end(), [left](const auto& e) -> bool {
+            return e.index == left;
+        });
+        if (iter != rooms.end()) {
+            markRecursive(left, rooms, visit);
         }
-        if (right >= 0 && right < 9 && room.index % 3 == 1) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
-                return e.index == right;
-            });
-            if (iter != rooms.end()) {
-                markRecursive(right, rooms, visit);
-            }
+    }
+    if (right >= 0 && right < 9 && room.index % 3 == 1) {
+        auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
+            return e.index == right;
+        });
+        if (iter != rooms.end()) {
+            markRecursive(right, rooms, visit);
         }
-        if (top >= 0 && top < 9 && room.index >= 3) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [top](const auto& e) -> bool {
-                return e.index == top;
-            });
-            if (iter != rooms.end()) {
-                markRecursive(top, rooms, visit);
-            }
+    }
+    if (top >= 0 && top < 9 && room.index >= 3) {
+        auto iter = std::find_if(rooms.begin(), rooms.end(), [top](const auto& e) -> bool {
+            return e.index == top;
+        });
+        if (iter != rooms.end()) {
+            markRecursive(top, rooms, visit);
         }
-        if (bottom >= 0 && bottom < 9 && room.index <= 5) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [bottom](const auto& e) -> bool {
-                return e.index == bottom;
-            });
-            if (iter != rooms.end()) {
-                markRecursive(bottom, rooms, visit);
-            }
+    }
+    if (bottom >= 0 && bottom < 9 && room.index <= 5) {
+        auto iter = std::find_if(rooms.begin(), rooms.end(), [bottom](const auto& e) -> bool {
+            return e.index == bottom;
+        });
+        if (iter != rooms.end()) {
+            markRecursive(bottom, rooms, visit);
         }
     }
 }
