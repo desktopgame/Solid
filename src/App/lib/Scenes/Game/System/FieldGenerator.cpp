@@ -84,11 +84,11 @@ void FieldGenerator::generate()
     m_rooms.erase(iter, m_rooms.end());
 
     // ブロック座標を記憶する配列を確保
-    std::array<std::array<std::array<bool, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
+    std::array<std::array<std::array<int32_t, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
     for (int32_t x = 0; x < k_sizeX; x++) {
         for (int32_t y = 0; y < k_sizeY; y++) {
-            std::array<bool, Field::k_fieldSizeZ>& a = table[x][y];
-            std::fill(a.begin(), a.end(), false);
+            std::array<int32_t, Field::k_fieldSizeZ>& a = table[x][y];
+            std::fill(a.begin(), a.end(), 0);
         }
     }
 
@@ -98,7 +98,7 @@ void FieldGenerator::generate()
             for (int32_t z = 0; z < room.size.z(); z++) {
                 int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
                 int32_t tileZ = (room.center.z() - (room.size.z() / 2)) + z;
-                table[tileX][0][tileZ] = true;
+                table[tileX][0][tileZ] = 1;
             }
         }
     }
@@ -123,9 +123,9 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x <= maxX; x++) {
-                    table[x][0][neighbor.center.z() - 1] = true;
-                    table[x][0][neighbor.center.z()] = true;
-                    table[x][0][neighbor.center.z() + 1] = true;
+                    table[x][0][neighbor.center.z() - 1] = 1;
+                    table[x][0][neighbor.center.z()] = 1;
+                    table[x][0][neighbor.center.z() + 1] = 1;
                 }
             }
         }
@@ -142,9 +142,9 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x <= maxX; x++) {
-                    table[x][0][neighbor.center.z() - 1] = true;
-                    table[x][0][neighbor.center.z()] = true;
-                    table[x][0][neighbor.center.z() + 1] = true;
+                    table[x][0][neighbor.center.z() - 1] = 1;
+                    table[x][0][neighbor.center.z()] = 1;
+                    table[x][0][neighbor.center.z() + 1] = 1;
                 }
             }
         }
@@ -161,9 +161,9 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
-                    table[neighbor.center.x() - 1][0][z] = true;
-                    table[neighbor.center.x()][0][z] = true;
-                    table[neighbor.center.x() + 1][0][z] = true;
+                    table[neighbor.center.x() - 1][0][z] = 1;
+                    table[neighbor.center.x()][0][z] = 1;
+                    table[neighbor.center.x() + 1][0][z] = 1;
                 }
             }
         }
@@ -180,9 +180,9 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
-                    table[neighbor.center.x() - 1][0][z] = true;
-                    table[neighbor.center.x()][0][z] = true;
-                    table[neighbor.center.x() + 1][0][z] = true;
+                    table[neighbor.center.x() - 1][0][z] = 1;
+                    table[neighbor.center.x()][0][z] = 1;
+                    table[neighbor.center.x() + 1][0][z] = 1;
                 }
             }
         }
@@ -245,12 +245,12 @@ void FieldGenerator::generate()
         // X方向に廊下を生成
         int32_t x = startX;
         while (x != endX && x >= 0 && x < k_sizeX) {
-            table[x][0][startZ] = true;
+            table[x][0][startZ] = 1;
             if (startZ - 1 >= 0) {
-                table[x][0][startZ - 1] = true;
+                table[x][0][startZ - 1] = 1;
             }
             if (startZ + 1 < k_sizeZ) {
-                table[x][0][startZ + 1] = true;
+                table[x][0][startZ + 1] = 1;
             }
             x += (x < endX) ? 1 : -1;
         }
@@ -258,12 +258,12 @@ void FieldGenerator::generate()
         // Z方向に廊下を生成
         int32_t z = startZ;
         while (z != endZ && z >= 0 && z < k_sizeZ) {
-            table[endX][0][z] = true;
+            table[endX][0][z] = 1;
             if (endX - 1 >= 0) {
-                table[endX - 1][0][z] = true;
+                table[endX - 1][0][z] = 1;
             }
             if (endX + 1 < k_sizeX) {
-                table[endX + 1][0][z] = true;
+                table[endX + 1][0][z] = 1;
             }
             z += (z < endZ) ? 1 : -1;
         }
