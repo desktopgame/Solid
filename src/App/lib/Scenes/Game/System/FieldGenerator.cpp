@@ -232,25 +232,69 @@ void FieldGenerator::generate()
                 if (srcMinX - i < 0) {
                     break;
                 }
-                srcRouteLeft.emplace_back(IntVector3({ srcMinX - i, 0, srcCenterZ }));
+                IntVector3 at = IntVector3({ srcMinX - i, 0, srcCenterZ });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                srcRouteLeft.emplace_back(at);
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (srcMaxX + i >= k_sizeX) {
                     break;
                 }
-                srcRouteRight.emplace_back(IntVector3({ srcMaxX + i, 0, srcCenterZ }));
+                IntVector3 at = IntVector3({ srcMaxX + i, 0, srcCenterZ });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                srcRouteRight.emplace_back(at);
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (srcMinZ - i < 0) {
                     break;
                 }
-                srcRouteTop.emplace_back(IntVector3({ srcCenterX, 0, srcMinZ - i }));
+                IntVector3 at = IntVector3({ srcCenterX, 0, srcMinZ - i });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                srcRouteTop.emplace_back(at);
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (srcMaxZ + i >= k_sizeZ) {
                     break;
                 }
-                srcRouteBottom.emplace_back(IntVector3({ srcCenterX, 0, srcMaxZ + i }));
+                IntVector3 at = IntVector3({ srcCenterX, 0, srcMaxZ + i });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                srcRouteBottom.emplace_back(at);
             }
             // デスト部屋から通路を伸ばす
             dstRouteLeft.clear();
@@ -261,25 +305,69 @@ void FieldGenerator::generate()
                 if (dstMinX - i < 0) {
                     break;
                 }
-                dstRouteLeft.emplace_back(IntVector3({ dstMinX - i, 0, dstCenterZ }));
+                IntVector3 at = IntVector3({ dstMinX - i, 0, dstCenterZ });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                dstRouteLeft.emplace_back(at);
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (dstMaxX + i >= k_sizeX) {
                     break;
                 }
-                dstRouteRight.emplace_back(IntVector3({ dstMaxX + i, 0, dstCenterZ }));
+                IntVector3 at = IntVector3({ dstMaxX + i, 0, dstCenterZ });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                dstRouteRight.emplace_back(at);
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (dstMinZ - i < 0) {
                     break;
                 }
-                dstRouteTop.emplace_back(IntVector3({ dstCenterX, 0, dstMinZ - i }));
+                IntVector3 at = IntVector3({ dstCenterX, 0, dstMinZ - i });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                dstRouteTop.emplace_back(at);
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (dstMaxZ + i >= k_sizeZ) {
                     break;
                 }
-                dstRouteBottom.emplace_back(IntVector3({ dstCenterX, 0, dstMaxZ + i }));
+                IntVector3 at = IntVector3({ dstCenterX, 0, dstMaxZ + i });
+                bool inRoom = false;
+                for (const auto& room : rooms) {
+                    if (room.isContains(at)) {
+                        inRoom = true;
+                        break;
+                    }
+                }
+                if (inRoom) {
+                    break;
+                }
+                dstRouteBottom.emplace_back(at);
             }
 
             bool connection = false;
