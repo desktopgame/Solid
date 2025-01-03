@@ -51,12 +51,12 @@ void FieldGenerator::generate()
     const int32_t k_roadLength = 5;
     (void)k_sizeY;
 
+    Random rand;
     const int32_t k_space = 4;
     int32_t roomSizeX = (Field::k_fieldSizeX - (k_space * 4)) / 3;
     int32_t roomSizeZ = (Field::k_fieldSizeZ - (k_space * 4)) / 3;
 
-    std::vector<Room> rooms;
-    Random rand;
+    m_rooms.clear();
 
     // 空間を9分割
     int32_t roomIndex = 0;
@@ -66,7 +66,7 @@ void FieldGenerator::generate()
             room.index = roomIndex;
             room.center = IntVector3({ ((i + 1) * k_space) + (roomSizeX * i) + (roomSizeX / 2), 0, ((j + 1) * k_space) + (roomSizeZ * j) + (roomSizeZ / 2) });
             room.size = IntVector3({ roomSizeX, Field::k_fieldSizeY, roomSizeZ });
-            rooms.emplace_back(room);
+            m_rooms.emplace_back(room);
             roomIndex++;
         }
     }
@@ -74,14 +74,14 @@ void FieldGenerator::generate()
     // 部屋をランダムに消す
     int32_t removeN = rand.range(2, 5);
     for (int32_t i = 0; i < removeN; i++) {
-        int32_t r = rand.range(0, static_cast<int32_t>(rooms.size() - 1));
-        rooms.at(r).removed = true;
+        int32_t r = rand.range(0, static_cast<int32_t>(m_rooms.size() - 1));
+        m_rooms.at(r).removed = true;
     }
 
-    auto iter = std::remove_if(rooms.begin(), rooms.end(), [](const auto& e) -> bool {
+    auto iter = std::remove_if(m_rooms.begin(), m_rooms.end(), [](const auto& e) -> bool {
         return e.removed;
     });
-    rooms.erase(iter, rooms.end());
+    m_rooms.erase(iter, m_rooms.end());
 
     // ブロック座標を記憶する配列を確保
     std::array<std::array<std::array<bool, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
@@ -93,7 +93,7 @@ void FieldGenerator::generate()
     }
 
     // ルームの床にブロックを配置
-    for (const auto& room : rooms) {
+    for (const auto& room : m_rooms) {
         for (int32_t x = 0; x < room.size.x(); x++) {
             for (int32_t z = 0; z < room.size.z(); z++) {
                 int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
@@ -104,17 +104,17 @@ void FieldGenerator::generate()
     }
 
     // 通路を繋ぐ
-    for (auto& room : rooms) {
+    for (auto& room : m_rooms) {
         int32_t left = room.index - 1;
         int32_t right = room.index + 1;
         int32_t top = room.index - 3;
         int32_t bottom = room.index + 3;
 
         if (left >= 0 && left < 9 && room.index % 3 > 0) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [left](const auto& e) -> bool {
+            auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [left](const auto& e) -> bool {
                 return e.index == left;
             });
-            if (iter != rooms.end()) {
+            if (iter != m_rooms.end()) {
                 auto& neighbor = *iter;
 
                 int32_t startX = room.center.x() - (room.size.x() / 2);
@@ -130,10 +130,10 @@ void FieldGenerator::generate()
             }
         }
         if (right >= 0 && right < 9 && room.index % 3 == 1) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
+            auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [right](const auto& e) -> bool {
                 return e.index == right;
             });
-            if (iter != rooms.end()) {
+            if (iter != m_rooms.end()) {
                 auto& neighbor = *iter;
 
                 int32_t startX = room.center.x() + (room.size.x() / 2);
@@ -149,10 +149,10 @@ void FieldGenerator::generate()
             }
         }
         if (top >= 0 && top < 9 && room.index >= 3) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [top](const auto& e) -> bool {
+            auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [top](const auto& e) -> bool {
                 return e.index == top;
             });
-            if (iter != rooms.end()) {
+            if (iter != m_rooms.end()) {
                 auto& neighbor = *iter;
 
                 int32_t startZ = room.center.z() - (room.size.z() / 2);
@@ -168,10 +168,10 @@ void FieldGenerator::generate()
             }
         }
         if (bottom >= 0 && bottom < 9 && room.index <= 5) {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [bottom](const auto& e) -> bool {
+            auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [bottom](const auto& e) -> bool {
                 return e.index == bottom;
             });
-            if (iter != rooms.end()) {
+            if (iter != m_rooms.end()) {
                 auto& neighbor = *iter;
 
                 int32_t startZ = room.center.z() + (room.size.z() / 2);
@@ -190,8 +190,8 @@ void FieldGenerator::generate()
 
     // 孤島を見つける
     std::vector<std::vector<int32_t>> groups;
-    for (const auto& room : rooms) {
-        std::vector<int32_t> markers = markRecursive(room.index, rooms);
+    for (const auto& room : m_rooms) {
+        std::vector<int32_t> markers = markRecursive(room.index, m_rooms);
 
         int32_t count = 0;
         for (int32_t m : markers) {
@@ -208,11 +208,11 @@ void FieldGenerator::generate()
         }
     }
     for (auto& group : groups) {
-        auto iter = std::remove_if(group.begin(), group.end(), [&rooms](const auto& e) -> bool {
-            auto iter = std::find_if(rooms.begin(), rooms.end(), [e](const auto& r) -> bool {
+        auto iter = std::remove_if(group.begin(), group.end(), [&](const auto& e) -> bool {
+            auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [e](const auto& r) -> bool {
                 return r.index == e;
             });
-            return iter == rooms.end();
+            return iter == m_rooms.end();
         });
         group.erase(iter, group.end());
     }
@@ -230,10 +230,10 @@ void FieldGenerator::generate()
         int32_t srcIndex = groups.at(i).at(rand.range(0, static_cast<int32_t>(groups.at(i).size() - 1)));
         int32_t dstIndex = groups.at(i + 1).at(rand.range(0, static_cast<int32_t>(groups.at(i + 1).size() - 1)));
 
-        auto& src = *std::find_if(rooms.begin(), rooms.end(), [srcIndex](const auto& e) -> bool {
+        auto& src = *std::find_if(m_rooms.begin(), m_rooms.end(), [srcIndex](const auto& e) -> bool {
             return e.index == srcIndex;
         });
-        auto& dst = *std::find_if(rooms.begin(), rooms.end(), [dstIndex](const auto& e) -> bool {
+        auto& dst = *std::find_if(m_rooms.begin(), m_rooms.end(), [dstIndex](const auto& e) -> bool {
             return e.index == dstIndex;
         });
 
@@ -288,6 +288,8 @@ void FieldGenerator::generate()
     }
 }
 const std::vector<Vector4>& FieldGenerator::getTiles() const { return m_tiles; }
+const std::vector<FieldGenerator::Room>& FieldGenerator::getRooms() const { return m_rooms; }
+
 // private
 void FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit)
 {

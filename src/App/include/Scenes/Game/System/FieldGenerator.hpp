@@ -5,12 +5,6 @@
 namespace App::Scenes::Game::System {
 class FieldGenerator {
 public:
-    explicit FieldGenerator();
-    void generate();
-
-    const std::vector<Vector4>& getTiles() const;
-
-private:
     class Room {
     public:
         explicit Room();
@@ -23,9 +17,17 @@ private:
         bool connected;
     };
 
+    explicit FieldGenerator();
+    void generate();
+
+    const std::vector<Vector4>& getTiles() const;
+    const std::vector<Room>& getRooms() const;
+
+private:
     static void markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit);
     static std::vector<int32_t> markRecursive(int32_t index, const std::vector<Room>& rooms);
 
     std::vector<Vector4> m_tiles;
+    std::vector<Room> m_rooms;
 };
 }
