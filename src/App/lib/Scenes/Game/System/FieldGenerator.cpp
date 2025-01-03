@@ -104,6 +104,7 @@ void FieldGenerator::generate()
         }
     }
 
+    // 通路を繋ぐ
     for (auto& room : rooms) {
         int32_t left = room.index - 1;
         int32_t right = room.index + 1;
@@ -123,7 +124,9 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x <= maxX; x++) {
+                    table[x][0][neighbor.center.z() - 1] = true;
                     table[x][0][neighbor.center.z()] = true;
+                    table[x][0][neighbor.center.z() + 1] = true;
                 }
             }
         }
@@ -140,7 +143,9 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x <= maxX; x++) {
+                    table[x][0][neighbor.center.z() - 1] = true;
                     table[x][0][neighbor.center.z()] = true;
+                    table[x][0][neighbor.center.z() + 1] = true;
                 }
             }
         }
@@ -157,7 +162,9 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
+                    table[neighbor.center.x() - 1][0][z] = true;
                     table[neighbor.center.x()][0][z] = true;
+                    table[neighbor.center.x() + 1][0][z] = true;
                 }
             }
         }
@@ -174,7 +181,9 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
+                    table[neighbor.center.x() - 1][0][z] = true;
                     table[neighbor.center.x()][0][z] = true;
+                    table[neighbor.center.x() + 1][0][z] = true;
                 }
             }
         }
