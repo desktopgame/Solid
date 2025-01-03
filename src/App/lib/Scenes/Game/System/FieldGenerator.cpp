@@ -23,8 +23,8 @@ bool FieldGenerator::Room::isContains(const IntVector3& at) const
     int32_t selfMaxX = center.x() + (size.x() / 2);
     int32_t selfMinZ = center.z() - (size.z() / 2);
     int32_t selfMaxZ = center.z() + (size.z() / 2);
-    bool cX = at.x() >= selfMinX && at.x() < selfMaxX;
-    bool cZ = at.z() >= selfMinZ && at.z() < selfMaxZ;
+    bool cX = at.x() >= selfMinX && at.x() <= selfMaxX;
+    bool cZ = at.z() >= selfMinZ && at.z() <= selfMaxZ;
     return cX && cZ;
 }
 bool FieldGenerator::Room::isOverwrap(const Room& other) const
@@ -476,7 +476,7 @@ void FieldGenerator::generate()
                 int32_t minX = Mathf::min(head.x(), dstRouteRight.back().x());
                 int32_t maxX = Mathf::max(head.x(), dstRouteRight.back().x());
                 int32_t roadLen = static_cast<int32_t>(dstRouteRight.size());
-                for (int32_t at = minX; at <= maxX; at++) {
+                for (int32_t at = maxX; at >= minX; at--) {
                     if (head.x() + (at - minX) >= k_sizeX) {
                         lineBroken = true;
                         break;
@@ -642,7 +642,7 @@ void FieldGenerator::generate()
                 int32_t minZ = Mathf::min(head.z(), dstRouteBottom.back().z());
                 int32_t maxZ = Mathf::max(head.z(), dstRouteBottom.back().z());
                 int32_t roadLen = static_cast<int32_t>(dstRouteBottom.size());
-                for (int32_t at = minZ; at <= maxZ; at++) {
+                for (int32_t at = maxZ; at >= minZ; at--) {
                     if (head.z() + (at - minZ) >= k_sizeZ) {
                         lineBroken = true;
                         break;
