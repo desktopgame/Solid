@@ -51,6 +51,7 @@ void FieldGenerator::generate()
     const int32_t k_sizeY = Field::k_fieldSizeY;
     const int32_t k_sizeZ = Field::k_fieldSizeZ;
     const int32_t k_wallPadding = 3;
+    const int32_t k_roadLength = 5;
     (void)k_sizeY;
 
     std::vector<Room> rooms;
@@ -284,7 +285,7 @@ void FieldGenerator::generate()
             bool connection = false;
             // 左でつなぐ
             // 道でつなぐ過程で他の部屋と重なる場合は接続しない
-            if (!connection && !srcRouteLeft.empty() && !dstRouteLeft.empty()) {
+            if (!connection && srcRouteLeft.size() >= k_roadLength && !dstRouteLeft.empty()) {
                 fillArea.clear();
                 bool lineBroken = false;
                 std::vector<IntVector3> line;
@@ -303,12 +304,18 @@ void FieldGenerator::generate()
                 head = line.back();
                 int32_t minX = Mathf::min(head.x(), dstRouteLeft.back().x());
                 int32_t maxX = Mathf::max(head.x(), dstRouteLeft.back().x());
+                int32_t roadLen = static_cast<int32_t>(dstRouteLeft.size());
                 for (int32_t at = minX; at <= maxX; at++) {
                     if (head.x() + (at - minX) >= k_sizeX) {
                         lineBroken = true;
                         break;
                     }
+                    roadLen++;
                     line.emplace_back(IntVector3({ head.x() + (at - minX), 0, head.z() }));
+                }
+
+                if (roadLen < k_roadLength) {
+                    lineBroken = true;
                 }
 
                 if (line.back() != dstRouteLeft.back()) {
@@ -361,7 +368,7 @@ void FieldGenerator::generate()
             }
             // 右でつなぐ
             // 道でつなぐ過程で他の部屋と重なる場合は接続しない
-            if (!connection && !srcRouteRight.empty() && !dstRouteRight.empty()) {
+            if (!connection && srcRouteRight.size() >= k_roadLength && !dstRouteRight.empty()) {
                 fillArea.clear();
                 bool lineBroken = false;
                 std::vector<IntVector3> line;
@@ -380,12 +387,18 @@ void FieldGenerator::generate()
                 head = line.back();
                 int32_t minX = Mathf::min(head.x(), dstRouteRight.back().x());
                 int32_t maxX = Mathf::max(head.x(), dstRouteRight.back().x());
+                int32_t roadLen = static_cast<int32_t>(dstRouteRight.size());
                 for (int32_t at = minX; at <= maxX; at++) {
                     if (head.x() + (at - minX) >= k_sizeX) {
                         lineBroken = true;
                         break;
                     }
+                    roadLen++;
                     line.emplace_back(IntVector3({ head.x() + (at - minX), 0, head.z() }));
+                }
+
+                if (roadLen < k_roadLength) {
+                    lineBroken = true;
                 }
 
                 if (line.back() != dstRouteRight.back()) {
@@ -438,7 +451,7 @@ void FieldGenerator::generate()
             }
             // 上でつなぐ
             // 道でつなぐ過程で他の部屋と重なる場合は接続しない
-            if (!connection && !srcRouteTop.empty() && !dstRouteTop.empty()) {
+            if (!connection && srcRouteTop.size() >= k_roadLength && !dstRouteTop.empty()) {
                 fillArea.clear();
                 bool lineBroken = false;
                 std::vector<IntVector3> line;
@@ -457,12 +470,18 @@ void FieldGenerator::generate()
                 head = line.back();
                 int32_t minZ = Mathf::min(head.z(), dstRouteTop.back().z());
                 int32_t maxZ = Mathf::max(head.z(), dstRouteTop.back().z());
+                int32_t roadLen = static_cast<int32_t>(dstRouteTop.size());
                 for (int32_t at = minZ; at <= maxZ; at++) {
                     if (head.z() + (at - minZ) >= k_sizeZ) {
                         lineBroken = true;
                         break;
                     }
+                    roadLen++;
                     line.emplace_back(IntVector3({ head.x(), 0, head.z() + (at - minZ) }));
+                }
+
+                if (roadLen < k_roadLength) {
+                    lineBroken = true;
                 }
 
                 if (line.back() != dstRouteTop.back()) {
@@ -515,7 +534,7 @@ void FieldGenerator::generate()
             }
             // 下でつなぐ
             // 道でつなぐ過程で他の部屋と重なる場合は接続しない
-            if (!connection && !srcRouteBottom.empty() && !dstRouteBottom.empty()) {
+            if (!connection && srcRouteBottom.size() >= k_roadLength && !dstRouteBottom.empty()) {
                 fillArea.clear();
                 bool lineBroken = false;
                 std::vector<IntVector3> line;
@@ -534,12 +553,18 @@ void FieldGenerator::generate()
                 head = line.back();
                 int32_t minZ = Mathf::min(head.z(), dstRouteBottom.back().z());
                 int32_t maxZ = Mathf::max(head.z(), dstRouteBottom.back().z());
+                int32_t roadLen = static_cast<int32_t>(dstRouteBottom.size());
                 for (int32_t at = minZ; at <= maxZ; at++) {
                     if (head.z() + (at - minZ) >= k_sizeZ) {
                         lineBroken = true;
                         break;
                     }
+                    roadLen++;
                     line.emplace_back(IntVector3({ head.x(), 0, head.z() + (at - minZ) }));
+                }
+
+                if (roadLen < k_roadLength) {
+                    lineBroken = true;
                 }
 
                 if (line.back() != dstRouteBottom.back()) {
@@ -607,48 +632,48 @@ void FieldGenerator::generate()
             }
         }
     }
+    /*
+        // 道を繋げなかったルームを再トライ
+        for (const auto& room : rooms) {
+            if (!room.isGenFailed) {
+                continue;
+            }
+            IntVector3 center = room.center;
+            IntVector3 target;
+            int32_t dist = 9999;
 
-    // 道を繋げなかったルームを再トライ
-    for (const auto& room : rooms) {
-        if (!room.isGenFailed) {
-            continue;
-        }
-        IntVector3 center = room.center;
-        IntVector3 target;
-        int32_t dist = 9999;
-
-        for (int32_t x = 0; x < k_sizeX; x++) {
-            for (int32_t z = 0; z < k_sizeZ; z++) {
-                if (!table[x][0][z]) {
-                    continue;
-                }
-                IntVector3 tile = IntVector3({ x, 0, z });
-                int32_t d = IntVector3::distance(center, tile);
-                if (d < dist) {
-                    target = tile;
-                    dist = d;
+            for (int32_t x = 0; x < k_sizeX; x++) {
+                for (int32_t z = 0; z < k_sizeZ; z++) {
+                    if (!table[x][0][z]) {
+                        continue;
+                    }
+                    IntVector3 tile = IntVector3({ x, 0, z });
+                    int32_t d = IntVector3::distance(center, tile);
+                    if (d < dist) {
+                        target = tile;
+                        dist = d;
+                    }
                 }
             }
+            // 現在の部屋とリンク先の部屋の中心座標
+            int32_t startX = room.center.x();
+            int32_t startZ = room.center.z();
+            int32_t endX = target.x();
+            int32_t endZ = target.z();
+            // X方向に廊下を生成
+            int32_t x = startX;
+            while (x != endX && x >= 0 && x < k_sizeX) {
+                table[x][0][startZ] = true;
+                x += (x < endX) ? 1 : -1;
+            }
+            // Z方向に廊下を生成
+            int32_t z = startZ;
+            while (z != endZ && z >= 0 && z < k_sizeZ) {
+                table[endX][0][z] = true;
+                z += (z < endZ) ? 1 : -1;
+            }
         }
-        // 現在の部屋とリンク先の部屋の中心座標
-        int32_t startX = room.center.x();
-        int32_t startZ = room.center.z();
-        int32_t endX = target.x();
-        int32_t endZ = target.z();
-        // X方向に廊下を生成
-        int32_t x = startX;
-        while (x != endX && x >= 0 && x < k_sizeX) {
-            table[x][0][startZ] = true;
-            x += (x < endX) ? 1 : -1;
-        }
-        // Z方向に廊下を生成
-        int32_t z = startZ;
-        while (z != endZ && z >= 0 && z < k_sizeZ) {
-            table[endX][0][z] = true;
-            z += (z < endZ) ? 1 : -1;
-        }
-    }
-
+    */
     // ルームの床にブロックを配置
     for (const auto& room : rooms) {
         for (int32_t x = 0; x < room.size.x(); x++) {
