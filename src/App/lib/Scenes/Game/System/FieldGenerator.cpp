@@ -2,6 +2,7 @@
 #include <Scenes/Game/System/FieldGenerator.hpp>
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 namespace App::Scenes::Game::System {
 // Room
@@ -177,55 +178,222 @@ void FieldGenerator::generate()
     }
 
     // 道を作成
-    for (const auto& room : rooms) {
-        if (room.isNoLink) {
+    for (const auto& src : rooms) {
+        // リンクしないなら無視
+        if (src.isNoLink) {
             continue;
         }
-
-        auto iter = std::find_if(rooms.begin(), rooms.end(), [room](const auto& e) -> bool {
-            return room.linkTo == e.index;
+        // 対応するルームを検索
+        auto iter = std::find_if(rooms.begin(), rooms.end(), [src](const auto& e) -> bool {
+            return src.linkTo == e.index && src.index != e.index;
         });
         assert(iter != rooms.end());
-        const Room& targetRoom = *iter;
-
+        const Room& dst = *iter;
         // 現在の部屋とリンク先の部屋の中心座標
-        int32_t startX = room.center.x();
-        int32_t startZ = room.center.z();
-        int32_t endX = targetRoom.center.x();
-        int32_t endZ = targetRoom.center.z();
+        int32_t srcCenterX = src.center.x();
+        int32_t srcCenterZ = src.center.z();
+        int32_t srcSizeX = src.size.x();
+        int32_t srcSizeZ = src.size.z();
+        int32_t dstCenterX = dst.center.x();
+        int32_t dstCenterZ = dst.center.z();
+        int32_t dstSizeX = dst.size.x();
+        int32_t dstSizeZ = dst.size.z();
 
-        std::vector<IntVector3> route;
+        int32_t srcMinX = srcCenterX - (srcSizeX / 2);
+        int32_t srcMaxX = srcCenterX + (srcSizeX / 2);
+        int32_t srcMinZ = srcCenterZ - (srcSizeZ / 2);
+        int32_t srcMaxZ = srcCenterZ + (srcSizeZ / 2);
+        int32_t dstMinX = dstCenterX - (dstSizeX / 2);
+        int32_t dstMaxX = dstCenterX + (dstSizeX / 2);
+        int32_t dstMinZ = dstCenterZ - (dstSizeZ / 2);
+        int32_t dstMaxZ = dstCenterZ + (dstSizeZ / 2);
 
-        // X方向に廊下を生成
-        int32_t x = startX;
-        while (x != endX && x >= 0 && x < k_sizeX) {
-            route.emplace_back(IntVector3({ x, 0, startZ }));
-            table[x][0][startZ] = true;
-            if (startZ - 1 >= 0) {
-                route.emplace_back(IntVector3({ x, 0, startZ - 1 }));
+        int32_t routeLength = 20;
+
+        std::vector<IntVector3> srcRouteLeft;
+        std::vector<IntVector3> srcRouteRight;
+        std::vector<IntVector3> srcRouteTop;
+        std::vector<IntVector3> srcRouteBottom;
+        std::vector<IntVector3> dstRouteLeft;
+        std::vector<IntVector3> dstRouteRight;
+        std::vector<IntVector3> dstRouteTop;
+        std::vector<IntVector3> dstRouteBottom;
+        std::vector<IntVector3> fillArea;
+        while (1) {
+            // ソース部屋から通路を伸ばす
+            srcRouteLeft.clear();
+            srcRouteRight.clear();
+            srcRouteTop.clear();
+            srcRouteBottom.clear();
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (srcMinX - i < 0) {
+                    break;
+                }
+                if (table[srcMinX - i][0][srcCenterZ]) {
+                    break;
+                }
+                srcRouteLeft.emplace_back(IntVector3({ srcMinX - i, 0, srcCenterZ }));
             }
-            if (startZ + 1 < k_sizeZ) {
-                route.emplace_back(IntVector3({ x, 0, startZ + 1 }));
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (srcMaxX + i >= k_sizeX) {
+                    break;
+                }
+                if (table[srcMaxX + i][0][srcCenterZ]) {
+                    break;
+                }
+                srcRouteRight.emplace_back(IntVector3({ srcMaxX + i, 0, srcCenterZ }));
             }
-            x += (x < endX) ? 1 : -1;
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (srcMinZ - i < 0) {
+                    break;
+                }
+                if (table[srcCenterX][0][srcMinZ - i]) {
+                    break;
+                }
+                srcRouteTop.emplace_back(IntVector3({ srcCenterX, 0, srcMinZ - i }));
+            }
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (srcMaxZ + i >= k_sizeZ) {
+                    break;
+                }
+                if (table[srcCenterX][0][srcMaxZ + i]) {
+                    break;
+                }
+                srcRouteBottom.emplace_back(IntVector3({ srcCenterX, 0, srcMaxZ + i }));
+            }
+            // デスト部屋から通路を伸ばす
+            dstRouteLeft.clear();
+            dstRouteRight.clear();
+            dstRouteTop.clear();
+            dstRouteBottom.clear();
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (dstMinX - i < 0) {
+                    break;
+                }
+                if (table[dstMinX - i][0][dstCenterZ]) {
+                    break;
+                }
+                dstRouteLeft.emplace_back(IntVector3({ dstMinX - i, 0, dstCenterZ }));
+            }
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (dstMaxX + i >= k_sizeX) {
+                    break;
+                }
+                if (table[dstMaxX + i][0][dstCenterZ]) {
+                    break;
+                }
+                dstRouteRight.emplace_back(IntVector3({ dstMaxX + i, 0, dstCenterZ }));
+            }
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (dstMinZ - i < 0) {
+                    break;
+                }
+                if (table[dstCenterX][0][dstMinZ - i]) {
+                    break;
+                }
+                dstRouteTop.emplace_back(IntVector3({ dstCenterX, 0, dstMinZ - i }));
+            }
+            for (int32_t i = 1; i < routeLength; i++) {
+                if (dstMaxZ + i >= k_sizeZ) {
+                    break;
+                }
+                if (table[dstCenterX][0][dstMaxZ + i]) {
+                    break;
+                }
+                dstRouteBottom.emplace_back(IntVector3({ dstCenterX, 0, dstMaxZ + i }));
+            }
+
+            bool connection = false;
+            // 左でつなぐ
+            // 道でつなぐ過程で他の部屋と重なる場合は接続しない
+            if (!connection && !srcRouteLeft.empty() && !dstRouteLeft.empty()) {
+                fillArea.clear();
+                bool lineBroken = false;
+                std::vector<IntVector3> line;
+                IntVector3 head = srcRouteLeft.back();
+                int32_t minZ = Mathf::min(srcCenterZ, dstCenterZ);
+                int32_t maxZ = Mathf::max(srcCenterZ, dstCenterZ);
+
+                for (int32_t at = minZ; at <= maxZ; at++) {
+                    if (head.z() + (at - minZ) >= k_sizeZ) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x(), 0, head.z() + (at - minZ) }));
+                }
+
+                head = line.back();
+                int32_t minX = Mathf::min(head.x(), dstRouteLeft.back().x());
+                int32_t maxX = Mathf::max(head.x(), dstRouteLeft.back().x());
+                for (int32_t at = minX; at <= maxX; at++) {
+                    if (head.x() + (at - minX) >= k_sizeX) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x() + (at - minX), 0, head.z() }));
+                }
+
+                if (line.back() != dstRouteLeft.back()) {
+                    lineBroken = true;
+                }
+
+                bool cross = false;
+                if (!cross) {
+                    for (const auto& at : srcRouteLeft) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : dstRouteLeft) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : line) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross && !line.empty() && !lineBroken) {
+                    connection = true;
+                    for (const auto& at : srcRouteLeft) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : dstRouteLeft) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : line) {
+                        fillArea.emplace_back(at);
+                    }
+                }
+            }
+            if (connection) {
+                break;
+            } else {
+                routeLength++;
+                if (routeLength > 100) {
+                    break;
+                }
+            }
         }
-
-        // Z方向に廊下を生成
-        int32_t z = startZ;
-        while (z != endZ && z >= 0 && z < k_sizeZ) {
-            route.emplace_back(IntVector3({ endX, 0, z }));
-            if (endX - 1 >= 0) {
-                route.emplace_back(IntVector3({ endX - 1, 0, z }));
+        for (const auto& at : fillArea) {
+            if (at.x() >= 0 && at.x() < k_sizeX && at.z() >= 0 && at.z() < k_sizeZ) {
+                table[at.x()][0][at.z()] = true;
             }
-            if (endX + 1 < k_sizeX) {
-                route.emplace_back(IntVector3({ endX + 1, 0, z }));
-            }
-            z += (z < endZ) ? 1 : -1;
-        }
-
-        // 実際に配置
-        for (const auto& r : route) {
-            table[r.x()][r.y()][r.z()] = true;
         }
     }
 
