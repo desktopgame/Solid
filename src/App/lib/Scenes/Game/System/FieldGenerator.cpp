@@ -61,8 +61,8 @@ void FieldGenerator::generate()
 
     // 空間を9分割
     int32_t roomIndex = 0;
-    for (int32_t i = 0; i < 3; i++) {
-        for (int32_t j = 0; j < 3; j++) {
+    for (int32_t j = 0; j < 3; j++) {
+        for (int32_t i = 0; i < 3; i++) {
             Room room;
             room.index = roomIndex;
             room.center = IntVector3({ ((i + 1) * k_space) + (roomSizeX * i) + (roomSizeX / 2), 0, ((j + 1) * k_space) + (roomSizeZ * j) + (roomSizeZ / 2) });
@@ -100,6 +100,82 @@ void FieldGenerator::generate()
                 int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
                 int32_t tileZ = (room.center.z() - (room.size.z() / 2)) + z;
                 table[tileX][0][tileZ] = true;
+            }
+        }
+    }
+
+    for (auto& room : rooms) {
+        int32_t left = room.index - 1;
+        int32_t right = room.index + 1;
+        int32_t top = room.index - 3;
+        int32_t bottom = room.index + 3;
+
+        if (left >= 0 && left < 9 && room.index % 3 > 0) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [left](const auto& e) -> bool {
+                return e.index == left;
+            });
+            if (iter != rooms.end()) {
+                auto& neighbor = *iter;
+
+                int32_t startX = room.center.x() - (room.size.x() / 2);
+                int32_t endX = neighbor.center.x() + (neighbor.size.x() / 2);
+                int32_t minX = Mathf::min(startX, endX);
+                int32_t maxX = Mathf::max(startX, endX);
+
+                for (int32_t x = minX; x <= maxX; x++) {
+                    table[x][0][neighbor.center.z()] = true;
+                }
+            }
+        }
+        if (right >= 0 && right < 9 && room.index % 3 == 1) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
+                return e.index == right;
+            });
+            if (iter != rooms.end()) {
+                auto& neighbor = *iter;
+
+                int32_t startX = room.center.x() + (room.size.x() / 2);
+                int32_t endX = neighbor.center.x() - (neighbor.size.x() / 2);
+                int32_t minX = Mathf::min(startX, endX);
+                int32_t maxX = Mathf::max(startX, endX);
+
+                for (int32_t x = minX; x <= maxX; x++) {
+                    table[x][0][neighbor.center.z()] = true;
+                }
+            }
+        }
+        if (top >= 0 && top < 9 && room.index >= 3) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [top](const auto& e) -> bool {
+                return e.index == top;
+            });
+            if (iter != rooms.end()) {
+                auto& neighbor = *iter;
+
+                int32_t startZ = room.center.z() - (room.size.z() / 2);
+                int32_t endZ = neighbor.center.z() + (neighbor.size.z() / 2);
+                int32_t minZ = Mathf::min(startZ, endZ);
+                int32_t maxZ = Mathf::max(startZ, endZ);
+
+                for (int32_t z = minZ; z <= maxZ; z++) {
+                    table[neighbor.center.x()][0][z] = true;
+                }
+            }
+        }
+        if (bottom >= 0 && bottom < 9 && room.index <= 5) {
+            auto iter = std::find_if(rooms.begin(), rooms.end(), [bottom](const auto& e) -> bool {
+                return e.index == bottom;
+            });
+            if (iter != rooms.end()) {
+                auto& neighbor = *iter;
+
+                int32_t startZ = room.center.z() + (room.size.z() / 2);
+                int32_t endZ = neighbor.center.z() - (neighbor.size.z() / 2);
+                int32_t minZ = Mathf::min(startZ, endZ);
+                int32_t maxZ = Mathf::max(startZ, endZ);
+
+                for (int32_t z = minZ; z <= maxZ; z++) {
+                    table[neighbor.center.x()][0][z] = true;
+                }
             }
         }
     }
