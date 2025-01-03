@@ -19,10 +19,8 @@ private:
         IntVector3 size;
         IntVector3 center;
         int32_t index;
-        int32_t linkTo;
-        bool isGarbage;
-        bool isNoLink;
-        bool isGenFailed;
+        bool removed;
+        bool connected;
     };
 
     std::vector<Vector4> m_tiles;

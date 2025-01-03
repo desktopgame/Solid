@@ -10,10 +10,8 @@ FieldGenerator::Room::Room()
     : size()
     , center()
     , index()
-    , linkTo()
-    , isGarbage()
-    , isNoLink()
-    , isGenFailed()
+    , removed()
+    , connected()
 {
 }
 
@@ -62,14 +60,29 @@ void FieldGenerator::generate()
     Random rand;
 
     // 空間を9分割
+    int32_t roomIndex = 0;
     for (int32_t i = 0; i < 3; i++) {
         for (int32_t j = 0; j < 3; j++) {
             Room room;
+            room.index = roomIndex;
             room.center = IntVector3({ ((i + 1) * k_space) + (roomSizeX * i) + (roomSizeX / 2), 0, ((j + 1) * k_space) + (roomSizeZ * j) + (roomSizeZ / 2) });
             room.size = IntVector3({ roomSizeX, Field::k_fieldSizeY, roomSizeZ });
             rooms.emplace_back(room);
+            roomIndex++;
         }
     }
+
+    // 部屋をランダムに消す
+    int32_t removeN = rand.range(1, 3);
+    for (int32_t i = 0; i < removeN; i++) {
+        int32_t r = rand.range(0, static_cast<int32_t>(rooms.size() - 1));
+        rooms.at(r).removed = true;
+    }
+
+    auto iter = std::remove_if(rooms.begin(), rooms.end(), [](const auto& e) -> bool {
+        return e.removed;
+    });
+    rooms.erase(iter, rooms.end());
 
     // ブロック座標を記憶する配列を確保
     std::array<std::array<std::array<bool, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
