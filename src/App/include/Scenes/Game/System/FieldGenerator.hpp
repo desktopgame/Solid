@@ -22,6 +22,7 @@ private:
         int32_t linkTo;
         bool isGarbage;
         bool isNoLink;
+        bool isGenFailed;
     };
 
     std::vector<Vector4> m_tiles;

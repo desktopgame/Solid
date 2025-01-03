@@ -13,6 +13,7 @@ FieldGenerator::Room::Room()
     , linkTo()
     , isGarbage()
     , isNoLink()
+    , isGenFailed()
 {
 }
 
@@ -179,7 +180,7 @@ void FieldGenerator::generate()
     }
 
     // 道を作成
-    for (const auto& src : rooms) {
+    for (auto& src : rooms) {
         // リンクしないなら無視
         if (src.isNoLink) {
             continue;
@@ -598,8 +599,53 @@ void FieldGenerator::generate()
                 }
             }
         }
-        for (const auto& at : fillArea) {
-            table[at.x()][0][at.z()] = true;
+        if (fillArea.empty()) {
+            src.isGenFailed = true;
+        } else {
+            for (const auto& at : fillArea) {
+                table[at.x()][0][at.z()] = true;
+            }
+        }
+    }
+
+    // 道を繋げなかったルームを再トライ
+    for (const auto& room : rooms) {
+        if (!room.isGenFailed) {
+            continue;
+        }
+        IntVector3 center = room.center;
+        IntVector3 target;
+        int32_t dist = 9999;
+
+        for (int32_t x = 0; x < k_sizeX; x++) {
+            for (int32_t z = 0; z < k_sizeZ; z++) {
+                if (!table[x][0][z]) {
+                    continue;
+                }
+                IntVector3 tile = IntVector3({ x, 0, z });
+                int32_t d = IntVector3::distance(center, tile);
+                if (d < dist) {
+                    target = tile;
+                    dist = d;
+                }
+            }
+        }
+        // 現在の部屋とリンク先の部屋の中心座標
+        int32_t startX = room.center.x();
+        int32_t startZ = room.center.z();
+        int32_t endX = target.x();
+        int32_t endZ = target.z();
+        // X方向に廊下を生成
+        int32_t x = startX;
+        while (x != endX && x >= 0 && x < k_sizeX) {
+            table[x][0][startZ] = true;
+            x += (x < endX) ? 1 : -1;
+        }
+        // Z方向に廊下を生成
+        int32_t z = startZ;
+        while (z != endZ && z >= 0 && z < k_sizeZ) {
+            table[endX][0][z] = true;
+            z += (z < endZ) ? 1 : -1;
         }
     }
 
