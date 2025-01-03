@@ -117,7 +117,7 @@ void Field::update()
     }
 
     auto iter = std::remove_if(m_entities.begin(), m_entities.end(), [](const auto& e) -> bool {
-        return e->isDead();
+        return e->isDead() || e->getPosition().y() < -100.0f;
     });
     m_entities.erase(iter, m_entities.end());
 }
