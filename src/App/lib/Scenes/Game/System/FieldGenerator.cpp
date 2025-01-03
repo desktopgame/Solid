@@ -208,7 +208,7 @@ void FieldGenerator::generate()
         int32_t dstMinZ = dstCenterZ - (dstSizeZ / 2);
         int32_t dstMaxZ = dstCenterZ + (dstSizeZ / 2);
 
-        int32_t routeLength = 20;
+        int32_t routeLength = 3;
 
         std::vector<IntVector3> srcRouteLeft;
         std::vector<IntVector3> srcRouteRight;
@@ -374,6 +374,237 @@ void FieldGenerator::generate()
                         fillArea.emplace_back(at);
                     }
                     for (const auto& at : dstRouteLeft) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : line) {
+                        fillArea.emplace_back(at);
+                    }
+                }
+            }
+            // 右でつなぐ
+            // 道でつなぐ過程で他の部屋と重なる場合は接続しない
+            if (!connection && !srcRouteRight.empty() && !dstRouteRight.empty()) {
+                fillArea.clear();
+                bool lineBroken = false;
+                std::vector<IntVector3> line;
+                IntVector3 head = srcRouteRight.back();
+                int32_t minZ = Mathf::min(srcCenterZ, dstCenterZ);
+                int32_t maxZ = Mathf::max(srcCenterZ, dstCenterZ);
+
+                for (int32_t at = minZ; at <= maxZ; at++) {
+                    if (head.z() + (at - minZ) >= k_sizeZ) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x(), 0, head.z() + (at - minZ) }));
+                }
+
+                head = line.back();
+                int32_t minX = Mathf::min(head.x(), dstRouteRight.back().x());
+                int32_t maxX = Mathf::max(head.x(), dstRouteRight.back().x());
+                for (int32_t at = minX; at <= maxX; at++) {
+                    if (head.x() + (at - minX) >= k_sizeX) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x() + (at - minX), 0, head.z() }));
+                }
+
+                if (line.back() != dstRouteRight.back()) {
+                    lineBroken = true;
+                }
+
+                bool cross = false;
+                if (!cross) {
+                    for (const auto& at : srcRouteRight) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : dstRouteRight) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : line) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross && !line.empty() && !lineBroken) {
+                    connection = true;
+                    for (const auto& at : srcRouteRight) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : dstRouteRight) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : line) {
+                        fillArea.emplace_back(at);
+                    }
+                }
+            }
+            // 上でつなぐ
+            // 道でつなぐ過程で他の部屋と重なる場合は接続しない
+            if (!connection && !srcRouteTop.empty() && !dstRouteTop.empty()) {
+                fillArea.clear();
+                bool lineBroken = false;
+                std::vector<IntVector3> line;
+                IntVector3 head = srcRouteTop.back();
+                int32_t minX = Mathf::min(srcCenterX, dstCenterX);
+                int32_t maxX = Mathf::max(srcCenterX, dstCenterX);
+
+                for (int32_t at = minX; at <= maxX; at++) {
+                    if (head.x() + (at - minX) >= k_sizeX) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x() + (at - minX), 0, head.z() }));
+                }
+
+                head = line.back();
+                int32_t minZ = Mathf::min(head.z(), dstRouteTop.back().z());
+                int32_t maxZ = Mathf::max(head.z(), dstRouteTop.back().z());
+                for (int32_t at = minZ; at <= maxZ; at++) {
+                    if (head.z() + (at - minZ) >= k_sizeZ) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x(), 0, head.z() + (at - minZ) }));
+                }
+
+                if (line.back() != dstRouteTop.back()) {
+                    lineBroken = true;
+                }
+
+                bool cross = false;
+                if (!cross) {
+                    for (const auto& at : srcRouteTop) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : dstRouteTop) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : line) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross && !line.empty() && !lineBroken) {
+                    connection = true;
+                    for (const auto& at : srcRouteTop) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : dstRouteTop) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : line) {
+                        fillArea.emplace_back(at);
+                    }
+                }
+            }
+            // 下でつなぐ
+            // 道でつなぐ過程で他の部屋と重なる場合は接続しない
+            if (!connection && !srcRouteBottom.empty() && !dstRouteBottom.empty()) {
+                fillArea.clear();
+                bool lineBroken = false;
+                std::vector<IntVector3> line;
+                IntVector3 head = srcRouteBottom.back();
+                int32_t minX = Mathf::min(srcCenterX, dstCenterX);
+                int32_t maxX = Mathf::max(srcCenterX, dstCenterX);
+
+                for (int32_t at = minX; at <= maxX; at++) {
+                    if (head.x() + (at - minX) >= k_sizeX) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x() + (at - minX), 0, head.z() }));
+                }
+
+                head = line.back();
+                int32_t minZ = Mathf::min(head.z(), dstRouteBottom.back().z());
+                int32_t maxZ = Mathf::max(head.z(), dstRouteBottom.back().z());
+                for (int32_t at = minZ; at <= maxZ; at++) {
+                    if (head.z() + (at - minZ) >= k_sizeZ) {
+                        lineBroken = true;
+                        break;
+                    }
+                    line.emplace_back(IntVector3({ head.x(), 0, head.z() + (at - minZ) }));
+                }
+
+                if (line.back() != dstRouteBottom.back()) {
+                    lineBroken = true;
+                }
+
+                bool cross = false;
+                if (!cross) {
+                    for (const auto& at : srcRouteBottom) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : dstRouteBottom) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross) {
+                    for (const auto& at : line) {
+                        for (const auto& room : rooms) {
+                            if (room.isContains(at)) {
+                                cross = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!cross && !line.empty() && !lineBroken) {
+                    connection = true;
+                    for (const auto& at : srcRouteBottom) {
+                        fillArea.emplace_back(at);
+                    }
+                    for (const auto& at : dstRouteBottom) {
                         fillArea.emplace_back(at);
                     }
                     for (const auto& at : line) {
