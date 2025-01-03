@@ -49,6 +49,7 @@ void FieldGenerator::generate()
     const int32_t k_sizeX = Field::k_fieldSizeX;
     const int32_t k_sizeY = Field::k_fieldSizeY;
     const int32_t k_sizeZ = Field::k_fieldSizeZ;
+    const int32_t k_wallPadding = 3;
     (void)k_sizeY;
 
     std::vector<Room> rooms;
@@ -77,16 +78,16 @@ void FieldGenerator::generate()
                 int32_t maxZ = room.center.z() + (room.size.z() / 2);
 
                 bool retry = false;
-                if (minX < 0 || minX >= k_sizeX) {
+                if (minX < k_wallPadding || minX >= k_sizeX - k_wallPadding) {
                     retry = true;
                 }
-                if (maxX < 0 || maxX >= k_sizeX) {
+                if (maxX < k_wallPadding || maxX >= k_sizeX - k_wallPadding) {
                     retry = true;
                 }
-                if (minZ < 0 || minZ >= k_sizeZ) {
+                if (minZ < k_wallPadding || minZ >= k_sizeZ - k_wallPadding) {
                     retry = true;
                 }
-                if (maxZ < 0 || maxZ >= k_sizeZ) {
+                if (maxZ < k_wallPadding || maxZ >= k_sizeZ - k_wallPadding) {
                     retry = true;
                 }
                 if (retry) {
@@ -598,9 +599,7 @@ void FieldGenerator::generate()
             }
         }
         for (const auto& at : fillArea) {
-            if (at.x() >= 0 && at.x() < k_sizeX && at.z() >= 0 && at.z() < k_sizeZ) {
-                table[at.x()][0][at.z()] = true;
-            }
+            table[at.x()][0][at.z()] = true;
         }
     }
 
