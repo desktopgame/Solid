@@ -229,16 +229,10 @@ void FieldGenerator::generate()
                 if (srcMinX - i < 0) {
                     break;
                 }
-                if (table[srcMinX - i][0][srcCenterZ]) {
-                    break;
-                }
                 srcRouteLeft.emplace_back(IntVector3({ srcMinX - i, 0, srcCenterZ }));
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (srcMaxX + i >= k_sizeX) {
-                    break;
-                }
-                if (table[srcMaxX + i][0][srcCenterZ]) {
                     break;
                 }
                 srcRouteRight.emplace_back(IntVector3({ srcMaxX + i, 0, srcCenterZ }));
@@ -247,16 +241,10 @@ void FieldGenerator::generate()
                 if (srcMinZ - i < 0) {
                     break;
                 }
-                if (table[srcCenterX][0][srcMinZ - i]) {
-                    break;
-                }
                 srcRouteTop.emplace_back(IntVector3({ srcCenterX, 0, srcMinZ - i }));
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (srcMaxZ + i >= k_sizeZ) {
-                    break;
-                }
-                if (table[srcCenterX][0][srcMaxZ + i]) {
                     break;
                 }
                 srcRouteBottom.emplace_back(IntVector3({ srcCenterX, 0, srcMaxZ + i }));
@@ -270,16 +258,10 @@ void FieldGenerator::generate()
                 if (dstMinX - i < 0) {
                     break;
                 }
-                if (table[dstMinX - i][0][dstCenterZ]) {
-                    break;
-                }
                 dstRouteLeft.emplace_back(IntVector3({ dstMinX - i, 0, dstCenterZ }));
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (dstMaxX + i >= k_sizeX) {
-                    break;
-                }
-                if (table[dstMaxX + i][0][dstCenterZ]) {
                     break;
                 }
                 dstRouteRight.emplace_back(IntVector3({ dstMaxX + i, 0, dstCenterZ }));
@@ -288,16 +270,10 @@ void FieldGenerator::generate()
                 if (dstMinZ - i < 0) {
                     break;
                 }
-                if (table[dstCenterX][0][dstMinZ - i]) {
-                    break;
-                }
                 dstRouteTop.emplace_back(IntVector3({ dstCenterX, 0, dstMinZ - i }));
             }
             for (int32_t i = 1; i < routeLength; i++) {
                 if (dstMaxZ + i >= k_sizeZ) {
-                    break;
-                }
-                if (table[dstCenterX][0][dstMaxZ + i]) {
                     break;
                 }
                 dstRouteBottom.emplace_back(IntVector3({ dstCenterX, 0, dstMaxZ + i }));
