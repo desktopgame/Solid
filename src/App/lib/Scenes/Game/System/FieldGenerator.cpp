@@ -319,7 +319,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : srcRouteLeft) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -329,7 +329,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : dstRouteLeft) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -339,7 +339,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : line) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -396,7 +396,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : srcRouteRight) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -406,7 +406,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : dstRouteRight) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -416,7 +416,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : line) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -473,7 +473,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : srcRouteTop) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -483,7 +483,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : dstRouteTop) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -493,7 +493,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : line) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -550,7 +550,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : srcRouteBottom) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -560,7 +560,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : dstRouteBottom) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
@@ -570,7 +570,7 @@ void FieldGenerator::generate()
                 if (!cross) {
                     for (const auto& at : line) {
                         for (const auto& room : rooms) {
-                            if (room.isContains(at)) {
+                            if (room.isContains(at) || table[at.x()][at.y()][at.z()]) {
                                 cross = true;
                                 break;
                             }
