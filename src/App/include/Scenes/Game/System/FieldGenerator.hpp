@@ -8,8 +8,6 @@ public:
     class Room {
     public:
         explicit Room();
-        bool isContains(const IntVector3& at) const;
-        bool isOverwrap(const Room& other) const;
         IntVector3 size;
         IntVector3 center;
         int32_t index;

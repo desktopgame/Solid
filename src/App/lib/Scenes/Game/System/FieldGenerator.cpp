@@ -14,32 +14,6 @@ FieldGenerator::Room::Room()
     , connected()
 {
 }
-
-bool FieldGenerator::Room::isContains(const IntVector3& at) const
-{
-    int32_t selfMinX = center.x() - (size.x() / 2);
-    int32_t selfMaxX = center.x() + (size.x() / 2);
-    int32_t selfMinZ = center.z() - (size.z() / 2);
-    int32_t selfMaxZ = center.z() + (size.z() / 2);
-    bool cX = at.x() >= selfMinX && at.x() <= selfMaxX;
-    bool cZ = at.z() >= selfMinZ && at.z() <= selfMaxZ;
-    return cX && cZ;
-}
-bool FieldGenerator::Room::isOverwrap(const Room& other) const
-{
-    int32_t selfMinX = center.x() - (size.x() / 2) - 5;
-    int32_t selfMaxX = center.x() + (size.x() / 2) + 5;
-    int32_t selfMinZ = center.z() - (size.z() / 2) - 5;
-    int32_t selfMaxZ = center.z() + (size.z() / 2) + 5;
-    int32_t otherMinX = other.center.x() - (other.size.x() / 2);
-    int32_t otherMaxX = other.center.x() + (other.size.x() / 2);
-    int32_t otherMinZ = other.center.z() - (other.size.z() / 2);
-    int32_t otherMaxZ = other.center.z() + (other.size.z() / 2);
-
-    bool overlapX = (selfMinX < otherMaxX && selfMaxX > otherMinX);
-    bool overlapZ = (selfMinZ < otherMaxZ && selfMaxZ > otherMinZ);
-    return overlapX && overlapZ;
-}
 // public
 FieldGenerator::FieldGenerator() { }
 void FieldGenerator::generate()
