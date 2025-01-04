@@ -305,6 +305,7 @@ void FieldGenerator::generate()
         if (i + 1 >= static_cast<int32_t>(groups.size())) {
             break;
         }
+        // 孤島グループからランダムに一組の部屋を選ぶ
         std::vector<int32_t> srcGroup = groups.at(i);
         std::vector<int32_t> dstGroup = groups.at(i + 1);
         int32_t srcIndex = srcGroup.at(rand.range(0, static_cast<int32_t>(srcGroup.size() - 1)));
@@ -318,6 +319,8 @@ void FieldGenerator::generate()
         });
         int32_t start = srcRoom.index;
         std::vector<std::vector<int32_t>> paths;
+        // 部屋と部屋を繋ぐパスを作る
+        // 途中で部屋にぶつかるたびに新たなパスとして追加する
         while (1) {
             std::vector<int32_t> path;
             int32_t current = start;
@@ -380,6 +383,7 @@ void FieldGenerator::generate()
             }
         }
 
+        // パスにそって通路を繋ぐ
         for (const auto& path : paths) {
             auto pathIter = path.begin();
             int32_t current = *pathIter;
