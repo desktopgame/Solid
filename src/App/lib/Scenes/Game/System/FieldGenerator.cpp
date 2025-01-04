@@ -305,61 +305,135 @@ void FieldGenerator::generate()
         if (i + 1 >= static_cast<int32_t>(groups.size())) {
             break;
         }
-        int32_t srcIndex = groups.at(i).at(rand.range(0, static_cast<int32_t>(groups.at(i).size() - 1)));
-        int32_t dstIndex = groups.at(i + 1).at(rand.range(0, static_cast<int32_t>(groups.at(i + 1).size() - 1)));
+        std::vector<int32_t> srcGroup = groups.at(i);
+        std::vector<int32_t> dstGroup = groups.at(i + 1);
+        int32_t srcIndex = srcGroup.at(rand.range(0, static_cast<int32_t>(srcGroup.size() - 1)));
+        int32_t dstIndex = dstGroup.at(rand.range(0, static_cast<int32_t>(dstGroup.size() - 1)));
 
-        auto& src = *std::find_if(m_rooms.begin(), m_rooms.end(), [srcIndex](const auto& e) -> bool {
-            return e.index == srcIndex;
+        std::vector<int32_t> path;
+        Room& srcRoom = *std::find_if(m_rooms.begin(), m_rooms.end(), [srcIndex](const auto& r) -> bool {
+            return r.index == srcIndex;
         });
-        auto& dst = *std::find_if(m_rooms.begin(), m_rooms.end(), [dstIndex](const auto& e) -> bool {
-            return e.index == dstIndex;
+        Room& dstRoom = *std::find_if(m_rooms.begin(), m_rooms.end(), [dstIndex](const auto& r) -> bool {
+            return r.index == dstIndex;
         });
+        while (true) {
+            path.clear();
+            srcRoom = *std::find_if(m_rooms.begin(), m_rooms.end(), [srcIndex](const auto& r) -> bool {
+                return r.index == srcIndex;
+            });
+            dstRoom = *std::find_if(m_rooms.begin(), m_rooms.end(), [dstIndex](const auto& r) -> bool {
+                return r.index == dstIndex;
+            });
+            int32_t current = srcRoom.index;
+            while (current != dstRoom.index) {
+                path.emplace_back(current);
 
-        int32_t startX = src.center.x();
-        int32_t startZ = src.center.z();
-        int32_t endX = dst.center.x();
-        int32_t endZ = dst.center.z();
+                int32_t srcRow = current / 3;
+                int32_t dstRow = dstRoom.index / 3;
+                int32_t srcColumn = current % 3;
+                int32_t dstColumn = dstRoom.index % 3;
+                if (srcRow != dstRow) {
+                    if (srcRow < dstRow) {
+                        current += 3;
+                    } else {
+                        current -= 3;
+                    }
+                } else if (srcColumn != dstColumn) {
+                    if (srcColumn < dstColumn) {
+                        current++;
+                    } else {
+                        current--;
+                    }
+                }
+            }
+            path.erase(path.begin());
 
-        // X方向に廊下を生成
-        int32_t x = startX;
-        while (x != endX && x >= 0 && x < k_sizeX) {
-            table[x][0][startZ] = 1;
-            if (startZ - 1 >= 0) {
-                table[x][0][startZ - 1] = 1;
+            auto iter = std::find_if(path.begin(), path.end(), [&](int32_t p) -> bool {
+                auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [p](const auto& r) -> bool {
+                    return r.index == p;
+                });
+                return iter != m_rooms.end();
+            });
+            if (iter == path.end()) {
+                break;
+            } else {
+                srcIndex = srcGroup.at(rand.range(0, static_cast<int32_t>(srcGroup.size() - 1)));
+                dstIndex = dstGroup.at(rand.range(0, static_cast<int32_t>(dstGroup.size() - 1)));
             }
-            if (startZ + 1 < k_sizeZ) {
-                table[x][0][startZ + 1] = 1;
-            }
-            for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
-                if (startZ - 1 >= 0) {
-                    table[x][y][startZ - 1] = 1;
-                }
-                if (startZ + 1 < k_sizeZ) {
-                    table[x][y][startZ + 1] = 1;
-                }
-            }
-            x += (x < endX) ? 1 : -1;
         }
 
-        // Z方向に廊下を生成
-        int32_t z = startZ;
-        while (z != endZ && z >= 0 && z < k_sizeZ) {
-            table[endX][0][z] = 1;
-            if (endX - 1 >= 0) {
-                table[endX - 1][0][z] = 1;
+        int32_t current = srcRoom.index;
+        auto pathIter = path.begin();
+        while (current != dstIndex) {
+            int32_t next = dstIndex;
+            if (pathIter != path.end()) {
+                next = *pathIter;
+                ++pathIter;
             }
-            if (endX + 1 < k_sizeX) {
-                table[endX + 1][0][z] = 1;
-            }
-            for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
-                if (endX - 1 >= 0) {
-                    table[endX - 1][y][z] = 1;
+
+            int32_t currentRow = current / 3;
+            int32_t currentCol = current % 3;
+
+            int32_t nextRow = next / 3;
+            int32_t nextCol = next % 3;
+
+            Room currentRoom;
+            currentRoom.index = current;
+            currentRoom.center = IntVector3({ ((currentCol + 1) * k_space) + (roomSizeX * currentCol) + (roomSizeX / 2), 0, ((currentRow + 1) * k_space) + (roomSizeZ * currentRow) + (roomSizeZ / 2) });
+            currentRoom.size = IntVector3({ roomSizeX, Field::k_fieldSizeY, roomSizeZ });
+
+            Room nextRoom;
+            nextRoom.index = next;
+            nextRoom.center = IntVector3({ ((nextCol + 1) * k_space) + (roomSizeX * nextCol) + (roomSizeX / 2), 0, ((nextRow + 1) * k_space) + (roomSizeZ * nextRow) + (roomSizeZ / 2) });
+            nextRoom.size = IntVector3({ roomSizeX, Field::k_fieldSizeY, roomSizeZ });
+
+            if (currentRow != nextRow) {
+                if (currentRow > nextRow) {
+                    int32_t startZ = currentRoom.center.z() + (currentRoom.size.z() / 2);
+                    int32_t endZ = nextRoom.center.z() - (nextRoom.size.z() / 2);
+
+                    int32_t minZ = Mathf::min(startZ, endZ);
+                    int32_t maxZ = Mathf::max(startZ, endZ);
+
+                    for (int32_t z = minZ; z <= maxZ; z++) {
+                        table[currentRoom.center.x()][0][z] = 1;
+                    }
+                } else {
+                    int32_t startZ = currentRoom.center.z() - (currentRoom.size.z() / 2);
+                    int32_t endZ = nextRoom.center.z() + (nextRoom.size.z() / 2);
+
+                    int32_t minZ = Mathf::min(startZ, endZ);
+                    int32_t maxZ = Mathf::max(startZ, endZ);
+
+                    for (int32_t z = minZ; z <= maxZ; z++) {
+                        table[currentRoom.center.x()][0][z] = 1;
+                    }
                 }
-                if (endX + 1 < k_sizeX) {
-                    table[endX + 1][y][z] = 1;
+            } else if (currentCol != nextCol) {
+                if (currentCol > nextCol) {
+                    int32_t startX = currentRoom.center.x() + (currentRoom.size.x() / 2);
+                    int32_t endX = nextRoom.center.x() - (nextRoom.size.x() / 2);
+
+                    int32_t minX = Mathf::min(startX, endX);
+                    int32_t maxX = Mathf::max(startX, endX);
+
+                    for (int32_t x = minX; x <= maxX; x++) {
+                        table[x][0][currentRoom.center.z()] = 1;
+                    }
+                } else {
+                    int32_t startX = currentRoom.center.x() - (currentRoom.size.x() / 2);
+                    int32_t endX = nextRoom.center.x() + (nextRoom.size.x() / 2);
+
+                    int32_t minX = Mathf::min(startX, endX);
+                    int32_t maxX = Mathf::max(startX, endX);
+
+                    for (int32_t x = minX; x <= maxX; x++) {
+                        table[x][0][currentRoom.center.z()] = 1;
+                    }
                 }
             }
-            z += (z < endZ) ? 1 : -1;
+            current = next;
         }
     }
 
