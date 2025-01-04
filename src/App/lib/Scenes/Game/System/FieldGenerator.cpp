@@ -463,40 +463,40 @@ void FieldGenerator::generate()
 
         // 通路を直線またはL字で埋める
         for (int32_t routeIndex = 0; routeIndex < m_routes.size(); routeIndex++) {
-            Route& src = m_routes.at(routeIndex);
+            Route& route = m_routes.at(routeIndex);
 
-            int32_t fromRow = src.prevRoomIndex / 3;
-            int32_t fromCol = src.prevRoomIndex % 3;
+            int32_t fromRow = route.prevRoomIndex / 3;
+            int32_t fromCol = route.prevRoomIndex % 3;
 
-            int32_t midRow = src.roomIndex / 3;
-            int32_t midCol = src.roomIndex % 3;
+            int32_t midRow = route.roomIndex / 3;
+            int32_t midCol = route.roomIndex % 3;
 
-            int32_t toRow = src.nextRoomIndex / 3;
-            int32_t toCol = src.nextRoomIndex % 3;
+            int32_t toRow = route.nextRoomIndex / 3;
+            int32_t toCol = route.nextRoomIndex % 3;
 
             if (fromRow == midRow) {
                 if (midRow == toRow) {
-                    int32_t startZ = src.center.z() - (roomSizeZ / 2);
-                    int32_t endZ = src.center.z() + (roomSizeZ / 2);
-
-                    int32_t minZ = Mathf::min(startZ, endZ);
-                    int32_t maxZ = Mathf::max(startZ, endZ);
-
-                    for (int32_t z = minZ; z < maxZ; z++) {
-                        table[src.center.x()][0][z] = 1;
-                    }
-                }
-
-            } else if (fromCol == midCol) {
-                if (midCol == toCol) {
-                    int32_t startX = src.center.x() - (roomSizeX / 2);
-                    int32_t endX = src.center.x() + (roomSizeX / 2);
+                    int32_t startX = route.center.x() - (roomSizeX / 2);
+                    int32_t endX = route.center.x() + (roomSizeX / 2);
 
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
 
                     for (int32_t x = minX; x < maxX; x++) {
-                        table[x][0][src.center.z()] = 1;
+                        table[x][0][route.center.z()] = 1;
+                    }
+                }
+
+            } else if (fromCol == midCol) {
+                if (midCol == toCol) {
+                    int32_t startZ = route.center.z() - (roomSizeZ / 2);
+                    int32_t endZ = route.center.z() + (roomSizeZ / 2);
+
+                    int32_t minZ = Mathf::min(startZ, endZ);
+                    int32_t maxZ = Mathf::max(startZ, endZ);
+
+                    for (int32_t z = minZ; z < maxZ; z++) {
+                        table[route.center.x()][0][z] = 1;
                     }
                 }
             }
