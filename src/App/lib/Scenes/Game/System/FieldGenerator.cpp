@@ -422,6 +422,14 @@ void FieldGenerator::generate()
                             table[currentRoom.center.x()][0][z] = 1;
                             table[currentRoom.center.x() + 1][0][z] = 1;
                         }
+                        for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                            table[currentRoom.center.x() - 1][y][minZ] = 0;
+                            table[currentRoom.center.x()][y][minZ] = 0;
+                            table[currentRoom.center.x() + 1][y][minZ] = 0;
+                            table[currentRoom.center.x() - 1][y][maxZ] = 0;
+                            table[currentRoom.center.x()][y][maxZ] = 0;
+                            table[currentRoom.center.x() + 1][y][maxZ] = 0;
+                        }
                     } else {
                         int32_t startZ = currentRoom.center.z() + (currentRoom.size.z() / 2);
                         int32_t endZ = nextRoom.center.z() - (nextRoom.size.z() / 2);
@@ -433,6 +441,14 @@ void FieldGenerator::generate()
                             table[currentRoom.center.x() - 1][0][z] = 1;
                             table[currentRoom.center.x()][0][z] = 1;
                             table[currentRoom.center.x() + 1][0][z] = 1;
+                        }
+                        for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                            table[currentRoom.center.x() - 1][y][minZ] = 0;
+                            table[currentRoom.center.x()][y][minZ] = 0;
+                            table[currentRoom.center.x() + 1][y][minZ] = 0;
+                            table[currentRoom.center.x() - 1][y][maxZ] = 0;
+                            table[currentRoom.center.x()][y][maxZ] = 0;
+                            table[currentRoom.center.x() + 1][y][maxZ] = 0;
                         }
                     }
                 } else if (currentCol != nextCol) {
@@ -448,6 +464,14 @@ void FieldGenerator::generate()
                             table[x][0][currentRoom.center.z()] = 1;
                             table[x][0][currentRoom.center.z() + 1] = 1;
                         }
+                        for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                            table[minX][y][currentRoom.center.z() - 1] = 0;
+                            table[minX][y][currentRoom.center.z()] = 0;
+                            table[minX][y][currentRoom.center.z() + 1] = 0;
+                            table[maxX][y][currentRoom.center.z() - 1] = 0;
+                            table[maxX][y][currentRoom.center.z()] = 0;
+                            table[maxX][y][currentRoom.center.z() + 1] = 0;
+                        }
                     } else {
                         int32_t startX = currentRoom.center.x() + (currentRoom.size.x() / 2);
                         int32_t endX = nextRoom.center.x() - (nextRoom.size.x() / 2);
@@ -459,6 +483,14 @@ void FieldGenerator::generate()
                             table[x][0][currentRoom.center.z() - 1] = 1;
                             table[x][0][currentRoom.center.z()] = 1;
                             table[x][0][currentRoom.center.z() + 1] = 1;
+                        }
+                        for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                            table[minX][y][currentRoom.center.z() - 1] = 0;
+                            table[minX][y][currentRoom.center.z()] = 0;
+                            table[minX][y][currentRoom.center.z() + 1] = 0;
+                            table[maxX][y][currentRoom.center.z() - 1] = 0;
+                            table[maxX][y][currentRoom.center.z()] = 0;
+                            table[maxX][y][currentRoom.center.z() + 1] = 0;
                         }
                     }
                 }
