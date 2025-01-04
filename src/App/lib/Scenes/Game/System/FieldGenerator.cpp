@@ -418,7 +418,9 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
+                            table[currentRoom.center.x() - 1][0][z] = 1;
                             table[currentRoom.center.x()][0][z] = 1;
+                            table[currentRoom.center.x() + 1][0][z] = 1;
                         }
                     } else {
                         int32_t startZ = currentRoom.center.z() + (currentRoom.size.z() / 2);
@@ -428,7 +430,9 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
+                            table[currentRoom.center.x() - 1][0][z] = 1;
                             table[currentRoom.center.x()][0][z] = 1;
+                            table[currentRoom.center.x() + 1][0][z] = 1;
                         }
                     }
                 } else if (currentCol != nextCol) {
@@ -440,7 +444,9 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
+                            table[x][0][currentRoom.center.z() - 1] = 1;
                             table[x][0][currentRoom.center.z()] = 1;
+                            table[x][0][currentRoom.center.z() + 1] = 1;
                         }
                     } else {
                         int32_t startX = currentRoom.center.x() + (currentRoom.size.x() / 2);
@@ -450,7 +456,9 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
+                            table[x][0][currentRoom.center.z() - 1] = 1;
                             table[x][0][currentRoom.center.z()] = 1;
+                            table[x][0][currentRoom.center.z() + 1] = 1;
                         }
                     }
                 }
@@ -481,7 +489,9 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x < maxX; x++) {
+                    table[x][0][route.center.z() - 1] = 1;
                     table[x][0][route.center.z()] = 1;
+                    table[x][0][route.center.z() + 1] = 1;
                 }
             } else {
                 if (midRow > toRow) {
@@ -493,7 +503,9 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
+                            table[x][0][route.center.z() - 1] = 1;
                             table[x][0][route.center.z()] = 1;
+                            table[x][0][route.center.z() + 1] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     } else if (fromCol < midCol) {
@@ -504,7 +516,9 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
+                            table[x][0][route.center.z() - 1] = 1;
                             table[x][0][route.center.z()] = 1;
+                            table[x][0][route.center.z() + 1] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     }
@@ -515,7 +529,9 @@ void FieldGenerator::generate()
                     int32_t minZ = Mathf::min(startZ, endZ);
                     int32_t maxZ = Mathf::max(startZ, endZ);
                     for (int32_t z = minZ; z <= maxZ; z++) {
+                        table[endX - 1][0][z] = 1;
                         table[endX][0][z] = 1;
+                        table[endX + 1][0][z] = 1;
                     }
                 } else if (midRow < toRow) {
                     int32_t endX = route.center.x();
@@ -526,7 +542,9 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
+                            table[x][0][route.center.z() - 1] = 1;
                             table[x][0][route.center.z()] = 1;
+                            table[x][0][route.center.z() + 1] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     } else if (fromCol < midCol) {
@@ -537,7 +555,9 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
+                            table[x][0][route.center.z() - 1] = 1;
                             table[x][0][route.center.z()] = 1;
+                            table[x][0][route.center.z() + 1] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     }
@@ -548,7 +568,9 @@ void FieldGenerator::generate()
                     int32_t minZ = Mathf::min(startZ, endZ);
                     int32_t maxZ = Mathf::max(startZ, endZ);
                     for (int32_t z = minZ; z <= maxZ; z++) {
+                        table[endX - 1][0][z] = 1;
                         table[endX][0][z] = 1;
+                        table[endX + 1][0][z] = 1;
                     }
                 }
             }
@@ -562,7 +584,9 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z < maxZ; z++) {
+                    table[route.center.x() - 1][0][z] = 1;
                     table[route.center.x()][0][z] = 1;
+                    table[route.center.x() + 1][0][z] = 1;
                 }
             } else {
                 if (midCol > toCol) {
@@ -574,7 +598,9 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
+                            table[route.center.x() - 1][0][z] = 1;
                             table[route.center.x()][0][z] = 1;
+                            table[route.center.x() + 1][0][z] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     } else if (fromRow < midRow) {
@@ -585,7 +611,9 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
+                            table[route.center.x() - 1][0][z] = 1;
                             table[route.center.x()][0][z] = 1;
+                            table[route.center.x() + 1][0][z] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     }
@@ -596,7 +624,9 @@ void FieldGenerator::generate()
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
                     for (int32_t x = minX; x <= maxX; x++) {
+                        table[x][0][endZ - 1] = 1;
                         table[x][0][endZ] = 1;
+                        table[x][0][endZ + 1] = 1;
                     }
                 } else if (midCol < toCol) {
                     int32_t endZ = route.center.z();
@@ -607,7 +637,9 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
+                            table[route.center.x() - 1][0][z] = 1;
                             table[route.center.x()][0][z] = 1;
+                            table[route.center.x() + 1][0][z] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     } else if (fromRow < midRow) {
@@ -618,7 +650,9 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
+                            table[route.center.x() - 1][0][z] = 1;
                             table[route.center.x()][0][z] = 1;
+                            table[route.center.x() + 1][0][z] = 1;
                         }
                         table[route.center.x()][0][route.center.z()] = 1;
                     }
@@ -629,7 +663,9 @@ void FieldGenerator::generate()
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
                     for (int32_t x = minX; x <= maxX; x++) {
+                        table[x][0][endZ - 1] = 1;
                         table[x][0][endZ] = 1;
+                        table[x][0][endZ + 1] = 1;
                     }
                 }
             }
