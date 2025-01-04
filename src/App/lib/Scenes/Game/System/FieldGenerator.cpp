@@ -390,8 +390,8 @@ void FieldGenerator::generate()
 
             if (currentRow != nextRow) {
                 if (currentRow > nextRow) {
-                    int32_t startZ = currentRoom.center.z() + (currentRoom.size.z() / 2);
-                    int32_t endZ = nextRoom.center.z() - (nextRoom.size.z() / 2);
+                    int32_t startZ = currentRoom.center.z() - (currentRoom.size.z() / 2);
+                    int32_t endZ = nextRoom.center.z() + (nextRoom.size.z() / 2);
 
                     int32_t minZ = Mathf::min(startZ, endZ);
                     int32_t maxZ = Mathf::max(startZ, endZ);
@@ -400,8 +400,8 @@ void FieldGenerator::generate()
                         table[currentRoom.center.x()][0][z] = 1;
                     }
                 } else {
-                    int32_t startZ = currentRoom.center.z() - (currentRoom.size.z() / 2);
-                    int32_t endZ = nextRoom.center.z() + (nextRoom.size.z() / 2);
+                    int32_t startZ = currentRoom.center.z() + (currentRoom.size.z() / 2);
+                    int32_t endZ = nextRoom.center.z() - (nextRoom.size.z() / 2);
 
                     int32_t minZ = Mathf::min(startZ, endZ);
                     int32_t maxZ = Mathf::max(startZ, endZ);
@@ -412,8 +412,8 @@ void FieldGenerator::generate()
                 }
             } else if (currentCol != nextCol) {
                 if (currentCol > nextCol) {
-                    int32_t startX = currentRoom.center.x() + (currentRoom.size.x() / 2);
-                    int32_t endX = nextRoom.center.x() - (nextRoom.size.x() / 2);
+                    int32_t startX = currentRoom.center.x() - (currentRoom.size.x() / 2);
+                    int32_t endX = nextRoom.center.x() + (nextRoom.size.x() / 2);
 
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
@@ -422,8 +422,8 @@ void FieldGenerator::generate()
                         table[x][0][currentRoom.center.z()] = 1;
                     }
                 } else {
-                    int32_t startX = currentRoom.center.x() - (currentRoom.size.x() / 2);
-                    int32_t endX = nextRoom.center.x() + (nextRoom.size.x() / 2);
+                    int32_t startX = currentRoom.center.x() + (currentRoom.size.x() / 2);
+                    int32_t endX = nextRoom.center.x() - (nextRoom.size.x() / 2);
 
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
