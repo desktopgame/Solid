@@ -383,6 +383,12 @@ void FieldGenerator::generate()
             }
         }
 
+        // 孤島の内側に閉じたパスは不要なので削除
+        auto iter = std::remove_if(paths.begin(), paths.end(), [](const auto& p) -> bool {
+            return p.size() == 2;
+        });
+        paths.erase(iter, paths.end());
+
         // パスにそって通路を繋ぐ
         for (const auto& path : paths) {
             auto pathIter = path.begin();
