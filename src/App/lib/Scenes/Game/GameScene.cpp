@@ -28,7 +28,7 @@ void GameScene::onEnter()
         auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
         auto borderTex = Texture::create("./assets/Textures/tileBorder.png");
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
-        m_field->load("./assets/Stages/stage_base.csv");
+        m_field->generate();
 
         for (int32_t i = 0; i < 10; i++) {
             m_debugEntity = System::Entities::SlimeEntity::create();

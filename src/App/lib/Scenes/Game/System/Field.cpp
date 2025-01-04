@@ -1,6 +1,7 @@
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <Scenes/Game/System/FieldGenerator.hpp>
 #include <algorithm>
 #include <imgui.h>
 
@@ -27,7 +28,7 @@ Field::Field(
 {
 }
 
-void Field::load(const std::string& file)
+void Field::generate()
 {
     m_vertexBuffer = CpuBuffer::create();
     m_indexBuffer = CpuBuffer::create();
@@ -43,9 +44,11 @@ void Field::load(const std::string& file)
     m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_indexBuffer->update(indices.data());
 
+    FieldGenerator generator;
+    generator.generate();
+    const std::vector<Vector4>& instances = generator.getTiles();
+
     auto instBuf = CpuBuffer::create();
-    std::vector<Vector4> instances;
-    IO::deserializeTile(file, instances, 1.0f);
     instBuf->allocate(sizeof(Vector4) * instances.size());
     instBuf->update(instances.data());
     m_instanceBuffers.emplace_back(instBuf);

@@ -20,7 +20,7 @@ public:
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 
-    void load(const std::string& file);
+    void generate();
 
     void update();
     void onGui();
