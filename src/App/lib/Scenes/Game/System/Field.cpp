@@ -13,6 +13,7 @@ Field::Field(
     : m_blocks()
     , m_player()
     , m_entities()
+    , m_generator()
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
     , m_vertexBuffer()
@@ -44,9 +45,11 @@ void Field::generate()
     m_indexBuffer->allocate(sizeof(uint32_t) * indices.size());
     m_indexBuffer->update(indices.data());
 
-    FieldGenerator generator;
-    generator.generate();
-    const std::vector<Vector4>& instances = generator.getTiles();
+    if (!m_generator) {
+        m_generator = std::make_shared<FieldGenerator>();
+        m_generator->generate();
+    }
+    const std::vector<Vector4>& instances = m_generator->getTiles();
 
     auto instBuf = CpuBuffer::create();
     instBuf->allocate(sizeof(Vector4) * instances.size());
@@ -229,4 +232,12 @@ void Field::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_ba
 std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_entities.at(index); }
 int32_t Field::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }
 
+FieldGenerator::Room Field::getRoomAt(int32_t index) const { return m_generator->getRooms().at(index); }
+int32_t Field::getRoomCount() const
+{
+    if (!m_generator) {
+        return 0;
+    }
+    return static_cast<int32_t>(m_generator->getRooms().size());
+}
 }

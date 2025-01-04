@@ -1,4 +1,5 @@
 #pragma once
+#include <Scenes/Game/System/FieldGenerator.hpp>
 #include <library.hpp>
 #include <memory>
 #include <vector>
@@ -36,6 +37,9 @@ public:
     void spwan(const std::shared_ptr<Entity>& entity);
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
     int32_t getEntityCount() const;
+
+    FieldGenerator::Room getRoomAt(int32_t index) const;
+    int32_t getRoomCount() const;
 
 private:
     static inline const std::array<Matrix, 6> k_translateMatrixTable = {
@@ -153,6 +157,7 @@ private:
     std::shared_ptr<Entities::PlayerEntity> m_player;
     std::vector<std::shared_ptr<Entity>> m_entities;
 
+    std::shared_ptr<FieldGenerator> m_generator;
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
     std::shared_ptr<CpuBuffer> m_vertexBuffer;

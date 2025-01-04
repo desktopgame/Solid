@@ -30,14 +30,31 @@ void GameScene::onEnter()
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->generate();
 
-        for (int32_t i = 0; i < 10; i++) {
-            m_debugEntity = System::Entities::SlimeEntity::create();
-            m_debugEntity->setPosition(Vector3({ 90, 20, 90 }));
-            m_field->spwan(m_debugEntity);
+        Random rand;
+        int32_t mainRoomIndex = rand.range(0, m_field->getRoomCount() - 1);
+
+        for (int32_t i = 0; i < m_field->getRoomCount(); i++) {
+            if (i == mainRoomIndex) {
+                continue;
+            }
+            System::FieldGenerator::Room room = m_field->getRoomAt(i);
+            for (int32_t j = 0; j < rand.range(0, 5); j++) {
+                int32_t tileOffsetX = rand.range(0, System::Field::k_fieldSizeX / 2);
+                int32_t tileOffsetZ = rand.range(0, System::Field::k_fieldSizeZ / 2);
+
+                float enemyPosX = (room.center.x() + tileOffsetX) * System::Field::k_tileSize;
+                float enemyPosZ = (room.center.z() + tileOffsetZ) * System::Field::k_tileSize;
+
+                m_debugEntity = System::Entities::SlimeEntity::create();
+                m_debugEntity->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
+                m_field->spwan(m_debugEntity);
+            }
         }
+
+        System::FieldGenerator::Room mainRoom = m_field->getRoomAt(mainRoomIndex);
         m_debugPlayer = System::Entities::PlayerEntity::create(
             Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
-        m_debugPlayer->setPosition(Vector3({ 80, 20, 80 }));
+        m_debugPlayer->setPosition(Vector3({ mainRoom.center.x() * System::Field::k_tileSize, 10, mainRoom.center.z() * System::Field::k_tileSize }));
         m_field->setPlayer(m_debugPlayer);
     }
     if (!m_aimTexture) {
