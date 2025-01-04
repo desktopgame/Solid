@@ -29,9 +29,6 @@ void FieldGenerator::generate()
     const int32_t k_sizeX = Field::k_fieldSizeX;
     const int32_t k_sizeY = Field::k_fieldSizeY;
     const int32_t k_sizeZ = Field::k_fieldSizeZ;
-    const int32_t k_wallPadding = 3;
-    const int32_t k_roadLength = 5;
-    (void)k_sizeY;
 
     Random rand;
     const int32_t k_space = 4;
