@@ -365,8 +365,8 @@ void FieldGenerator::generate()
 
         int32_t current = srcRoom.index;
         auto pathIter = path.begin();
-        while (current != dstIndex) {
-            int32_t next = dstIndex;
+        while (current != dstRoom.index) {
+            int32_t next = dstRoom.index;
             if (pathIter != path.end()) {
                 next = *pathIter;
                 ++pathIter;
