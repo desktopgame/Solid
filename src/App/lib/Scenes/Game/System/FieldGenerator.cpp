@@ -341,17 +341,34 @@ void FieldGenerator::generate()
                 int32_t dstRow = dstRoom.index / 3;
                 int32_t srcColumn = current % 3;
                 int32_t dstColumn = dstRoom.index % 3;
-                if (srcRow != dstRow) {
-                    if (srcRow < dstRow) {
-                        current += 3;
-                    } else {
-                        current -= 3;
+                int32_t branch = rand.range(0, 1);
+                if (branch == 0) {
+                    if (srcRow != dstRow) {
+                        if (srcRow < dstRow) {
+                            current += 3;
+                        } else {
+                            current -= 3;
+                        }
+                    } else if (srcColumn != dstColumn) {
+                        if (srcColumn < dstColumn) {
+                            current++;
+                        } else {
+                            current--;
+                        }
                     }
-                } else if (srcColumn != dstColumn) {
-                    if (srcColumn < dstColumn) {
-                        current++;
-                    } else {
-                        current--;
+                } else {
+                    if (srcColumn != dstColumn) {
+                        if (srcColumn < dstColumn) {
+                            current++;
+                        } else {
+                            current--;
+                        }
+                    } else if (srcRow != dstRow) {
+                        if (srcRow < dstRow) {
+                            current += 3;
+                        } else {
+                            current -= 3;
+                        }
                     }
                 }
             }
