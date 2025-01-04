@@ -14,6 +14,14 @@ FieldGenerator::Room::Room()
     , connected()
 {
 }
+// Route
+FieldGenerator::Route::Route()
+    : prevRoomIndex()
+    , nextRoomIndex()
+    , roomIndex()
+    , center()
+{
+}
 // public
 FieldGenerator::FieldGenerator() { }
 void FieldGenerator::generate()
@@ -31,6 +39,7 @@ void FieldGenerator::generate()
     int32_t roomSizeZ = (Field::k_fieldSizeZ - (k_space * 4)) / 3;
 
     m_rooms.clear();
+    m_routes.clear();
 
     // 空間を9分割
     int32_t roomIndex = 0;
@@ -394,6 +403,15 @@ void FieldGenerator::generate()
                 nextRoom.center = IntVector3({ ((nextCol + 1) * k_space) + (roomSizeX * nextCol) + (roomSizeX / 2), 0, ((nextRow + 1) * k_space) + (roomSizeZ * nextRow) + (roomSizeZ / 2) });
                 nextRoom.size = IntVector3({ roomSizeX, Field::k_fieldSizeY, roomSizeZ });
 
+                if (pathIter != path.end()) {
+                    Route route;
+                    route.prevRoomIndex = current;
+                    route.nextRoomIndex = *pathIter;
+                    route.roomIndex = next;
+                    route.center = nextRoom.center;
+                    m_routes.emplace_back(route);
+                }
+
                 if (currentRow != nextRow) {
                     if (currentRow > nextRow) {
                         int32_t startZ = currentRoom.center.z() - (currentRoom.size.z() / 2);
@@ -440,6 +458,47 @@ void FieldGenerator::generate()
                     }
                 }
                 current = next;
+            }
+        }
+
+        // 通路を直線またはL字で埋める
+        for (int32_t routeIndex = 0; routeIndex < m_routes.size(); routeIndex++) {
+            Route& src = m_routes.at(routeIndex);
+
+            int32_t fromRow = src.prevRoomIndex / 3;
+            int32_t fromCol = src.prevRoomIndex % 3;
+
+            int32_t midRow = src.roomIndex / 3;
+            int32_t midCol = src.roomIndex % 3;
+
+            int32_t toRow = src.nextRoomIndex / 3;
+            int32_t toCol = src.nextRoomIndex % 3;
+
+            if (fromRow == midRow) {
+                if (midRow == toRow) {
+                    int32_t startZ = src.center.z() - (roomSizeZ / 2);
+                    int32_t endZ = src.center.z() + (roomSizeZ / 2);
+
+                    int32_t minZ = Mathf::min(startZ, endZ);
+                    int32_t maxZ = Mathf::max(startZ, endZ);
+
+                    for (int32_t z = minZ; z < maxZ; z++) {
+                        table[src.center.x()][0][z] = 1;
+                    }
+                }
+
+            } else if (fromCol == midCol) {
+                if (midCol == toCol) {
+                    int32_t startX = src.center.x() - (roomSizeX / 2);
+                    int32_t endX = src.center.x() + (roomSizeX / 2);
+
+                    int32_t minX = Mathf::min(startX, endX);
+                    int32_t maxX = Mathf::max(startX, endX);
+
+                    for (int32_t x = minX; x < maxX; x++) {
+                        table[x][0][src.center.z()] = 1;
+                    }
+                }
             }
         }
     }
