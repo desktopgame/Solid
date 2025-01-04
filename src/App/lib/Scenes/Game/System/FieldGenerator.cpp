@@ -489,7 +489,7 @@ void FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms
             markRecursive(left, rooms, visit);
         }
     }
-    if (right >= 0 && right < 9 && room.index % 3 == 1) {
+    if (right >= 0 && right < 9 && room.index % 3 < 2) {
         auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
             return e.index == right;
         });
