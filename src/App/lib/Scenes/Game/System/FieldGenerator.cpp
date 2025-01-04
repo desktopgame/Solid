@@ -148,6 +148,17 @@ void FieldGenerator::generate()
                     table[x][0][neighbor.center.z() - 1] = 1;
                     table[x][0][neighbor.center.z()] = 1;
                     table[x][0][neighbor.center.z() + 1] = 1;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() - 1] = 1;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z()] = 1;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() + 1] = 1;
+                }
+                for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                    table[minX][y][neighbor.center.z() - 1] = 0;
+                    table[minX][y][neighbor.center.z()] = 0;
+                    table[minX][y][neighbor.center.z() + 1] = 0;
+                    table[maxX][y][neighbor.center.z() - 1] = 0;
+                    table[maxX][y][neighbor.center.z()] = 0;
+                    table[maxX][y][neighbor.center.z() + 1] = 0;
                 }
             }
         }
@@ -171,6 +182,17 @@ void FieldGenerator::generate()
                     table[x][0][neighbor.center.z() - 1] = 1;
                     table[x][0][neighbor.center.z()] = 1;
                     table[x][0][neighbor.center.z() + 1] = 1;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() - 1] = 1;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z()] = 1;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() + 1] = 1;
+                }
+                for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                    table[minX][y][neighbor.center.z() - 1] = 0;
+                    table[minX][y][neighbor.center.z()] = 0;
+                    table[minX][y][neighbor.center.z() + 1] = 0;
+                    table[maxX][y][neighbor.center.z() - 1] = 0;
+                    table[maxX][y][neighbor.center.z()] = 0;
+                    table[maxX][y][neighbor.center.z() + 1] = 0;
                 }
             }
         }
@@ -194,6 +216,17 @@ void FieldGenerator::generate()
                     table[neighbor.center.x() - 1][0][z] = 1;
                     table[neighbor.center.x()][0][z] = 1;
                     table[neighbor.center.x() + 1][0][z] = 1;
+                    table[neighbor.center.x() - 1][Field::k_fieldSizeY - 1][z] = 1;
+                    table[neighbor.center.x()][Field::k_fieldSizeY - 1][z] = 1;
+                    table[neighbor.center.x() + 1][Field::k_fieldSizeY - 1][z] = 1;
+                }
+                for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                    table[neighbor.center.x() - 1][y][minZ] = 0;
+                    table[neighbor.center.x()][y][minZ] = 0;
+                    table[neighbor.center.x() + 1][y][minZ] = 0;
+                    table[neighbor.center.x() - 1][y][maxZ] = 0;
+                    table[neighbor.center.x()][y][maxZ] = 0;
+                    table[neighbor.center.x() + 1][y][maxZ] = 0;
                 }
             }
         }
@@ -217,6 +250,17 @@ void FieldGenerator::generate()
                     table[neighbor.center.x() - 1][0][z] = 1;
                     table[neighbor.center.x()][0][z] = 1;
                     table[neighbor.center.x() + 1][0][z] = 1;
+                    table[neighbor.center.x() - 1][Field::k_fieldSizeY - 1][z] = 1;
+                    table[neighbor.center.x()][Field::k_fieldSizeY - 1][z] = 1;
+                    table[neighbor.center.x() + 1][Field::k_fieldSizeY - 1][z] = 1;
+                }
+                for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
+                    table[neighbor.center.x() - 1][y][minZ] = 0;
+                    table[neighbor.center.x()][y][minZ] = 0;
+                    table[neighbor.center.x() + 1][y][minZ] = 0;
+                    table[neighbor.center.x() - 1][y][maxZ] = 0;
+                    table[neighbor.center.x()][y][maxZ] = 0;
+                    table[neighbor.center.x() + 1][y][maxZ] = 0;
                 }
             }
         }
