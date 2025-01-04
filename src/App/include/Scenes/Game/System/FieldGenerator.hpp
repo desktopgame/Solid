@@ -15,6 +15,15 @@ public:
         bool connected;
     };
 
+    class Route {
+    public:
+        explicit Route();
+        int32_t prevRoomIndex;
+        int32_t nextRoomIndex;
+        int32_t roomIndex;
+        IntVector3 center;
+    };
+
     explicit FieldGenerator();
     void generate();
 
@@ -27,5 +36,6 @@ private:
 
     std::vector<Vector4> m_tiles;
     std::vector<Room> m_rooms;
+    std::vector<Route> m_routes;
 };
 }
