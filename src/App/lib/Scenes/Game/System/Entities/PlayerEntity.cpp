@@ -97,7 +97,7 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : BasicEntity(node)
     , m_cameraAngleX()
     , m_cameraAngleY()
-    , m_cameraMoveSpeed(20.0f)
+    , m_cameraMoveSpeed(40.0f)
     , m_cameraRotateSpeed(0.8f)
 {
 }
