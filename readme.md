@@ -77,3 +77,7 @@ ninja -C build Test
 ````bat
 ctest --test-dir build/App -R "^Test$" -V
 ````
+
+## ライセンス
+このリポジトリのソースコードはMITライセンスで公開されています。  
+詳細は `license.txt` を確認してください。
