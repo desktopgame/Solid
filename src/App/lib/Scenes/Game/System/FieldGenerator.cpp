@@ -432,6 +432,9 @@ void FieldGenerator::generate()
                             table[currentRoom.center.x() - 1][0][z] = k_blockRouteFloor;
                             table[currentRoom.center.x()][0][z] = k_blockRouteFloor;
                             table[currentRoom.center.x() + 1][0][z] = k_blockRouteFloor;
+                            table[currentRoom.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[currentRoom.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[currentRoom.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
                             table[currentRoom.center.x() - 1][y][minZ] = k_blockNone;
@@ -452,6 +455,9 @@ void FieldGenerator::generate()
                             table[currentRoom.center.x() - 1][0][z] = k_blockRouteFloor;
                             table[currentRoom.center.x()][0][z] = k_blockRouteFloor;
                             table[currentRoom.center.x() + 1][0][z] = k_blockRouteFloor;
+                            table[currentRoom.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[currentRoom.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[currentRoom.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
                             table[currentRoom.center.x() - 1][y][minZ] = k_blockNone;
@@ -474,6 +480,9 @@ void FieldGenerator::generate()
                             table[x][0][currentRoom.center.z() - 1] = k_blockRouteFloor;
                             table[x][0][currentRoom.center.z()] = k_blockRouteFloor;
                             table[x][0][currentRoom.center.z() + 1] = k_blockRouteFloor;
+                            table[x][Field::k_fieldSizeY - 1][currentRoom.center.z() - 1] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][currentRoom.center.z()] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][currentRoom.center.z() + 1] = k_blockRouteRoof;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
                             table[minX][y][currentRoom.center.z() - 1] = k_blockNone;
@@ -494,6 +503,9 @@ void FieldGenerator::generate()
                             table[x][0][currentRoom.center.z() - 1] = k_blockRouteFloor;
                             table[x][0][currentRoom.center.z()] = k_blockRouteFloor;
                             table[x][0][currentRoom.center.z() + 1] = k_blockRouteFloor;
+                            table[x][Field::k_fieldSizeY - 1][currentRoom.center.z() - 1] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][currentRoom.center.z()] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][currentRoom.center.z() + 1] = k_blockRouteRoof;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
                             table[minX][y][currentRoom.center.z() - 1] = k_blockNone;
