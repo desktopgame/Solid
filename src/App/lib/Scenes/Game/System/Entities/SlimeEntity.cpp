@@ -110,6 +110,7 @@ SlimeEntity::SlimeEntity()
     , m_moveDir()
     , m_random()
 {
+    m_currentHP = m_maximumHP = 3;
 }
 
 void SlimeEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z)
