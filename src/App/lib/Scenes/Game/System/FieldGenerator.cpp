@@ -64,12 +64,15 @@ void FieldGenerator::generate()
     m_rooms.erase(iter, m_rooms.end());
 
     // ブロック座標を記憶する配列を確保
-    std::array<std::array<std::array<int32_t, Field::k_fieldSizeZ>, Field::k_fieldSizeY>, Field::k_fieldSizeX> table;
+    // スタックを使いすぎないように動的確保
+    std::vector<std::vector<std::vector<int32_t>>> table(Field::k_fieldSizeX);
     for (int32_t x = 0; x < k_sizeX; x++) {
+        std::vector<std::vector<int32_t>> inner(Field::k_fieldSizeY);
         for (int32_t y = 0; y < k_sizeY; y++) {
-            std::array<int32_t, Field::k_fieldSizeZ>& a = table[x][y];
-            std::fill(a.begin(), a.end(), 0);
+            std::vector<int32_t> vec(Field::k_fieldSizeZ);
+            inner.at(y) = std::move(vec);
         }
+        table.at(x) = std::move(inner);
     }
 
     // ルームの床にブロックを配置
