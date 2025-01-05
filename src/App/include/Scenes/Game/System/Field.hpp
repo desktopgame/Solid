@@ -15,8 +15,8 @@ public:
     static inline constexpr int32_t k_fieldSizeY = 16;
     static inline constexpr int32_t k_fieldSizeZ = 64;
     static inline constexpr int32_t k_roomSpace = 4;
-    static inline constexpr int32_t k_roomSizeX = (k_fieldSizeX - (k_space * 4)) / 3;
-    static inline constexpr int32_t k_roomSizeZ = (k_fieldSizeZ - (k_space * 4)) / 3;
+    static inline constexpr int32_t k_roomSizeX = (k_fieldSizeX - (k_roomSpace * 4)) / 3;
+    static inline constexpr int32_t k_roomSizeZ = (k_fieldSizeZ - (k_roomSpace * 4)) / 3;
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
 
