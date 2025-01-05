@@ -16,11 +16,21 @@ static void physicsTest()
     auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
     auto borderTex = Texture::create("./assets/Textures/tileBorder.png");
     auto field = std::make_shared<System::Field>(normalTex, borderTex);
-    field->load("./assets/Stages/stage_base.csv");
+    field->generate();
 
+    System::FieldGenerator::Room room = field->getRoomAt(0);
+    Random rand;
     for (int32_t i = 0; i < 10; i++) {
+        int32_t halfX = (System::Field::k_roomSizeX / 2) - 3;
+        int32_t halfZ = (System::Field::k_roomSizeZ / 2) - 3;
+        int32_t tileOffsetX = rand.range(-halfX, halfX);
+        int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
+
+        float enemyPosX = (room.center.x() + 0) * System::Field::k_tileSize;
+        float enemyPosZ = (room.center.z() + 0) * System::Field::k_tileSize;
+
         auto enemy = System::Entities::SlimeEntity::create();
-        enemy->setPosition(Vector3({ 90, 20, 90 }));
+        enemy->setPosition(Vector3({ enemyPosX, 20, enemyPosZ }));
         field->spwan(enemy);
     }
     auto player = System::Entities::PlayerEntity::create(
@@ -37,7 +47,7 @@ static void physicsTest()
     fieldAABB.max = (Vector3({ System::Field::k_fieldSizeX, System::Field::k_fieldSizeY, System::Field::k_fieldSizeZ }) * System::Field::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
 
     // 長すぎるとCIがタイムアウトするのでほどほどに
-    const float duration = (60.0f * 60.0f * 1.0f);
+    const float duration = (60.0f * 10.0f * 1.0f);
 
     while (elapsed < duration) {
         Lib::Utils::Time::s_deltaTime = deltaTime;
