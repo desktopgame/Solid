@@ -39,9 +39,9 @@ void FieldGenerator::generate()
     const int32_t k_blockRouteWall = 6;
 
     Random rand;
-    const int32_t k_space = 4;
-    int32_t roomSizeX = (Field::k_fieldSizeX - (k_space * 4)) / 3;
-    int32_t roomSizeZ = (Field::k_fieldSizeZ - (k_space * 4)) / 3;
+    const int32_t k_space = Field::k_roomSpace;
+    int32_t roomSizeX = Field::k_roomSizeX;
+    int32_t roomSizeZ = Field::k_roomSizeZ;
 
     m_rooms.clear();
     m_routes.clear();
