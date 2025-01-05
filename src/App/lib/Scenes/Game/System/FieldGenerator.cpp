@@ -547,6 +547,9 @@ void FieldGenerator::generate()
                     table[x][0][route.center.z() - 1] = k_blockRouteFloor;
                     table[x][0][route.center.z()] = k_blockRouteFloor;
                     table[x][0][route.center.z() + 1] = k_blockRouteFloor;
+                    table[x][Field::k_fieldSizeY - 1][route.center.z() - 1] = k_blockRouteRoof;
+                    table[x][Field::k_fieldSizeY - 1][route.center.z()] = k_blockRouteRoof;
+                    table[x][Field::k_fieldSizeY - 1][route.center.z() + 1] = k_blockRouteRoof;
                 }
             } else {
                 if (midRow > toRow) {
@@ -561,6 +564,9 @@ void FieldGenerator::generate()
                             table[x][0][route.center.z() - 1] = k_blockRouteFloor;
                             table[x][0][route.center.z()] = k_blockRouteFloor;
                             table[x][0][route.center.z() + 1] = k_blockRouteFloor;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() - 1] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z()] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() + 1] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromCol < midCol) {
@@ -574,6 +580,9 @@ void FieldGenerator::generate()
                             table[x][0][route.center.z() - 1] = k_blockRouteFloor;
                             table[x][0][route.center.z()] = k_blockRouteFloor;
                             table[x][0][route.center.z() + 1] = k_blockRouteFloor;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() - 1] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z()] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() + 1] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
@@ -587,6 +596,9 @@ void FieldGenerator::generate()
                         table[endX - 1][0][z] = k_blockRouteFloor;
                         table[endX][0][z] = k_blockRouteFloor;
                         table[endX + 1][0][z] = k_blockRouteFloor;
+                        table[endX - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                        table[endX][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                        table[endX + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                     }
                 } else if (midRow < toRow) {
                     int32_t endX = route.center.x();
@@ -600,6 +612,9 @@ void FieldGenerator::generate()
                             table[x][0][route.center.z() - 1] = k_blockRouteFloor;
                             table[x][0][route.center.z()] = k_blockRouteFloor;
                             table[x][0][route.center.z() + 1] = k_blockRouteFloor;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() - 1] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z()] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() + 1] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromCol < midCol) {
@@ -613,6 +628,9 @@ void FieldGenerator::generate()
                             table[x][0][route.center.z() - 1] = k_blockRouteFloor;
                             table[x][0][route.center.z()] = k_blockRouteFloor;
                             table[x][0][route.center.z() + 1] = k_blockRouteFloor;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() - 1] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z()] = k_blockRouteRoof;
+                            table[x][Field::k_fieldSizeY - 1][route.center.z() + 1] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
@@ -626,6 +644,9 @@ void FieldGenerator::generate()
                         table[endX - 1][0][z] = k_blockRouteFloor;
                         table[endX][0][z] = k_blockRouteFloor;
                         table[endX + 1][0][z] = k_blockRouteFloor;
+                        table[endX - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                        table[endX][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                        table[endX + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                     }
                 }
             }
@@ -642,6 +663,9 @@ void FieldGenerator::generate()
                     table[route.center.x() - 1][0][z] = k_blockRouteFloor;
                     table[route.center.x()][0][z] = k_blockRouteFloor;
                     table[route.center.x() + 1][0][z] = k_blockRouteFloor;
+                    table[route.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                    table[route.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                    table[route.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                 }
             } else {
                 if (midCol > toCol) {
@@ -656,6 +680,9 @@ void FieldGenerator::generate()
                             table[route.center.x() - 1][0][z] = k_blockRouteFloor;
                             table[route.center.x()][0][z] = k_blockRouteFloor;
                             table[route.center.x() + 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromRow < midRow) {
@@ -669,6 +696,9 @@ void FieldGenerator::generate()
                             table[route.center.x() - 1][0][z] = k_blockRouteFloor;
                             table[route.center.x()][0][z] = k_blockRouteFloor;
                             table[route.center.x() + 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
@@ -682,6 +712,9 @@ void FieldGenerator::generate()
                         table[x][0][endZ - 1] = k_blockRouteFloor;
                         table[x][0][endZ] = k_blockRouteFloor;
                         table[x][0][endZ + 1] = k_blockRouteFloor;
+                        table[x][Field::k_fieldSizeY - 1][endZ - 1] = k_blockRouteRoof;
+                        table[x][Field::k_fieldSizeY - 1][endZ] = k_blockRouteRoof;
+                        table[x][Field::k_fieldSizeY - 1][endZ + 1] = k_blockRouteRoof;
                     }
                 } else if (midCol < toCol) {
                     int32_t endZ = route.center.z();
@@ -695,6 +728,9 @@ void FieldGenerator::generate()
                             table[route.center.x() - 1][0][z] = k_blockRouteFloor;
                             table[route.center.x()][0][z] = k_blockRouteFloor;
                             table[route.center.x() + 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromRow < midRow) {
@@ -708,6 +744,9 @@ void FieldGenerator::generate()
                             table[route.center.x() - 1][0][z] = k_blockRouteFloor;
                             table[route.center.x()][0][z] = k_blockRouteFloor;
                             table[route.center.x() + 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                            table[route.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                         }
                         table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
@@ -721,6 +760,9 @@ void FieldGenerator::generate()
                         table[x][0][endZ - 1] = k_blockRouteFloor;
                         table[x][0][endZ] = k_blockRouteFloor;
                         table[x][0][endZ + 1] = k_blockRouteFloor;
+                        table[x][Field::k_fieldSizeY - 1][endZ - 1] = k_blockRouteRoof;
+                        table[x][Field::k_fieldSizeY - 1][endZ] = k_blockRouteRoof;
+                        table[x][Field::k_fieldSizeY - 1][endZ + 1] = k_blockRouteRoof;
                     }
                 }
             }
