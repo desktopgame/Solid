@@ -715,6 +715,47 @@ void FieldGenerator::generate()
         }
     }
 
+    // 通路の壁を埋める
+    for (int32_t x = 0; x < Field::k_fieldSizeX; x++) {
+        const int32_t y = 0;
+        for (int32_t z = 0; z < Field::k_fieldSizeZ; z++) {
+            if (table[x][y][z]) {
+                continue;
+            }
+            std::array<IntVector3, 8> neighbor {
+                IntVector3({ x - 1, y, z }),
+                IntVector3({ x + 1, y, z }),
+                IntVector3({ x, y, z - 1 }),
+                IntVector3({ x, y, z + 1 }),
+                IntVector3({ x - 1, y, z - 1 }),
+                IntVector3({ x + 1, y, z - 1 }),
+                IntVector3({ x - 1, y, z + 1 }),
+                IntVector3({ x + 1, y, z + 1 })
+            };
+            bool wall = false;
+            for (const auto& n : neighbor) {
+                if (n.x() < 0 || n.x() >= Field::k_fieldSizeX) {
+                    continue;
+                }
+                if (n.y() < 0 || n.y() >= Field::k_fieldSizeY) {
+                    continue;
+                }
+                if (n.z() < 0 || n.z() >= Field::k_fieldSizeZ) {
+                    continue;
+                }
+                if (table[n.x()][n.y()][n.z()] == k_blockRouteFloor) {
+                    wall = true;
+                    break;
+                }
+            }
+            if (wall) {
+                for (int32_t yy = 0; yy < Field::k_fieldSizeY; yy++) {
+                    table[x][yy][z] = k_blockRouteWall;
+                }
+            }
+        }
+    }
+
     // 配置ブロック座標にタイルを六面分配置
     m_tiles.clear();
     for (int32_t x = 0; x < k_sizeX; x++) {
