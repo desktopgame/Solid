@@ -818,12 +818,26 @@ void FieldGenerator::generate()
                 if (!table[x][y][z]) {
                     continue;
                 }
-                m_tiles.emplace_back(Vector4({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), 0.0f }));
-                m_tiles.emplace_back(Vector4({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), 1.0f }));
-                m_tiles.emplace_back(Vector4({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), 2.0f }));
-                m_tiles.emplace_back(Vector4({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), 3.0f }));
-                m_tiles.emplace_back(Vector4({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), 4.0f }));
-                m_tiles.emplace_back(Vector4({ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), 5.0f }));
+                float fx = static_cast<float>(x);
+                float fy = static_cast<float>(y);
+                float fz = static_cast<float>(z);
+                for (int32_t normal = 0; normal < Field::k_normalVectorTable.size(); normal++) {
+                    float fNormal = static_cast<float>(normal);
+                    const auto& normalVec = Field::k_normalVectorTable.at(normal);
+                    const IntVector3 neighbor = IntVector3({ x, y, z }) + (IntVector3)normalVec;
+
+                    bool outX = neighbor.x() < 0 || neighbor.x() >= Field::k_fieldSizeX;
+                    bool outY = neighbor.y() < 0 || neighbor.y() >= Field::k_fieldSizeY;
+                    bool outZ = neighbor.z() < 0 || neighbor.z() >= Field::k_fieldSizeZ;
+
+                    if (outX || outY || outZ) {
+                        continue;
+                    }
+
+                    if (!table[neighbor.x()][neighbor.y()][neighbor.z()]) {
+                        m_tiles.emplace_back(Vector4({ fx, fy, fz, fNormal }));
+                    }
+                }
             }
         }
     }

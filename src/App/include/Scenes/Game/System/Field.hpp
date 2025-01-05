@@ -20,31 +20,6 @@ public:
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
 
-    explicit Field(
-        const std::shared_ptr<Texture>& normalTexture,
-        const std::shared_ptr<Texture>& borderTexture);
-
-    void generate();
-
-    void update();
-    void onGui();
-    void draw3D(const std::shared_ptr<Renderer>& renderer);
-    void draw2D(const std::shared_ptr<Renderer>& renderer);
-
-    bool hasBlockAt(int32_t x, int32_t y, int32_t z) const;
-    int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const;
-
-    void setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player);
-    std::shared_ptr<Entities::PlayerEntity> getPlayer() const;
-
-    void spwan(const std::shared_ptr<Entity>& entity);
-    std::shared_ptr<Entity> getEntityAt(int32_t index) const;
-    int32_t getEntityCount() const;
-
-    FieldGenerator::Room getRoomAt(int32_t index) const;
-    int32_t getRoomCount() const;
-
-private:
     static inline const std::array<Matrix, 6> k_translateMatrixTable = {
         // posY
         Matrix::translate(Vector3({ 0.0f, 0.5f, 0.0f })),
@@ -156,6 +131,31 @@ private:
         Vector4({ 0.9490196078431372f, 0.9490196078431372f, 0.8549019607843137f, 1.0f }),
     };
 
+    explicit Field(
+        const std::shared_ptr<Texture>& normalTexture,
+        const std::shared_ptr<Texture>& borderTexture);
+
+    void generate();
+
+    void update();
+    void onGui();
+    void draw3D(const std::shared_ptr<Renderer>& renderer);
+    void draw2D(const std::shared_ptr<Renderer>& renderer);
+
+    bool hasBlockAt(int32_t x, int32_t y, int32_t z) const;
+    int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const;
+
+    void setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player);
+    std::shared_ptr<Entities::PlayerEntity> getPlayer() const;
+
+    void spwan(const std::shared_ptr<Entity>& entity);
+    std::shared_ptr<Entity> getEntityAt(int32_t index) const;
+    int32_t getEntityCount() const;
+
+    FieldGenerator::Room getRoomAt(int32_t index) const;
+    int32_t getRoomCount() const;
+
+private:
     std::array<std::array<std::array<int32_t, k_fieldSizeX>, k_fieldSizeY>, k_fieldSizeZ> m_blocks;
     std::shared_ptr<Entities::PlayerEntity> m_player;
     std::vector<std::shared_ptr<Entity>> m_entities;
