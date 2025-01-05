@@ -30,6 +30,14 @@ void FieldGenerator::generate()
     const int32_t k_sizeY = Field::k_fieldSizeY;
     const int32_t k_sizeZ = Field::k_fieldSizeZ;
 
+    const int32_t k_blockNone = 0;
+    const int32_t k_blockRoomFloor = 1;
+    const int32_t k_blockRoomRoof = 2;
+    const int32_t k_blockRoomWall = 3;
+    const int32_t k_blockRouteFloor = 4;
+    const int32_t k_blockRouteRoof = 5;
+    const int32_t k_blockRouteWall = 6;
+
     Random rand;
     const int32_t k_space = 4;
     int32_t roomSizeX = (Field::k_fieldSizeX - (k_space * 4)) / 3;
@@ -81,8 +89,8 @@ void FieldGenerator::generate()
             for (int32_t z = 0; z < room.size.z(); z++) {
                 int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
                 int32_t tileZ = (room.center.z() - (room.size.z() / 2)) + z;
-                table[tileX][0][tileZ] = 1;
-                table[tileX][Field::k_fieldSizeY - 1][tileZ] = 1;
+                table[tileX][0][tileZ] = k_blockRoomFloor;
+                table[tileX][Field::k_fieldSizeY - 1][tileZ] = k_blockRoomRoof;
             }
         }
         for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
@@ -93,13 +101,13 @@ void FieldGenerator::generate()
 
             for (int32_t x = 0; x < room.size.x(); x++) {
                 int32_t tileX = (room.center.x() - (room.size.x() / 2)) + x;
-                table[tileX][y][minZ] = 1;
-                table[tileX][y][maxZ] = 1;
+                table[tileX][y][minZ] = k_blockRoomWall;
+                table[tileX][y][maxZ] = k_blockRoomWall;
             }
             for (int32_t z = 0; z < room.size.z(); z++) {
                 int32_t tileZ = (room.center.z() - (room.size.z() / 2)) + z;
-                table[minX][y][tileZ] = 1;
-                table[maxX][y][tileZ] = 1;
+                table[minX][y][tileZ] = k_blockRoomWall;
+                table[maxX][y][tileZ] = k_blockRoomWall;
             }
         }
     }
@@ -125,23 +133,23 @@ void FieldGenerator::generate()
 
                 for (int32_t x = minX; x <= maxX; x++) {
                     for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
-                        table[x][y][neighbor.center.z() - 2] = 1;
-                        table[x][y][neighbor.center.z() + 2] = 1;
+                        table[x][y][neighbor.center.z() - 2] = k_blockRouteWall;
+                        table[x][y][neighbor.center.z() + 2] = k_blockRouteWall;
                     }
-                    table[x][0][neighbor.center.z() - 1] = 1;
-                    table[x][0][neighbor.center.z()] = 1;
-                    table[x][0][neighbor.center.z() + 1] = 1;
-                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() - 1] = 1;
-                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z()] = 1;
-                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() + 1] = 1;
+                    table[x][0][neighbor.center.z() - 1] = k_blockRouteFloor;
+                    table[x][0][neighbor.center.z()] = k_blockRouteFloor;
+                    table[x][0][neighbor.center.z() + 1] = k_blockRouteFloor;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() - 1] = k_blockRouteRoof;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z()] = k_blockRouteRoof;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() + 1] = k_blockRouteRoof;
                 }
                 for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                    table[minX][y][neighbor.center.z() - 1] = 0;
-                    table[minX][y][neighbor.center.z()] = 0;
-                    table[minX][y][neighbor.center.z() + 1] = 0;
-                    table[maxX][y][neighbor.center.z() - 1] = 0;
-                    table[maxX][y][neighbor.center.z()] = 0;
-                    table[maxX][y][neighbor.center.z() + 1] = 0;
+                    table[minX][y][neighbor.center.z() - 1] = k_blockNone;
+                    table[minX][y][neighbor.center.z()] = k_blockNone;
+                    table[minX][y][neighbor.center.z() + 1] = k_blockNone;
+                    table[maxX][y][neighbor.center.z() - 1] = k_blockNone;
+                    table[maxX][y][neighbor.center.z()] = k_blockNone;
+                    table[maxX][y][neighbor.center.z() + 1] = k_blockNone;
                 }
             }
         }
@@ -159,23 +167,23 @@ void FieldGenerator::generate()
 
                 for (int32_t x = minX; x <= maxX; x++) {
                     for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
-                        table[x][y][neighbor.center.z() - 2] = 1;
-                        table[x][y][neighbor.center.z() + 2] = 1;
+                        table[x][y][neighbor.center.z() - 2] = k_blockRouteWall;
+                        table[x][y][neighbor.center.z() + 2] = k_blockRouteWall;
                     }
-                    table[x][0][neighbor.center.z() - 1] = 1;
-                    table[x][0][neighbor.center.z()] = 1;
-                    table[x][0][neighbor.center.z() + 1] = 1;
-                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() - 1] = 1;
-                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z()] = 1;
-                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() + 1] = 1;
+                    table[x][0][neighbor.center.z() - 1] = k_blockRouteFloor;
+                    table[x][0][neighbor.center.z()] = k_blockRouteFloor;
+                    table[x][0][neighbor.center.z() + 1] = k_blockRouteFloor;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() - 1] = k_blockRouteRoof;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z()] = k_blockRouteRoof;
+                    table[x][Field::k_fieldSizeY - 1][neighbor.center.z() + 1] = k_blockRouteRoof;
                 }
                 for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                    table[minX][y][neighbor.center.z() - 1] = 0;
-                    table[minX][y][neighbor.center.z()] = 0;
-                    table[minX][y][neighbor.center.z() + 1] = 0;
-                    table[maxX][y][neighbor.center.z() - 1] = 0;
-                    table[maxX][y][neighbor.center.z()] = 0;
-                    table[maxX][y][neighbor.center.z() + 1] = 0;
+                    table[minX][y][neighbor.center.z() - 1] = k_blockNone;
+                    table[minX][y][neighbor.center.z()] = k_blockNone;
+                    table[minX][y][neighbor.center.z() + 1] = k_blockNone;
+                    table[maxX][y][neighbor.center.z() - 1] = k_blockNone;
+                    table[maxX][y][neighbor.center.z()] = k_blockNone;
+                    table[maxX][y][neighbor.center.z() + 1] = k_blockNone;
                 }
             }
         }
@@ -193,23 +201,23 @@ void FieldGenerator::generate()
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
                     for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
-                        table[neighbor.center.x() - 2][y][z] = 1;
-                        table[neighbor.center.x() + 2][y][z] = 1;
+                        table[neighbor.center.x() - 2][y][z] = k_blockRouteWall;
+                        table[neighbor.center.x() + 2][y][z] = k_blockRouteWall;
                     }
-                    table[neighbor.center.x() - 1][0][z] = 1;
-                    table[neighbor.center.x()][0][z] = 1;
-                    table[neighbor.center.x() + 1][0][z] = 1;
-                    table[neighbor.center.x() - 1][Field::k_fieldSizeY - 1][z] = 1;
-                    table[neighbor.center.x()][Field::k_fieldSizeY - 1][z] = 1;
-                    table[neighbor.center.x() + 1][Field::k_fieldSizeY - 1][z] = 1;
+                    table[neighbor.center.x() - 1][0][z] = k_blockRouteFloor;
+                    table[neighbor.center.x()][0][z] = k_blockRouteFloor;
+                    table[neighbor.center.x() + 1][0][z] = k_blockRouteFloor;
+                    table[neighbor.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                    table[neighbor.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                    table[neighbor.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                 }
                 for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                    table[neighbor.center.x() - 1][y][minZ] = 0;
-                    table[neighbor.center.x()][y][minZ] = 0;
-                    table[neighbor.center.x() + 1][y][minZ] = 0;
-                    table[neighbor.center.x() - 1][y][maxZ] = 0;
-                    table[neighbor.center.x()][y][maxZ] = 0;
-                    table[neighbor.center.x() + 1][y][maxZ] = 0;
+                    table[neighbor.center.x() - 1][y][minZ] = k_blockNone;
+                    table[neighbor.center.x()][y][minZ] = k_blockNone;
+                    table[neighbor.center.x() + 1][y][minZ] = k_blockNone;
+                    table[neighbor.center.x() - 1][y][maxZ] = k_blockNone;
+                    table[neighbor.center.x()][y][maxZ] = k_blockNone;
+                    table[neighbor.center.x() + 1][y][maxZ] = k_blockNone;
                 }
             }
         }
@@ -227,23 +235,23 @@ void FieldGenerator::generate()
 
                 for (int32_t z = minZ; z <= maxZ; z++) {
                     for (int32_t y = 0; y < Field::k_fieldSizeY; y++) {
-                        table[neighbor.center.x() - 2][y][z] = 1;
-                        table[neighbor.center.x() + 2][y][z] = 1;
+                        table[neighbor.center.x() - 2][y][z] = k_blockRouteWall;
+                        table[neighbor.center.x() + 2][y][z] = k_blockRouteWall;
                     }
-                    table[neighbor.center.x() - 1][0][z] = 1;
-                    table[neighbor.center.x()][0][z] = 1;
-                    table[neighbor.center.x() + 1][0][z] = 1;
-                    table[neighbor.center.x() - 1][Field::k_fieldSizeY - 1][z] = 1;
-                    table[neighbor.center.x()][Field::k_fieldSizeY - 1][z] = 1;
-                    table[neighbor.center.x() + 1][Field::k_fieldSizeY - 1][z] = 1;
+                    table[neighbor.center.x() - 1][0][z] = k_blockRouteFloor;
+                    table[neighbor.center.x()][0][z] = k_blockRouteFloor;
+                    table[neighbor.center.x() + 1][0][z] = k_blockRouteFloor;
+                    table[neighbor.center.x() - 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                    table[neighbor.center.x()][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
+                    table[neighbor.center.x() + 1][Field::k_fieldSizeY - 1][z] = k_blockRouteRoof;
                 }
                 for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                    table[neighbor.center.x() - 1][y][minZ] = 0;
-                    table[neighbor.center.x()][y][minZ] = 0;
-                    table[neighbor.center.x() + 1][y][minZ] = 0;
-                    table[neighbor.center.x() - 1][y][maxZ] = 0;
-                    table[neighbor.center.x()][y][maxZ] = 0;
-                    table[neighbor.center.x() + 1][y][maxZ] = 0;
+                    table[neighbor.center.x() - 1][y][minZ] = k_blockNone;
+                    table[neighbor.center.x()][y][minZ] = k_blockNone;
+                    table[neighbor.center.x() + 1][y][minZ] = k_blockNone;
+                    table[neighbor.center.x() - 1][y][maxZ] = k_blockNone;
+                    table[neighbor.center.x()][y][maxZ] = k_blockNone;
+                    table[neighbor.center.x() + 1][y][maxZ] = k_blockNone;
                 }
             }
         }
@@ -421,17 +429,17 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
-                            table[currentRoom.center.x() - 1][0][z] = 1;
-                            table[currentRoom.center.x()][0][z] = 1;
-                            table[currentRoom.center.x() + 1][0][z] = 1;
+                            table[currentRoom.center.x() - 1][0][z] = k_blockRouteFloor;
+                            table[currentRoom.center.x()][0][z] = k_blockRouteFloor;
+                            table[currentRoom.center.x() + 1][0][z] = k_blockRouteFloor;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                            table[currentRoom.center.x() - 1][y][minZ] = 0;
-                            table[currentRoom.center.x()][y][minZ] = 0;
-                            table[currentRoom.center.x() + 1][y][minZ] = 0;
-                            table[currentRoom.center.x() - 1][y][maxZ] = 0;
-                            table[currentRoom.center.x()][y][maxZ] = 0;
-                            table[currentRoom.center.x() + 1][y][maxZ] = 0;
+                            table[currentRoom.center.x() - 1][y][minZ] = k_blockNone;
+                            table[currentRoom.center.x()][y][minZ] = k_blockNone;
+                            table[currentRoom.center.x() + 1][y][minZ] = k_blockNone;
+                            table[currentRoom.center.x() - 1][y][maxZ] = k_blockNone;
+                            table[currentRoom.center.x()][y][maxZ] = k_blockNone;
+                            table[currentRoom.center.x() + 1][y][maxZ] = k_blockNone;
                         }
                     } else {
                         int32_t startZ = currentRoom.center.z() + (currentRoom.size.z() / 2);
@@ -441,17 +449,17 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
-                            table[currentRoom.center.x() - 1][0][z] = 1;
-                            table[currentRoom.center.x()][0][z] = 1;
-                            table[currentRoom.center.x() + 1][0][z] = 1;
+                            table[currentRoom.center.x() - 1][0][z] = k_blockRouteFloor;
+                            table[currentRoom.center.x()][0][z] = k_blockRouteFloor;
+                            table[currentRoom.center.x() + 1][0][z] = k_blockRouteFloor;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                            table[currentRoom.center.x() - 1][y][minZ] = 0;
-                            table[currentRoom.center.x()][y][minZ] = 0;
-                            table[currentRoom.center.x() + 1][y][minZ] = 0;
-                            table[currentRoom.center.x() - 1][y][maxZ] = 0;
-                            table[currentRoom.center.x()][y][maxZ] = 0;
-                            table[currentRoom.center.x() + 1][y][maxZ] = 0;
+                            table[currentRoom.center.x() - 1][y][minZ] = k_blockNone;
+                            table[currentRoom.center.x()][y][minZ] = k_blockNone;
+                            table[currentRoom.center.x() + 1][y][minZ] = k_blockNone;
+                            table[currentRoom.center.x() - 1][y][maxZ] = k_blockNone;
+                            table[currentRoom.center.x()][y][maxZ] = k_blockNone;
+                            table[currentRoom.center.x() + 1][y][maxZ] = k_blockNone;
                         }
                     }
                 } else if (currentCol != nextCol) {
@@ -463,17 +471,17 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
-                            table[x][0][currentRoom.center.z() - 1] = 1;
-                            table[x][0][currentRoom.center.z()] = 1;
-                            table[x][0][currentRoom.center.z() + 1] = 1;
+                            table[x][0][currentRoom.center.z() - 1] = k_blockRouteFloor;
+                            table[x][0][currentRoom.center.z()] = k_blockRouteFloor;
+                            table[x][0][currentRoom.center.z() + 1] = k_blockRouteFloor;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                            table[minX][y][currentRoom.center.z() - 1] = 0;
-                            table[minX][y][currentRoom.center.z()] = 0;
-                            table[minX][y][currentRoom.center.z() + 1] = 0;
-                            table[maxX][y][currentRoom.center.z() - 1] = 0;
-                            table[maxX][y][currentRoom.center.z()] = 0;
-                            table[maxX][y][currentRoom.center.z() + 1] = 0;
+                            table[minX][y][currentRoom.center.z() - 1] = k_blockNone;
+                            table[minX][y][currentRoom.center.z()] = k_blockNone;
+                            table[minX][y][currentRoom.center.z() + 1] = k_blockNone;
+                            table[maxX][y][currentRoom.center.z() - 1] = k_blockNone;
+                            table[maxX][y][currentRoom.center.z()] = k_blockNone;
+                            table[maxX][y][currentRoom.center.z() + 1] = k_blockNone;
                         }
                     } else {
                         int32_t startX = currentRoom.center.x() + (currentRoom.size.x() / 2);
@@ -483,17 +491,17 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
-                            table[x][0][currentRoom.center.z() - 1] = 1;
-                            table[x][0][currentRoom.center.z()] = 1;
-                            table[x][0][currentRoom.center.z() + 1] = 1;
+                            table[x][0][currentRoom.center.z() - 1] = k_blockRouteFloor;
+                            table[x][0][currentRoom.center.z()] = k_blockRouteFloor;
+                            table[x][0][currentRoom.center.z() + 1] = k_blockRouteFloor;
                         }
                         for (int32_t y = 1; y < Field::k_fieldSizeY - 1; y++) {
-                            table[minX][y][currentRoom.center.z() - 1] = 0;
-                            table[minX][y][currentRoom.center.z()] = 0;
-                            table[minX][y][currentRoom.center.z() + 1] = 0;
-                            table[maxX][y][currentRoom.center.z() - 1] = 0;
-                            table[maxX][y][currentRoom.center.z()] = 0;
-                            table[maxX][y][currentRoom.center.z() + 1] = 0;
+                            table[minX][y][currentRoom.center.z() - 1] = k_blockNone;
+                            table[minX][y][currentRoom.center.z()] = k_blockNone;
+                            table[minX][y][currentRoom.center.z() + 1] = k_blockNone;
+                            table[maxX][y][currentRoom.center.z() - 1] = k_blockNone;
+                            table[maxX][y][currentRoom.center.z()] = k_blockNone;
+                            table[maxX][y][currentRoom.center.z() + 1] = k_blockNone;
                         }
                     }
                 }
@@ -524,9 +532,9 @@ void FieldGenerator::generate()
                 int32_t maxX = Mathf::max(startX, endX);
 
                 for (int32_t x = minX; x < maxX; x++) {
-                    table[x][0][route.center.z() - 1] = 1;
-                    table[x][0][route.center.z()] = 1;
-                    table[x][0][route.center.z() + 1] = 1;
+                    table[x][0][route.center.z() - 1] = k_blockRouteFloor;
+                    table[x][0][route.center.z()] = k_blockRouteFloor;
+                    table[x][0][route.center.z() + 1] = k_blockRouteFloor;
                 }
             } else {
                 if (midRow > toRow) {
@@ -538,11 +546,11 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
-                            table[x][0][route.center.z() - 1] = 1;
-                            table[x][0][route.center.z()] = 1;
-                            table[x][0][route.center.z() + 1] = 1;
+                            table[x][0][route.center.z() - 1] = k_blockRouteFloor;
+                            table[x][0][route.center.z()] = k_blockRouteFloor;
+                            table[x][0][route.center.z() + 1] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromCol < midCol) {
                         int32_t startX = route.center.x() - (roomSizeX / 2);
                         int32_t endX = route.center.x();
@@ -551,11 +559,11 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
-                            table[x][0][route.center.z() - 1] = 1;
-                            table[x][0][route.center.z()] = 1;
-                            table[x][0][route.center.z() + 1] = 1;
+                            table[x][0][route.center.z() - 1] = k_blockRouteFloor;
+                            table[x][0][route.center.z()] = k_blockRouteFloor;
+                            table[x][0][route.center.z() + 1] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
 
                     int32_t startZ = route.center.z();
@@ -564,9 +572,9 @@ void FieldGenerator::generate()
                     int32_t minZ = Mathf::min(startZ, endZ);
                     int32_t maxZ = Mathf::max(startZ, endZ);
                     for (int32_t z = minZ; z <= maxZ; z++) {
-                        table[endX - 1][0][z] = 1;
-                        table[endX][0][z] = 1;
-                        table[endX + 1][0][z] = 1;
+                        table[endX - 1][0][z] = k_blockRouteFloor;
+                        table[endX][0][z] = k_blockRouteFloor;
+                        table[endX + 1][0][z] = k_blockRouteFloor;
                     }
                 } else if (midRow < toRow) {
                     int32_t endX = route.center.x();
@@ -577,11 +585,11 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
-                            table[x][0][route.center.z() - 1] = 1;
-                            table[x][0][route.center.z()] = 1;
-                            table[x][0][route.center.z() + 1] = 1;
+                            table[x][0][route.center.z() - 1] = k_blockRouteFloor;
+                            table[x][0][route.center.z()] = k_blockRouteFloor;
+                            table[x][0][route.center.z() + 1] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromCol < midCol) {
                         int32_t startX = route.center.x() - (roomSizeX / 2);
                         int32_t endX = route.center.x();
@@ -590,11 +598,11 @@ void FieldGenerator::generate()
                         int32_t maxX = Mathf::max(startX, endX);
 
                         for (int32_t x = minX; x <= maxX; x++) {
-                            table[x][0][route.center.z() - 1] = 1;
-                            table[x][0][route.center.z()] = 1;
-                            table[x][0][route.center.z() + 1] = 1;
+                            table[x][0][route.center.z() - 1] = k_blockRouteFloor;
+                            table[x][0][route.center.z()] = k_blockRouteFloor;
+                            table[x][0][route.center.z() + 1] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
 
                     int32_t startZ = route.center.z();
@@ -603,9 +611,9 @@ void FieldGenerator::generate()
                     int32_t minZ = Mathf::min(startZ, endZ);
                     int32_t maxZ = Mathf::max(startZ, endZ);
                     for (int32_t z = minZ; z <= maxZ; z++) {
-                        table[endX - 1][0][z] = 1;
-                        table[endX][0][z] = 1;
-                        table[endX + 1][0][z] = 1;
+                        table[endX - 1][0][z] = k_blockRouteFloor;
+                        table[endX][0][z] = k_blockRouteFloor;
+                        table[endX + 1][0][z] = k_blockRouteFloor;
                     }
                 }
             }
@@ -619,9 +627,9 @@ void FieldGenerator::generate()
                 int32_t maxZ = Mathf::max(startZ, endZ);
 
                 for (int32_t z = minZ; z < maxZ; z++) {
-                    table[route.center.x() - 1][0][z] = 1;
-                    table[route.center.x()][0][z] = 1;
-                    table[route.center.x() + 1][0][z] = 1;
+                    table[route.center.x() - 1][0][z] = k_blockRouteFloor;
+                    table[route.center.x()][0][z] = k_blockRouteFloor;
+                    table[route.center.x() + 1][0][z] = k_blockRouteFloor;
                 }
             } else {
                 if (midCol > toCol) {
@@ -633,11 +641,11 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
-                            table[route.center.x() - 1][0][z] = 1;
-                            table[route.center.x()][0][z] = 1;
-                            table[route.center.x() + 1][0][z] = 1;
+                            table[route.center.x() - 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x()][0][z] = k_blockRouteFloor;
+                            table[route.center.x() + 1][0][z] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromRow < midRow) {
                         int32_t startZ = route.center.z() - (roomSizeZ / 2);
                         int32_t endZ = route.center.z();
@@ -646,11 +654,11 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
-                            table[route.center.x() - 1][0][z] = 1;
-                            table[route.center.x()][0][z] = 1;
-                            table[route.center.x() + 1][0][z] = 1;
+                            table[route.center.x() - 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x()][0][z] = k_blockRouteFloor;
+                            table[route.center.x() + 1][0][z] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
 
                     int32_t startX = route.center.x();
@@ -659,9 +667,9 @@ void FieldGenerator::generate()
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
                     for (int32_t x = minX; x <= maxX; x++) {
-                        table[x][0][endZ - 1] = 1;
-                        table[x][0][endZ] = 1;
-                        table[x][0][endZ + 1] = 1;
+                        table[x][0][endZ - 1] = k_blockRouteFloor;
+                        table[x][0][endZ] = k_blockRouteFloor;
+                        table[x][0][endZ + 1] = k_blockRouteFloor;
                     }
                 } else if (midCol < toCol) {
                     int32_t endZ = route.center.z();
@@ -672,11 +680,11 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
-                            table[route.center.x() - 1][0][z] = 1;
-                            table[route.center.x()][0][z] = 1;
-                            table[route.center.x() + 1][0][z] = 1;
+                            table[route.center.x() - 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x()][0][z] = k_blockRouteFloor;
+                            table[route.center.x() + 1][0][z] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     } else if (fromRow < midRow) {
                         int32_t startZ = route.center.z() - (roomSizeZ / 2);
                         int32_t endZ = route.center.z();
@@ -685,11 +693,11 @@ void FieldGenerator::generate()
                         int32_t maxZ = Mathf::max(startZ, endZ);
 
                         for (int32_t z = minZ; z <= maxZ; z++) {
-                            table[route.center.x() - 1][0][z] = 1;
-                            table[route.center.x()][0][z] = 1;
-                            table[route.center.x() + 1][0][z] = 1;
+                            table[route.center.x() - 1][0][z] = k_blockRouteFloor;
+                            table[route.center.x()][0][z] = k_blockRouteFloor;
+                            table[route.center.x() + 1][0][z] = k_blockRouteFloor;
                         }
-                        table[route.center.x()][0][route.center.z()] = 1;
+                        table[route.center.x()][0][route.center.z()] = k_blockRouteFloor;
                     }
 
                     int32_t startX = route.center.x();
@@ -698,9 +706,9 @@ void FieldGenerator::generate()
                     int32_t minX = Mathf::min(startX, endX);
                     int32_t maxX = Mathf::max(startX, endX);
                     for (int32_t x = minX; x <= maxX; x++) {
-                        table[x][0][endZ - 1] = 1;
-                        table[x][0][endZ] = 1;
-                        table[x][0][endZ + 1] = 1;
+                        table[x][0][endZ - 1] = k_blockRouteFloor;
+                        table[x][0][endZ] = k_blockRouteFloor;
+                        table[x][0][endZ + 1] = k_blockRouteFloor;
                     }
                 }
             }
