@@ -163,8 +163,8 @@ void Surface::end2D()
 
 void Surface::present()
 {
-    m_swapchain->present(m_commandList);
     m_swapchain->waitSync();
+    m_swapchain->present();
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);

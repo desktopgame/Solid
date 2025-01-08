@@ -105,7 +105,7 @@ void Swapchain::swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& co
     commandList->ResourceBarrier(1, &barrier);
 }
 
-void Swapchain::present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)
+void Swapchain::present()
 {
     m_swapchain->Present(1, 0);
 }

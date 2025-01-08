@@ -28,7 +28,7 @@ public:
     void clear(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle);
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
-    void present(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
+    void present();
     void waitSync();
 
     void destroy();
