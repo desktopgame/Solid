@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <memory>
+#include <thread>
 #include <vector>
 #include <wrl/client.h>
 
@@ -78,6 +79,10 @@ private:
     void bloomWrite(int32_t index);
     void bloomRead(int32_t index);
 
+    class Impl;
+    std::shared_ptr<Impl> m_impl;
+
+    std::unique_ptr<std::thread> m_thread;
     std::shared_ptr<Swapchain> m_swapchain;
 
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;

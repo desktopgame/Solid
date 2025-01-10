@@ -13,6 +13,7 @@
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
+#include <Utils/BlockingQueue.hpp>
 #include <Utils/String.hpp>
 #include <stdexcept>
 #include <vector>
@@ -20,6 +21,24 @@
 namespace Lib::Graphics {
 
 using Microsoft::WRL::ComPtr;
+// Command
+class ICommand {
+public:
+    explicit ICommand() = default;
+    virtual ~ICommand() = default;
+    virtual void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) = 0;
+
+private:
+};
+// Impl
+class Surface::Impl {
+public:
+    explicit Impl()
+        : queue()
+    {
+    }
+    Utils::BlockingQueue<std::shared_ptr<ICommand>> queue;
+};
 // public
 Surface::~Surface()
 {
@@ -239,7 +258,9 @@ void Surface::destroy()
 }
 // private
 Surface::Surface()
-    : m_swapchain()
+    : m_impl()
+    , m_thread()
+    , m_swapchain()
     , m_dxgiFactory()
     , m_infoQueue()
     , m_commandAllocator()
@@ -422,6 +443,9 @@ void Surface::init(
     PointLight::initialize(device, m_gTextures);
     // Bloom
     BloomEffect::initialize(device, m_bloomTextures);
+    // Thread
+    m_impl = std::make_shared<Impl>();
+    m_thread = std::make_unique<std::thread>();
 }
 
 void Surface::bloomWrite(int32_t index)
