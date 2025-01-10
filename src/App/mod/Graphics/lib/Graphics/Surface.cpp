@@ -33,40 +33,38 @@ private:
 
 class Surface::BeginGuiCommand : public ICommand {
 public:
-    explicit BeginGuiCommand(const std::shared_ptr<Swapchain>& swapchain)
-        : m_swapchain(swapchain)
+    explicit BeginGuiCommand()
+        : swapchain(nullptr)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_swapchain->guiClear();
+        swapchain->guiClear();
     }
 
-private:
-    std::shared_ptr<Swapchain> m_swapchain;
+    std::shared_ptr<Swapchain> swapchain;
 };
 
 class Surface::EndGuiCommand : public ICommand {
 public:
-    explicit EndGuiCommand(const std::shared_ptr<Swapchain>& swapchain)
-        : m_swapchain(swapchain)
+    explicit EndGuiCommand()
+        : swapchain(nullptr)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_swapchain->guiRender();
+        swapchain->guiRender();
     }
 
-private:
-    std::shared_ptr<Swapchain> m_swapchain;
+    std::shared_ptr<Swapchain> swapchain;
 };
 
 class Surface::Begin3DCommand : public ICommand {
 public:
-    explicit Begin3DCommand(Surface& surface)
-        : m_surface(surface)
+    explicit Begin3DCommand()
+        : surface(nullptr)
     {
     }
 
@@ -79,15 +77,15 @@ public:
             D3D12_RESOURCE_BARRIER& barrier = barriers[i];
             barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
             barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-            barrier.Transition.pResource = m_surface.m_gTextures.at(i).Get();
+            barrier.Transition.pResource = surface->m_gTextures.at(i).Get();
             barrier.Transition.Subresource = 0;
             barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
             barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
         }
         commandList->ResourceBarrier(3, barriers);
 
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_surface.m_gHeap->GetCPUDescriptorHandleForHeapStart();
-        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_surface.m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = surface->m_gHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
         commandList->OMSetRenderTargets(3, &rtvHandle, true, &dsvHandle);
 
         float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -124,14 +122,13 @@ public:
         commandList->RSSetScissorRects(3, scissorRects);
     }
 
-private:
-    Surface& m_surface;
+    Surface* surface;
 };
 
 class Surface::End3DCommand : public ICommand {
 public:
-    explicit End3DCommand(Surface& surface)
-        : m_surface(surface)
+    explicit End3DCommand()
+        : surface(nullptr)
     {
     }
 
@@ -143,7 +140,7 @@ public:
             D3D12_RESOURCE_BARRIER& barrier = barriers[i];
             barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
             barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-            barrier.Transition.pResource = m_surface.m_gTextures.at(i).Get();
+            barrier.Transition.pResource = surface->m_gTextures.at(i).Get();
             barrier.Transition.Subresource = 0;
             barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
             barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
@@ -153,14 +150,13 @@ public:
         commandList->OMSetStencilRef(2);
     }
 
-private:
-    Surface& m_surface;
+    Surface* surface;
 };
 
 class Surface::Begin2DCommand : public ICommand {
 public:
-    explicit Begin2DCommand(Surface& surface)
-        : m_surface(surface)
+    explicit Begin2DCommand()
+        : surface(nullptr)
     {
     }
 
@@ -175,211 +171,219 @@ public:
         auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
         // Barrier
         // Bloom0番テクスチャにGBufferをソースとして書く
-        m_surface.bloomWrite(0);
+        surface->bloomWrite(0);
         GlobalLight::draw(commandList);
         PointLight::draw(commandList);
-        m_surface.bloomRead(0);
+        surface->bloomRead(0);
 
         //
         // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
         //
-        m_surface.bloomWrite(1);
+        surface->bloomWrite(1);
         BloomEffect::drawFilter(commandList);
-        m_surface.bloomRead(1);
+        surface->bloomRead(1);
 
         for (int32_t i = 0; i < 8; i++) {
             //
             // Bloom1番をソースとしてBloom2番にブラー書き込む
             //
-            m_surface.bloomWrite(2);
+            surface->bloomWrite(2);
             BloomEffect::drawBlur1(commandList);
-            m_surface.bloomRead(2);
+            surface->bloomRead(2);
 
             //
             // Bloom2番をソースとしてBloom1番にブラーを書き込む
             //
 
-            m_surface.bloomWrite(1);
+            surface->bloomWrite(1);
             BloomEffect::drawBlur2(commandList);
-            m_surface.bloomRead(1);
+            surface->bloomRead(1);
         }
         //
         // ダイレクトターゲットに戻す
         //
-        m_surface.m_swapchain->clear(commandList, m_surface.m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+        surface->m_swapchain->clear(commandList, surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
         BloomEffect::drawMix(commandList);
         //*/
     }
 
-private:
-    Surface& m_surface;
+    Surface* surface;
 };
 
 class Surface::End2DCommand : public ICommand {
 public:
-    explicit End2DCommand(Surface& surface)
-        : m_surface(surface)
+    explicit End2DCommand()
+        : surface(nullptr)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_surface.m_swapchain->swap(commandList);
+        surface->m_swapchain->swap(commandList);
         commandList->Close();
-        m_surface.m_swapchain->execute(commandList);
+        surface->m_swapchain->execute(commandList);
     }
 
-private:
-    Surface& m_surface;
+    Surface* surface;
 };
 
 class Surface::PresentCommand : public ICommand {
 public:
-    explicit PresentCommand(Surface& surface)
-        : m_surface(surface)
+    explicit PresentCommand()
+        : surface(nullptr)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_surface.m_swapchain->present();
-        m_surface.m_swapchain->signal();
+        surface->m_swapchain->present();
+        surface->m_swapchain->signal();
     }
 
-private:
-    Surface& m_surface;
+    Surface* surface;
 };
 
 class Surface::SyncCommand : public ICommand {
 public:
-    explicit SyncCommand(const std::shared_ptr<DualBuffer>& dualBuffer)
-        : m_dualBuffer(dualBuffer)
+    explicit SyncCommand()
+        : dualBuffer(nullptr)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_dualBuffer->sync(commandList);
+        dualBuffer->sync(commandList);
     }
 
-private:
-    std::shared_ptr<DualBuffer> m_dualBuffer;
+    std::shared_ptr<DualBuffer> dualBuffer;
 };
 
 class Surface::RenderCommand1 : public ICommand {
 public:
-    explicit RenderCommand1(
-        const std::shared_ptr<RenderContext>& renderContext,
-        const std::shared_ptr<UniformBuffer>& uniformBuffer,
-        const std::shared_ptr<IBuffer>& vertex,
-        const std::shared_ptr<IBuffer>& index,
-        int32_t indexLength)
-        : m_renderContext(renderContext)
-        , m_uniformBuffer(uniformBuffer)
-        , m_vertex(vertex)
-        , m_index(index)
-        , m_indexLength(indexLength)
+    explicit RenderCommand1()
+        : renderContext(nullptr)
+        , uniformBuffer(nullptr)
+        , vertex(nullptr)
+        , index(nullptr)
+        , indexLength(0)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_renderContext->render(commandList, m_uniformBuffer, m_vertex, m_index, m_indexLength);
+        renderContext->render(commandList, uniformBuffer, vertex, index, indexLength);
     }
 
-private:
-    std::shared_ptr<RenderContext> m_renderContext;
-    std::shared_ptr<UniformBuffer> m_uniformBuffer;
-    std::shared_ptr<IBuffer> m_vertex;
-    std::shared_ptr<IBuffer> m_index;
-    int32_t m_indexLength;
+    std::shared_ptr<RenderContext> renderContext;
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    std::shared_ptr<IBuffer> vertex;
+    std::shared_ptr<IBuffer> index;
+    int32_t indexLength;
 };
 
 class Surface::RenderCommand2 : public ICommand {
 public:
-    explicit RenderCommand2(
-        const std::shared_ptr<RenderContext>& renderContext,
-        const std::shared_ptr<UniformBuffer>& uniformBuffer,
-        const std::shared_ptr<IBuffer>& vertex,
-        const std::shared_ptr<IBuffer>& index,
-        int32_t indexLength,
-        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
-        int32_t instanceCount)
-        : m_renderContext(renderContext)
-        , m_uniformBuffer(uniformBuffer)
-        , m_vertex(vertex)
-        , m_index(index)
-        , m_indexLength(indexLength)
-        , m_instanceBuffers(instanceBuffers)
-        , m_instanceCount(instanceCount)
+    explicit RenderCommand2()
+        : renderContext(nullptr)
+        , uniformBuffer(nullptr)
+        , vertex(nullptr)
+        , index(nullptr)
+        , indexLength(0)
+        , instanceBuffers()
+        , instanceCount(0)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_renderContext->render(commandList, m_uniformBuffer, m_vertex, m_index, m_indexLength, m_instanceBuffers, m_instanceCount);
+        renderContext->render(commandList, uniformBuffer, vertex, index, indexLength, instanceBuffers, instanceCount);
     }
 
-private:
-    std::shared_ptr<RenderContext> m_renderContext;
-    std::shared_ptr<UniformBuffer> m_uniformBuffer;
-    std::shared_ptr<IBuffer> m_vertex;
-    std::shared_ptr<IBuffer> m_index;
-    int32_t m_indexLength;
-    std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
-    int32_t m_instanceCount;
+    std::shared_ptr<RenderContext> renderContext;
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    std::shared_ptr<IBuffer> vertex;
+    std::shared_ptr<IBuffer> index;
+    int32_t indexLength;
+    std::vector<std::shared_ptr<IBuffer>> instanceBuffers;
+    int32_t instanceCount;
 };
 
 class Surface::RenderCommand3 : public ICommand {
 public:
-    explicit RenderCommand3(
-        Surface& surface,
-        const std::shared_ptr<RenderContext>& renderContext,
-        const std::shared_ptr<UniformBuffer>& uniformBuffer,
-        const std::shared_ptr<IBuffer>& vertex,
-        const std::shared_ptr<IBuffer>& index,
-        int32_t indexLength,
-        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
-        int32_t instanceCount,
-        int32_t threadGroupCountX,
-        int32_t threadGroupCountY,
-        int32_t threadGroupCountZ)
-        : m_surface(surface)
-        , m_renderContext(renderContext)
-        , m_uniformBuffer(uniformBuffer)
-        , m_vertex(vertex)
-        , m_index(index)
-        , m_indexLength(indexLength)
-        , m_instanceBuffers(instanceBuffers)
-        , m_instanceCount(instanceCount)
-        , m_threadGroupCountX(threadGroupCountX)
-        , m_threadGroupCountY(threadGroupCountY)
-        , m_threadGroupCountZ(threadGroupCountZ)
+    explicit RenderCommand3()
+        : surface(nullptr)
+        , renderContext(nullptr)
+        , uniformBuffer(nullptr)
+        , vertex(nullptr)
+        , index(nullptr)
+        , indexLength(0)
+        , instanceBuffers()
+        , instanceCount(0)
+        , threadGroupCountX(0)
+        , threadGroupCountY(0)
+        , threadGroupCountZ(0)
     {
     }
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        m_uniformBuffer->beginCompute(commandList);
-        m_renderContext->compute(commandList, m_uniformBuffer, m_threadGroupCountX, m_threadGroupCountY, m_threadGroupCountZ);
-        m_uniformBuffer->syncCompute(commandList);
-        m_uniformBuffer->endCompute(commandList);
+        uniformBuffer->beginCompute(commandList);
+        renderContext->compute(commandList, uniformBuffer, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+        uniformBuffer->syncCompute(commandList);
+        uniformBuffer->endCompute(commandList);
 
-        m_surface.render(m_renderContext, m_uniformBuffer, m_vertex, m_index, m_indexLength, m_instanceBuffers, m_instanceCount);
+        surface->render(renderContext, uniformBuffer, vertex, index, indexLength, instanceBuffers, instanceCount);
+    }
+
+    Surface* surface;
+    std::shared_ptr<RenderContext> renderContext;
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    std::shared_ptr<IBuffer> vertex;
+    std::shared_ptr<IBuffer> index;
+    int32_t indexLength;
+    std::vector<std::shared_ptr<IBuffer>> instanceBuffers;
+    int32_t instanceCount;
+    int32_t threadGroupCountX;
+    int32_t threadGroupCountY;
+    int32_t threadGroupCountZ;
+};
+
+template <typename T>
+class CommandPool {
+public:
+    explicit CommandPool()
+        : m_usedVec()
+        , m_freeVec()
+    {
+    }
+
+    std::shared_ptr<T> rent()
+    {
+        if (m_freeVec.size() > 0) {
+            std::shared_ptr<T> ub = m_freeVec.back();
+            m_freeVec.pop_back();
+            m_usedVec.emplace_back(ub);
+            return ub;
+        } else {
+            std::shared_ptr<T> ub = std::make_shared<T>();
+            m_usedVec.emplace_back(ub);
+            return ub;
+        }
+        return nullptr;
+    }
+
+    void releaseAll()
+    {
+        for (const auto& s : m_usedVec) {
+            m_freeVec.emplace_back(s);
+        }
+
+        m_usedVec.clear();
     }
 
 private:
-    Surface& m_surface;
-    std::shared_ptr<RenderContext> m_renderContext;
-    std::shared_ptr<UniformBuffer> m_uniformBuffer;
-    std::shared_ptr<IBuffer> m_vertex;
-    std::shared_ptr<IBuffer> m_index;
-    int32_t m_indexLength;
-    std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
-    int32_t m_instanceCount;
-    int32_t m_threadGroupCountX;
-    int32_t m_threadGroupCountY;
-    int32_t m_threadGroupCountZ;
+    std::vector<std::shared_ptr<T>> m_usedVec;
+    std::vector<std::shared_ptr<T>> m_freeVec;
 };
 // Impl
 class Surface::Impl {
@@ -389,6 +393,17 @@ public:
     {
     }
     Utils::BlockingQueue<std::shared_ptr<ICommand>> queue;
+    CommandPool<BeginGuiCommand> beginGuiCommandPool;
+    CommandPool<EndGuiCommand> endGuiCommandPool;
+    CommandPool<Begin3DCommand> begin3DCommandPool;
+    CommandPool<End3DCommand> end3DCommandPool;
+    CommandPool<Begin2DCommand> begin2DCommandPool;
+    CommandPool<End2DCommand> end2DCommandPool;
+    CommandPool<PresentCommand> presentCommandPool;
+    CommandPool<SyncCommand> syncCommandPool;
+    CommandPool<RenderCommand1> renderCommand1Pool;
+    CommandPool<RenderCommand2> renderCommand2Pool;
+    CommandPool<RenderCommand3> renderCommand3Pool;
 };
 // public
 Surface::~Surface()
@@ -397,48 +412,78 @@ Surface::~Surface()
 
 void Surface::beginGui()
 {
-    m_impl->queue.enqueue(std::make_shared<BeginGuiCommand>(m_swapchain));
+    auto cmd = m_impl->beginGuiCommandPool.rent();
+    cmd->swapchain = m_swapchain;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::endGui()
 {
-    m_impl->queue.enqueue(std::make_shared<EndGuiCommand>(m_swapchain));
+    auto cmd = m_impl->endGuiCommandPool.rent();
+    cmd->swapchain = m_swapchain;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::begin3D()
 {
-    m_impl->queue.enqueue(std::make_shared<Begin3DCommand>(*this));
+    auto cmd = m_impl->begin3DCommandPool.rent();
+    cmd->surface = this;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::end3D()
 {
-    m_impl->queue.enqueue(std::make_shared<End3DCommand>(*this));
+    auto cmd = m_impl->end3DCommandPool.rent();
+    cmd->surface = this;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::begin2D()
 {
-    m_impl->queue.enqueue(std::make_shared<Begin2DCommand>(*this));
+    auto cmd = m_impl->begin2DCommandPool.rent();
+    cmd->surface = this;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::end2D()
 {
-    m_impl->queue.enqueue(std::make_shared<End2DCommand>(*this));
+    auto cmd = m_impl->end2DCommandPool.rent();
+    cmd->surface = this;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::present()
 {
     m_swapchain->fence();
-    m_impl->queue.enqueue(std::make_shared<PresentCommand>(*this));
+    {
+        auto cmd = m_impl->presentCommandPool.rent();
+        cmd->surface = this;
+        m_impl->queue.enqueue(cmd);
+    }
     m_swapchain->waitSync();
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
     UniformPool::releaseAll();
+
+    m_impl->beginGuiCommandPool.releaseAll();
+    m_impl->endGuiCommandPool.releaseAll();
+    m_impl->begin3DCommandPool.releaseAll();
+    m_impl->end3DCommandPool.releaseAll();
+    m_impl->begin2DCommandPool.releaseAll();
+    m_impl->end2DCommandPool.releaseAll();
+    m_impl->presentCommandPool.releaseAll();
+    m_impl->syncCommandPool.releaseAll();
+    m_impl->renderCommand1Pool.releaseAll();
+    m_impl->renderCommand2Pool.releaseAll();
+    m_impl->renderCommand3Pool.releaseAll();
 }
 
 void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
 {
-    m_impl->queue.enqueue(std::make_shared<SyncCommand>(dualBuffer));
+    auto cmd = m_impl->syncCommandPool.rent();
+    cmd->dualBuffer = dualBuffer;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::render(
@@ -448,7 +493,13 @@ void Surface::render(
     const std::shared_ptr<IBuffer>& index,
     int32_t indexLength)
 {
-    m_impl->queue.enqueue(std::make_shared<RenderCommand1>(rc, ub, vertex, index, indexLength));
+    auto cmd = m_impl->renderCommand1Pool.rent();
+    cmd->renderContext = rc;
+    cmd->uniformBuffer = ub;
+    cmd->vertex = vertex;
+    cmd->index = index;
+    cmd->indexLength = indexLength;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::render(
@@ -460,7 +511,15 @@ void Surface::render(
     const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
     int32_t instanceCount)
 {
-    m_impl->queue.enqueue(std::make_shared<RenderCommand2>(rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount));
+    auto cmd = m_impl->renderCommand2Pool.rent();
+    cmd->renderContext = rc;
+    cmd->uniformBuffer = ub;
+    cmd->vertex = vertex;
+    cmd->index = index;
+    cmd->indexLength = indexLength;
+    cmd->instanceBuffers = instanceBuffers;
+    cmd->instanceCount = instanceCount;
+    m_impl->queue.enqueue(cmd);
 }
 
 void Surface::render(
@@ -475,7 +534,18 @@ void Surface::render(
     int32_t threadGroupCountY,
     int32_t threadGroupCountZ)
 {
-    m_impl->queue.enqueue(std::make_shared<RenderCommand3>(*this, rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount, threadGroupCountX, threadGroupCountY, threadGroupCountZ));
+    auto cmd = m_impl->renderCommand3Pool.rent();
+    cmd->renderContext = rc;
+    cmd->uniformBuffer = ub;
+    cmd->vertex = vertex;
+    cmd->index = index;
+    cmd->indexLength = indexLength;
+    cmd->instanceBuffers = instanceBuffers;
+    cmd->instanceCount = instanceCount;
+    cmd->threadGroupCountX = threadGroupCountX;
+    cmd->threadGroupCountY = threadGroupCountY;
+    cmd->threadGroupCountZ = threadGroupCountZ;
+    m_impl->queue.enqueue(cmd);
 }
 
 // internal
