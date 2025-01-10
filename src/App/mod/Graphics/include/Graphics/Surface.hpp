@@ -90,6 +90,7 @@ private:
     class End3DCommand;
     class Begin2DCommand;
     class End2DCommand;
+    class PresentCommand;
     class SyncCommand;
     class RenderCommand1;
     class RenderCommand2;

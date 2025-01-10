@@ -110,10 +110,19 @@ void Swapchain::present()
     m_swapchain->Present(1, 0);
 }
 
+void Swapchain::fence()
+{
+    ++m_fenceVal;
+}
+
+void Swapchain::signal()
+{
+    m_commandQueue->Signal(m_fence.Get(), m_fenceVal);
+}
+
 void Swapchain::waitSync()
 {
     // Wait events
-    m_commandQueue->Signal(m_fence.Get(), ++m_fenceVal);
     if (m_fence->GetCompletedValue() < m_fenceVal) {
         HANDLE evt = CreateEvent(nullptr, false, false, nullptr);
         m_fence->SetEventOnCompletion(m_fenceVal, evt);

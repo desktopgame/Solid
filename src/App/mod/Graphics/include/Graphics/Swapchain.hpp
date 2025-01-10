@@ -29,6 +29,8 @@ public:
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void swap(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
     void present();
+    void fence();
+    void signal();
     void waitSync();
 
     void destroy();

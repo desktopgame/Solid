@@ -233,6 +233,23 @@ private:
     Surface& m_surface;
 };
 
+class Surface::PresentCommand : public ICommand {
+public:
+    explicit PresentCommand(Surface& surface)
+        : m_surface(surface)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_surface.m_swapchain->present();
+        m_surface.m_swapchain->signal();
+    }
+
+private:
+    Surface& m_surface;
+};
+
 class Surface::SyncCommand : public ICommand {
 public:
     explicit SyncCommand(const std::shared_ptr<DualBuffer>& dualBuffer)
@@ -410,7 +427,8 @@ void Surface::end2D()
 
 void Surface::present()
 {
-    m_swapchain->present();
+    m_swapchain->fence();
+    m_impl->queue.enqueue(std::make_shared<PresentCommand>(*this));
     m_swapchain->waitSync();
 
     m_commandAllocator->Reset();
