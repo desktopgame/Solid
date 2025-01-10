@@ -25,7 +25,7 @@ public:
         }
     }
 
-    void dequeue()
+    T dequeue()
     {
         while (true) {
             std::lock_guard<std::mutex> guard(m_mutex);
