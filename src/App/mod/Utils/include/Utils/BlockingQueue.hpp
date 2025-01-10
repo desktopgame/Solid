@@ -28,7 +28,7 @@ public:
     T dequeue()
     {
         while (true) {
-            std::lock_guard<std::mutex> guard(m_mutex);
+            std::unique_lock<std::mutex> guard(m_mutex);
             if (m_queue.empty()) {
                 m_condVar.wait(guard);
             }

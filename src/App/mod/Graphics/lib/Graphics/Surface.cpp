@@ -22,13 +22,347 @@ namespace Lib::Graphics {
 
 using Microsoft::WRL::ComPtr;
 // Command
-class ICommand {
+class Surface::ICommand {
 public:
     explicit ICommand() = default;
     virtual ~ICommand() = default;
     virtual void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) = 0;
 
 private:
+};
+
+class Surface::BeginGuiCommand : public ICommand {
+public:
+    explicit BeginGuiCommand(const std::shared_ptr<Swapchain>& swapchain)
+        : m_swapchain(swapchain)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_swapchain->guiClear();
+    }
+
+private:
+    std::shared_ptr<Swapchain> m_swapchain;
+};
+
+class Surface::EndGuiCommand : public ICommand {
+public:
+    explicit EndGuiCommand(const std::shared_ptr<Swapchain>& swapchain)
+        : m_swapchain(swapchain)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_swapchain->guiRender();
+    }
+
+private:
+    std::shared_ptr<Swapchain> m_swapchain;
+};
+
+class Surface::Begin3DCommand : public ICommand {
+public:
+    explicit Begin3DCommand(Surface& surface)
+        : m_surface(surface)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
+        // Barrier
+        D3D12_RESOURCE_BARRIER barriers[3] = {};
+        for (int32_t i = 0; i < 3; i++) {
+            D3D12_RESOURCE_BARRIER& barrier = barriers[i];
+            barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+            barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+            barrier.Transition.pResource = m_surface.m_gTextures.at(i).Get();
+            barrier.Transition.Subresource = 0;
+            barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+            barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        }
+        commandList->ResourceBarrier(3, barriers);
+
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_surface.m_gHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_surface.m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+        commandList->OMSetRenderTargets(3, &rtvHandle, true, &dsvHandle);
+
+        float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        for (int32_t i = 0; i < 3; i++) {
+            commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+            rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        }
+
+        D3D12_CLEAR_FLAGS clearDepthFlags = D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL;
+        commandList->ClearDepthStencilView(dsvHandle, clearDepthFlags, 1.0f, 0, 0, nullptr);
+        commandList->OMSetStencilRef(1);
+
+        // viewport
+        D3D12_VIEWPORT viewports[3] = {};
+        for (int32_t i = 0; i < 3; i++) {
+            D3D12_VIEWPORT& viewport = viewports[i];
+            viewport.Width = Screen::getWidth();
+            viewport.Height = Screen::getHeight();
+            viewport.TopLeftX = 0;
+            viewport.TopLeftY = 0;
+            viewport.MaxDepth = 1.0f;
+            viewport.MinDepth = 0.0f;
+        }
+        commandList->RSSetViewports(3, viewports);
+        // scissor
+        D3D12_RECT scissorRects[3] = {};
+        for (int32_t i = 0; i < 3; i++) {
+            D3D12_RECT& scissorRect = scissorRects[i];
+            scissorRect.top = 0;
+            scissorRect.left = 0;
+            scissorRect.right = scissorRect.left + Screen::getWidth();
+            scissorRect.bottom = scissorRect.top + Screen::getHeight();
+        }
+        commandList->RSSetScissorRects(3, scissorRects);
+    }
+
+private:
+    Surface& m_surface;
+};
+
+class Surface::End3DCommand : public ICommand {
+public:
+    explicit End3DCommand(Surface& surface)
+        : m_surface(surface)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        // Barrier
+        D3D12_RESOURCE_BARRIER barriers[3] = {};
+        for (int32_t i = 0; i < 3; i++) {
+            D3D12_RESOURCE_BARRIER& barrier = barriers[i];
+            barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+            barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+            barrier.Transition.pResource = m_surface.m_gTextures.at(i).Get();
+            barrier.Transition.Subresource = 0;
+            barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+            barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        }
+        commandList->ResourceBarrier(3, barriers);
+
+        commandList->OMSetStencilRef(2);
+    }
+
+private:
+    Surface& m_surface;
+};
+
+class Surface::Begin2DCommand : public ICommand {
+public:
+    explicit Begin2DCommand(Surface& surface)
+        : m_surface(surface)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        /*
+        m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+        GlobalLight::draw(m_commandList);
+        PointLight::draw(m_commandList);
+        */
+        //*
+        auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
+        // Barrier
+        // Bloom0番テクスチャにGBufferをソースとして書く
+        m_surface.bloomWrite(0);
+        GlobalLight::draw(commandList);
+        PointLight::draw(commandList);
+        m_surface.bloomRead(0);
+
+        //
+        // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
+        //
+        m_surface.bloomWrite(1);
+        BloomEffect::drawFilter(commandList);
+        m_surface.bloomRead(1);
+
+        for (int32_t i = 0; i < 8; i++) {
+            //
+            // Bloom1番をソースとしてBloom2番にブラー書き込む
+            //
+            m_surface.bloomWrite(2);
+            BloomEffect::drawBlur1(commandList);
+            m_surface.bloomRead(2);
+
+            //
+            // Bloom2番をソースとしてBloom1番にブラーを書き込む
+            //
+
+            m_surface.bloomWrite(1);
+            BloomEffect::drawBlur2(commandList);
+            m_surface.bloomRead(1);
+        }
+        //
+        // ダイレクトターゲットに戻す
+        //
+        m_surface.m_swapchain->clear(commandList, m_surface.m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+        BloomEffect::drawMix(commandList);
+        //*/
+    }
+
+private:
+    Surface& m_surface;
+};
+
+class Surface::End2DCommand : public ICommand {
+public:
+    explicit End2DCommand(Surface& surface)
+        : m_surface(surface)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_surface.m_swapchain->swap(commandList);
+        commandList->Close();
+        m_surface.m_swapchain->execute(commandList);
+    }
+
+private:
+    Surface& m_surface;
+};
+
+class Surface::SyncCommand : public ICommand {
+public:
+    explicit SyncCommand(const std::shared_ptr<DualBuffer>& dualBuffer)
+        : m_dualBuffer(dualBuffer)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_dualBuffer->sync(commandList);
+    }
+
+private:
+    std::shared_ptr<DualBuffer> m_dualBuffer;
+};
+
+class Surface::RenderCommand1 : public ICommand {
+public:
+    explicit RenderCommand1(
+        const std::shared_ptr<RenderContext>& renderContext,
+        const std::shared_ptr<UniformBuffer>& uniformBuffer,
+        const std::shared_ptr<IBuffer>& vertex,
+        const std::shared_ptr<IBuffer>& index,
+        int32_t indexLength)
+        : m_renderContext(renderContext)
+        , m_uniformBuffer(uniformBuffer)
+        , m_vertex(vertex)
+        , m_index(index)
+        , m_indexLength(indexLength)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_renderContext->render(commandList, m_uniformBuffer, m_vertex, m_index, m_indexLength);
+    }
+
+private:
+    std::shared_ptr<RenderContext> m_renderContext;
+    std::shared_ptr<UniformBuffer> m_uniformBuffer;
+    std::shared_ptr<IBuffer> m_vertex;
+    std::shared_ptr<IBuffer> m_index;
+    int32_t m_indexLength;
+};
+
+class Surface::RenderCommand2 : public ICommand {
+public:
+    explicit RenderCommand2(
+        const std::shared_ptr<RenderContext>& renderContext,
+        const std::shared_ptr<UniformBuffer>& uniformBuffer,
+        const std::shared_ptr<IBuffer>& vertex,
+        const std::shared_ptr<IBuffer>& index,
+        int32_t indexLength,
+        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
+        int32_t instanceCount)
+        : m_renderContext(renderContext)
+        , m_uniformBuffer(uniformBuffer)
+        , m_vertex(vertex)
+        , m_index(index)
+        , m_indexLength(indexLength)
+        , m_instanceBuffers(instanceBuffers)
+        , m_instanceCount(instanceCount)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_renderContext->render(commandList, m_uniformBuffer, m_vertex, m_index, m_indexLength, m_instanceBuffers, m_instanceCount);
+    }
+
+private:
+    std::shared_ptr<RenderContext> m_renderContext;
+    std::shared_ptr<UniformBuffer> m_uniformBuffer;
+    std::shared_ptr<IBuffer> m_vertex;
+    std::shared_ptr<IBuffer> m_index;
+    int32_t m_indexLength;
+    std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
+    int32_t m_instanceCount;
+};
+
+class Surface::RenderCommand3 : public ICommand {
+public:
+    explicit RenderCommand3(
+        Surface& surface,
+        const std::shared_ptr<RenderContext>& renderContext,
+        const std::shared_ptr<UniformBuffer>& uniformBuffer,
+        const std::shared_ptr<IBuffer>& vertex,
+        const std::shared_ptr<IBuffer>& index,
+        int32_t indexLength,
+        const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
+        int32_t instanceCount,
+        int32_t threadGroupCountX,
+        int32_t threadGroupCountY,
+        int32_t threadGroupCountZ)
+        : m_surface(surface)
+        , m_renderContext(renderContext)
+        , m_uniformBuffer(uniformBuffer)
+        , m_vertex(vertex)
+        , m_index(index)
+        , m_indexLength(indexLength)
+        , m_instanceBuffers(instanceBuffers)
+        , m_instanceCount(instanceCount)
+        , m_threadGroupCountX(threadGroupCountX)
+        , m_threadGroupCountY(threadGroupCountY)
+        , m_threadGroupCountZ(threadGroupCountZ)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        m_uniformBuffer->beginCompute(commandList);
+        m_renderContext->compute(commandList, m_uniformBuffer, m_threadGroupCountX, m_threadGroupCountY, m_threadGroupCountZ);
+        m_uniformBuffer->syncCompute(commandList);
+        m_uniformBuffer->endCompute(commandList);
+
+        m_surface.render(m_renderContext, m_uniformBuffer, m_vertex, m_index, m_indexLength, m_instanceBuffers, m_instanceCount);
+    }
+
+private:
+    Surface& m_surface;
+    std::shared_ptr<RenderContext> m_renderContext;
+    std::shared_ptr<UniformBuffer> m_uniformBuffer;
+    std::shared_ptr<IBuffer> m_vertex;
+    std::shared_ptr<IBuffer> m_index;
+    int32_t m_indexLength;
+    std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
+    int32_t m_instanceCount;
+    int32_t m_threadGroupCountX;
+    int32_t m_threadGroupCountY;
+    int32_t m_threadGroupCountZ;
 };
 // Impl
 class Surface::Impl {
@@ -46,154 +380,47 @@ Surface::~Surface()
 
 void Surface::beginGui()
 {
-    m_swapchain->guiClear();
+    m_impl->queue.enqueue(std::make_shared<BeginGuiCommand>(m_swapchain));
 }
 
 void Surface::endGui()
 {
-    m_swapchain->guiRender();
+    m_impl->queue.enqueue(std::make_shared<EndGuiCommand>(m_swapchain));
 }
 
 void Surface::begin3D()
 {
-    auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
-    // Barrier
-    D3D12_RESOURCE_BARRIER barriers[3] = {};
-    for (int32_t i = 0; i < 3; i++) {
-        D3D12_RESOURCE_BARRIER& barrier = barriers[i];
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_gTextures.at(i).Get();
-        barrier.Transition.Subresource = 0;
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    }
-    m_commandList->ResourceBarrier(3, barriers);
-
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_gHeap->GetCPUDescriptorHandleForHeapStart();
-    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
-    m_commandList->OMSetRenderTargets(3, &rtvHandle, true, &dsvHandle);
-
-    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    for (int32_t i = 0; i < 3; i++) {
-        m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-        rtvHandle.ptr += d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    }
-
-    D3D12_CLEAR_FLAGS clearDepthFlags = D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL;
-    m_commandList->ClearDepthStencilView(dsvHandle, clearDepthFlags, 1.0f, 0, 0, nullptr);
-    m_commandList->OMSetStencilRef(1);
-
-    // viewport
-    D3D12_VIEWPORT viewports[3] = {};
-    for (int32_t i = 0; i < 3; i++) {
-        D3D12_VIEWPORT& viewport = viewports[i];
-        viewport.Width = Screen::getWidth();
-        viewport.Height = Screen::getHeight();
-        viewport.TopLeftX = 0;
-        viewport.TopLeftY = 0;
-        viewport.MaxDepth = 1.0f;
-        viewport.MinDepth = 0.0f;
-    }
-    m_commandList->RSSetViewports(3, viewports);
-    // scissor
-    D3D12_RECT scissorRects[3] = {};
-    for (int32_t i = 0; i < 3; i++) {
-        D3D12_RECT& scissorRect = scissorRects[i];
-        scissorRect.top = 0;
-        scissorRect.left = 0;
-        scissorRect.right = scissorRect.left + Screen::getWidth();
-        scissorRect.bottom = scissorRect.top + Screen::getHeight();
-    }
-    m_commandList->RSSetScissorRects(3, scissorRects);
+    m_impl->queue.enqueue(std::make_shared<Begin3DCommand>(*this));
 }
 
 void Surface::end3D()
 {
-    // Barrier
-    D3D12_RESOURCE_BARRIER barriers[3] = {};
-    for (int32_t i = 0; i < 3; i++) {
-        D3D12_RESOURCE_BARRIER& barrier = barriers[i];
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_gTextures.at(i).Get();
-        barrier.Transition.Subresource = 0;
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    }
-    m_commandList->ResourceBarrier(3, barriers);
-
-    m_commandList->OMSetStencilRef(2);
+    m_impl->queue.enqueue(std::make_shared<End3DCommand>(*this));
 }
 
 void Surface::begin2D()
 {
-    /*
-    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
-    GlobalLight::draw(m_commandList);
-    PointLight::draw(m_commandList);
-    */
-    //*
-    auto d3d12Device = Engine::getInstance()->getDevice()->getID3D12Device();
-    // Barrier
-    // Bloom0番テクスチャにGBufferをソースとして書く
-    bloomWrite(0);
-    GlobalLight::draw(m_commandList);
-    PointLight::draw(m_commandList);
-    bloomRead(0);
-
-    //
-    // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
-    //
-    bloomWrite(1);
-    BloomEffect::drawFilter(m_commandList);
-    bloomRead(1);
-
-    for (int32_t i = 0; i < 8; i++) {
-        //
-        // Bloom1番をソースとしてBloom2番にブラー書き込む
-        //
-        bloomWrite(2);
-        BloomEffect::drawBlur1(m_commandList);
-        bloomRead(2);
-
-        //
-        // Bloom2番をソースとしてBloom1番にブラーを書き込む
-        //
-
-        bloomWrite(1);
-        BloomEffect::drawBlur2(m_commandList);
-        bloomRead(1);
-    }
-    //
-    // ダイレクトターゲットに戻す
-    //
-    m_swapchain->clear(m_commandList, m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
-    BloomEffect::drawMix(m_commandList);
-    //*/
+    m_impl->queue.enqueue(std::make_shared<Begin2DCommand>(*this));
 }
 
 void Surface::end2D()
 {
-    m_swapchain->swap(m_commandList);
-    m_commandList->Close();
-    m_swapchain->execute(m_commandList);
+    m_impl->queue.enqueue(std::make_shared<End2DCommand>(*this));
 }
 
 void Surface::present()
 {
-    m_swapchain->waitSync();
     m_swapchain->present();
+    m_swapchain->waitSync();
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
-
     UniformPool::releaseAll();
 }
 
 void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
 {
-    dualBuffer->sync(m_commandList);
+    m_impl->queue.enqueue(std::make_shared<SyncCommand>(dualBuffer));
 }
 
 void Surface::render(
@@ -203,7 +430,7 @@ void Surface::render(
     const std::shared_ptr<IBuffer>& index,
     int32_t indexLength)
 {
-    rc->render(m_commandList, ub, vertex, index, indexLength);
+    m_impl->queue.enqueue(std::make_shared<RenderCommand1>(rc, ub, vertex, index, indexLength));
 }
 
 void Surface::render(
@@ -215,7 +442,7 @@ void Surface::render(
     const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
     int32_t instanceCount)
 {
-    rc->render(m_commandList, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
+    m_impl->queue.enqueue(std::make_shared<RenderCommand2>(rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount));
 }
 
 void Surface::render(
@@ -230,12 +457,7 @@ void Surface::render(
     int32_t threadGroupCountY,
     int32_t threadGroupCountZ)
 {
-    ub->beginCompute(m_commandList);
-    rc->compute(m_commandList, ub, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
-    ub->syncCompute(m_commandList);
-    ub->endCompute(m_commandList);
-
-    render(rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount);
+    m_impl->queue.enqueue(std::make_shared<RenderCommand3>(*this, rc, ub, vertex, index, indexLength, instanceBuffers, instanceCount, threadGroupCountX, threadGroupCountY, threadGroupCountZ));
 }
 
 // internal
@@ -445,7 +667,7 @@ void Surface::init(
     BloomEffect::initialize(device, m_bloomTextures);
     // Thread
     m_impl = std::make_shared<Impl>();
-    m_thread = std::make_unique<std::thread>();
+    m_thread = std::make_unique<std::thread>(&Surface::threadRun, this);
 }
 
 void Surface::bloomWrite(int32_t index)
@@ -498,5 +720,13 @@ void Surface::bloomRead(int32_t index)
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
     m_commandList->ResourceBarrier(1, &barrier);
+}
+
+void Surface::threadRun()
+{
+    while (true) {
+        auto cmd = m_impl->queue.dequeue();
+        cmd->execute(m_commandList);
+    }
 }
 }

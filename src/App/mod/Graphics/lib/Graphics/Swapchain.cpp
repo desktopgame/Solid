@@ -114,7 +114,7 @@ void Swapchain::waitSync()
 {
     // Wait events
     m_commandQueue->Signal(m_fence.Get(), ++m_fenceVal);
-    if (m_fence->GetCompletedValue() != m_fenceVal) {
+    if (m_fence->GetCompletedValue() < m_fenceVal) {
         HANDLE evt = CreateEvent(nullptr, false, false, nullptr);
         m_fence->SetEventOnCompletion(m_fenceVal, evt);
         WaitForSingleObject(evt, INFINITE);

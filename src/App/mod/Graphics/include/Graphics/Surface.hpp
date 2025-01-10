@@ -78,9 +78,22 @@ private:
 
     void bloomWrite(int32_t index);
     void bloomRead(int32_t index);
+    void threadRun();
 
     class Impl;
     std::shared_ptr<Impl> m_impl;
+
+    class ICommand;
+    class BeginGuiCommand;
+    class EndGuiCommand;
+    class Begin3DCommand;
+    class End3DCommand;
+    class Begin2DCommand;
+    class End2DCommand;
+    class SyncCommand;
+    class RenderCommand1;
+    class RenderCommand2;
+    class RenderCommand3;
 
     std::unique_ptr<std::thread> m_thread;
     std::shared_ptr<Swapchain> m_swapchain;

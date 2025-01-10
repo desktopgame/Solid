@@ -48,7 +48,7 @@ static int appMain(int argc, char* argv[])
         sceneManager->onUpdate();
 
         surface->beginGui();
-        sceneManager->onGui();
+        // sceneManager->onGui();
         surface->endGui();
 
         surface->begin3D();
