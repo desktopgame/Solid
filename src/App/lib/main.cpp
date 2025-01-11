@@ -32,7 +32,7 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
     sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
-    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Debug");
+    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Game");
 
     Graphics::NodeRegistry::initialize();
     Graphics::ParticleSystem::initialize();
@@ -47,6 +47,8 @@ static int appMain(int argc, char* argv[])
 
         sceneManager->onUpdate();
 
+        surface->present();
+
         surface->beginGui();
         // sceneManager->onGui();
         surface->endGui();
@@ -58,8 +60,6 @@ static int appMain(int argc, char* argv[])
         surface->begin2D();
         sceneManager->onDraw2D();
         surface->end2D();
-
-        surface->present();
         Time::end();
         Time::sync();
     }
