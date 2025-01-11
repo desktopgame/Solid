@@ -31,6 +31,9 @@ public:
     void begin2D();
     void end2D();
 
+    void beginBatch(const std::shared_ptr<RenderContext>& rc);
+    void endBatch(const std::shared_ptr<RenderContext>& rc);
+
     void present();
 
     void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
@@ -90,6 +93,8 @@ private:
     class End3DCommand;
     class Begin2DCommand;
     class End2DCommand;
+    class BeginBatchCommand;
+    class EndBatchCommand;
     class PresentCommand;
     class SyncCommand;
     class RenderCommand1;

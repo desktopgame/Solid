@@ -13,6 +13,9 @@ class RenderContext {
 public:
     static std::shared_ptr<RenderContext> get(Metadata::ProgramTable entry);
 
+    void beginBatch();
+    void endBatch();
+
 #if SOLID_ENABLE_INTERNAL
     void compute(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
@@ -57,6 +60,9 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_computePipelineState;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_computeRootSignature;
+
+    bool m_batchMode;
+    bool m_batchInit;
 
     void render(
         const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,

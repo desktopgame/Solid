@@ -14,6 +14,7 @@
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
 #include <Utils/BlockingQueue.hpp>
+#include <Utils/Stopwatch.hpp>
 #include <Utils/String.hpp>
 #include <stdexcept>
 #include <vector>
@@ -227,6 +228,34 @@ public:
     Surface* surface;
 };
 
+class Surface::BeginBatchCommand : public ICommand {
+public:
+    explicit BeginBatchCommand()
+        : renderContext(nullptr)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        renderContext->beginBatch();
+    }
+    std::shared_ptr<RenderContext> renderContext;
+};
+
+class Surface::EndBatchCommand : public ICommand {
+public:
+    explicit EndBatchCommand()
+        : renderContext(nullptr)
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        renderContext->endBatch();
+    }
+    std::shared_ptr<RenderContext> renderContext;
+};
+
 class Surface::PresentCommand : public ICommand {
 public:
     explicit PresentCommand()
@@ -399,6 +428,8 @@ public:
     CommandPool<End3DCommand> end3DCommandPool;
     CommandPool<Begin2DCommand> begin2DCommandPool;
     CommandPool<End2DCommand> end2DCommandPool;
+    CommandPool<BeginBatchCommand> beginBatchCommandPool;
+    CommandPool<EndBatchCommand> endBatchCommandPool;
     CommandPool<PresentCommand> presentCommandPool;
     CommandPool<SyncCommand> syncCommandPool;
     CommandPool<RenderCommand1> renderCommand1Pool;
@@ -452,6 +483,20 @@ void Surface::end2D()
     m_impl->queue.enqueue(cmd);
 }
 
+void Surface::beginBatch(const std::shared_ptr<RenderContext>& rc)
+{
+    auto cmd = m_impl->beginBatchCommandPool.rent();
+    cmd->renderContext = rc;
+    m_impl->queue.enqueue(cmd);
+}
+
+void Surface::endBatch(const std::shared_ptr<RenderContext>& rc)
+{
+    auto cmd = m_impl->endBatchCommandPool.rent();
+    cmd->renderContext = rc;
+    m_impl->queue.enqueue(cmd);
+}
+
 void Surface::present()
 {
     m_swapchain->fence();
@@ -460,7 +505,11 @@ void Surface::present()
         cmd->surface = this;
         m_impl->queue.enqueue(cmd);
     }
+    Lib::Utils::Stopwatch stw;
+    stw.start();
     m_swapchain->waitSync();
+    stw.stop();
+    stw.dump("sync", std::cout);
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
@@ -472,6 +521,8 @@ void Surface::present()
     m_impl->end3DCommandPool.releaseAll();
     m_impl->begin2DCommandPool.releaseAll();
     m_impl->end2DCommandPool.releaseAll();
+    m_impl->beginBatchCommandPool.releaseAll();
+    m_impl->endBatchCommandPool.releaseAll();
     m_impl->presentCommandPool.releaseAll();
     m_impl->syncCommandPool.releaseAll();
     m_impl->renderCommand1Pool.releaseAll();

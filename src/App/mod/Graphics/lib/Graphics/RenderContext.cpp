@@ -49,6 +49,16 @@ std::shared_ptr<RenderContext> RenderContext::get(Metadata::ProgramTable entry)
 {
     return s_table.at(entry);
 }
+
+void RenderContext::beginBatch()
+{
+    m_batchMode = true;
+    m_batchInit = false;
+}
+void RenderContext::endBatch()
+{
+    m_batchMode = false;
+}
 // internal
 void RenderContext::compute(
     const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList,
@@ -134,6 +144,17 @@ void RenderContext::destroy()
 }
 // private
 RenderContext::RenderContext()
+    : m_entry()
+    , m_vShader()
+    , m_gShader()
+    , m_pShader()
+    , m_cShader()
+    , m_pipelineState()
+    , m_rootSignature()
+    , m_computePipelineState()
+    , m_computeRootSignature()
+    , m_batchMode()
+    , m_batchInit()
 {
 }
 
@@ -547,8 +568,10 @@ void RenderContext::render(
         throw std::logic_error("missing instance buffer.");
     }
 
-    cmdList->SetPipelineState(m_pipelineState.Get());
-    cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
+    if (!m_batchMode || !m_batchInit) {
+        cmdList->SetPipelineState(m_pipelineState.Get());
+        cmdList->SetGraphicsRootSignature(m_rootSignature.Get());
+    }
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     auto descriptorHeap = ub->getID3D12DescriptorHeap();
@@ -563,33 +586,34 @@ void RenderContext::render(
     }
     cmdList->IASetPrimitiveTopology(convPrimitiveTopology(program.primitiveType));
 
-    uint32_t stride = 0;
-    switch (program.inputLayout) {
-    case Reflect::InputLayout::Vertex2D:
-        stride = sizeof(Math::Vector2);
-        break;
-    case Reflect::InputLayout::VertexTexCoord2D:
-        stride = sizeof(VertexTexCoord2D);
-        break;
-    case Reflect::InputLayout::Vertex3D:
-        stride = sizeof(Math::Vector3);
-        break;
-    case Reflect::InputLayout::VertexNormal3D:
-        stride = sizeof(VertexNormal3D);
-        break;
-    case Reflect::InputLayout::VertexTexCoord3D:
-        stride = sizeof(VertexTexCoord3D);
-        break;
-    case Reflect::InputLayout::VertexNormalTexCoord3D:
-        stride = sizeof(VertexNormalTexCoord3D);
-        break;
+    if (!m_batchMode || !m_batchInit) {
+        uint32_t stride = 0;
+        switch (program.inputLayout) {
+        case Reflect::InputLayout::Vertex2D:
+            stride = sizeof(Math::Vector2);
+            break;
+        case Reflect::InputLayout::VertexTexCoord2D:
+            stride = sizeof(VertexTexCoord2D);
+            break;
+        case Reflect::InputLayout::Vertex3D:
+            stride = sizeof(Math::Vector3);
+            break;
+        case Reflect::InputLayout::VertexNormal3D:
+            stride = sizeof(VertexNormal3D);
+            break;
+        case Reflect::InputLayout::VertexTexCoord3D:
+            stride = sizeof(VertexTexCoord3D);
+            break;
+        case Reflect::InputLayout::VertexNormalTexCoord3D:
+            stride = sizeof(VertexNormalTexCoord3D);
+            break;
+        }
+        D3D12_VERTEX_BUFFER_VIEW vbView = {};
+        vbView.BufferLocation = vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+        vbView.SizeInBytes = vertexBuffer->getSize();
+        vbView.StrideInBytes = static_cast<UINT>(stride);
+        cmdList->IASetVertexBuffers(0, 1, &vbView);
     }
-    D3D12_VERTEX_BUFFER_VIEW vbView = {};
-    vbView.BufferLocation = vertexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
-    vbView.SizeInBytes = vertexBuffer->getSize();
-    vbView.StrideInBytes = static_cast<UINT>(stride);
-    cmdList->IASetVertexBuffers(0, 1, &vbView);
-
     for (int32_t i = 0; i < instanceBufferCount; i++) {
         std::shared_ptr<IBuffer> instBuffer = instanceBuffers[i];
         Reflect::InstanceBufferType instBufType = program.instanceBufferLayout.at(i);
@@ -601,12 +625,17 @@ void RenderContext::render(
         cmdList->IASetVertexBuffers(i + 1, 1, &instView);
     }
 
-    D3D12_INDEX_BUFFER_VIEW ibView = {};
-    ibView.BufferLocation = indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
-    ibView.Format = DXGI_FORMAT_R32_UINT;
-    ibView.SizeInBytes = indexBuffer->getSize();
-    cmdList->IASetIndexBuffer(&ibView);
+    if (!m_batchMode || !m_batchInit) {
+        D3D12_INDEX_BUFFER_VIEW ibView = {};
+        ibView.BufferLocation = indexBuffer->getID3D12Resource()->GetGPUVirtualAddress();
+        ibView.Format = DXGI_FORMAT_R32_UINT;
+        ibView.SizeInBytes = indexBuffer->getSize();
+        cmdList->IASetIndexBuffer(&ibView);
+    }
 
+    if (m_batchMode) {
+        m_batchInit = true;
+    }
     if (instanceBufferCount > 0) {
         cmdList->DrawIndexedInstanced(indexLength, instanceCount, 0, 0, 0);
     } else {

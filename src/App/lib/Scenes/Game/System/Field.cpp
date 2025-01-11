@@ -191,9 +191,13 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
             m_instanceCount);
     }
     m_player->draw3D(renderer);
+
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
+    surface->beginBatch(RenderContext::get(Metadata::MeshColor3D));
     for (auto& entity : m_entities) {
         entity->draw3D(renderer);
     }
+    surface->endBatch(RenderContext::get(Metadata::MeshColor3D));
 }
 void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
