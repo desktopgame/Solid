@@ -8,48 +8,41 @@ namespace Lib::Utils {
 template <typename T>
 class BlockingQueue {
 public:
-    explicit BlockingQueue()
-        : m_mutex()
-        , m_condVar()
-        , m_queue()
+    explicit BlockingQueue(size_t capacity)
+        : buffer_(capacity)
+        , head_(0)
+        , tail_(0)
     {
     }
 
-    void enqueue(const T& item)
+    bool enqueue(const T& item)
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        bool wasEmpty = m_queue.empty();
-        m_queue.push(item);
-        if (wasEmpty) {
-            m_condVar.notify_all();
+        size_t currentTail = tail_.load(std::memory_order_relaxed);
+        size_t nextTail = (currentTail + 1) % buffer_.size();
+        if (nextTail == head_.load(std::memory_order_acquire)) {
+            // キューが満杯
+            return false;
         }
+        buffer_[currentTail] = item;
+        tail_.store(nextTail, std::memory_order_release);
+        return true;
     }
 
-    T dequeue()
+    bool dequeue(T& item)
     {
-        while (true) {
-            std::unique_lock<std::mutex> guard(m_mutex);
-            if (m_queue.empty()) {
-                m_condVar.wait(guard);
-            }
-            if (m_queue.empty()) {
-                continue;
-            }
-            T result = m_queue.front();
-            m_queue.pop();
-            return result;
+        size_t currentHead = head_.load(std::memory_order_relaxed);
+        if (currentHead == tail_.load(std::memory_order_acquire)) {
+            // キューが空
+            return false;
         }
-    }
-
-    size_t size() const
-    {
-        std::lock_guard<std::mutex>(m_mutex);
-        return m_queue.size();
+        item = buffer_[currentHead];
+        head_.store((currentHead + 1) % buffer_.size(), std::memory_order_release);
+        return true;
     }
 
 private:
-    mutable std::mutex m_mutex;
-    mutable std::condition_variable m_condVar;
-    std::queue<T> m_queue;
+    std::vector<T> buffer_;
+    std::atomic<size_t> head_;
+    std::atomic<size_t> tail_;
 };
 }

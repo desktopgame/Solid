@@ -418,7 +418,7 @@ private:
 class Surface::Impl {
 public:
     explicit Impl()
-        : queue()
+        : queue(1024)
     {
     }
     Utils::BlockingQueue<std::shared_ptr<ICommand>> queue;
@@ -505,11 +505,7 @@ void Surface::present()
         cmd->surface = this;
         m_impl->queue.enqueue(cmd);
     }
-    Lib::Utils::Stopwatch stw;
-    stw.start();
     m_swapchain->waitSync();
-    stw.stop();
-    stw.dump("sync", std::cout);
 
     m_commandAllocator->Reset();
     m_commandList->Reset(m_commandAllocator.Get(), nullptr);
@@ -864,8 +860,10 @@ void Surface::bloomRead(int32_t index)
 void Surface::threadRun()
 {
     while (true) {
-        auto cmd = m_impl->queue.dequeue();
-        cmd->execute(m_commandList);
+        std::shared_ptr<ICommand> cmd;
+        if (m_impl->queue.dequeue(cmd)) {
+            cmd->execute(m_commandList);
+        }
     }
 }
 }
