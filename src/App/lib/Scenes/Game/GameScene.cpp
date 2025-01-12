@@ -39,10 +39,10 @@ void GameScene::onEnter()
             }
             System::FieldGenerator::Room room = m_field->getRoomAt(i);
             for (int32_t j = 0; j < rand.range(1, 5); j++) {
-                int32_t halfX = (System::Field::k_roomSizeX / 2) - 3;
-                int32_t halfZ = (System::Field::k_roomSizeZ / 2) - 3;
-                int32_t tileOffsetX = rand.range(-halfX, halfX);
-                int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
+                // int32_t halfX = (System::Field::k_roomSizeX / 2) - 3;
+                // int32_t halfZ = (System::Field::k_roomSizeZ / 2) - 3;
+                // int32_t tileOffsetX = rand.range(-halfX, halfX);
+                // int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
 
                 float enemyPosX = (room.center.x() + 0) * System::Field::k_tileSize;
                 float enemyPosZ = (room.center.z() + 0) * System::Field::k_tileSize;
