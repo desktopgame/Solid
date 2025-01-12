@@ -30,5 +30,10 @@ private:
     std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
     std::shared_ptr<Texture> m_aimTexture;
+
+#if _DEBUG
+    const float k_fpsK = 0.05f;
+    float m_avgTime = 0.0f;
+#endif
 };
 }

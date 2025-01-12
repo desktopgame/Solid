@@ -15,6 +15,10 @@ GameScene::GameScene()
     , m_field()
     , m_debugPlayer()
     , m_debugEntity()
+    , m_aimTexture()
+#if _DEBUG
+    , m_avgTime()
+#endif
 {
 }
 GameScene::~GameScene() { }
@@ -102,6 +106,18 @@ void GameScene::onDraw2D()
     m_field->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
+
+#if _DEBUG
+    float dt = Time::deltaTime();
+    m_avgTime *= 1.0f - k_fpsK;
+    m_avgTime += dt * k_fpsK;
+    float fps = 1.0 / m_avgTime;
+    std::string fpsT = std::to_string(fps);
+    std::u16string uFpsT = std::u16string(fpsT.begin(), fpsT.end());
+    m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
+    m_renderer->textFontSize(20);
+    m_renderer->drawText(Vector2({ 0, 100 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, uFpsT, Color({ 1, 0, 0, 1 }));
+#endif
 }
 
 bool GameScene::tryTransition(std::string& outNextScene)
