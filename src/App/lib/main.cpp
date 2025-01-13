@@ -45,9 +45,9 @@ static int appMain(int argc, char* argv[])
         running = window->peekMessage();
         inputSystem->sync();
 
+        surface->beginPresent();
         sceneManager->onUpdate();
-
-        surface->present();
+        surface->endPresent();
 
         surface->beginGui();
         // sceneManager->onGui();

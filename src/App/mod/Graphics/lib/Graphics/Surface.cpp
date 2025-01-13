@@ -497,7 +497,7 @@ void Surface::endBatch(const std::shared_ptr<RenderContext>& rc)
     m_impl->queue.enqueue(cmd);
 }
 
-void Surface::present()
+void Surface::beginPresent()
 {
     m_swapchain->fence();
     {
@@ -505,6 +505,10 @@ void Surface::present()
         cmd->surface = this;
         m_impl->queue.enqueue(cmd);
     }
+}
+
+void Surface::endPresent()
+{
     m_swapchain->waitSync();
 
     m_commandAllocator->Reset();

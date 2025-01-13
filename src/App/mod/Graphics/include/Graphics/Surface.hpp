@@ -34,7 +34,8 @@ public:
     void beginBatch(const std::shared_ptr<RenderContext>& rc);
     void endBatch(const std::shared_ptr<RenderContext>& rc);
 
-    void present();
+    void beginPresent();
+    void endPresent();
 
     void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
 
