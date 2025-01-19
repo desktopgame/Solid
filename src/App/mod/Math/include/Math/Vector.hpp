@@ -104,111 +104,111 @@ public:
         }
     };
 
-    T& at(int32_t index)
+    inline T& at(int32_t index)
     {
         return components.at(index);
     }
 
-    T at(int32_t index) const
+    inline T at(int32_t index) const
     {
         return components.at(index);
     }
 
-    T& x()
+    inline T& x()
     {
         static_assert(N >= 1);
         return components.at(0);
     }
 
-    T x() const
+    inline T x() const
     {
 
         static_assert(N >= 1);
         return components.at(0);
     }
 
-    T& y()
+    inline T& y()
     {
         static_assert(N >= 2);
         return components.at(1);
     }
 
-    T y() const
+    inline T y() const
     {
         static_assert(N >= 2);
         return components.at(1);
     }
 
-    T& z()
+    inline T& z()
     {
         static_assert(N >= 3);
         return components.at(2);
     }
 
-    T z() const
+    inline T z() const
     {
         static_assert(N >= 3);
         return components.at(2);
     }
 
-    T& w()
+    inline T& w()
     {
         static_assert(N >= 4);
         return components.at(3);
     }
 
-    T w() const
+    inline T w() const
     {
         static_assert(N >= 4);
         return components.at(3);
     }
 
-    T& r()
+    inline T& r()
     {
         return x();
     }
 
-    T r() const
+    inline T r() const
     {
         return x();
     }
 
-    T& g()
+    inline T& g()
     {
         return y();
     }
 
-    T g() const
+    inline T g() const
     {
         return y();
     }
 
-    T& b()
+    inline T& b()
     {
         return z();
     }
 
-    T b() const
+    inline T b() const
     {
         return z();
     }
 
-    T& a()
+    inline T& a()
     {
         return w();
     }
 
-    T a() const
+    inline T a() const
     {
         return w();
     }
 
-    const T& operator[](std::size_t i) const
+    inline const T& operator[](std::size_t i) const
     {
         return components[i];
     }
 
-    T& operator[](std::size_t i)
+    inline T& operator[](std::size_t i)
     {
         return components[i];
     }
@@ -242,7 +242,7 @@ public:
         components.fill(a);
     }
 
-    T length() const
+    inline T length() const
     {
         T p = static_cast<T>(0);
         for (int32_t i = 0; i < N; i++) {
@@ -265,12 +265,12 @@ public:
         return v;
     }
 
-    static typename DotHelper<N>::Type dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
+    static inline typename DotHelper<N>::Type dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
     {
         return DotHelper<N>::compute(a, b);
     }
 
-    static typename CrossHelper<N>::Type cross(const VectorT<T, N>& a, const VectorT<T, N>& b)
+    static inline typename CrossHelper<N>::Type cross(const VectorT<T, N>& a, const VectorT<T, N>& b)
     {
         return CrossHelper<N>::compute(a, b);
     }
