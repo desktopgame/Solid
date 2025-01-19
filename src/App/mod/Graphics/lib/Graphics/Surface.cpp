@@ -441,8 +441,10 @@ void Surface::bloomWrite(int32_t index)
     rtvHandle.ptr += index * d3d12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     m_commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
-    float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+    if (index == 0) {
+        float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+    }
 
     // viewport
     D3D12_VIEWPORT viewport = {};
