@@ -138,12 +138,10 @@ struct MatrixT {
 #pragma unroll 4
 #endif
                 for (int32_t j = 0; j < ColumnNum; j++) {
-                    // sum += a.at(i, k) * b.at(k, j);
                     int32_t aIndex = (i * ColumnNum) + k;
                     int32_t bIndex = (k * ColumnNum) + j;
                     m.components[(i * ColumnNum) + j] = (a.components[aIndex] * b.components[bIndex] + m.components[(i * ColumnNum) + j]);
                 }
-                // m.at(i, j) = sum;
             }
         }
         return m;
