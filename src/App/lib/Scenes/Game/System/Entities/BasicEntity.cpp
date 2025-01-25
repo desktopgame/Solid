@@ -56,7 +56,7 @@ void BasicEntity::update(Field& field)
     Vector3 newPos = oldPos + delta;
 
     // X軸方向
-    {
+    if (Mathf::abs(m_velocity.x()) > 0) {
         Vector3 offset = delta * Vector3({ 1, 0, 0 });
         m_fuzzyHitCache.clear();
         hitTilesFuzzy(field, offset, m_fuzzyHitCache);
@@ -143,7 +143,7 @@ void BasicEntity::update(Field& field)
     }
 
     // Y軸方向
-    {
+    if (Mathf::abs(m_velocity.y()) > 0) {
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
 
         m_fuzzyHitCache.clear();
@@ -232,7 +232,7 @@ void BasicEntity::update(Field& field)
     }
 
     // Z軸方向
-    {
+    if (Mathf::abs(m_velocity.z()) > 0) {
         Vector3 offset = delta * Vector3({ 0, 0, 1 });
         m_fuzzyHitCache.clear();
         hitTilesFuzzy(field, offset, m_fuzzyHitCache);
@@ -333,7 +333,6 @@ void BasicEntity::update(Field& field)
     m_aabb = saveAABB;
 
     setPosition(newPos);
-    m_node->validate();
 
     if (m_receiveGravity) {
         m_velocity.y() -= Field::k_gravity * dt;
@@ -346,6 +345,7 @@ void BasicEntity::update(Field& field)
     newRot = Vector3({ Mathf::normalizeDegree(newRot.x()), Mathf::normalizeDegree(newRot.y()), Mathf::normalizeDegree(newRot.z()) });
 
     if (m_torque.length() > 0.0f) {
+        m_node->validate();
         markAsDirtyAABB();
         rehashAABB();
 
