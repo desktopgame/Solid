@@ -129,6 +129,9 @@ struct MatrixT {
 #pragma unroll
 #endif
         for (int32_t i = 0; i < RowNum; i++) {
+#ifdef __clang__
+#pragma unroll
+#endif
             for (int32_t j = 0; j < ColumnNum; j++) {
                 T sum = static_cast<T>(0);
                 for (int32_t k = 0; k < RowNum; k++) {
