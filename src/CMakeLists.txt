@@ -50,7 +50,7 @@ function(app_target_compile_params target)
         $<$<CONFIG:Debug>:${SOLID_DEBUG_COMPILE}>
         $<$<CONFIG:Release>:${SOLID_RELEASE_COMPILE}>
     )
-    target_compile_features(${target} PRIVATE cxx_std_17)
+    target_compile_features(${target} PRIVATE cxx_std_20)
 endfunction()
 
 function(app_target_link_params target)
@@ -75,7 +75,7 @@ function(lib_target_compile_params target)
         $<$<CONFIG:Debug>:${SOLID_DEBUG_COMPILE}>
         $<$<CONFIG:Release>:${SOLID_RELEASE_COMPILE}>
     )
-    target_compile_features(${target} PRIVATE cxx_std_17)
+    target_compile_features(${target} PRIVATE cxx_std_20)
 endfunction()
 
 function(lib_target_link_params target)

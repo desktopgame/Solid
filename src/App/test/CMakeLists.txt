@@ -16,7 +16,7 @@ set_property(
 )
 target_compile_definitions(App-Test PRIVATE _TEST NOMINMAX)
 target_compile_options(App-Test PRIVATE $<$<BOOL:${MSVC}>: /utf-8>)
-target_compile_features(App-Test PRIVATE cxx_std_17)
+target_compile_features(App-Test PRIVATE cxx_std_20)
 target_include_directories(
     App-Test
     PRIVATE

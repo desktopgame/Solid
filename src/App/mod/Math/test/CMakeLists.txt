@@ -3,7 +3,7 @@ project(Lib-Math-Test CXX)
 
 add_executable(Lib-Math-Test main.cpp)
 target_compile_options(Lib-Math-Test PRIVATE $<$<BOOL:${MSVC}>: /utf-8>)
-target_compile_features(Lib-Math-Test PRIVATE cxx_std_17)
+target_compile_features(Lib-Math-Test PRIVATE cxx_std_20)
 target_include_directories(
     Lib-Math-Test
     PRIVATE
