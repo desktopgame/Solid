@@ -900,8 +900,13 @@ void Surface::init(
         texHeapProps.VisibleNodeMask = 0;
         D3D12_RESOURCE_DESC texResDesc = {};
         texResDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-        texResDesc.Width = Screen::getWidth();
-        texResDesc.Height = Screen::getHeight();
+        if (i == 0) {
+            texResDesc.Width = Screen::getWidth();
+            texResDesc.Height = Screen::getHeight();
+        } else {
+            texResDesc.Width = Screen::getWidth() / 4;
+            texResDesc.Height = Screen::getHeight() / 4;
+        }
         texResDesc.DepthOrArraySize = 1;
         texResDesc.SampleDesc.Count = 1;
         texResDesc.SampleDesc.Quality = 0;
@@ -997,8 +1002,13 @@ void Surface::bloomWrite(int32_t index)
 
     // viewport
     D3D12_VIEWPORT viewport = {};
-    viewport.Width = Screen::getWidth();
-    viewport.Height = Screen::getHeight();
+    if (index == 0) {
+        viewport.Width = Screen::getWidth();
+        viewport.Height = Screen::getHeight();
+    } else {
+        viewport.Width = Screen::getWidth() / 4;
+        viewport.Height = Screen::getHeight() / 4;
+    }
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
     viewport.MaxDepth = 1.0f;
@@ -1008,8 +1018,13 @@ void Surface::bloomWrite(int32_t index)
     D3D12_RECT scissorRect = {};
     scissorRect.top = 0;
     scissorRect.left = 0;
-    scissorRect.right = scissorRect.left + Screen::getWidth();
-    scissorRect.bottom = scissorRect.top + Screen::getHeight();
+    if (index == 0) {
+        scissorRect.right = scissorRect.left + Screen::getWidth();
+        scissorRect.bottom = scissorRect.top + Screen::getHeight();
+    } else {
+        scissorRect.right = scissorRect.left + Screen::getWidth() / 4;
+        scissorRect.bottom = scissorRect.top + Screen::getHeight() / 4;
+    }
     m_commandList->RSSetScissorRects(1, &scissorRect);
 }
 

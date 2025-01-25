@@ -486,7 +486,7 @@ void BloomEffect::initBlur1(
             float4 result = 0;
             float offset[5] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
             float weight[5] = { 0.1, 0.2, 0.4, 0.2, 0.1 };
-            float2 texelSize = float2(1.0 / 800.0, 1.0 / 600.0);
+            float2 texelSize = float2(1.0 / (800.0 / 4.0), 1.0 / (600.0 / 4.0));
 
             for (int i = 0; i < 5; i++)
             {
@@ -727,7 +727,7 @@ void BloomEffect::initBlur2(
             float4 result = 0;
             float offset[5] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
             float weight[5] = { 0.1, 0.2, 0.4, 0.2, 0.1 }; // ガウス分布の重み
-            float2 texelSize = float2(1.0 / 800.0, 1.0 / 600.0);
+            float2 texelSize = float2(1.0 / (800.0 / 4.0), 1.0 / (600.0 / 4.0));
 
             for (int i = 0; i < 5; i++)
             {
