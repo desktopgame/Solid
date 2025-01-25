@@ -77,7 +77,7 @@ public:
         return q;
     }
 
-    static QuaternionT<T> multiply(QuaternionT<T> q1, QuaternionT<T> q2)
+    static inline QuaternionT<T> multiply(QuaternionT<T> q1, QuaternionT<T> q2)
     {
         // see: http://marupeke296.com/DXG_No10_Quaternion.html
         VectorT<T, 3> v1 = VectorT<T, 3>({ q1.x, q1.y, q1.z });

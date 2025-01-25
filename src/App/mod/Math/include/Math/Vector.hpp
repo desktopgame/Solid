@@ -40,7 +40,7 @@ public:
     struct DotHelper {
         using Type = T;
 
-        static Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
+        static inline Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             Type sum = static_cast<Type>(0);
             for (int32_t i = 0; i < N; i++) {
@@ -67,7 +67,7 @@ public:
         static inline constexpr int32_t NumV = 2;
         using Type = T;
 
-        static Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
+        static inline Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             return a.x() * b.y() - a.y() * b.x();
         }
@@ -78,7 +78,7 @@ public:
         static inline constexpr int32_t NumV = 3;
         using Type = VectorT<T, NumV>;
 
-        static Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
+        static inline Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             return Type(std::array<T, NumV> {
                 a.y() * b.z() - b.y() * a.z(),
