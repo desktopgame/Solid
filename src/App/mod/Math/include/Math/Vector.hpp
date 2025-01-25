@@ -234,8 +234,8 @@ public:
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
-            // p += static_cast<T>(components[i] * components[i]);
-            p = std::fmaf(components[i], components[i], p);
+            p += static_cast<T>(components[i] * components[i]);
+            // p = std::fmaf(components[i], components[i], p);
         }
         return static_cast<T>(std::sqrt(p));
     }
@@ -254,7 +254,7 @@ public:
         return v;
     }
 
-    static inline typename T dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
+    static inline T dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
     {
         T sum = static_cast<T>(0);
 #ifdef __clang__
