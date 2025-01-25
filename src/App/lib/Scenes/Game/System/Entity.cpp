@@ -8,18 +8,16 @@ Entity::~Entity() { }
 void Entity::addHitEntity(const std::shared_ptr<Entity>& entity)
 {
     if (!isHitOnEntity(entity)) {
-        m_hitTable.emplace_back(entity);
+        m_hitTable[entity->getUuid()] = entity;
     }
 }
 void Entity::removeHitEntity(const std::shared_ptr<Entity>& entity)
 {
-    auto iter = std::remove(m_hitTable.begin(), m_hitTable.end(), entity);
-    m_hitTable.erase(iter, m_hitTable.end());
+    m_hitTable.erase(entity->getUuid());
 }
 bool Entity::isHitOnEntity(const std::shared_ptr<Entity>& entity) const
 {
-    auto iter = std::find(m_hitTable.begin(), m_hitTable.end(), entity);
-    return iter != m_hitTable.end();
+    return m_hitTable.count(entity->getUuid()) != 0;
 }
 
 bool Entity::damage(const std::shared_ptr<DamageSource>& damageSource)
@@ -75,6 +73,7 @@ void Entity::setRotation(const Vector3& rotation)
 }
 Vector3 Entity::getRotation() const { return m_rotation; }
 
+const uuids::uuid& Entity::getUuid() const { return m_uuid; }
 // protected
 Entity::Entity()
     : m_hitTable()
@@ -82,7 +81,15 @@ Entity::Entity()
     , m_currentHP(10)
     , m_position()
     , m_rotation()
+    , m_uuid()
 {
+    std::random_device rd;
+    auto seedData = std::array<int, std::mt19937::state_size> {};
+    std::generate(std::begin(seedData), std::end(seedData), std::ref(rd));
+    std::seed_seq seedSeq(std::begin(seedData), std::end(seedData));
+    std::mt19937 randomGenerator(seedSeq);
+    uuids::uuid_random_generator uuidGen { randomGenerator };
+    m_uuid = uuidGen();
 }
 void Entity::onDead(const std::shared_ptr<DamageSource>& damageSource)
 {

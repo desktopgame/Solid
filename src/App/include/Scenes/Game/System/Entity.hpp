@@ -1,6 +1,8 @@
 #pragma once
 #include <library.hpp>
 #include <memory>
+#include <stduuid/uuid.h>
+#include <unordered_map>
 
 namespace App::Scenes::Game::System {
 class Field;
@@ -36,6 +38,8 @@ public:
     void setRotation(const Vector3& rotation);
     Vector3 getRotation() const;
 
+    const uuids::uuid& getUuid() const;
+
 protected:
     Entity();
 
@@ -43,10 +47,11 @@ protected:
     virtual void onPositionChanged(const Vector3& position);
     virtual void onRotationChanged(const Vector3& rotation);
 
-    std::vector<std::shared_ptr<Entity>> m_hitTable;
+    std::unordered_map<uuids::uuid, std::shared_ptr<Entity>> m_hitTable;
     int32_t m_maximumHP;
     int32_t m_currentHP;
     Vector3 m_position;
     Vector3 m_rotation;
+    uuids::uuid m_uuid;
 };
 }
