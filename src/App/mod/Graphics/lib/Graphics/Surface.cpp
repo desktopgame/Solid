@@ -41,7 +41,9 @@ public:
 
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
-        swapchain->guiClear();
+        // これはメインスレッドで呼ぶのが正しい
+        // ImGui::Renderさえ描画スレッドで呼べばいい
+        // swapchain->guiClear();
     }
 
     std::shared_ptr<Swapchain> swapchain;
@@ -443,9 +445,7 @@ Surface::~Surface()
 
 void Surface::beginGui()
 {
-    auto cmd = m_impl->beginGuiCommandPool.rent();
-    cmd->swapchain = m_swapchain;
-    m_impl->queue.enqueue(cmd);
+    m_swapchain->guiClear();
 }
 
 void Surface::endGui()

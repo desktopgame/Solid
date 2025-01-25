@@ -50,7 +50,7 @@ static int appMain(int argc, char* argv[])
         surface->endPresent();
 
         surface->beginGui();
-        // sceneManager->onGui();
+        sceneManager->onGui();
         surface->endGui();
 
         surface->begin3D();
