@@ -118,50 +118,50 @@ public:
     inline T& x()
     {
         static_assert(N >= 1);
-        return components.at(0);
+        return std::get<0>(components);
     }
 
     inline T x() const
     {
 
         static_assert(N >= 1);
-        return components.at(0);
+        return std::get<0>(components);
     }
 
     inline T& y()
     {
         static_assert(N >= 2);
-        return components.at(1);
+        return std::get<1>(components);
     }
 
     inline T y() const
     {
         static_assert(N >= 2);
-        return components.at(1);
+        return std::get<1>(components);
     }
 
     inline T& z()
     {
         static_assert(N >= 3);
-        return components.at(2);
+        return std::get<2>(components);
     }
 
     inline T z() const
     {
         static_assert(N >= 3);
-        return components.at(2);
+        return std::get<2>(components);
     }
 
     inline T& w()
     {
         static_assert(N >= 4);
-        return components.at(3);
+        return std::get<3>(components);
     }
 
     inline T w() const
     {
         static_assert(N >= 4);
-        return components.at(3);
+        return std::get<3>(components);
     }
 
     inline T& r()
