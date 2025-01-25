@@ -125,20 +125,25 @@ struct MatrixT {
     static MatrixT<T> multiply(const MatrixT<T>& a, const MatrixT<T>& b)
     {
         MatrixT<T> m;
+        ::memset(m.components, 0, sizeof(T) * 16);
 #ifdef __clang__
-#pragma unroll
+#pragma unroll 4
 #endif
         for (int32_t i = 0; i < RowNum; i++) {
 #ifdef __clang__
-#pragma unroll
+#pragma unroll 4
 #endif
-            for (int32_t j = 0; j < ColumnNum; j++) {
-                T sum = static_cast<T>(0);
-                for (int32_t k = 0; k < RowNum; k++) {
+            for (int32_t k = 0; k < RowNum; k++) {
+#ifdef __clang__
+#pragma unroll 4
+#endif
+                for (int32_t j = 0; j < ColumnNum; j++) {
                     // sum += a.at(i, k) * b.at(k, j);
-                    sum = std::fmaf(a.at(i, k), b.at(k, j), sum);
+                    int32_t aIndex = (i * ColumnNum) + k;
+                    int32_t bIndex = (k * ColumnNum) + j;
+                    m.components[(i * ColumnNum) + j] = (a.components[aIndex] * b.components[bIndex] + m.components[(i * ColumnNum) + j]);
                 }
-                m.at(i, j) = sum;
+                // m.at(i, j) = sum;
             }
         }
         return m;
