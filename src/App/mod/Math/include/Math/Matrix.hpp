@@ -33,14 +33,14 @@ struct MatrixT {
 
     // mutable
 
-    std::array<std::reference_wrapper<T>, ColumnNum> row(int32_t index)
+    std::array<T&, ColumnNum> row(int32_t index)
     {
         T& e0 = components[(index * ColumnNum) + 0];
         T& e1 = components[(index * ColumnNum) + 1];
         T& e2 = components[(index * ColumnNum) + 2];
         T& e3 = components[(index * ColumnNum) + 3];
 
-        std::array<std::reference_wrapper<T>, 4> a {
+        std::array<T&, 4> a {
             e0,
             e1,
             e2,
@@ -49,14 +49,14 @@ struct MatrixT {
         return a;
     }
 
-    std::array<std::reference_wrapper<T>, RowNum> column(int32_t index)
+    std::array<T&, RowNum> column(int32_t index)
     {
         T& e0 = components[index];
         T& e1 = components[(1 * ColumnNum) + index + 0];
         T& e2 = components[(2 * ColumnNum) + index + 0];
         T& e3 = components[(3 * ColumnNum) + index + 0];
 
-        std::array<std::reference_wrapper<T>, 4> a {
+        std::array<T&, 4> a {
             e0,
             e1,
             e2,
@@ -72,14 +72,14 @@ struct MatrixT {
 
     // immutable
 
-    std::array<std::reference_wrapper<const T>, ColumnNum> row(int32_t index) const
+    std::array<T, ColumnNum> row(int32_t index) const
     {
         const T& e0 = components[(index * ColumnNum) + 0];
         const T& e1 = components[(index * ColumnNum) + 1];
         const T& e2 = components[(index * ColumnNum) + 2];
         const T& e3 = components[(index * ColumnNum) + 3];
 
-        std::array<std::reference_wrapper<const T>, 4> a {
+        std::array<T, 4> a {
             e0,
             e1,
             e2,
@@ -88,14 +88,14 @@ struct MatrixT {
         return a;
     }
 
-    std::array<std::reference_wrapper<const T>, RowNum> column(int32_t index) const
+    std::array<T, RowNum> column(int32_t index) const
     {
         const T& e0 = components[index];
         const T& e1 = components[(1 * ColumnNum) + index + 0];
         const T& e2 = components[(2 * ColumnNum) + index + 0];
         const T& e3 = components[(3 * ColumnNum) + index + 0];
 
-        std::array<std::reference_wrapper<const T>, 4> a {
+        std::array<T, 4> a {
             e0,
             e1,
             e2,
@@ -111,11 +111,11 @@ struct MatrixT {
 
     // operator
 
-    const std::array<std::reference_wrapper<const T>, ColumnNum> operator[](std::size_t i) const
+    const std::array<T, ColumnNum> operator[](std::size_t i) const
     {
         return row(static_cast<int32_t>(i));
     }
-    std::array<std::reference_wrapper<T>, ColumnNum> operator[](std::size_t i)
+    std::array<T&, ColumnNum> operator[](std::size_t i)
     {
         return row(static_cast<int32_t>(i));
     }
@@ -125,10 +125,15 @@ struct MatrixT {
     static MatrixT<T> multiply(const MatrixT<T>& a, const MatrixT<T>& b)
     {
         MatrixT<T> m;
+        std::array<std::array<T, RowNum>, ColumnNum> columns;
+        for (int32_t row = 0; row < RowNum; row++) {
+            columns[row] = b.column(row);
+        }
+
         for (int32_t i = 0; i < RowNum; i++) {
+            std::array<T, ColumnNum> row = a.row(i);
             for (int32_t j = 0; j < ColumnNum; j++) {
-                std::array<std::reference_wrapper<const T>, ColumnNum> row = a.row(i);
-                std::array<std::reference_wrapper<const T>, RowNum> col = b.column(j);
+                std::array<T, RowNum> col = columns[j];
                 T sum = static_cast<T>(0);
                 for (int32_t k = 0; k < RowNum; k++) {
                     sum += row[k] * col[k];
@@ -141,17 +146,17 @@ struct MatrixT {
 
     static VectorT<T, 2> multiply(const MatrixT<T>& a, const VectorT<T, 2>& b)
     {
-        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.column(0);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.column(1);
+        std::array<T, ColumnNum> r1 = a.column(0);
+        std::array<T, ColumnNum> r2 = a.column(1);
         return VectorT<T, 2>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + r1.at(2) + r1.at(3),
             (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + r2.at(2) + r2.at(3) });
     }
 
     static VectorT<T, 3> multiply(const MatrixT<T>& a, const VectorT<T, 3>& b)
     {
-        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.column(0);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.column(1);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r3 = a.column(2);
+        std::array<T, ColumnNum> r1 = a.column(0);
+        std::array<T, ColumnNum> r2 = a.column(1);
+        std::array<T, ColumnNum> r3 = a.column(2);
         return VectorT<T, 3>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + (r1.at(2) * b.at(2)) + r1.at(3),
             (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + (r2.at(2) * b.at(2) + r2.at(3)),
             (r3.at(0) * b.at(0)) + (r3.at(1) * b.at(1)) + (r3.at(2) * b.at(2)) + r3.at(3) });
@@ -159,10 +164,10 @@ struct MatrixT {
 
     static VectorT<T, 4> multiply(const MatrixT<T>& a, const VectorT<T, 4>& b)
     {
-        std::array<std::reference_wrapper<const T>, ColumnNum> r1 = a.column(0);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r2 = a.column(1);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r3 = a.column(2);
-        std::array<std::reference_wrapper<const T>, ColumnNum> r4 = a.column(3);
+        std::array<T, ColumnNum> r1 = a.column(0);
+        std::array<T, ColumnNum> r2 = a.column(1);
+        std::array<T, ColumnNum> r3 = a.column(2);
+        std::array<T, ColumnNum> r4 = a.column(3);
         return VectorT<T, 4>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + (r1.at(2) * b.at(2)) + (r1.at(3) * b.at(3)),
             (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + (r2.at(2) * b.at(2)) + (r2.at(3) * b.at(3)),
             (r3.at(0) * b.at(0)) + (r3.at(1) * b.at(1)) + (r3.at(2) * b.at(2)) + (r3.at(3) * b.at(3)),
