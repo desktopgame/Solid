@@ -125,18 +125,11 @@ struct MatrixT {
     static MatrixT<T> multiply(const MatrixT<T>& a, const MatrixT<T>& b)
     {
         MatrixT<T> m;
-        std::array<std::array<T, RowNum>, ColumnNum> columns;
-        for (int32_t row = 0; row < RowNum; row++) {
-            columns[row] = b.column(row);
-        }
-
         for (int32_t i = 0; i < RowNum; i++) {
-            std::array<T, ColumnNum> row = a.row(i);
             for (int32_t j = 0; j < ColumnNum; j++) {
-                std::array<T, RowNum> col = columns[j];
                 T sum = static_cast<T>(0);
                 for (int32_t k = 0; k < RowNum; k++) {
-                    sum += row[k] * col[k];
+                    sum += a.at(i, k) * b.at(k, j);
                 }
                 m.at(i, j) = sum;
             }
