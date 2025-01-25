@@ -33,14 +33,14 @@ struct MatrixT {
 
     // mutable
 
-    std::array<T&, ColumnNum> row(int32_t index)
+    std::array<std::reference_wrapper<T>, ColumnNum> row(int32_t index)
     {
         T& e0 = components[(index * ColumnNum) + 0];
         T& e1 = components[(index * ColumnNum) + 1];
         T& e2 = components[(index * ColumnNum) + 2];
         T& e3 = components[(index * ColumnNum) + 3];
 
-        std::array<T&, 4> a {
+        std::array<std::reference_wrapper<T>, 4> a {
             e0,
             e1,
             e2,
@@ -49,14 +49,14 @@ struct MatrixT {
         return a;
     }
 
-    std::array<T&, RowNum> column(int32_t index)
+    std::array<std::reference_wrapper<T>, RowNum> column(int32_t index)
     {
         T& e0 = components[index];
         T& e1 = components[(1 * ColumnNum) + index + 0];
         T& e2 = components[(2 * ColumnNum) + index + 0];
         T& e3 = components[(3 * ColumnNum) + index + 0];
 
-        std::array<T&, 4> a {
+        std::array<std::reference_wrapper<T>, 4> a {
             e0,
             e1,
             e2,
