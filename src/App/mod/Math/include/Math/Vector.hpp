@@ -43,6 +43,11 @@ public:
         static inline Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             Type sum = static_cast<Type>(0);
+#ifdef _MSC_VER
+#pragma loop(unroll)
+#else
+#pragma unroll
+#endif
             for (int32_t i = 0; i < N; i++) {
                 // sum += (a[i] * b[i]);
                 sum = std::fmaf(a[i], b[i], sum);
