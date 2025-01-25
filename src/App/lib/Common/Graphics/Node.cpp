@@ -44,6 +44,7 @@ void Node::validate()
 
         m_localTransform = computeLocalTransform();
         m_globalTransform = computeGlobalTransform();
+        m_globalRotation = computeGlobalRotation();
         m_edges = computeEdges();
         m_obb = computeOBB();
 
