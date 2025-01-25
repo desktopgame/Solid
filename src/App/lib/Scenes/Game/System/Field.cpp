@@ -158,6 +158,7 @@ void Field::onGui()
 }
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto rc = RenderContext::get(Metadata::ProgramTable::TileInstance3D);
     auto ub = UniformPool::rent(Metadata::ProgramTable::TileInstance3D);
     Reflect::UCamera uCamera;
@@ -167,16 +168,22 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
         Matrix::scale(Vector3({ k_tileSize, k_tileSize, k_tileSize })));
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
-    ub->setVS(1, &m_tileTransform);
-    ub->setVS(2, &m_tilePallet);
+    // ub->setVS(0, &uCamera);
+    surface->setVS(ub, 0, &uCamera);
+    // ub->setVS(1, &m_tileTransform);
+    surface->setVS(ub, 1, &m_tileTransform);
+    // ub->setVS(2, &m_tilePallet);
+    surface->setVS(ub, 2, &m_tilePallet);
 
     Reflect::UVector3 uCameraPos;
     uCameraPos.value = Camera::getPosition();
-    ub->setVS(3, &uCameraPos);
+    // ub->setVS(3, &uCameraPos);
+    surface->setVS(ub, 3, &uCamera);
 
-    ub->setPS(0, m_normalTexture);
-    ub->setPS(1, m_borderTexture);
+    // ub->setPS(0, m_normalTexture);
+    surface->setPS(ub, 0, m_normalTexture);
+    // ub->setPS(1, m_borderTexture);
+    surface->setPS(ub, 1, m_borderTexture);
 #if _DEBUG
     if (m_debugDrawField)
 #endif
@@ -192,7 +199,6 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
     }
     m_player->draw3D(renderer);
 
-    auto surface = Engine::getInstance()->getDevice()->getSurface();
     surface->beginBatch(RenderContext::get(Metadata::MeshColor3D));
     for (auto& entity : m_entities) {
         entity->draw3D(renderer);

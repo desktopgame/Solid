@@ -17,7 +17,6 @@
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Math/Mathf.hpp>
 
-
 namespace Lib::Graphics {
 // public
 Renderer::Renderer()
@@ -91,6 +90,7 @@ void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& si
 void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color)
 {
     initSprite();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::Texture2D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
@@ -100,12 +100,15 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->setVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
-    ub->setPS(0, texture);
+    // ub->setVS(1, &uColor);
+    surface->setVS(ub, 1, &uColor);
+    // ub->setPS(0, texture);
+    surface->setPS(ub, 0, texture);
     renderObject(m_spriteObject, ub);
 }
 
@@ -115,6 +118,7 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
         return;
     }
     initText();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     Math::Vector2 offset(position);
     Math::Vector2 size = measureText(label, alignY);
     switch (alignX) {
@@ -152,12 +156,15 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
         uCamera.modelMatrix = modelMatrix;
         uCamera.viewMatrix = Math::Matrix();
         uCamera.projectionMatrix = Camera::getOrthoMatrix();
-        ub->setVS(0, &uCamera);
+        // ub->setVS(0, &uCamera);
+        surface->setVS(ub, 0, &uCamera);
 
         Reflect::UVector4 uColor;
         uColor.value = color;
-        ub->setVS(1, &uColor);
-        ub->setPS(0, fontSprite->texture);
+        // ub->setVS(1, &uColor);
+        surface->setVS(ub, 1, &uColor);
+        // ub->setPS(0, fontSprite->texture);
+        surface->setPS(ub, 0, fontSprite->texture);
         renderObject(m_textObject, ub);
         offset.x() += fontSprite->metrics.advance.x() >> 6;
     }
@@ -261,6 +268,7 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
 {
     Object& obj = isWireframe ? m_boxWireframeObject : m_boxObject;
     initBox(obj, isWireframe);
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -270,11 +278,13 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->setVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->setVS(ub, 1, &uColor);
     renderObject(obj, ub);
 }
 

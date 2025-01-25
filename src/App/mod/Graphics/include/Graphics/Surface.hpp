@@ -18,6 +18,8 @@ class TileBatch;
 class RenderContext;
 class UniformBuffer;
 class DualBuffer;
+class GpuBuffer;
+class Texture;
 class Surface {
 public:
     ~Surface();
@@ -38,6 +40,14 @@ public:
     void endPresent();
 
     void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
+
+    void setVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void setGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
+    void setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
+    void setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
 
     void render(
         const std::shared_ptr<RenderContext>& rc,
@@ -101,6 +111,10 @@ private:
     class RenderCommand1;
     class RenderCommand2;
     class RenderCommand3;
+    class UpdateVSCommand;
+    class UpdateGSCommand;
+    class UpdatePSCommand;
+    class UpdateCSCommand;
 
     std::unique_ptr<std::thread> m_thread;
     std::shared_ptr<Swapchain> m_swapchain;
@@ -116,5 +130,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> m_depthBuffer;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
+
+    void* m_vram;
+    uint64_t m_vramOffset;
 };
 }

@@ -379,6 +379,67 @@ public:
     int32_t threadGroupCountZ;
 };
 
+class Surface::UpdateVSCommand : public ICommand {
+public:
+    explicit UpdateVSCommand() { }
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        uniformBuffer->setVS(index, vram);
+    }
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    int32_t index;
+    void* vram;
+};
+
+class Surface::UpdateGSCommand : public ICommand {
+public:
+    explicit UpdateGSCommand() { }
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        uniformBuffer->setGS(index, vram);
+    }
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    int32_t index;
+    void* vram;
+};
+
+class Surface::UpdatePSCommand : public ICommand {
+public:
+    explicit UpdatePSCommand() { }
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        if (texture) {
+            uniformBuffer->setPS(index, texture);
+        } else {
+            uniformBuffer->setPS(index, vram);
+        }
+    }
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    int32_t index;
+    void* vram;
+    std::shared_ptr<Texture> texture;
+};
+
+class Surface::UpdateCSCommand : public ICommand {
+public:
+    explicit UpdateCSCommand() { }
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        if (texture) {
+            uniformBuffer->setCS(index, texture);
+        } else if (gpuBuffer) {
+            uniformBuffer->setCS(index, gpuBuffer);
+        } else {
+            uniformBuffer->setCS(index, vram);
+        }
+    }
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    int32_t index;
+    void* vram;
+    std::shared_ptr<Texture> texture;
+    std::shared_ptr<GpuBuffer> gpuBuffer;
+};
+
 template <typename T>
 class CommandPool {
 public:
@@ -437,6 +498,10 @@ public:
     CommandPool<RenderCommand1> renderCommand1Pool;
     CommandPool<RenderCommand2> renderCommand2Pool;
     CommandPool<RenderCommand3> renderCommand3Pool;
+    CommandPool<UpdateVSCommand> updateVSPool;
+    CommandPool<UpdateGSCommand> updateGSPool;
+    CommandPool<UpdatePSCommand> updatePSPool;
+    CommandPool<UpdateCSCommand> updateCSPool;
 };
 // public
 Surface::~Surface()
@@ -528,12 +593,107 @@ void Surface::endPresent()
     m_impl->renderCommand1Pool.releaseAll();
     m_impl->renderCommand2Pool.releaseAll();
     m_impl->renderCommand3Pool.releaseAll();
+    m_impl->updateVSPool.releaseAll();
+    m_impl->updateGSPool.releaseAll();
+    m_impl->updatePSPool.releaseAll();
+    m_impl->updateCSPool.releaseAll();
+
+    m_vramOffset = 0;
 }
 
 void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
 {
     auto cmd = m_impl->syncCommandPool.rent();
     cmd->dualBuffer = dualBuffer;
+    m_impl->queue.enqueue(cmd);
+}
+
+void Surface::setVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+{
+    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
+    size_t size = program.vsUniforms.at(index).size;
+    void* memory = (unsigned char*)m_vram + m_vramOffset;
+    ::memcpy(memory, data, size);
+    m_vramOffset += size;
+
+    auto cmd = m_impl->updateVSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = memory;
+    m_impl->queue.enqueue(cmd);
+}
+void Surface::setGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+{
+    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
+    size_t size = program.gsUniforms.at(index).size;
+    void* memory = (unsigned char*)m_vram + m_vramOffset;
+    ::memcpy(memory, data, size);
+    m_vramOffset += size;
+
+    auto cmd = m_impl->updateGSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = memory;
+    m_impl->queue.enqueue(cmd);
+}
+void Surface::setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+{
+    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
+    size_t size = program.psUniforms.at(index).size;
+    void* memory = (unsigned char*)m_vram + m_vramOffset;
+    ::memcpy(memory, data, size);
+    m_vramOffset += size;
+
+    auto cmd = m_impl->updatePSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = memory;
+    cmd->texture = nullptr;
+    m_impl->queue.enqueue(cmd);
+}
+void Surface::setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
+{
+    auto cmd = m_impl->updatePSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = nullptr;
+    cmd->texture = texture;
+    m_impl->queue.enqueue(cmd);
+}
+void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+{
+    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
+    size_t size = program.csUniforms.at(index).size;
+    void* memory = (unsigned char*)m_vram + m_vramOffset;
+    ::memcpy(memory, data, size);
+    m_vramOffset += size;
+
+    auto cmd = m_impl->updateCSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = memory;
+    cmd->gpuBuffer = nullptr;
+    cmd->texture = nullptr;
+    m_impl->queue.enqueue(cmd);
+}
+void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
+{
+    auto cmd = m_impl->updateCSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = nullptr;
+    cmd->gpuBuffer = nullptr;
+    cmd->texture = texture;
+    m_impl->queue.enqueue(cmd);
+}
+void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
+{
+    auto cmd = m_impl->updateCSPool.rent();
+    cmd->uniformBuffer = ub;
+    cmd->index = index;
+    cmd->vram = nullptr;
+    cmd->gpuBuffer = buffer;
+    cmd->texture = nullptr;
     m_impl->queue.enqueue(cmd);
 }
 
@@ -633,6 +793,8 @@ Surface::Surface()
     , m_depthBuffer()
     , m_depthStencilViewHeap()
     , m_fence()
+    , m_vram(::malloc(::pow(2, 20) * 512))
+    , m_vramOffset(0)
 {
 }
 
