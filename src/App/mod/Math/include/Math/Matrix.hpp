@@ -65,7 +65,7 @@ struct MatrixT {
         return a;
     }
 
-    T& at(int32_t row, int32_t col)
+    inline T& at(int32_t row, int32_t col)
     {
         return components[(row * ColumnNum) + col];
     }
@@ -104,7 +104,7 @@ struct MatrixT {
         return a;
     }
 
-    T at(int32_t row, int32_t col) const
+    inline T at(int32_t row, int32_t col) const
     {
         return components[(row * ColumnNum) + col];
     }
