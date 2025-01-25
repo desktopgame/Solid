@@ -107,12 +107,12 @@ public:
 
     inline T& at(int32_t index)
     {
-        return components.at(index);
+        return components[index];
     }
 
     inline T at(int32_t index) const
     {
-        return components.at(index);
+        return components[index];
     }
 
     inline T& x()
