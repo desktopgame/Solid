@@ -447,17 +447,19 @@ public:
         : m_usedVec()
         , m_freeVec()
     {
+        // TODO: ポインタ解放処理
+        // NOTE: 参照カウントが無視できないコストなのでスマポは使わない
     }
 
-    std::shared_ptr<T> rent()
+    T* rent()
     {
         if (m_freeVec.size() > 0) {
-            std::shared_ptr<T> ub = m_freeVec.back();
+            T* ub = m_freeVec.back();
             m_freeVec.pop_back();
             m_usedVec.emplace_back(ub);
             return ub;
         } else {
-            std::shared_ptr<T> ub = std::make_shared<T>();
+            T* ub = new T();
             m_usedVec.emplace_back(ub);
             return ub;
         }
@@ -474,8 +476,8 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<T>> m_usedVec;
-    std::vector<std::shared_ptr<T>> m_freeVec;
+    std::vector<T*> m_usedVec;
+    std::vector<T*> m_freeVec;
 };
 // Impl
 class Surface::Impl {
@@ -484,7 +486,7 @@ public:
         : queue(4096)
     {
     }
-    Utils::BlockingQueue<std::shared_ptr<ICommand>> queue;
+    Utils::BlockingQueue<ICommand*> queue;
     CommandPool<BeginGuiCommand> beginGuiCommandPool;
     CommandPool<EndGuiCommand> endGuiCommandPool;
     CommandPool<Begin3DCommand> begin3DCommandPool;
@@ -1026,7 +1028,7 @@ void Surface::bloomRead(int32_t index)
 void Surface::threadRun()
 {
     while (true) {
-        std::shared_ptr<ICommand> cmd;
+        ICommand* cmd;
         if (m_impl->queue.dequeue(cmd)) {
             cmd->execute(m_commandList);
         }
