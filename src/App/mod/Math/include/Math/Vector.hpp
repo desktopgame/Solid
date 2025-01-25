@@ -35,26 +35,6 @@ public:
         reset(a);
     }
 
-    // DotHelper
-
-    template <int32_t NumV>
-    struct DotHelper {
-        using Type = T;
-
-        static inline Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
-        {
-            Type sum = static_cast<Type>(0);
-#ifdef __clang__
-#pragma unroll
-#endif
-            for (int32_t i = 0; i < N; i++) {
-                // sum += (a[i] * b[i]);
-                sum = std::fmaf(a[i], b[i], sum);
-            }
-            return sum;
-        }
-    };
-
     // CrossHelper
 
     template <int32_t NumV>
@@ -274,7 +254,7 @@ public:
         return v;
     }
 
-    static inline typename DotHelper<N>::Type dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
+    static inline typename T dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
     {
         T sum = static_cast<T>(0);
 #ifdef __clang__
