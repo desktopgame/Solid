@@ -22,7 +22,7 @@ set(SOLID_DEBUG_DEFINE
 )
 set(SOLID_RELEASE_DEFINE NOMINMAX SOLID_NDEBUG)
 set(SOLID_DEBUG_COMPILE
-    $<$<BOOL:${MSVC}>: /utf-8>
+    $<$<BOOL:${MSVC}>: /Ob1 /utf-8>
     $<$<NOT:$<BOOL:${MSVC}>>: -Og -g -Wall -Werror>
     $<$<NOT:${WIN32}>:-fsanitize=address>
 )
