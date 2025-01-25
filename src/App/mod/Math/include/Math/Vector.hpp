@@ -412,6 +412,7 @@ public:
         return os;
     }
 
+    // NOTE: _ITERATOR_DEBUG_LEVELや_CONTAINER_DEBUG_LEVELの影響を受けるstd::arrayは使わない
     T components[N];
 };
 
