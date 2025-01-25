@@ -250,8 +250,12 @@ public:
     inline T length() const
     {
         T p = static_cast<T>(0);
+#ifdef __clang__
+#pragma unroll
+#endif
         for (int32_t i = 0; i < N; i++) {
-            p += static_cast<T>(std::pow(components[i], 2));
+            // p += static_cast<T>(components[i] * components[i]);
+            p = std::fmaf(components[i], components[i], p);
         }
         return static_cast<T>(std::sqrt(p));
     }
@@ -272,7 +276,15 @@ public:
 
     static inline typename DotHelper<N>::Type dot(const VectorT<T, N>& a, const VectorT<T, N>& b)
     {
-        return DotHelper<N>::compute(a, b);
+        T sum = static_cast<T>(0);
+#ifdef __clang__
+#pragma unroll
+#endif
+        for (int32_t i = 0; i < N; i++) {
+            sum += (a[i] * b[i]);
+            // sum = std::fmaf(a.components[i], b.components[i], sum);
+        }
+        return sum;
     }
 
     static inline typename CrossHelper<N>::Type cross(const VectorT<T, N>& a, const VectorT<T, N>& b)
