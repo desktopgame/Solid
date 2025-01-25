@@ -26,7 +26,8 @@ void Time::sync()
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(s_end - s_start);
     auto sleepTime = frameDuration - elapsedTime - s_overSleep;
     if (sleepTime.count() > 0) {
-        std::this_thread::sleep_for(sleepTime);
+        // NOTE: DirectXがリフレッシュレートに合わせて同期するので不要
+        // std::this_thread::sleep_for(sleepTime);
         s_overSleep = std::chrono::duration_cast<std::chrono::milliseconds>((std::chrono::system_clock::now() - s_end) - sleepTime);
     } else {
         s_overSleep = std::chrono::milliseconds(0);
