@@ -481,7 +481,7 @@ private:
 class Surface::Impl {
 public:
     explicit Impl()
-        : queue(1024)
+        : queue(4096)
     {
     }
     Utils::BlockingQueue<std::shared_ptr<ICommand>> queue;
