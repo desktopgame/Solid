@@ -154,12 +154,10 @@ struct MatrixT {
 
     static VectorT<T, 3> multiply(const MatrixT<T>& a, const VectorT<T, 3>& b)
     {
-        std::array<T, ColumnNum> r1 = a.column(0);
-        std::array<T, ColumnNum> r2 = a.column(1);
-        std::array<T, ColumnNum> r3 = a.column(2);
-        return VectorT<T, 3>({ (r1.at(0) * b.at(0)) + (r1.at(1) * b.at(1)) + (r1.at(2) * b.at(2)) + r1.at(3),
-            (r2.at(0) * b.at(0)) + (r2.at(1) * b.at(1)) + (r2.at(2) * b.at(2) + r2.at(3)),
-            (r3.at(0) * b.at(0)) + (r3.at(1) * b.at(1)) + (r3.at(2) * b.at(2)) + r3.at(3) });
+        // TODO: 他の multiply も最適化
+        return VectorT<T, 3>({ (a.at(0, 0) * b.at(0)) + (a.at(1, 0) * b.at(1)) + (a.at(2, 0) * b.at(2)) + a.at(3, 0),
+            (a.at(0, 1) * b.at(0)) + (a.at(1, 1) * b.at(1)) + (a.at(2, 1) * b.at(2) + a.at(3, 1)),
+            (a.at(0, 2) * b.at(0)) + (a.at(1, 2) * b.at(1)) + (a.at(2, 2) * b.at(2)) + a.at(3, 2) });
     }
 
     static VectorT<T, 4> multiply(const MatrixT<T>& a, const VectorT<T, 4>& b)
