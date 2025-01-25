@@ -178,7 +178,7 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
     Reflect::UVector3 uCameraPos;
     uCameraPos.value = Camera::getPosition();
     // ub->setVS(3, &uCameraPos);
-    surface->setVS(ub, 3, &uCamera);
+    surface->setVS(ub, 3, &uCameraPos);
 
     // ub->setPS(0, m_normalTexture);
     surface->setPS(ub, 0, m_normalTexture);
