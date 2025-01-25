@@ -132,7 +132,11 @@
 			"queue": "cpp",
 			"stack": "cpp",
 			"variant": "cpp",
-			"cassert": "cpp"
+			"cassert": "cpp",
+			"semaphore": "cpp",
+			"coroutine": "cpp",
+			"resumable": "cpp",
+			"future": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,
