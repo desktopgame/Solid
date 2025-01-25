@@ -125,9 +125,7 @@ struct MatrixT {
     static MatrixT<T> multiply(const MatrixT<T>& a, const MatrixT<T>& b)
     {
         MatrixT<T> m;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < RowNum; i++) {

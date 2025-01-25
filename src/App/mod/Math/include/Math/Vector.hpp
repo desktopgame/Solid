@@ -43,9 +43,7 @@ public:
         static inline Type compute(const VectorT<T, NumV>& a, const VectorT<T, NumV>& b)
         {
             Type sum = static_cast<Type>(0);
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
             for (int32_t i = 0; i < N; i++) {
@@ -289,9 +287,7 @@ public:
     explicit operator VectorT<int32_t, N>() const
     {
         VectorT<int32_t, N> v;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -303,9 +299,7 @@ public:
     explicit operator VectorT<float, N>() const
     {
         VectorT<float, N> v;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -323,9 +317,7 @@ public:
 
     inline VectorT<T, N>& operator+=(const VectorT<T, N>& a)
     {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -336,9 +328,7 @@ public:
 
     inline VectorT<T, N>& operator-=(const VectorT<T, N>& a)
     {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -349,9 +339,7 @@ public:
 
     inline VectorT<T, N>& operator*=(const VectorT<T, N>& a)
     {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -362,9 +350,7 @@ public:
 
     inline VectorT<T, N>& operator/=(const VectorT<T, N>& a)
     {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -375,9 +361,7 @@ public:
 
     inline VectorT<T, N>& operator*=(const T scale)
     {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -388,9 +372,7 @@ public:
 
     inline VectorT<T, N>& operator/=(const T scale)
     {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -402,9 +384,7 @@ public:
     inline VectorT<T, N> operator-() const
     {
         VectorT<T, N> v;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
         for (int32_t i = 0; i < N; i++) {
@@ -426,9 +406,7 @@ template <typename T, int32_t N>
 inline VectorT<T, N> operator+(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
@@ -441,9 +419,7 @@ template <typename T, int32_t N>
 inline VectorT<T, N> operator-(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
@@ -456,9 +432,7 @@ template <typename T, int32_t N>
 inline VectorT<T, N> operator*(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
@@ -471,9 +445,7 @@ template <typename T, int32_t N>
 inline VectorT<T, N> operator/(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
     VectorT<T, N> ret;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
@@ -486,9 +458,7 @@ template <typename T, int32_t N>
 inline VectorT<T, N> operator*(const VectorT<T, N>& a, T scale)
 {
     VectorT<T, N> ret;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
@@ -501,9 +471,7 @@ template <typename T, int32_t N>
 inline VectorT<T, N> operator/(const VectorT<T, N>& a, T scale)
 {
     VectorT<T, N> ret;
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
@@ -515,9 +483,7 @@ inline VectorT<T, N> operator/(const VectorT<T, N>& a, T scale)
 template <typename T, int32_t N>
 inline bool operator==(const VectorT<T, N>& a, const VectorT<T, N>& b)
 {
-#ifdef _MSC_VER
-#pragma loop(unroll)
-#else
+#ifdef __clang__
 #pragma unroll
 #endif
     for (int32_t i = 0; i < N; i++) {
