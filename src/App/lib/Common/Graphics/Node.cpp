@@ -106,15 +106,6 @@ void Node::setLocalRotation(const Vector3& localRotation)
     m_localRotation = localRotation;
 }
 Vector3 Node::getLocalRotation() const { return m_localRotation; }
-Matrix Node::getGlobalRotation() const
-{
-    Matrix m = Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 })));
-    auto sp = m_parent.lock();
-    if (sp) {
-        return m * sp->getGlobalRotation();
-    }
-    return m;
-}
 
 void Node::setSize(const Vector3& size)
 {
@@ -142,6 +133,19 @@ Matrix Node::computeGlobalTransform()
         return getLocalTransform() * sp->getGlobalTransform();
     }
     return getLocalTransform();
+}
+Matrix Node::getGlobalRotation() const
+{
+    return m_globalRotation;
+}
+Matrix Node::computeGlobalRotation()
+{
+    Matrix m = Quaternion::toMatrix(Quaternion::angleAxis(m_localRotation.x(), Vector3({ 1, 0, 0 })) * Quaternion::angleAxis(m_localRotation.y(), Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(m_localRotation.z(), Vector3({ 0, 0, 1 })));
+    auto sp = m_parent.lock();
+    if (sp) {
+        return m * sp->getGlobalRotation();
+    }
+    return m;
 }
 std::array<Vector3, 8> Node::getEdges() const { return m_edges; }
 std::array<Vector3, 8> Node::computeEdges()
@@ -266,6 +270,8 @@ Node::Node()
     , m_size()
     , m_color()
     , m_localTransform()
+    , m_globalTransform()
+    , m_globalRotation()
     , m_isInvalid(true)
     , m_parent()
     , m_children()

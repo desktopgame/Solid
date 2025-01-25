@@ -31,7 +31,6 @@ public:
 
     void setLocalRotation(const Vector3& localRotation);
     Vector3 getLocalRotation() const;
-    Matrix getGlobalRotation() const;
 
     void setSize(const Vector3& size);
     Vector3 getSize() const;
@@ -43,6 +42,8 @@ public:
     Matrix computeLocalTransform();
     Matrix getGlobalTransform() const;
     Matrix computeGlobalTransform();
+    Matrix getGlobalRotation() const;
+    Matrix computeGlobalRotation();
     std::array<Vector3, 8> getEdges() const;
     std::array<Vector3, 8> computeEdges();
     Geom::OBB getOBB() const;
@@ -69,6 +70,7 @@ private:
     Vector3 m_color;
     Matrix m_localTransform;
     Matrix m_globalTransform;
+    Matrix m_globalRotation;
     std::array<Vector3, 8> m_edges;
     Geom::OBB m_obb;
     bool m_isInvalid;
