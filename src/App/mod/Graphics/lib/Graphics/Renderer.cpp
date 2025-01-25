@@ -543,7 +543,7 @@ void Renderer::initBoxTexture()
     m_boxTextureObject.rc = RenderContext::get(Metadata::ProgramTable::MeshTexture3D);
 }
 
-Math::Matrix Renderer::applyMatrix(const Math::Matrix& m) const
+Math::Matrix Renderer::applyMatrix(const Math::Matrix& m)
 {
     return m * m_matrixStack.mult();
 }

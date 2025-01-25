@@ -70,7 +70,7 @@ private:
     void initBoxLine();
     void initBoxTexture();
 
-    Math::Matrix applyMatrix(const Math::Matrix& m) const;
+    Math::Matrix applyMatrix(const Math::Matrix& m);
     void renderObject(const Object& object, const std::shared_ptr<UniformBuffer>& ub);
 
     // common
