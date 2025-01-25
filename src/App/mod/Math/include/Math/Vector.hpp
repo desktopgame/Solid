@@ -17,15 +17,16 @@ public:
     }
 
     explicit VectorT(std::array<T, N> src)
-        : components(src)
+        : components()
     {
+        ::memcpy(components, src.data(), sizeof(T) * N);
     }
 
     explicit VectorT(VectorT<T, N - 1> src, T a)
         : components()
     {
-        std::copy(src.components.begin(), src.components.end(), components.begin());
-        std::get<N - 1>(this->components) = a;
+        ::memcpy(components, src.data(), sizeof(T) * (N - 1));
+        this->components[N - 1] = a;
     }
 
     explicit VectorT(T a)
@@ -99,8 +100,8 @@ public:
         {
             T sum = static_cast<T>(0);
             for (int32_t i = 0; i < N; i++) {
-                T av = a.components.at(i);
-                T bv = b.components.at(i);
+                T av = a.components[i];
+                T bv = b.components[i];
                 T diff = av - bv;
                 sum += diff * diff;
             }
@@ -121,50 +122,50 @@ public:
     inline T& x()
     {
         static_assert(N >= 1);
-        return std::get<0>(components);
+        return components[0];
     }
 
     inline T x() const
     {
 
         static_assert(N >= 1);
-        return std::get<0>(components);
+        return components[0];
     }
 
     inline T& y()
     {
         static_assert(N >= 2);
-        return std::get<1>(components);
+        return components[1];
     }
 
     inline T y() const
     {
         static_assert(N >= 2);
-        return std::get<1>(components);
+        return components[1];
     }
 
     inline T& z()
     {
         static_assert(N >= 3);
-        return std::get<2>(components);
+        return components[2];
     }
 
     inline T z() const
     {
         static_assert(N >= 3);
-        return std::get<2>(components);
+        return components[2];
     }
 
     inline T& w()
     {
         static_assert(N >= 4);
-        return std::get<3>(components);
+        return components[3];
     }
 
     inline T w() const
     {
         static_assert(N >= 4);
-        return std::get<3>(components);
+        return components[3];
     }
 
     inline T& r()
@@ -222,7 +223,7 @@ public:
         std::stringstream ss;
         ss << '(';
         for (int32_t i = 0; i < N; i++) {
-            ss << components.at(i);
+            ss << components[i];
             if (i != N - 1) {
                 ss << ',';
             }
@@ -233,12 +234,12 @@ public:
 
     T* data()
     {
-        return this->components.data();
+        return this->components;
     }
 
     const T* data() const
     {
-        return this->components.data();
+        return this->components;
     }
 
     void reset(T a)
@@ -399,7 +400,7 @@ public:
         return os;
     }
 
-    std::array<T, N> components;
+    T components[N];
 };
 
 template <typename T, int32_t N>

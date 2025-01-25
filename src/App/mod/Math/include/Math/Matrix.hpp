@@ -24,9 +24,9 @@ struct MatrixT {
     explicit MatrixT(const std::array<VectorT<T, ColumnNum>, RowNum>& table)
     {
         for (int32_t i = 0; i < RowNum; i++) {
-            const VectorT<T, ColumnNum>& line = table.at(i);
+            const VectorT<T, ColumnNum>& line = table[i];
             for (int32_t j = 0; j < ColumnNum; j++) {
-                this->at(i, j) = line.components.at(j);
+                this->at(i, j) = line.components[j];
             }
         }
     }
@@ -297,10 +297,9 @@ struct MatrixT {
         // see: https://learn.microsoft.com/ja-jp/windows/win32/direct3d9/d3dxmatrixperspectivefovlh
         MatrixT<T> ret;
         T one = static_cast<T>(1);
-        T zero = static_cast<T>(0);
         T yScale = one / Mathf::tan(fovy / static_cast<T>(2) * Mathf::Deg2Rad);
         T xScale = yScale / aspectRatio;
-        std::fill(ret.components.begin(), ret.components.end(), zero);
+        ::memset(ret.components, 0, sizeof(T) * 16);
         ret.at(0, 0) = xScale;
         ret.at(1, 1) = yScale;
         ret.at(2, 2) = zFar / (zFar - zNear);
@@ -403,7 +402,7 @@ struct MatrixT {
         return os;
     }
 
-    std::array<T, RowNum * ColumnNum> components;
+    T components[RowNum * ColumnNum];
 };
 template <typename T>
 bool operator==(const MatrixT<T>& a, const MatrixT<T>& b)
