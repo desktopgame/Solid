@@ -125,11 +125,17 @@ struct MatrixT {
     static MatrixT<T> multiply(const MatrixT<T>& a, const MatrixT<T>& b)
     {
         MatrixT<T> m;
+#ifdef _MSC_VER
+#pragma loop(unroll)
+#else
+#pragma unroll
+#endif
         for (int32_t i = 0; i < RowNum; i++) {
             for (int32_t j = 0; j < ColumnNum; j++) {
                 T sum = static_cast<T>(0);
                 for (int32_t k = 0; k < RowNum; k++) {
-                    sum += a.at(i, k) * b.at(k, j);
+                    // sum += a.at(i, k) * b.at(k, j);
+                    sum = std::fmaf(a.at(i, k), b.at(k, j), sum);
                 }
                 m.at(i, j) = sum;
             }
