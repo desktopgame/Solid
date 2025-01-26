@@ -58,7 +58,33 @@ private:
     void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
     void hitTilesFuzzy(Field& field, const Vector3& offset, std::vector<IntVector3>& hits);
     void hitTilesStrict(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits);
-    static float alignTile(float a, float tileSize);
+
+    static inline float alignTile(float a, float tileSize)
+    {
+        float tileHalf = tileSize / 2.0f;
+        float d = a / tileSize;
+        if (d > 0.0f) {
+            d = ::floorf(d);
+        } else {
+            d = ::ceilf(d);
+        }
+        float m = ::fmodf(a, tileSize);
+
+        if (::fabs(m) < 0.000001f) {
+            return a;
+        }
+        if (m > 0.0f) {
+            if (m < tileHalf) {
+                return d * tileSize;
+            }
+            return (d * tileSize) + tileSize;
+        } else {
+            if (::fabs(m) < tileHalf) {
+                return d * tileSize;
+            }
+            return (d * tileSize) - tileSize;
+        }
+    }
 
     std::shared_ptr<Common::Graphics::Node> m_node;
     IntVector3 m_groundTile;
