@@ -438,6 +438,36 @@ public:
     std::shared_ptr<GpuBuffer> gpuBuffer;
 };
 
+class Surface::WaitCommand : public ICommand {
+public:
+    explicit WaitCommand()
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        std::unique_lock<std::mutex> lock(surface->m_threadSyncMutex);
+        surface->m_threadSyncFlag = true;
+        surface->m_threadSyncCondVar.notify_one();
+    }
+
+    Surface* surface;
+};
+
+class Surface::ExitCommand : public ICommand {
+public:
+    explicit ExitCommand()
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        surface->m_threadRunning = false;
+    }
+
+    Surface* surface;
+};
+
 template <typename T>
 class CommandPool {
 public:
@@ -445,8 +475,20 @@ public:
         : m_usedVec()
         , m_freeVec()
     {
-        // TODO: ポインタ解放処理
+    }
+
+    ~CommandPool()
+    {
         // NOTE: 参照カウントが無視できないコストなのでスマポは使わない
+        for (auto ptr : m_usedVec) {
+            delete ptr;
+        }
+        m_usedVec.clear();
+
+        for (auto ptr : m_freeVec) {
+            delete ptr;
+        }
+        m_freeVec.clear();
     }
 
     T* rent()
@@ -481,7 +523,7 @@ private:
 class Surface::Impl {
 public:
     explicit Impl()
-        : queue(4096)
+        : queue(8192)
     {
     }
     Utils::BlockingQueue<ICommand*> queue;
@@ -502,6 +544,8 @@ public:
     CommandPool<UniformGSCommand> uniformGSPool;
     CommandPool<UniformPSCommand> uniformPSPool;
     CommandPool<UniformCSCommand> uniformCSPool;
+    CommandPool<WaitCommand> waitPool;
+    CommandPool<ExitCommand> exitPool;
 };
 // public
 Surface::~Surface()
@@ -771,6 +815,23 @@ std::shared_ptr<Surface> Surface::create(
 
 void Surface::destroy()
 {
+    auto cmd = m_impl->waitPool.rent();
+    cmd->surface = this;
+    m_impl->queue.enqueue(cmd);
+
+    {
+        std::unique_lock<std::mutex> lock(m_threadSyncMutex);
+        m_threadSyncCondVar.wait(lock, [&]() -> bool { return m_threadSyncFlag; });
+    }
+
+    m_swapchain->fence();
+    m_swapchain->present();
+    m_swapchain->signal();
+    m_swapchain->waitSync();
+
+    threadExit();
+    m_impl = nullptr;
+
     GlobalLight::destroy();
     PointLight::destroy();
     BloomEffect::destroy();
@@ -783,6 +844,10 @@ void Surface::destroy()
 Surface::Surface()
     : m_impl()
     , m_thread()
+    , m_threadRunning(true)
+    , m_threadSyncMutex()
+    , m_threadSyncCondVar()
+    , m_threadSyncFlag(false)
     , m_swapchain()
     , m_dxgiFactory()
     , m_infoQueue()
@@ -1042,11 +1107,21 @@ void Surface::bloomRead(int32_t index)
 
 void Surface::threadRun()
 {
-    while (true) {
+    while (m_threadRunning) {
         ICommand* cmd;
         if (m_impl->queue.dequeue(cmd)) {
             cmd->execute(m_commandList);
         }
     }
+}
+
+void Surface::threadExit()
+{
+    auto cmd = m_impl->exitPool.rent();
+    cmd->surface = this;
+    m_impl->queue.enqueue(cmd);
+    m_thread->join();
+    m_thread = nullptr;
+    m_impl->exitPool.releaseAll();
 }
 }
