@@ -1,5 +1,6 @@
 #pragma once
 #include <Utils/BlockingQueue.hpp>
+#include <Utils/Clock.hpp>
 #include <Utils/IO.hpp>
 #include <Utils/Random.hpp>
 #include <Utils/Stopwatch.hpp>

@@ -14,11 +14,13 @@ set(SOURCES
     ./include/Utils/Time.hpp
     ./include/Utils/Stopwatch.hpp
     ./include/Utils/Random.hpp
+    ./include/Utils/Clock.hpp
     ./lib/Utils/String.cpp
     ./lib/Utils/IO.cpp
     ./lib/Utils/Time.cpp
     ./lib/Utils/Stopwatch.cpp
     ./lib/Utils/Random.cpp
+    ./lib/Utils/Clock.cpp
 )
 source_group(
     TREE
