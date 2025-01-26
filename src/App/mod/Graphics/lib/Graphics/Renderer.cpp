@@ -101,14 +101,14 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
     // ub->setVS(0, &uCamera);
-    surface->setVS(ub, 0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
     // ub->setVS(1, &uColor);
-    surface->setVS(ub, 1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
     // ub->setPS(0, texture);
-    surface->setPS(ub, 0, texture);
+    surface->uniformPS(ub, 0, texture);
     renderObject(m_spriteObject, ub);
 }
 
@@ -157,14 +157,14 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
         uCamera.viewMatrix = Math::Matrix();
         uCamera.projectionMatrix = Camera::getOrthoMatrix();
         // ub->setVS(0, &uCamera);
-        surface->setVS(ub, 0, &uCamera);
+        surface->uniformVS(ub, 0, &uCamera);
 
         Reflect::UVector4 uColor;
         uColor.value = color;
         // ub->setVS(1, &uColor);
-        surface->setVS(ub, 1, &uColor);
+        surface->uniformVS(ub, 1, &uColor);
         // ub->setPS(0, fontSprite->texture);
-        surface->setPS(ub, 0, fontSprite->texture);
+        surface->uniformPS(ub, 0, fontSprite->texture);
         renderObject(m_textObject, ub);
         offset.x() += fontSprite->metrics.advance.x() >> 6;
     }
@@ -279,12 +279,12 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
     // ub->setVS(0, &uCamera);
-    surface->setVS(ub, 0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
     // ub->setVS(1, &uColor);
-    surface->setVS(ub, 1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
     renderObject(obj, ub);
 }
 

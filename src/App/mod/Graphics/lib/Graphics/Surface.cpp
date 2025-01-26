@@ -610,7 +610,7 @@ void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
     m_impl->queue.enqueue(cmd);
 }
 
-void Surface::setVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+void Surface::uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.vsUniforms.at(index).size;
@@ -624,7 +624,7 @@ void Surface::setVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, con
     cmd->vram = memory;
     m_impl->queue.enqueue(cmd);
 }
-void Surface::setGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+void Surface::uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.gsUniforms.at(index).size;
@@ -638,7 +638,7 @@ void Surface::setGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, con
     cmd->vram = memory;
     m_impl->queue.enqueue(cmd);
 }
-void Surface::setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.psUniforms.at(index).size;
@@ -653,7 +653,7 @@ void Surface::setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, con
     cmd->texture = nullptr;
     m_impl->queue.enqueue(cmd);
 }
-void Surface::setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
+void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
     auto cmd = m_impl->updatePSPool.rent();
     cmd->uniformBuffer = ub;
@@ -662,7 +662,7 @@ void Surface::setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, con
     cmd->texture = texture;
     m_impl->queue.enqueue(cmd);
 }
-void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
+void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.csUniforms.at(index).size;
@@ -678,7 +678,7 @@ void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, con
     cmd->texture = nullptr;
     m_impl->queue.enqueue(cmd);
 }
-void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
+void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
     auto cmd = m_impl->updateCSPool.rent();
     cmd->uniformBuffer = ub;
@@ -688,7 +688,7 @@ void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, con
     cmd->texture = texture;
     m_impl->queue.enqueue(cmd);
 }
-void Surface::setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
+void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
 {
     auto cmd = m_impl->updateCSPool.rent();
     cmd->uniformBuffer = ub;

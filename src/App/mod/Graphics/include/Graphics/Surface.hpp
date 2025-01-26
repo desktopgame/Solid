@@ -41,13 +41,13 @@ public:
 
     void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
 
-    void setVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
-    void setGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
-    void setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
-    void setPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
-    void setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
-    void setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
-    void setCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
+    void uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
+    void uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+    void uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
+    void uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
 
     void render(
         const std::shared_ptr<RenderContext>& rc,

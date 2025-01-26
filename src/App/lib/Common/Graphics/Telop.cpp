@@ -61,14 +61,14 @@ void Telop::draw(const std::shared_ptr<FontMap>& fontMap, const std::shared_ptr<
         uCamera.viewMatrix = Matrix();
         uCamera.projectionMatrix = Camera::getOrthoMatrix();
         // ub->setVS(0, &uCamera);
-        surface->setVS(ub, 0, &uCamera);
+        surface->uniformVS(ub, 0, &uCamera);
 
         Reflect::UVector4 uColor;
         uColor.value = Vector4(color, 1.0f - (m_elapsed / duration));
         // ub->setVS(1, &uColor);
-        surface->setVS(ub, 1, &uColor);
+        surface->uniformVS(ub, 1, &uColor);
         // ub->setPS(0, fontSprite->texture);
-        surface->setPS(ub, 0, fontSprite->texture);
+        surface->uniformPS(ub, 0, fontSprite->texture);
         surface->render(rc, ub, vertexBuffer, indexBuffer, indexLength);
         screenX += fontSprite->metrics.size.x();
     }
