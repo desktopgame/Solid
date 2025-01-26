@@ -16,7 +16,7 @@ GameScene::GameScene()
     , m_debugPlayer()
     , m_debugEntity()
     , m_aimTexture()
-#if _DEBUG
+#if GAMESCENE_PROFILE
     , m_avgTime()
 #endif
 {
@@ -107,7 +107,7 @@ void GameScene::onDraw2D()
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
 
-#if _DEBUG
+#if GAMESCENE_PROFILE
     float dt = Time::deltaTime();
     m_avgTime *= 1.0f - k_fpsK;
     m_avgTime += dt * k_fpsK;

@@ -6,6 +6,10 @@
 #include <memory>
 #include <optional>
 
+#ifdef _DEBUG
+#define GAMESCENE_PROFILE 1
+#endif
+
 namespace App::Scenes::Game {
 class GameScene : public IScene {
 public:
@@ -31,7 +35,7 @@ private:
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
     std::shared_ptr<Texture> m_aimTexture;
 
-#if _DEBUG
+#if GAMESCENE_PROFILE
     const float k_fpsK = 0.05f;
     float m_avgTime = 0.0f;
 #endif
