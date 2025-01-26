@@ -5,6 +5,7 @@
 #include <Graphics/Screen.hpp>
 #include <Graphics/UniformPool.hpp>
 #include <OS/Window.hpp>
+#include <Utils/Clock.hpp>
 #include <imgui.h>
 #include <stdexcept>
 
@@ -55,6 +56,7 @@ std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
     m_device = Device::create(m_window);
     RenderContext::initialize();
     UniformPool::initialize();
+    Utils::Clock::initialize();
     return s_instance;
 }
 
@@ -68,6 +70,7 @@ void Engine::shutdown()
     }
     m_shutdowned = true;
 
+    Utils::Clock::destroy();
     UniformPool::destroy();
     RenderContext::destroy();
     FontFactory::destroy();

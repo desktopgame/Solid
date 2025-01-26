@@ -1,3 +1,4 @@
+#include <Utils/Clock.hpp>
 #include <Utils/Stopwatch.hpp>
 
 namespace Lib::Utils {
@@ -8,17 +9,17 @@ Stopwatch::Stopwatch()
 
 void Stopwatch::start()
 {
-    m_start = std::chrono::system_clock::now();
+    m_start = Clock::counter();
 }
 
 void Stopwatch::stop()
 {
-    m_end = std::chrono::system_clock::now();
+    m_end = Clock::counter();
 }
 
 void Stopwatch::dump(const std::string& label, std::ostream& os)
 {
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(m_end - m_start);
-    os << label << ":" << duration.count() << "msec." << std::endl;
+    float duration = (m_end - m_start) * 1000.0f;
+    os << label << ":" << duration << "msec." << std::endl;
 }
 }
