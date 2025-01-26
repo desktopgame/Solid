@@ -13,7 +13,7 @@
 #include <Graphics/VertexTexCoord2D.hpp>
 #include <Graphics/VertexTexCoord3D.hpp>
 #include <Math/Vector.hpp>
-#include <Utils/BlockingQueue.hpp>
+#include <Utils/LockfreeQueue.hpp>
 #include <Utils/Stopwatch.hpp>
 #include <Utils/String.hpp>
 #include <stdexcept>
@@ -526,7 +526,7 @@ public:
         : queue(8192)
     {
     }
-    Utils::BlockingQueue<ICommand*> queue;
+    Utils::LockfreeQueue<ICommand*> queue;
     CommandPool<BeginGuiCommand> beginGuiCommandPool;
     CommandPool<EndGuiCommand> endGuiCommandPool;
     CommandPool<Begin3DCommand> begin3DCommandPool;

@@ -6,9 +6,9 @@
 
 namespace Lib::Utils {
 template <typename T>
-class BlockingQueue {
+class LockfreeQueue {
 public:
-    explicit BlockingQueue(size_t capacity)
+    explicit LockfreeQueue(size_t capacity)
         : buffer_(capacity)
         , head_(0)
         , tail_(0)
