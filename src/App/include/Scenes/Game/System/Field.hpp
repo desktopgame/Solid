@@ -155,8 +155,22 @@ public:
     FieldGenerator::Room getRoomAt(int32_t index) const;
     int32_t getRoomCount() const;
 
+    static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
+    {
+        return (z * k_fieldSizeX * k_fieldSizeY) + (y * k_fieldSizeX) + x;
+    }
+    static inline IntVector3 toCoord(int32_t index)
+    {
+        const int z = index / (k_fieldSizeX * k_fieldSizeY);
+        index -= (z * k_fieldSizeX * k_fieldSizeY);
+        const int y = index / k_fieldSizeX;
+        const int x = index % k_fieldSizeX;
+        return IntVector3({ x, y, z });
+    }
+
 private:
-    std::array<std::array<std::array<int32_t, k_fieldSizeX>, k_fieldSizeY>, k_fieldSizeZ> m_blocks;
+    // NOTE: _ITERATOR_DEBUG_LEVELや_CONTAINER_DEBUG_LEVELの影響を受けるstd::arrayは使わない
+    int32_t m_blocks[k_fieldSizeX * k_fieldSizeY * k_fieldSizeZ];
     std::shared_ptr<Entities::PlayerEntity> m_player;
     std::vector<std::shared_ptr<Entity>> m_entities;
 

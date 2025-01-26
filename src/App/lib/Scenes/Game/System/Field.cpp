@@ -65,7 +65,7 @@ void Field::generate()
     for (int32_t x = 0; x < k_fieldSizeX; x++) {
         for (int32_t y = 0; y < k_fieldSizeY; y++) {
             for (int32_t z = 0; z < k_fieldSizeZ; z++) {
-                m_blocks[x][y][z] = 0;
+                m_blocks[toIndex(x, y, z)] = 0;
             }
         }
     }
@@ -73,7 +73,7 @@ void Field::generate()
         int32_t x = static_cast<int32_t>(instance.x());
         int32_t y = static_cast<int32_t>(instance.y());
         int32_t z = static_cast<int32_t>(instance.z());
-        m_blocks[x][y][z] = 1;
+        m_blocks[toIndex(x, y, z)] = 1;
     }
 }
 
@@ -232,7 +232,7 @@ int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
     if (!hasBlockAt(x, y, z)) {
         return 1;
     }
-    return m_blocks[x][y][z];
+    return m_blocks[toIndex(x, y, z)];
 }
 
 void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
