@@ -111,10 +111,10 @@ private:
     class RenderCommand1;
     class RenderCommand2;
     class RenderCommand3;
-    class UpdateVSCommand;
-    class UpdateGSCommand;
-    class UpdatePSCommand;
-    class UpdateCSCommand;
+    class UniformVSCommand;
+    class UniformGSCommand;
+    class UniformPSCommand;
+    class UniformCSCommand;
 
     std::unique_ptr<std::thread> m_thread;
     std::shared_ptr<Swapchain> m_swapchain;

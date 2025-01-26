@@ -379,9 +379,9 @@ public:
     int32_t threadGroupCountZ;
 };
 
-class Surface::UpdateVSCommand : public ICommand {
+class Surface::UniformVSCommand : public ICommand {
 public:
-    explicit UpdateVSCommand() { }
+    explicit UniformVSCommand() { }
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
         uniformBuffer->setVS(index, vram);
@@ -391,9 +391,9 @@ public:
     void* vram;
 };
 
-class Surface::UpdateGSCommand : public ICommand {
+class Surface::UniformGSCommand : public ICommand {
 public:
-    explicit UpdateGSCommand() { }
+    explicit UniformGSCommand() { }
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
         uniformBuffer->setGS(index, vram);
@@ -403,9 +403,9 @@ public:
     void* vram;
 };
 
-class Surface::UpdatePSCommand : public ICommand {
+class Surface::UniformPSCommand : public ICommand {
 public:
-    explicit UpdatePSCommand() { }
+    explicit UniformPSCommand() { }
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
         if (texture) {
@@ -420,9 +420,9 @@ public:
     std::shared_ptr<Texture> texture;
 };
 
-class Surface::UpdateCSCommand : public ICommand {
+class Surface::UniformCSCommand : public ICommand {
 public:
-    explicit UpdateCSCommand() { }
+    explicit UniformCSCommand() { }
     void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
     {
         if (texture) {
@@ -500,10 +500,10 @@ public:
     CommandPool<RenderCommand1> renderCommand1Pool;
     CommandPool<RenderCommand2> renderCommand2Pool;
     CommandPool<RenderCommand3> renderCommand3Pool;
-    CommandPool<UpdateVSCommand> updateVSPool;
-    CommandPool<UpdateGSCommand> updateGSPool;
-    CommandPool<UpdatePSCommand> updatePSPool;
-    CommandPool<UpdateCSCommand> updateCSPool;
+    CommandPool<UniformVSCommand> updateVSPool;
+    CommandPool<UniformGSCommand> updateGSPool;
+    CommandPool<UniformPSCommand> updatePSPool;
+    CommandPool<UniformCSCommand> updateCSPool;
 };
 // public
 Surface::~Surface()

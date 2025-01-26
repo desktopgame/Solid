@@ -67,24 +67,28 @@ public:
 
     void draw(const std::shared_ptr<CpuBuffer>& vertexBuffer, const std::shared_ptr<CpuBuffer>& indexBuffer, int32_t indexLength) override
     {
+        auto surface = Engine::getInstance()->getDevice()->getSurface();
         Reflect::UCamera uCamera;
         uCamera.modelMatrix = Matrix::scale(m_scale);
         uCamera.viewMatrix = Camera::getLookAtMatrix();
         uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-        m_uniformBuffer->setVS(0, &uCamera);
+        // m_uniformBuffer->setVS(0, &uCamera);
+        surface->setVS(m_uniformBuffer, 0, &uCamera);
 
         Reflect::UVector4 uColor;
         uColor.value = Vector4(m_color, 1.0f);
-        m_uniformBuffer->setVS(1, &uColor);
+        // m_uniformBuffer->setVS(1, &uColor);
+        surface->setVS(m_uniformBuffer, 1, &uColor);
 
         Reflect::UFloat uDeltatime;
         uDeltatime.value = Time::deltaTime();
-        m_uniformBuffer->setCS(0, &uDeltatime);
-        m_uniformBuffer->setCS(1, m_instanceBuffer->getGpuBuffer());
+        // m_uniformBuffer->setCS(0, &uDeltatime);
+        surface->setCS(m_uniformBuffer, 0, &uDeltatime);
+        // m_uniformBuffer->setCS(1, m_instanceBuffer->getGpuBuffer());
+        surface->setCS(m_uniformBuffer, 1, m_instanceBuffer->getGpuBuffer());
 
         auto rc = RenderContext::get(Metadata::ProgramTable::ParticleInstance3D);
 
-        auto surface = Engine::getInstance()->getDevice()->getSurface();
         surface->sync(m_instanceBuffer);
 
         int32_t threads = (NumParticles + 255) / 256;

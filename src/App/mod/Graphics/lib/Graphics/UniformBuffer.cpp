@@ -7,6 +7,29 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
+std::shared_ptr<UniformBuffer> UniformBuffer::owned()
+{
+    if (m_owned) {
+        throw std::logic_error("already owned.");
+    }
+    m_owned = true;
+    return shared_from_this();
+}
+bool UniformBuffer::isOwned() const { return m_owned; }
+
+Metadata::ProgramTable UniformBuffer::getEntry() const { return m_entry; }
+// internal
+std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entry)
+{
+    auto ub = std::shared_ptr<UniformBuffer>(new UniformBuffer());
+    ub->init(entry);
+    return ub;
+}
+
+void UniformBuffer::destroy()
+{
+}
+
 void UniformBuffer::setVS(int32_t index, const void* data)
 {
     if (index >= Metadata::k_programs.at(m_entry).vsUniforms.size()) {
@@ -154,29 +177,6 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffe
     } else {
         throw std::logic_error("uniform is require buffer.");
     }
-}
-
-std::shared_ptr<UniformBuffer> UniformBuffer::owned()
-{
-    if (m_owned) {
-        throw std::logic_error("already owned.");
-    }
-    m_owned = true;
-    return shared_from_this();
-}
-bool UniformBuffer::isOwned() const { return m_owned; }
-
-Metadata::ProgramTable UniformBuffer::getEntry() const { return m_entry; }
-// internal
-std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entry)
-{
-    auto ub = std::shared_ptr<UniformBuffer>(new UniformBuffer());
-    ub->init(entry);
-    return ub;
-}
-
-void UniformBuffer::destroy()
-{
 }
 
 void UniformBuffer::reset() { m_owned = false; }

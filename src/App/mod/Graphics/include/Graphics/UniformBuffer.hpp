@@ -10,14 +10,6 @@ class Texture;
 class GpuBuffer;
 class UniformBuffer : public std::enable_shared_from_this<UniformBuffer> {
 public:
-    void setVS(int32_t index, const void* data);
-    void setGS(int32_t index, const void* data);
-    void setPS(int32_t index, const void* data);
-    void setPS(int32_t index, const std::shared_ptr<Texture>& texture);
-    void setCS(int32_t index, const void* data);
-    void setCS(int32_t index, const std::shared_ptr<Texture>& texture);
-    void setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
-
     std::shared_ptr<UniformBuffer> owned();
     bool isOwned() const;
 
@@ -26,6 +18,14 @@ public:
 #if SOLID_ENABLE_INTERNAL
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
     void destroy();
+
+    void setVS(int32_t index, const void* data);
+    void setGS(int32_t index, const void* data);
+    void setPS(int32_t index, const void* data);
+    void setPS(int32_t index, const std::shared_ptr<Texture>& texture);
+    void setCS(int32_t index, const void* data);
+    void setCS(int32_t index, const std::shared_ptr<Texture>& texture);
+    void setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
 
     void reset();
     void beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
