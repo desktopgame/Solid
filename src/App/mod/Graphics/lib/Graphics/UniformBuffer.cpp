@@ -270,10 +270,10 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
             throw std::runtime_error("failed CreateCommittedResource()");
         }
 
-        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-        cbvColorDesc.BufferLocation = m_vsResources.back()->GetGPUVirtualAddress();
-        cbvColorDesc.SizeInBytes = u.size;
-        device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+        cbvDesc.BufferLocation = m_vsResources.back()->GetGPUVirtualAddress();
+        cbvDesc.SizeInBytes = u.size;
+        device->CreateConstantBufferView(&cbvDesc, heapHandle);
         heapHandle.ptr += unitSize;
     }
     for (int32_t i = 0; i < program.gsUniforms.size(); i++) {
@@ -305,10 +305,10 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
             throw std::runtime_error("failed CreateCommittedResource()");
         }
 
-        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-        cbvColorDesc.BufferLocation = m_gsResources.back()->GetGPUVirtualAddress();
-        cbvColorDesc.SizeInBytes = u.size;
-        device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+        cbvDesc.BufferLocation = m_gsResources.back()->GetGPUVirtualAddress();
+        cbvDesc.SizeInBytes = u.size;
+        device->CreateConstantBufferView(&cbvDesc, heapHandle);
         heapHandle.ptr += unitSize;
     }
     for (int32_t i = 0; i < program.psUniforms.size(); i++) {
@@ -344,10 +344,10 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
                 throw std::runtime_error("failed CreateCommittedResource()");
             }
 
-            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-            cbvColorDesc.BufferLocation = m_psResources.back()->GetGPUVirtualAddress();
-            cbvColorDesc.SizeInBytes = u.size;
-            device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+            cbvDesc.BufferLocation = m_psResources.back()->GetGPUVirtualAddress();
+            cbvDesc.SizeInBytes = u.size;
+            device->CreateConstantBufferView(&cbvDesc, heapHandle);
         }
         heapHandle.ptr += unitSize;
     }
@@ -383,10 +383,10 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
                 throw std::runtime_error("failed CreateCommittedResource()");
             }
 
-            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-            cbvColorDesc.BufferLocation = m_csResources.back()->GetGPUVirtualAddress();
-            cbvColorDesc.SizeInBytes = u.size;
-            device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+            cbvDesc.BufferLocation = m_csResources.back()->GetGPUVirtualAddress();
+            cbvDesc.SizeInBytes = u.size;
+            device->CreateConstantBufferView(&cbvDesc, heapHandle);
             break;
         }
         case Metadata::Uniform::Type::SRV:
