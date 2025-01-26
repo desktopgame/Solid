@@ -27,7 +27,8 @@ void Time::sync()
     float elapsedTime = s_end - s_start;
     float sleepTime = frameDuration - elapsedTime - s_overSleep;
     if (sleepTime > 0) {
-        ::Sleep((DWORD)(sleepTime * 1000.0f));
+        // NOTE: スワップチェインがリフレッシュレートに合わせて同期するのでそちらに任せる
+        // ::Sleep((DWORD)(sleepTime * 1000.0f));
         s_overSleep = (Clock::counter() - s_end) - sleepTime;
     } else {
         s_overSleep = 0;
