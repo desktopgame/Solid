@@ -213,28 +213,6 @@ void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
     }
 }
 
-bool Field::hasBlockAt(int32_t x, int32_t y, int32_t z) const
-{
-    if (x >= k_fieldSizeX || x < 0) {
-        return false;
-    }
-    if (y >= k_fieldSizeY || y < 0) {
-        return false;
-    }
-    if (z >= k_fieldSizeZ || z < 0) {
-        return false;
-    }
-    return true;
-}
-
-int32_t Field::getBlockAt(int32_t x, int32_t y, int32_t z) const
-{
-    if (!hasBlockAt(x, y, z)) {
-        return 1;
-    }
-    return m_blocks[toIndex(x, y, z)];
-}
-
 void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
 std::shared_ptr<Entities::PlayerEntity> Field::getPlayer() const { return m_player; }
 

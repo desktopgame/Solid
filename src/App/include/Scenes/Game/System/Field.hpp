@@ -142,8 +142,27 @@ public:
     void draw3D(const std::shared_ptr<Renderer>& renderer);
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 
-    bool hasBlockAt(int32_t x, int32_t y, int32_t z) const;
-    int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const;
+    inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
+    {
+        if (x >= k_fieldSizeX || x < 0) {
+            return false;
+        }
+        if (y >= k_fieldSizeY || y < 0) {
+            return false;
+        }
+        if (z >= k_fieldSizeZ || z < 0) {
+            return false;
+        }
+        return true;
+    }
+
+    inline int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const
+    {
+        if (!hasBlockAt(x, y, z)) {
+            return 1;
+        }
+        return m_blocks[toIndex(x, y, z)];
+    }
 
     void setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player);
     std::shared_ptr<Entities::PlayerEntity> getPlayer() const;
