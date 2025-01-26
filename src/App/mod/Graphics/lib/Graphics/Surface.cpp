@@ -342,8 +342,7 @@ public:
 class Surface::RenderCommand3 : public ICommand {
 public:
     explicit RenderCommand3()
-        : surface(nullptr)
-        , renderContext(nullptr)
+        : renderContext(nullptr)
         , uniformBuffer(nullptr)
         , vertex(nullptr)
         , index(nullptr)
@@ -363,10 +362,9 @@ public:
         uniformBuffer->syncCompute(commandList);
         uniformBuffer->endCompute(commandList);
 
-        surface->render(renderContext, uniformBuffer, vertex, index, indexLength, instanceBuffers, instanceCount);
+        renderContext->render(commandList, uniformBuffer, vertex, index, indexLength, instanceBuffers, instanceCount);
     }
 
-    Surface* surface;
     std::shared_ptr<RenderContext> renderContext;
     std::shared_ptr<UniformBuffer> uniformBuffer;
     std::shared_ptr<IBuffer> vertex;
