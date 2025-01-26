@@ -826,23 +826,24 @@ std::shared_ptr<Surface> Surface::create(
 
 void Surface::destroy()
 {
+    // 描画コマンドの終了を待ち合わせるためのコマンドを送る
     auto cmd = m_impl->waitPool.rent();
     cmd->surface = this;
     m_impl->queue.enqueue(cmd);
-
+    // コマンドが実行されるまで待つ
     {
         std::unique_lock<std::mutex> lock(m_threadSyncMutex);
         m_threadSyncCondVar.wait(lock, [&]() -> bool { return m_threadSyncFlag; });
     }
-
+    // 全ての描画コマンドが消費されるまで同期待ち
     m_swapchain->fence();
     m_swapchain->present();
     m_swapchain->signal();
     m_swapchain->waitSync();
-
+    // スレッドを終了する
     threadExit();
     m_impl = nullptr;
-
+    // 各種リソースの解放
     GlobalLight::destroy();
     PointLight::destroy();
     BloomEffect::destroy();
