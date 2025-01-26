@@ -235,7 +235,7 @@ public:
 #endif
         for (int32_t i = 0; i < N; i++) {
             p += static_cast<T>(components[i] * components[i]);
-            // p = std::fmaf(components[i], components[i], p);
+            // p = Mathf::fma(components[i], components[i], p);
         }
         return static_cast<T>(std::sqrt(p));
     }
@@ -262,7 +262,7 @@ public:
 #endif
         for (int32_t i = 0; i < N; i++) {
             sum += (a[i] * b[i]);
-            // sum = std::fmaf(a.components[i], b.components[i], sum);
+            // sum = Mathf::fma(a.components[i], b.components[i], sum);
         }
         return sum;
     }

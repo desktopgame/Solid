@@ -141,7 +141,7 @@ struct MatrixT {
                     int32_t aIndex = (i * ColumnNum) + k;
                     int32_t bIndex = (k * ColumnNum) + j;
                     // m.components[(i * ColumnNum) + j] = (a.components[aIndex] * b.components[bIndex] + m.components[(i * ColumnNum) + j]);
-                    m.components[(i * ColumnNum) + j] = std::fmaf(a.components[aIndex], b.components[bIndex], m.components[(i * ColumnNum) + j]);
+                    m.components[(i * ColumnNum) + j] = Mathf::fma(a.components[aIndex], b.components[bIndex], m.components[(i * ColumnNum) + j]);
                 }
             }
         }

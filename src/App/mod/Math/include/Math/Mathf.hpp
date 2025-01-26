@@ -181,6 +181,18 @@ public:
         return d;
     }
 
+    template <typename T>
+    inline static T fma(T x, T y, T z)
+    {
+        return x * y + z;
+    }
+
+    template <>
+    INLINE_SPEC_STATIC float fma(float x, float y, float z)
+    {
+        return std::fmaf(x, y, z);
+    }
+
 private:
     Mathf() = delete;
     ~Mathf() = delete;
