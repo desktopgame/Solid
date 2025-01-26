@@ -72,19 +72,15 @@ public:
         uCamera.modelMatrix = Matrix::scale(m_scale);
         uCamera.viewMatrix = Camera::getLookAtMatrix();
         uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-        // m_uniformBuffer->setVS(0, &uCamera);
         surface->uniformVS(m_uniformBuffer, 0, &uCamera);
 
         Reflect::UVector4 uColor;
         uColor.value = Vector4(m_color, 1.0f);
-        // m_uniformBuffer->setVS(1, &uColor);
         surface->uniformVS(m_uniformBuffer, 1, &uColor);
 
         Reflect::UFloat uDeltatime;
         uDeltatime.value = Time::deltaTime();
-        // m_uniformBuffer->setCS(0, &uDeltatime);
         surface->uniformCS(m_uniformBuffer, 0, &uDeltatime);
-        // m_uniformBuffer->setCS(1, m_instanceBuffer->getGpuBuffer());
         surface->uniformCS(m_uniformBuffer, 1, m_instanceBuffer->getGpuBuffer());
 
         auto rc = RenderContext::get(Metadata::ProgramTable::ParticleInstance3D);

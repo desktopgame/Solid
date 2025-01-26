@@ -59,12 +59,10 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
 
     renderObject(m_rectObject, ub);
@@ -83,12 +81,10 @@ void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& si
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
     renderObject(m_circleObject, ub);
 }
@@ -106,14 +102,11 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
-    // ub->setPS(0, texture);
     surface->uniformPS(ub, 0, texture);
     renderObject(m_spriteObject, ub);
 }
@@ -162,14 +155,11 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
         uCamera.modelMatrix = modelMatrix;
         uCamera.viewMatrix = Math::Matrix();
         uCamera.projectionMatrix = Camera::getOrthoMatrix();
-        // ub->setVS(0, &uCamera);
         surface->uniformVS(ub, 0, &uCamera);
 
         Reflect::UVector4 uColor;
         uColor.value = color;
-        // ub->setVS(1, &uColor);
         surface->uniformVS(ub, 1, &uColor);
-        // ub->setPS(0, fontSprite->texture);
         surface->uniformPS(ub, 0, fontSprite->texture);
         renderObject(m_textObject, ub);
         offset.x() += fontSprite->metrics.advance.x() >> 6;
@@ -211,12 +201,10 @@ void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& sca
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
     renderObject(obj, ub);
 }
@@ -234,25 +222,20 @@ void Renderer::drawPlaneLine(const Math::Vector3& position, const Math::Vector2&
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
 
-    // ub->setGS(0, &uCamera);
     surface->uniformGS(ub, 0, &uCamera);
 
     Reflect::UFloat uLineWidth;
     uLineWidth.value = lineWidth;
-    // ub->setGS(1, &uLineWidth);
     surface->uniformGS(ub, 1, &uLineWidth);
 
     Reflect::UVector3 uCameraPosition;
     uCameraPosition.value = Camera::getPosition();
-    // ub->setGS(2, &uCameraPosition);
     surface->uniformGS(ub, 2, &uCameraPosition);
     renderObject(m_planeLineObject, ub);
 }
@@ -270,15 +253,12 @@ void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vecto
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
 
-    // ub->setPS(0, texture);
     surface->uniformPS(ub, 0, texture);
     renderObject(m_planeTextureObject, ub);
 }
@@ -297,12 +277,10 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
     renderObject(obj, ub);
 }
@@ -320,25 +298,20 @@ void Renderer::drawBoxLine(const Math::Vector3& position, const Math::Vector3& s
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
 
-    // ub->setGS(0, &uCamera);
     surface->uniformGS(ub, 0, &uCamera);
 
     Reflect::UFloat uLineWidth;
     uLineWidth.value = lineWidth;
-    // ub->setGS(1, &uLineWidth);
     surface->uniformGS(ub, 1, &uLineWidth);
 
     Reflect::UVector3 uCameraPosition;
     uCameraPosition.value = Camera::getPosition();
-    // ub->setGS(2, &uCameraPosition);
     surface->uniformGS(ub, 2, &uCameraPosition);
     renderObject(m_boxLineObject, ub);
 }
@@ -356,15 +329,12 @@ void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    // ub->setVS(1, &uColor);
     surface->uniformVS(ub, 1, &uColor);
 
-    // ub->setPS(0, texture);
     surface->uniformPS(ub, 0, texture);
     renderObject(m_boxTextureObject, ub);
 }

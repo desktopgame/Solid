@@ -168,21 +168,15 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
         Matrix::scale(Vector3({ k_tileSize, k_tileSize, k_tileSize })));
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    // ub->setVS(0, &uCamera);
     surface->uniformVS(ub, 0, &uCamera);
-    // ub->setVS(1, &m_tileTransform);
     surface->uniformVS(ub, 1, &m_tileTransform);
-    // ub->setVS(2, &m_tilePallet);
     surface->uniformVS(ub, 2, &m_tilePallet);
 
     Reflect::UVector3 uCameraPos;
     uCameraPos.value = Camera::getPosition();
-    // ub->setVS(3, &uCameraPos);
     surface->uniformVS(ub, 3, &uCameraPos);
 
-    // ub->setPS(0, m_normalTexture);
     surface->uniformPS(ub, 0, m_normalTexture);
-    // ub->setPS(1, m_borderTexture);
     surface->uniformPS(ub, 1, m_borderTexture);
 #if _DEBUG
     if (m_debugDrawField)
