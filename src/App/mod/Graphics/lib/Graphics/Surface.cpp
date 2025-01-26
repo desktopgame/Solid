@@ -608,6 +608,10 @@ void Surface::endBatch(const std::shared_ptr<RenderContext>& rc)
 
 void Surface::beginPresent()
 {
+    // NOTE: 前の一フレームを描画する都合上、最初の一フレームは描画するべきものが存在しない
+    if (!m_sendDrawCall) {
+        return;
+    }
     m_swapchain->fence();
     {
         auto cmd = m_impl->presentCommandPool.rent();
@@ -618,6 +622,10 @@ void Surface::beginPresent()
 
 void Surface::endPresent()
 {
+    // NOTE: 前の一フレームを描画する都合上、最初の一フレームは描画するべきものが存在しない
+    if (!m_sendDrawCall) {
+        return;
+    }
     m_swapchain->waitSync();
 
     m_commandAllocator->Reset();
@@ -755,6 +763,7 @@ void Surface::render(
     cmd->index = index;
     cmd->indexLength = indexLength;
     m_impl->queue.enqueue(cmd);
+    m_sendDrawCall = true;
 }
 
 void Surface::render(
@@ -775,6 +784,7 @@ void Surface::render(
     cmd->instanceBuffers = instanceBuffers;
     cmd->instanceCount = instanceCount;
     m_impl->queue.enqueue(cmd);
+    m_sendDrawCall = true;
 }
 
 void Surface::render(
@@ -801,6 +811,7 @@ void Surface::render(
     cmd->threadGroupCountY = threadGroupCountY;
     cmd->threadGroupCountZ = threadGroupCountZ;
     m_impl->queue.enqueue(cmd);
+    m_sendDrawCall = true;
 }
 
 // internal
@@ -860,6 +871,7 @@ Surface::Surface()
     , m_depthBuffer()
     , m_depthStencilViewHeap()
     , m_fence()
+    , m_sendDrawCall(false)
     , m_vram(::malloc(::pow(2, 20) * 512))
     , m_vramOffset(0)
 {
