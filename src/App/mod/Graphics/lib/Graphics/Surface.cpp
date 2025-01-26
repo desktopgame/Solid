@@ -776,6 +776,8 @@ void Surface::destroy()
     BloomEffect::destroy();
     m_swapchain->destroy();
     m_swapchain = nullptr;
+    ::free(m_vram);
+    m_vram = nullptr;
 }
 // private
 Surface::Surface()
