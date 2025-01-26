@@ -32,7 +32,7 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
     sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
-    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Game");
+    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Debug");
 
     Graphics::NodeRegistry::initialize();
     Graphics::ParticleSystem::initialize();

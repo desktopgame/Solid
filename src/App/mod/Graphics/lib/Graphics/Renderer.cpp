@@ -49,6 +49,7 @@ void Renderer::textFontSize(int32_t fontSize) { m_fontSize = fontSize; }
 void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
 {
     initRect();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::Color2D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
@@ -58,11 +59,13 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
 
     renderObject(m_rectObject, ub);
 }
@@ -70,6 +73,7 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
 void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color)
 {
     initCircle();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::Color2D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(Math::Vector3(position, 0)),
@@ -79,11 +83,13 @@ void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& si
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Math::Matrix();
     uCamera.projectionMatrix = Camera::getOrthoMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
     renderObject(m_circleObject, ub);
 }
 
@@ -195,6 +201,7 @@ void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& sca
 {
     Object& obj = isWireframe ? m_planeWireframeObject : m_planeObject;
     initPlane(obj, isWireframe);
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshColor3D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -204,17 +211,20 @@ void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& sca
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
     renderObject(obj, ub);
 }
 
 void Renderer::drawPlaneLine(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color, float lineWidth)
 {
     initPlaneLine();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshLine3D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -224,27 +234,33 @@ void Renderer::drawPlaneLine(const Math::Vector3& position, const Math::Vector2&
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
 
-    ub->setGS(0, &uCamera);
+    // ub->setGS(0, &uCamera);
+    surface->uniformGS(ub, 0, &uCamera);
 
     Reflect::UFloat uLineWidth;
     uLineWidth.value = lineWidth;
-    ub->setGS(1, &uLineWidth);
+    // ub->setGS(1, &uLineWidth);
+    surface->uniformGS(ub, 1, &uLineWidth);
 
     Reflect::UVector3 uCameraPosition;
     uCameraPosition.value = Camera::getPosition();
-    ub->setGS(2, &uCameraPosition);
+    // ub->setGS(2, &uCameraPosition);
+    surface->uniformGS(ub, 2, &uCameraPosition);
     renderObject(m_planeLineObject, ub);
 }
 
 void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
 {
     initPlaneTexture();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -254,13 +270,16 @@ void Renderer::drawPlaneTexture(const Math::Vector3& position, const Math::Vecto
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
 
-    ub->setPS(0, texture);
+    // ub->setPS(0, texture);
+    surface->uniformPS(ub, 0, texture);
     renderObject(m_planeTextureObject, ub);
 }
 
@@ -291,6 +310,7 @@ void Renderer::drawBox(const Math::Vector3& position, const Math::Vector3& scale
 void Renderer::drawBoxLine(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const Math::Vector4& color, float lineWidth)
 {
     initBoxLine();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshLine3D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -300,27 +320,33 @@ void Renderer::drawBoxLine(const Math::Vector3& position, const Math::Vector3& s
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
 
-    ub->setGS(0, &uCamera);
+    // ub->setGS(0, &uCamera);
+    surface->uniformGS(ub, 0, &uCamera);
 
     Reflect::UFloat uLineWidth;
     uLineWidth.value = lineWidth;
-    ub->setGS(1, &uLineWidth);
+    // ub->setGS(1, &uLineWidth);
+    surface->uniformGS(ub, 1, &uLineWidth);
 
     Reflect::UVector3 uCameraPosition;
     uCameraPosition.value = Camera::getPosition();
-    ub->setGS(2, &uCameraPosition);
+    // ub->setGS(2, &uCameraPosition);
+    surface->uniformGS(ub, 2, &uCameraPosition);
     renderObject(m_boxLineObject, ub);
 }
 
 void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3& scale, const Math::Quaternion& rotation, const std::shared_ptr<Texture>& texture, const Math::Vector4& color)
 {
     initBoxTexture();
+    auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto ub = UniformPool::rent(Metadata::ProgramTable::MeshTexture3D);
     auto modelMatrix = applyMatrix(Math::Matrix::transform(
         Math::Matrix::translate(position),
@@ -330,13 +356,16 @@ void Renderer::drawBoxTexture(const Math::Vector3& position, const Math::Vector3
     uCamera.modelMatrix = modelMatrix;
     uCamera.viewMatrix = Camera::getLookAtMatrix();
     uCamera.projectionMatrix = Camera::getPerspectiveMatrix();
-    ub->setVS(0, &uCamera);
+    // ub->setVS(0, &uCamera);
+    surface->uniformVS(ub, 0, &uCamera);
 
     Reflect::UVector4 uColor;
     uColor.value = color;
-    ub->setVS(1, &uColor);
+    // ub->setVS(1, &uColor);
+    surface->uniformVS(ub, 1, &uColor);
 
-    ub->setPS(0, texture);
+    // ub->setPS(0, texture);
+    surface->uniformPS(ub, 0, texture);
     renderObject(m_boxTextureObject, ub);
 }
 // private
