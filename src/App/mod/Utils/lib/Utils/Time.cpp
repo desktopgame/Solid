@@ -1,5 +1,6 @@
 #include <Utils/Clock.hpp>
 #include <Utils/Time.hpp>
+#include <Windows.h>
 #include <thread>
 
 namespace Lib::Utils {
@@ -22,12 +23,11 @@ void Time::end()
 }
 void Time::sync()
 {
-    float frameDuration = (1000.0f / 60.0f);
+    float frameDuration = (1.0f / 60.0f);
     float elapsedTime = s_end - s_start;
     float sleepTime = frameDuration - elapsedTime - s_overSleep;
     if (sleepTime > 0) {
-        // NOTE: DirectXがリフレッシュレートに合わせて同期するので不要
-        // std::this_thread::sleep_for(sleepTime);
+        ::Sleep((DWORD)(sleepTime * 1000.0f));
         s_overSleep = (Clock::counter() - s_end) - sleepTime;
     } else {
         s_overSleep = 0;
