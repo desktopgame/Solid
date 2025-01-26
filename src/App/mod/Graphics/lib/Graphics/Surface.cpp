@@ -500,10 +500,10 @@ public:
     CommandPool<RenderCommand1> renderCommand1Pool;
     CommandPool<RenderCommand2> renderCommand2Pool;
     CommandPool<RenderCommand3> renderCommand3Pool;
-    CommandPool<UniformVSCommand> updateVSPool;
-    CommandPool<UniformGSCommand> updateGSPool;
-    CommandPool<UniformPSCommand> updatePSPool;
-    CommandPool<UniformCSCommand> updateCSPool;
+    CommandPool<UniformVSCommand> uniformVSPool;
+    CommandPool<UniformGSCommand> uniformGSPool;
+    CommandPool<UniformPSCommand> uniformPSPool;
+    CommandPool<UniformCSCommand> uniformCSPool;
 };
 // public
 Surface::~Surface()
@@ -595,10 +595,10 @@ void Surface::endPresent()
     m_impl->renderCommand1Pool.releaseAll();
     m_impl->renderCommand2Pool.releaseAll();
     m_impl->renderCommand3Pool.releaseAll();
-    m_impl->updateVSPool.releaseAll();
-    m_impl->updateGSPool.releaseAll();
-    m_impl->updatePSPool.releaseAll();
-    m_impl->updateCSPool.releaseAll();
+    m_impl->uniformVSPool.releaseAll();
+    m_impl->uniformGSPool.releaseAll();
+    m_impl->uniformPSPool.releaseAll();
+    m_impl->uniformCSPool.releaseAll();
 
     m_vramOffset = 0;
 }
@@ -618,7 +618,7 @@ void Surface::uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     ::memcpy(memory, data, size);
     m_vramOffset += size;
 
-    auto cmd = m_impl->updateVSPool.rent();
+    auto cmd = m_impl->uniformVSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = memory;
@@ -632,7 +632,7 @@ void Surface::uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     ::memcpy(memory, data, size);
     m_vramOffset += size;
 
-    auto cmd = m_impl->updateGSPool.rent();
+    auto cmd = m_impl->uniformGSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = memory;
@@ -646,7 +646,7 @@ void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     ::memcpy(memory, data, size);
     m_vramOffset += size;
 
-    auto cmd = m_impl->updatePSPool.rent();
+    auto cmd = m_impl->uniformPSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = memory;
@@ -655,7 +655,7 @@ void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
 }
 void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
-    auto cmd = m_impl->updatePSPool.rent();
+    auto cmd = m_impl->uniformPSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = nullptr;
@@ -670,7 +670,7 @@ void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     ::memcpy(memory, data, size);
     m_vramOffset += size;
 
-    auto cmd = m_impl->updateCSPool.rent();
+    auto cmd = m_impl->uniformCSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = memory;
@@ -680,7 +680,7 @@ void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
-    auto cmd = m_impl->updateCSPool.rent();
+    auto cmd = m_impl->uniformCSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = nullptr;
@@ -690,7 +690,7 @@ void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
 {
-    auto cmd = m_impl->updateCSPool.rent();
+    auto cmd = m_impl->uniformCSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = nullptr;
