@@ -137,7 +137,7 @@ public:
 
     explicit Chunk(
         std::weak_ptr<Field> field,
-        const IntVector2& position,
+        const IntVector2& gridPosition,
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 
@@ -150,9 +150,9 @@ public:
 
     std::shared_ptr<Field> getField() const;
 
-    inline IntVector2 getPosition() const
+    inline IntVector2 getGridPosition() const
     {
-        return m_position;
+        return m_gridPosition;
     }
 
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
@@ -204,7 +204,7 @@ private:
 
     std::shared_ptr<ChunkGenerator> m_generator;
     std::weak_ptr<Field> m_field;
-    IntVector2 m_position;
+    IntVector2 m_gridPosition;
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
     std::shared_ptr<CpuBuffer> m_vertexBuffer;

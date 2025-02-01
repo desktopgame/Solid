@@ -9,14 +9,14 @@ namespace App::Scenes::Game::System {
 // public
 Chunk::Chunk(
     std::weak_ptr<Field> field,
-    const IntVector2& position,
+    const IntVector2& gridPosition,
     const std::shared_ptr<Texture>& normalTexture,
     const std::shared_ptr<Texture>& borderTexture)
     : m_blocks()
     , m_entities()
     , m_generator()
     , m_field(field)
-    , m_position(position)
+    , m_gridPosition(gridPosition)
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
     , m_vertexBuffer()

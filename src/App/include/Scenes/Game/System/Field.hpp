@@ -26,7 +26,7 @@ public:
         bool found = false;
 
         for (auto chunk : m_chunks) {
-            IntVector2 chunkPos = chunk->getPosition();
+            IntVector2 chunkPos = chunk->getGridPosition();
             float chunkCenterX = (chunkPos.x() * Chunk::k_fieldSizeX) + (Chunk::k_fieldSizeX / 2) * Chunk::k_tileSize;
             float chunkCenterZ = (chunkPos.y() * Chunk::k_fieldSizeZ) + (Chunk::k_fieldSizeZ / 2) * Chunk::k_tileSize;
             float chunkMinX = chunkCenterX - ((Chunk::k_fieldSizeX * Chunk::k_tileSize) / 2.0f);
