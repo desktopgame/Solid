@@ -141,6 +141,37 @@ void ChunkGenerator::generate()
                 }
             }
         }
+        if (room.index % 3 == 0) {
+            Room neighbor;
+            neighbor.center = room.center - IntVector3({ Chunk::k_roomSpace * 2, 0, 0 }) - IntVector3({ Chunk::k_roomSizeX, 0, 0 });
+            neighbor.size = IntVector3({ roomSizeX, Chunk::k_fieldSizeY, roomSizeZ });
+
+            int32_t startX = room.center.x() - (room.size.x() / 2);
+            int32_t endX = neighbor.center.x() + (neighbor.size.x() / 2) + Chunk::k_roomSpace;
+            int32_t minX = Mathf::min(startX, endX);
+            int32_t maxX = Mathf::max(startX, endX);
+
+            for (int32_t x = minX; x <= maxX; x++) {
+                for (int32_t y = 0; y < Chunk::k_fieldSizeY; y++) {
+                    table[x][y][neighbor.center.z() - 2] = k_blockRouteWall;
+                    table[x][y][neighbor.center.z() + 2] = k_blockRouteWall;
+                }
+                table[x][0][neighbor.center.z() - 1] = k_blockRouteFloor;
+                table[x][0][neighbor.center.z()] = k_blockRouteFloor;
+                table[x][0][neighbor.center.z() + 1] = k_blockRouteFloor;
+                table[x][Chunk::k_fieldSizeY - 1][neighbor.center.z() - 1] = k_blockRouteRoof;
+                table[x][Chunk::k_fieldSizeY - 1][neighbor.center.z()] = k_blockRouteRoof;
+                table[x][Chunk::k_fieldSizeY - 1][neighbor.center.z() + 1] = k_blockRouteRoof;
+            }
+            for (int32_t y = 1; y < Chunk::k_fieldSizeY - 1; y++) {
+                table[minX][y][neighbor.center.z() - 1] = k_blockNone;
+                table[minX][y][neighbor.center.z()] = k_blockNone;
+                table[minX][y][neighbor.center.z() + 1] = k_blockNone;
+                table[maxX][y][neighbor.center.z() - 1] = k_blockNone;
+                table[maxX][y][neighbor.center.z()] = k_blockNone;
+                table[maxX][y][neighbor.center.z() + 1] = k_blockNone;
+            }
+        }
         if (right >= 0 && right < 9 && room.index % 3 == 1) {
             auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [right](const auto& e) -> bool {
                 return e.index == right;
@@ -173,6 +204,37 @@ void ChunkGenerator::generate()
                     table[maxX][y][neighbor.center.z()] = k_blockNone;
                     table[maxX][y][neighbor.center.z() + 1] = k_blockNone;
                 }
+            }
+        }
+        if (room.index % 3 == 2) {
+            Room neighbor;
+            neighbor.center = room.center + IntVector3({ Chunk::k_roomSpace * 2, 0, 0 }) + IntVector3({ Chunk::k_roomSizeX, 0, 0 });
+            neighbor.size = IntVector3({ roomSizeX, Chunk::k_fieldSizeY, roomSizeZ });
+
+            int32_t startX = room.center.x() + (room.size.x() / 2);
+            int32_t endX = neighbor.center.x() - (neighbor.size.x() / 2) - Chunk::k_roomSpace;
+            int32_t minX = Mathf::min(startX, endX);
+            int32_t maxX = Mathf::max(startX, endX);
+
+            for (int32_t x = minX; x <= maxX; x++) {
+                for (int32_t y = 0; y < Chunk::k_fieldSizeY; y++) {
+                    table[x][y][neighbor.center.z() - 2] = k_blockRouteWall;
+                    table[x][y][neighbor.center.z() + 2] = k_blockRouteWall;
+                }
+                table[x][0][neighbor.center.z() - 1] = k_blockRouteFloor;
+                table[x][0][neighbor.center.z()] = k_blockRouteFloor;
+                table[x][0][neighbor.center.z() + 1] = k_blockRouteFloor;
+                table[x][Chunk::k_fieldSizeY - 1][neighbor.center.z() - 1] = k_blockRouteRoof;
+                table[x][Chunk::k_fieldSizeY - 1][neighbor.center.z()] = k_blockRouteRoof;
+                table[x][Chunk::k_fieldSizeY - 1][neighbor.center.z() + 1] = k_blockRouteRoof;
+            }
+            for (int32_t y = 1; y < Chunk::k_fieldSizeY - 1; y++) {
+                table[minX][y][neighbor.center.z() - 1] = k_blockNone;
+                table[minX][y][neighbor.center.z()] = k_blockNone;
+                table[minX][y][neighbor.center.z() + 1] = k_blockNone;
+                table[maxX][y][neighbor.center.z() - 1] = k_blockNone;
+                table[maxX][y][neighbor.center.z()] = k_blockNone;
+                table[maxX][y][neighbor.center.z() + 1] = k_blockNone;
             }
         }
         if (top >= 0 && top < 9 && room.index >= 3) {

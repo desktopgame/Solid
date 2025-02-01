@@ -12,9 +12,9 @@ namespace Entities {
 class Field;
 class Chunk {
 public:
-    static inline constexpr int32_t k_fieldSizeX = 128;
+    static inline constexpr int32_t k_fieldSizeX = 132;
     static inline constexpr int32_t k_fieldSizeY = 16;
-    static inline constexpr int32_t k_fieldSizeZ = 128;
+    static inline constexpr int32_t k_fieldSizeZ = 132;
     static inline constexpr int32_t k_roomSpace = 4;
     static inline constexpr int32_t k_roomSizeX = (k_fieldSizeX - (k_roomSpace * 4)) / 3;
     static inline constexpr int32_t k_roomSizeZ = (k_fieldSizeZ - (k_roomSpace * 4)) / 3;
