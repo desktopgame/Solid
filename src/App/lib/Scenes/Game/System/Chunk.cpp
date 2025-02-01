@@ -9,12 +9,14 @@ namespace App::Scenes::Game::System {
 // public
 Chunk::Chunk(
     Field& field,
+    const IntVector2& position,
     const std::shared_ptr<Texture>& normalTexture,
     const std::shared_ptr<Texture>& borderTexture)
     : m_blocks()
     , m_entities()
     , m_generator()
     , m_field(field)
+    , m_position(position)
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
     , m_vertexBuffer()
@@ -176,6 +178,9 @@ void Chunk::draw2D(const std::shared_ptr<Renderer>& renderer)
         entity->draw2D(renderer);
     }
 }
+
+const Field& Chunk::getField() const { return m_field; }
+Field& Chunk::getField() { return m_field; }
 
 void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }

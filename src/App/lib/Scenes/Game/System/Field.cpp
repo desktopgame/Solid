@@ -19,7 +19,7 @@ Field::Field(
 void Field::generate()
 {
     if (!m_chunk) {
-        m_chunk = std::make_shared<Chunk>(*this, m_normalTexture, m_borderTexture);
+        m_chunk = std::make_shared<Chunk>(*this, IntVector2({ 0, 0 }), m_normalTexture, m_borderTexture);
         m_chunk->generate();
     }
 }

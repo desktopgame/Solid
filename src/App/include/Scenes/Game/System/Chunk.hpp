@@ -137,6 +137,7 @@ public:
 
     explicit Chunk(
         Field& field,
+        const IntVector2& position,
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 
@@ -146,6 +147,14 @@ public:
     void onGui();
     void draw3D(const std::shared_ptr<Renderer>& renderer);
     void draw2D(const std::shared_ptr<Renderer>& renderer);
+
+    const Field& getField() const;
+    Field& getField();
+
+    inline IntVector2 getPosition() const
+    {
+        return m_position;
+    }
 
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
@@ -196,6 +205,7 @@ private:
 
     std::shared_ptr<ChunkGenerator> m_generator;
     Field& m_field;
+    IntVector2 m_position;
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
     std::shared_ptr<CpuBuffer> m_vertexBuffer;
