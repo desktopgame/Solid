@@ -153,6 +153,11 @@ std::shared_ptr<Chunk> Field::getCurrentChunk() const
     return m_chunks.at(0);
 }
 
+std::vector<std::shared_ptr<Chunk>> Field::getLoadedChunks() const
+{
+    return m_loadedChunks;
+}
+
 void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
 std::shared_ptr<Entities::PlayerEntity> Field::getPlayer() const { return m_player; }
 }
