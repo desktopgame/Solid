@@ -64,8 +64,8 @@ void Chunk::generate()
 
     std::vector<Vector4> gpuDatas = instances;
     for (auto& gpuData : gpuDatas) {
-        int32_t offsetX = (m_gridPosition.x() * Chunk::k_fieldSizeX);
-        int32_t offsetZ = (m_gridPosition.y() * Chunk::k_fieldSizeZ);
+        int32_t offsetX = (m_gridPosition.x() * (Chunk::k_fieldSizeX - 1));
+        int32_t offsetZ = (m_gridPosition.y() * (Chunk::k_fieldSizeZ - 1));
         gpuData.x() += offsetX;
         gpuData.z() += offsetZ;
     }
