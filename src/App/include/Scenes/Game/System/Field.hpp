@@ -19,71 +19,13 @@ public:
     void draw3D(const std::shared_ptr<Renderer>& renderer);
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 
-    inline bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const Vector3& pos) const
-    {
-        bool found = false;
+    bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const Vector3& pos) const;
 
-        for (auto chunk : m_chunks) {
-            float chunkMinX = chunk->getPhysicalMinX();
-            float chunkMaxX = chunk->getPhysicalMaxX();
-            float chunkMinZ = chunk->getPhysicalMinZ();
-            float chunkMaxZ = chunk->getPhysicalMaxZ();
+    bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const IntVector2& gridPosition) const;
 
-            if (pos.x() >= chunkMinX && pos.x() <= chunkMaxX) {
-                if (pos.z() >= chunkMinZ && pos.z() <= chunkMaxZ) {
-                    outChunk = chunk;
-                    found = true;
-                    break;
-                }
-            }
-        }
-        return found;
-    }
+    std::shared_ptr<Chunk> loadChunk(const Vector3& pos);
 
-    inline bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const IntVector2& gridPosition) const
-    {
-        bool found = false;
-
-        for (auto& chunk : m_chunks) {
-            if (chunk->getGridPosition() == gridPosition) {
-                outChunk = chunk;
-                found = true;
-                break;
-            }
-        }
-        return found;
-    }
-
-    inline std::shared_ptr<Chunk> loadChunk(const Vector3& pos)
-    {
-        std::optional<std::shared_ptr<Chunk>> c;
-        if (tryFindChunk(c, pos)) {
-            return *c;
-        }
-        int32_t tileX = pos.x() / Chunk::k_tileSize;
-        int32_t tileZ = pos.z() / Chunk::k_tileSize;
-
-        int32_t gridPosX = tileX / Chunk::k_fieldSizeX;
-        int32_t gridPosZ = tileZ / Chunk::k_fieldSizeZ;
-
-        auto chunk = std::make_shared<Chunk>(shared_from_this(), IntVector2({ gridPosX, gridPosZ }), m_normalTexture, m_borderTexture);
-        chunk->generate();
-        m_chunks.emplace_back(chunk);
-        return chunk;
-    }
-
-    inline std::shared_ptr<Chunk> loadChunk(const IntVector2& gridPosition)
-    {
-        std::optional<std::shared_ptr<Chunk>> c;
-        if (tryFindChunk(c, gridPosition)) {
-            return *c;
-        }
-
-        auto chunk = std::make_shared<Chunk>(shared_from_this(), gridPosition, m_normalTexture, m_borderTexture);
-        chunk->generate();
-        m_chunks.emplace_back(chunk);
-        return chunk;
-    }
+    std::shared_ptr<Chunk> loadChunk(const IntVector2& gridPosition);
 
     void reloadChunks();
 
