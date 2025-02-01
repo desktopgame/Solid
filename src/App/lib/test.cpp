@@ -21,13 +21,13 @@ static void physicsTest()
     System::FieldGenerator::Room room = field->getRoomAt(0);
     Random rand;
     for (int32_t i = 0; i < 10; i++) {
-        int32_t halfX = (System::Field::k_roomSizeX / 2) - 3;
-        int32_t halfZ = (System::Field::k_roomSizeZ / 2) - 3;
+        int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
+        int32_t halfZ = (System::Chunk::k_roomSizeZ / 2) - 3;
         int32_t tileOffsetX = rand.range(-halfX, halfX);
         int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
 
-        float enemyPosX = (room.center.x() + 0) * System::Field::k_tileSize;
-        float enemyPosZ = (room.center.z() + 0) * System::Field::k_tileSize;
+        float enemyPosX = (room.center.x() + 0) * System::Chunk::k_tileSize;
+        float enemyPosZ = (room.center.z() + 0) * System::Chunk::k_tileSize;
 
         auto enemy = System::Entities::SlimeEntity::create();
         enemy->setPosition(Vector3({ enemyPosX, 20, enemyPosZ }));
@@ -43,8 +43,8 @@ static void physicsTest()
     float deltaTime = 0.0288699996f;
 
     Geom::AABB fieldAABB;
-    fieldAABB.min = (Vector3({ 0, 0, 0 }) * System::Field::k_tileSize) - (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
-    fieldAABB.max = (Vector3({ System::Field::k_fieldSizeX, System::Field::k_fieldSizeY, System::Field::k_fieldSizeZ }) * System::Field::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Field::k_tileSize);
+    fieldAABB.min = (Vector3({ 0, 0, 0 }) * System::Chunk::k_tileSize) - (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Chunk::k_tileSize);
+    fieldAABB.max = (Vector3({ System::Chunk::k_fieldSizeX, System::Chunk::k_fieldSizeY, System::Chunk::k_fieldSizeZ }) * System::Chunk::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Chunk::k_tileSize);
 
     // 長すぎるとCIがタイムアウトするのでほどほどに
     const float duration = (60.0f * 10.0f * 1.0f);

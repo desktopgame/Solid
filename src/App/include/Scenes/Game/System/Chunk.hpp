@@ -131,7 +131,7 @@ public:
         Vector4({ 0.9490196078431372f, 0.9490196078431372f, 0.8549019607843137f, 1.0f }),
     };
 
-    explicit Field(
+    explicit Chunk(
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 

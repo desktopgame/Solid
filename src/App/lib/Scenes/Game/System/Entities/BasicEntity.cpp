@@ -76,8 +76,8 @@ void BasicEntity::update(Field& field)
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
-                        plane.center = (Vector3)hit.tile * Field::k_tileSize;
-                        plane.center += Vector3({ -0.5f, 0, 0 }) * Field::k_tileSize;
+                        plane.center = (Vector3)hit.tile * Chunk::k_tileSize;
+                        plane.center += Vector3({ -0.5f, 0, 0 }) * Chunk::k_tileSize;
                         plane.normal = Vector3({ -1, 0, 0 });
 
                         Geom::OBB obb = hit.node->getOBB();
@@ -114,8 +114,8 @@ void BasicEntity::update(Field& field)
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
-                        plane.center = (Vector3)hit.tile * Field::k_tileSize;
-                        plane.center += Vector3({ 0.5f, 0, 0 }) * Field::k_tileSize;
+                        plane.center = (Vector3)hit.tile * Chunk::k_tileSize;
+                        plane.center += Vector3({ 0.5f, 0, 0 }) * Chunk::k_tileSize;
                         plane.normal = Vector3({ 1, 0, 0 });
 
                         Geom::OBB obb = hit.node->getOBB();
@@ -164,8 +164,8 @@ void BasicEntity::update(Field& field)
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
-                        plane.center = (Vector3)hit.tile * Field::k_tileSize;
-                        plane.center += Vector3({ 0, -0.5f, 0 }) * Field::k_tileSize;
+                        plane.center = (Vector3)hit.tile * Chunk::k_tileSize;
+                        plane.center += Vector3({ 0, -0.5f, 0 }) * Chunk::k_tileSize;
                         plane.normal = Vector3({ 0, -1, 0 });
 
                         Geom::OBB obb = hit.node->getOBB();
@@ -202,8 +202,8 @@ void BasicEntity::update(Field& field)
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
-                        plane.center = (Vector3)hit.tile * Field::k_tileSize;
-                        plane.center += Vector3({ 0, 0.5f, 0 }) * Field::k_tileSize;
+                        plane.center = (Vector3)hit.tile * Chunk::k_tileSize;
+                        plane.center += Vector3({ 0, 0.5f, 0 }) * Chunk::k_tileSize;
                         plane.normal = Vector3({ 0, 1, 0 });
 
                         Geom::OBB obb = hit.node->getOBB();
@@ -252,8 +252,8 @@ void BasicEntity::update(Field& field)
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
-                        plane.center = (Vector3)hit.tile * Field::k_tileSize;
-                        plane.center += Vector3({ 0, 0, -0.5f }) * Field::k_tileSize;
+                        plane.center = (Vector3)hit.tile * Chunk::k_tileSize;
+                        plane.center += Vector3({ 0, 0, -0.5f }) * Chunk::k_tileSize;
                         plane.normal = Vector3({ 0, 0, -1 });
 
                         Geom::OBB obb = hit.node->getOBB();
@@ -290,8 +290,8 @@ void BasicEntity::update(Field& field)
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
                         Geom::Plane plane;
-                        plane.center = (Vector3)hit.tile * Field::k_tileSize;
-                        plane.center += Vector3({ 0, 0, 0.5f }) * Field::k_tileSize;
+                        plane.center = (Vector3)hit.tile * Chunk::k_tileSize;
+                        plane.center += Vector3({ 0, 0, 0.5f }) * Chunk::k_tileSize;
                         plane.normal = Vector3({ 0, 0, 1 });
 
                         Geom::OBB obb = hit.node->getOBB();
@@ -335,7 +335,7 @@ void BasicEntity::update(Field& field)
     setPosition(newPos);
 
     if (m_receiveGravity) {
-        m_velocity.y() -= Field::k_gravity * dt;
+        m_velocity.y() -= Chunk::k_gravity * dt;
     }
 
     Vector3 rot = m_torque * dt;
@@ -529,19 +529,19 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
     float distance = 0.0f;
     float limit = Vector3::distance(center, end);
     while (distance < limit) {
-        float minX = alignTile(center.x() - (size.x() / 2.0f), Field::k_tileSize);
-        float maxX = alignTile(center.x() + (size.x() / 2.0f), Field::k_tileSize);
-        float minY = alignTile(center.y() - (size.y() / 2.0f), Field::k_tileSize);
-        float maxY = alignTile(center.y() + (size.y() / 2.0f), Field::k_tileSize);
-        float minZ = alignTile(center.z() - (size.z() / 2.0f), Field::k_tileSize);
-        float maxZ = alignTile(center.z() + (size.z() / 2.0f), Field::k_tileSize);
+        float minX = alignTile(center.x() - (size.x() / 2.0f), Chunk::k_tileSize);
+        float maxX = alignTile(center.x() + (size.x() / 2.0f), Chunk::k_tileSize);
+        float minY = alignTile(center.y() - (size.y() / 2.0f), Chunk::k_tileSize);
+        float maxY = alignTile(center.y() + (size.y() / 2.0f), Chunk::k_tileSize);
+        float minZ = alignTile(center.z() - (size.z() / 2.0f), Chunk::k_tileSize);
+        float maxZ = alignTile(center.z() + (size.z() / 2.0f), Chunk::k_tileSize);
 
-        for (float fx = minX; fx <= maxX; fx += Field::k_tileSize) {
-            for (float fy = minY; fy <= maxY; fy += Field::k_tileSize) {
-                for (float fz = minZ; fz <= maxZ; fz += Field::k_tileSize) {
-                    int32_t ix = static_cast<int32_t>(fx / Field::k_tileSize);
-                    int32_t iy = static_cast<int32_t>(fy / Field::k_tileSize);
-                    int32_t iz = static_cast<int32_t>(fz / Field::k_tileSize);
+        for (float fx = minX; fx <= maxX; fx += Chunk::k_tileSize) {
+            for (float fy = minY; fy <= maxY; fy += Chunk::k_tileSize) {
+                for (float fz = minZ; fz <= maxZ; fz += Chunk::k_tileSize) {
+                    int32_t ix = static_cast<int32_t>(fx / Chunk::k_tileSize);
+                    int32_t iy = static_cast<int32_t>(fy / Chunk::k_tileSize);
+                    int32_t iz = static_cast<int32_t>(fz / Chunk::k_tileSize);
                     if (!field.hasBlockAt(ix, iy, iz)) {
                         continue;
                     }
@@ -554,25 +554,25 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
             }
         }
 
-        center += (dir * Field::k_tileSize);
-        distance += Field::k_tileSize;
+        center += (dir * Chunk::k_tileSize);
+        distance += Chunk::k_tileSize;
     }
 
     center = end;
 
-    float minX = alignTile(center.x() - (size.x() / 2.0f), Field::k_tileSize);
-    float maxX = alignTile(center.x() + (size.x() / 2.0f), Field::k_tileSize);
-    float minY = alignTile(center.y() - (size.y() / 2.0f), Field::k_tileSize);
-    float maxY = alignTile(center.y() + (size.y() / 2.0f), Field::k_tileSize);
-    float minZ = alignTile(center.z() - (size.z() / 2.0f), Field::k_tileSize);
-    float maxZ = alignTile(center.z() + (size.z() / 2.0f), Field::k_tileSize);
+    float minX = alignTile(center.x() - (size.x() / 2.0f), Chunk::k_tileSize);
+    float maxX = alignTile(center.x() + (size.x() / 2.0f), Chunk::k_tileSize);
+    float minY = alignTile(center.y() - (size.y() / 2.0f), Chunk::k_tileSize);
+    float maxY = alignTile(center.y() + (size.y() / 2.0f), Chunk::k_tileSize);
+    float minZ = alignTile(center.z() - (size.z() / 2.0f), Chunk::k_tileSize);
+    float maxZ = alignTile(center.z() + (size.z() / 2.0f), Chunk::k_tileSize);
 
-    for (float fx = minX; fx <= maxX; fx += Field::k_tileSize) {
-        for (float fy = minY; fy <= maxY; fy += Field::k_tileSize) {
-            for (float fz = minZ; fz <= maxZ; fz += Field::k_tileSize) {
-                int32_t ix = static_cast<int32_t>(fx / Field::k_tileSize);
-                int32_t iy = static_cast<int32_t>(fy / Field::k_tileSize);
-                int32_t iz = static_cast<int32_t>(fz / Field::k_tileSize);
+    for (float fx = minX; fx <= maxX; fx += Chunk::k_tileSize) {
+        for (float fy = minY; fy <= maxY; fy += Chunk::k_tileSize) {
+            for (float fz = minZ; fz <= maxZ; fz += Chunk::k_tileSize) {
+                int32_t ix = static_cast<int32_t>(fx / Chunk::k_tileSize);
+                int32_t iy = static_cast<int32_t>(fy / Chunk::k_tileSize);
+                int32_t iz = static_cast<int32_t>(fz / Chunk::k_tileSize);
                 if (!field.hasBlockAt(ix, iy, iz)) {
                     continue;
                 }
@@ -585,8 +585,8 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
         }
     }
 
-    center += (dir * Field::k_tileSize);
-    distance += Field::k_tileSize;
+    center += (dir * Chunk::k_tileSize);
+    distance += Chunk::k_tileSize;
 }
 
 void BasicEntity::hitTilesStrict(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits)
@@ -600,13 +600,13 @@ void BasicEntity::hitTilesStrict(Field& field, const std::shared_ptr<Common::Gra
         }
 
         Geom::OBB checkTileOBB;
-        checkTileOBB.center = (Vector3)checkTile * Field::k_tileSize;
+        checkTileOBB.center = (Vector3)checkTile * Chunk::k_tileSize;
         checkTileOBB.axes = std::array<Vector3, 3> {
             Vector3({ 1, 0, 0 }),
             Vector3({ 0, 1, 0 }),
             Vector3({ 0, 0, 1 }),
         };
-        checkTileOBB.size = Vector3({ 1, 1, 1 }) * Field::k_tileSize;
+        checkTileOBB.size = Vector3({ 1, 1, 1 }) * Chunk::k_tileSize;
 
         bool isHit = Geom::Collision::testOBBAndOBB(nodeOBB, checkTileOBB);
         if (isHit) {

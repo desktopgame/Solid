@@ -24,7 +24,7 @@ public:
         IntVector3 center;
     };
 
-    explicit FieldGenerator();
+    explicit ChunkGenerator();
     void generate();
 
     const std::vector<Vector4>& getTiles() const;

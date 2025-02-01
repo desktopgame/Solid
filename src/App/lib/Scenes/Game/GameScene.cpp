@@ -43,13 +43,13 @@ void GameScene::onEnter()
             }
             System::FieldGenerator::Room room = m_field->getRoomAt(i);
             for (int32_t j = 0; j < rand.range(1, 5); j++) {
-                // int32_t halfX = (System::Field::k_roomSizeX / 2) - 3;
-                // int32_t halfZ = (System::Field::k_roomSizeZ / 2) - 3;
+                // int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
+                // int32_t halfZ = (System::Chunk::k_roomSizeZ / 2) - 3;
                 // int32_t tileOffsetX = rand.range(-halfX, halfX);
                 // int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
 
-                float enemyPosX = (room.center.x() + 0) * System::Field::k_tileSize;
-                float enemyPosZ = (room.center.z() + 0) * System::Field::k_tileSize;
+                float enemyPosX = (room.center.x() + 0) * System::Chunk::k_tileSize;
+                float enemyPosZ = (room.center.z() + 0) * System::Chunk::k_tileSize;
 
                 m_debugEntity = System::Entities::SlimeEntity::create();
                 m_debugEntity->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
@@ -60,7 +60,7 @@ void GameScene::onEnter()
         System::FieldGenerator::Room mainRoom = m_field->getRoomAt(mainRoomIndex);
         m_debugPlayer = System::Entities::PlayerEntity::create(
             Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
-        m_debugPlayer->setPosition(Vector3({ mainRoom.center.x() * System::Field::k_tileSize, 10, mainRoom.center.z() * System::Field::k_tileSize }));
+        m_debugPlayer->setPosition(Vector3({ mainRoom.center.x() * System::Chunk::k_tileSize, 10, mainRoom.center.z() * System::Chunk::k_tileSize }));
         m_field->setPlayer(m_debugPlayer);
     }
     if (!m_aimTexture) {
