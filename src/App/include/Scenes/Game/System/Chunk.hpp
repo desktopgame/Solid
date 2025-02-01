@@ -20,6 +20,9 @@ public:
     static inline constexpr int32_t k_roomSizeZ = (k_fieldSizeZ - (k_roomSpace * 4)) / 3;
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
+    static_assert(k_roomSpace % 2 == 0);
+    static_assert(k_roomSizeX % 2 == 0);
+    static_assert(k_roomSizeZ % 2 == 0);
 
     static inline const std::array<Matrix, 6> k_translateMatrixTable = {
         // posY
