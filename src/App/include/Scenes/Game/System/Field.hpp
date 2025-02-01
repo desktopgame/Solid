@@ -71,15 +71,6 @@ public:
     void setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player);
     std::shared_ptr<Entities::PlayerEntity> getPlayer() const;
 
-    static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
-    {
-        return Chunk::toIndex(x, y, z);
-    }
-    static inline IntVector3 toCoord(int32_t index)
-    {
-        return Chunk::toCoord(index);
-    }
-
 private:
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
