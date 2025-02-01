@@ -21,8 +21,6 @@ public:
 
     inline bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const Vector3& pos) const
     {
-        int32_t ix = static_cast<int32_t>(pos.x());
-        int32_t iz = static_cast<int32_t>(pos.z());
         bool found = false;
 
         for (auto chunk : m_chunks) {
