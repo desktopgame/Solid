@@ -54,7 +54,42 @@ public:
         return found;
     }
 
+    inline std::shared_ptr<Chunk> loadChunk(const Vector3& pos)
+    {
+        std::optional<std::shared_ptr<Chunk>> c;
+        if (tryFindChunk(c, pos)) {
+            return *c;
+        }
+        int32_t tileX = pos.x() / Chunk::k_tileSize;
+        int32_t tileZ = pos.z() / Chunk::k_tileSize;
+
+        int32_t gridPosX = tileX / Chunk::k_fieldSizeX;
+        int32_t gridPosZ = tileZ / Chunk::k_fieldSizeZ;
+
+        auto chunk = std::make_shared<Chunk>(shared_from_this(), IntVector2({ gridPosX, gridPosZ }), m_normalTexture, m_borderTexture);
+        chunk->generate();
+        m_chunks.emplace_back(chunk);
+        return chunk;
+    }
+
+    inline std::shared_ptr<Chunk> loadChunk(const IntVector2& gridPosition)
+    {
+        std::optional<std::shared_ptr<Chunk>> c;
+        if (tryFindChunk(c, gridPosition)) {
+            return *c;
+        }
+
+        auto chunk = std::make_shared<Chunk>(shared_from_this(), gridPosition, m_normalTexture, m_borderTexture);
+        chunk->generate();
+        m_chunks.emplace_back(chunk);
+        return chunk;
+    }
+
+    void reloadChunks();
+
     std::shared_ptr<Chunk> getCurrentChunk() const;
+
+    std::vector<std::shared_ptr<Chunk>> getLoadedChunks() const;
 
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
@@ -91,6 +126,7 @@ private:
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
     std::vector<std::shared_ptr<Chunk>> m_chunks;
+    std::vector<std::shared_ptr<Chunk>> m_loadedChunks;
     std::shared_ptr<Entities::PlayerEntity> m_player;
 };
 }
