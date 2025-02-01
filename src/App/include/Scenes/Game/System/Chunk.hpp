@@ -155,6 +155,36 @@ public:
         return m_gridPosition;
     }
 
+    inline float getPhysicalCenterX() const
+    {
+        return (m_gridPosition.x() * Chunk::k_fieldSizeX) + (Chunk::k_fieldSizeX / 2) * Chunk::k_tileSize;
+    }
+
+    inline float getPhysicalCenterZ() const
+    {
+        return (m_gridPosition.y() * Chunk::k_fieldSizeZ) + (Chunk::k_fieldSizeZ / 2) * Chunk::k_tileSize;
+    }
+
+    inline float getPhysicalMinX() const
+    {
+        return getPhysicalCenterX() - ((Chunk::k_fieldSizeX * Chunk::k_tileSize) / 2.0f);
+    }
+
+    inline float getPhysicalMaxX() const
+    {
+        return getPhysicalCenterX() + ((Chunk::k_fieldSizeX * Chunk::k_tileSize) / 2.0f);
+    }
+
+    inline float getPhysicalMinZ() const
+    {
+        return getPhysicalCenterZ() - ((Chunk::k_fieldSizeZ * Chunk::k_tileSize) / 2.0f);
+    }
+
+    inline float getPhysicalMaxZ() const
+    {
+        return getPhysicalCenterZ() + ((Chunk::k_fieldSizeZ * Chunk::k_tileSize) / 2.0f);
+    }
+
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
         if (x >= k_fieldSizeX || x < 0) {
