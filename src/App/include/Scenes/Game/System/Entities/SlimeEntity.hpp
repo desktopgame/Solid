@@ -7,16 +7,16 @@ public:
     static std::shared_ptr<SlimeEntity> create();
     virtual ~SlimeEntity();
 
-    virtual void idle(Field& field) override;
+    virtual void idle(const std::shared_ptr<Chunk>& chunk) override;
     virtual void onGui() override;
 
 protected:
     SlimeEntity();
 
-    virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) override;
-    virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) override;
-    virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) override;
-    virtual void onRotationStop(Field& field) override;
+    virtual void onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
+    virtual void onRotationStop(const std::shared_ptr<Chunk>& chunk) override;
 
 private:
     void stop();

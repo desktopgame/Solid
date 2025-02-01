@@ -8,7 +8,7 @@
 namespace App::Scenes::Game::System {
 // public
 Chunk::Chunk(
-    Field& field,
+    std::weak_ptr<Field> field,
     const IntVector2& position,
     const std::shared_ptr<Texture>& normalTexture,
     const std::shared_ptr<Texture>& borderTexture)
@@ -82,8 +82,10 @@ void Chunk::generate()
 
 void Chunk::update()
 {
+    auto self = shared_from_this();
+
     for (auto& entity : m_entities) {
-        entity->update(m_field);
+        entity->update(self);
     }
 
     for (int32_t i = 0; i < static_cast<int32_t>(m_entities.size()); i++) {
@@ -179,8 +181,7 @@ void Chunk::draw2D(const std::shared_ptr<Renderer>& renderer)
     }
 }
 
-const Field& Chunk::getField() const { return m_field; }
-Field& Chunk::getField() { return m_field; }
+std::shared_ptr<Field> Chunk::getField() const { return m_field.lock(); }
 
 void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }

@@ -12,7 +12,7 @@ std::shared_ptr<PlayerEntity> PlayerEntity::create(const std::shared_ptr<Common:
 }
 PlayerEntity::~PlayerEntity() { }
 
-void PlayerEntity::idle(Field& field)
+void PlayerEntity::idle(const std::shared_ptr<Chunk>& chunk)
 {
     auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
     auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
@@ -77,12 +77,12 @@ void PlayerEntity::idle(Field& field)
         proj->setRotation(Vector3({ m_cameraAngleX, Mathf::normalizeDegree(-m_cameraAngleY), 0.0f }));
         proj->setDirection(forward);
         proj->setSpeed(200);
-        field.spwan(proj);
+        chunk->spwan(proj);
     }
 }
-void PlayerEntity::update(Field& field)
+void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
 {
-    BasicEntity::update(field);
+    BasicEntity::update(chunk);
 
     auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
     auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));

@@ -11,7 +11,7 @@ std::shared_ptr<ProjectileEntity> ProjectileEntity::create(const std::shared_ptr
 }
 ProjectileEntity::~ProjectileEntity() { }
 
-void ProjectileEntity::idle(Field& field)
+void ProjectileEntity::idle(const std::shared_ptr<Chunk>& chunk)
 {
     setVelocity(m_direction * m_speed);
 }
@@ -55,9 +55,9 @@ ProjectileEntity::ProjectileEntity(const std::shared_ptr<Common::Graphics::Node>
     setReceiveGravity(false);
 }
 
-void ProjectileEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
-void ProjectileEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
-void ProjectileEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
+void ProjectileEntity::onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
+void ProjectileEntity::onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
+void ProjectileEntity::onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
 
 // private
 }

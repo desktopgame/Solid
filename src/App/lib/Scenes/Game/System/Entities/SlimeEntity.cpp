@@ -13,8 +13,9 @@ std::shared_ptr<SlimeEntity> SlimeEntity::create()
 SlimeEntity::~SlimeEntity()
 {
 }
-void SlimeEntity::idle(Field& field)
+void SlimeEntity::idle(const std::shared_ptr<Chunk>& chunk)
 {
+    auto field = chunk->getField();
     switch (m_state) {
     case State::Wait: {
         if (isOnGround()) {
@@ -24,7 +25,7 @@ void SlimeEntity::idle(Field& field)
             m_state = State::Look;
 
             int32_t degree = m_random.range(0, 360);
-            Vector3 playerPos = field.getPlayer()->getPosition();
+            Vector3 playerPos = field->getPlayer()->getPosition();
             Vector3 selfPos = getPosition();
             float distToPlayer = Vector3::distance(playerPos, selfPos);
             if (distToPlayer < 30.0f) {
@@ -113,7 +114,7 @@ SlimeEntity::SlimeEntity()
     m_currentHP = m_maximumHP = 3;
 }
 
-void SlimeEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z)
+void SlimeEntity::onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z)
 {
     if (m_state == State::Walk) {
         stop();
@@ -121,13 +122,13 @@ void SlimeEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z)
         m_moveDir = -m_moveDir;
     }
 }
-void SlimeEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z)
+void SlimeEntity::onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z)
 {
 }
-void SlimeEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z)
+void SlimeEntity::onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z)
 {
 }
-void SlimeEntity::onRotationStop(Field& field)
+void SlimeEntity::onRotationStop(const std::shared_ptr<Chunk>& chunk)
 {
     if (m_state == State::Look) {
         m_state = State::Back;

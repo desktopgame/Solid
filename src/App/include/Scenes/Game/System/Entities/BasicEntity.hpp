@@ -8,8 +8,8 @@ public:
     static std::shared_ptr<BasicEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);
     virtual ~BasicEntity();
 
-    virtual void idle(Field& field);
-    virtual void update(Field& field) override;
+    virtual void idle(const std::shared_ptr<Chunk>& chunk);
+    virtual void update(const std::shared_ptr<Chunk>& chunk) override;
     virtual void onGui() override;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
@@ -43,10 +43,10 @@ protected:
     void onPositionChanged(const Vector3& position) override;
     void onRotationChanged(const Vector3& rotation) override;
 
-    virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z);
-    virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z);
-    virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z);
-    virtual void onRotationStop(Field& field);
+    virtual void onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z);
+    virtual void onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z);
+    virtual void onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z);
+    virtual void onRotationStop(const std::shared_ptr<Chunk>& chunk);
 
 private:
     class NodeHit {
@@ -56,8 +56,8 @@ private:
     };
 
     void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
-    void hitTilesFuzzy(Field& field, const Vector3& offset, std::vector<IntVector3>& hits);
-    void hitTilesStrict(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits);
+    void hitTilesFuzzy(const std::shared_ptr<Chunk>& chunk, const Vector3& offset, std::vector<IntVector3>& hits);
+    void hitTilesStrict(const std::shared_ptr<Chunk>& chunk, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits);
 
     static inline float alignTile(float a, float tileSize)
     {

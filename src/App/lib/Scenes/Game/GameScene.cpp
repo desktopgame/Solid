@@ -34,14 +34,16 @@ void GameScene::onEnter()
         m_field = std::make_shared<System::Field>(normalTex, borderTex);
         m_field->generate();
 
-        Random rand;
-        int32_t mainRoomIndex = rand.range(0, m_field->getRoomCount() - 1);
+        auto chunk = m_field->getCurrentChunk();
 
-        for (int32_t i = 0; i < m_field->getRoomCount(); i++) {
+        Random rand;
+        int32_t mainRoomIndex = rand.range(0, chunk->getRoomCount() - 1);
+
+        for (int32_t i = 0; i < chunk->getRoomCount(); i++) {
             if (i == mainRoomIndex) {
                 continue;
             }
-            System::ChunkGenerator::Room room = m_field->getRoomAt(i);
+            System::ChunkGenerator::Room room = chunk->getRoomAt(i);
             for (int32_t j = 0; j < rand.range(1, 5); j++) {
                 // int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
                 // int32_t halfZ = (System::Chunk::k_roomSizeZ / 2) - 3;
@@ -53,11 +55,11 @@ void GameScene::onEnter()
 
                 m_debugEntity = System::Entities::SlimeEntity::create();
                 m_debugEntity->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
-                m_field->spwan(m_debugEntity);
+                chunk->spwan(m_debugEntity);
             }
         }
 
-        System::ChunkGenerator::Room mainRoom = m_field->getRoomAt(mainRoomIndex);
+        System::ChunkGenerator::Room mainRoom = chunk->getRoomAt(mainRoomIndex);
         m_debugPlayer = System::Entities::PlayerEntity::create(
             Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
         m_debugPlayer->setPosition(Vector3({ mainRoom.center.x() * System::Chunk::k_tileSize, 10, mainRoom.center.z() * System::Chunk::k_tileSize }));

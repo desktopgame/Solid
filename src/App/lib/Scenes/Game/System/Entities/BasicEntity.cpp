@@ -11,10 +11,10 @@ std::shared_ptr<BasicEntity> BasicEntity::create(const std::shared_ptr<Common::G
 }
 BasicEntity::~BasicEntity() { }
 
-void BasicEntity::idle(Field& field)
+void BasicEntity::idle(const std::shared_ptr<Chunk>& chunk)
 {
 }
-void BasicEntity::update(Field& field)
+void BasicEntity::update(const std::shared_ptr<Chunk>& chunk)
 {
     float dt = Time::deltaTime();
     if (m_knockbackPlaying) {
@@ -30,10 +30,10 @@ void BasicEntity::update(Field& field)
             m_knockbackElapsed = 0.0f;
             m_velocity.x() = 0.0f;
             m_velocity.z() = 0.0f;
-            idle(field);
+            idle(chunk);
         }
     } else {
-        idle(field);
+        idle(chunk);
     }
 
     if (m_damagePlaying) {
@@ -59,7 +59,7 @@ void BasicEntity::update(Field& field)
     if (Mathf::abs(m_velocity.x()) > 0) {
         Vector3 offset = delta * Vector3({ 1, 0, 0 });
         m_fuzzyHitCache.clear();
-        hitTilesFuzzy(field, offset, m_fuzzyHitCache);
+        hitTilesFuzzy(chunk, offset, m_fuzzyHitCache);
 
         if (m_fuzzyHitCache.size() > 0) {
             if (m_velocity.x() > 0.0f) {
@@ -68,10 +68,10 @@ void BasicEntity::update(Field& field)
                     float maxLen = 0.0f;
 
                     m_fuzzyHitCache.clear();
-                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
+                    hitTilesFuzzy(chunk, totalOffset, m_fuzzyHitCache);
 
                     m_strictHitCache.clear();
-                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
+                    hitTilesStrict(chunk, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
@@ -95,7 +95,7 @@ void BasicEntity::update(Field& field)
                         newPos.x() -= maxLen + threshould;
                         totalOffset.x() -= maxLen + threshould;
                         m_velocity.x() = 0.0f;
-                        onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
+                        onCollisionWall(chunk, hitTile.x(), hitTile.y(), hitTile.z());
                     } else {
                         break;
                     }
@@ -106,10 +106,10 @@ void BasicEntity::update(Field& field)
                     float maxLen = 0.0f;
 
                     m_fuzzyHitCache.clear();
-                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
+                    hitTilesFuzzy(chunk, totalOffset, m_fuzzyHitCache);
 
                     m_strictHitCache.clear();
-                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
+                    hitTilesStrict(chunk, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
@@ -133,7 +133,7 @@ void BasicEntity::update(Field& field)
                         newPos.x() += maxLen + threshould;
                         totalOffset.x() += maxLen + threshould;
                         m_velocity.x() = 0.0f;
-                        onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
+                        onCollisionWall(chunk, hitTile.x(), hitTile.y(), hitTile.z());
                     } else {
                         break;
                     }
@@ -147,7 +147,7 @@ void BasicEntity::update(Field& field)
         Vector3 offset = delta * Vector3({ 0, 1, 0 });
 
         m_fuzzyHitCache.clear();
-        hitTilesFuzzy(field, offset, m_fuzzyHitCache);
+        hitTilesFuzzy(chunk, offset, m_fuzzyHitCache);
 
         if (m_fuzzyHitCache.size() > 0) {
             if (m_velocity.y() > 0.0f) {
@@ -156,10 +156,10 @@ void BasicEntity::update(Field& field)
                     float maxLen = 0.0f;
 
                     m_fuzzyHitCache.clear();
-                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
+                    hitTilesFuzzy(chunk, totalOffset, m_fuzzyHitCache);
 
                     m_strictHitCache.clear();
-                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
+                    hitTilesStrict(chunk, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
@@ -183,7 +183,7 @@ void BasicEntity::update(Field& field)
                         newPos.y() -= maxLen + threshould;
                         totalOffset.y() -= maxLen + threshould;
                         m_velocity.y() = 0.0f;
-                        onCollisionRoof(field, hitTile.x(), hitTile.y(), hitTile.z());
+                        onCollisionRoof(chunk, hitTile.x(), hitTile.y(), hitTile.z());
                     } else {
                         break;
                     }
@@ -194,10 +194,10 @@ void BasicEntity::update(Field& field)
                     float maxLen = 0.0f;
 
                     m_fuzzyHitCache.clear();
-                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
+                    hitTilesFuzzy(chunk, totalOffset, m_fuzzyHitCache);
 
                     m_strictHitCache.clear();
-                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
+                    hitTilesStrict(chunk, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
@@ -222,7 +222,7 @@ void BasicEntity::update(Field& field)
                         totalOffset.y() += maxLen + threshould;
                         m_velocity.y() = 0.0f;
                         m_onGround = true;
-                        onCollisionFloor(field, hitTile.x(), hitTile.y(), hitTile.z());
+                        onCollisionFloor(chunk, hitTile.x(), hitTile.y(), hitTile.z());
                     } else {
                         break;
                     }
@@ -235,7 +235,7 @@ void BasicEntity::update(Field& field)
     if (Mathf::abs(m_velocity.z()) > 0) {
         Vector3 offset = delta * Vector3({ 0, 0, 1 });
         m_fuzzyHitCache.clear();
-        hitTilesFuzzy(field, offset, m_fuzzyHitCache);
+        hitTilesFuzzy(chunk, offset, m_fuzzyHitCache);
 
         if (m_fuzzyHitCache.size() > 0) {
             if (m_velocity.z() > 0.0f) {
@@ -244,10 +244,10 @@ void BasicEntity::update(Field& field)
                     float maxLen = 0.0f;
 
                     m_fuzzyHitCache.clear();
-                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
+                    hitTilesFuzzy(chunk, totalOffset, m_fuzzyHitCache);
 
                     m_strictHitCache.clear();
-                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
+                    hitTilesStrict(chunk, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
@@ -271,7 +271,7 @@ void BasicEntity::update(Field& field)
                         newPos.z() -= maxLen + threshould;
                         totalOffset.z() -= maxLen + threshould;
                         m_velocity.z() = 0.0f;
-                        onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
+                        onCollisionWall(chunk, hitTile.x(), hitTile.y(), hitTile.z());
                     } else {
                         break;
                     }
@@ -282,10 +282,10 @@ void BasicEntity::update(Field& field)
                     float maxLen = 0.0f;
 
                     m_fuzzyHitCache.clear();
-                    hitTilesFuzzy(field, totalOffset, m_fuzzyHitCache);
+                    hitTilesFuzzy(chunk, totalOffset, m_fuzzyHitCache);
 
                     m_strictHitCache.clear();
-                    hitTilesStrict(field, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
+                    hitTilesStrict(chunk, m_node, totalOffset, m_fuzzyHitCache, m_strictHitCache);
 
                     IntVector3 hitTile;
                     for (const auto& hit : m_strictHitCache) {
@@ -309,7 +309,7 @@ void BasicEntity::update(Field& field)
                         newPos.z() += maxLen + threshould;
                         totalOffset.z() += maxLen + threshould;
                         m_velocity.z() = 0.0f;
-                        onCollisionWall(field, hitTile.x(), hitTile.y(), hitTile.z());
+                        onCollisionWall(chunk, hitTile.x(), hitTile.y(), hitTile.z());
                     } else {
                         break;
                     }
@@ -324,7 +324,7 @@ void BasicEntity::update(Field& field)
     m_aabb.max += newPos - oldPos;
 
     std::vector<IntVector3> tmpHits;
-    hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), tmpHits);
+    hitTilesFuzzy(chunk, Vector3({ 0, 0, 0 }), tmpHits);
 
     if (!tmpHits.empty()) {
         newPos = oldPos;
@@ -366,7 +366,7 @@ void BasicEntity::update(Field& field)
             rehashAABB();
 
             m_fuzzyHitCache.clear();
-            hitTilesFuzzy(field, Vector3({ 0, 0, 0 }), m_fuzzyHitCache);
+            hitTilesFuzzy(chunk, Vector3({ 0, 0, 0 }), m_fuzzyHitCache);
 
             if (!m_fuzzyHitCache.empty()) {
                 high = mid;
@@ -389,7 +389,7 @@ void BasicEntity::update(Field& field)
         rehashAABB();
 
         if (best == 0.0f) {
-            onRotationStop(field);
+            onRotationStop(chunk);
         }
     }
 }
@@ -479,10 +479,10 @@ BasicEntity::BasicEntity(const std::shared_ptr<Common::Graphics::Node>& node)
 
 void BasicEntity::onPositionChanged(const Vector3& position) { m_node->setLocalPosition(position); }
 void BasicEntity::onRotationChanged(const Vector3& rotation) { m_node->setLocalRotation(rotation); }
-void BasicEntity::onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) { }
-void BasicEntity::onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) { }
-void BasicEntity::onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) { }
-void BasicEntity::onRotationStop(Field& field) { }
+void BasicEntity::onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { }
+void BasicEntity::onRotationStop(const std::shared_ptr<Chunk>& chunk) { }
 // private
 void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst)
 {
@@ -519,8 +519,9 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
     }
 }
 
-void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector<IntVector3>& hits)
+void BasicEntity::hitTilesFuzzy(const std::shared_ptr<Chunk>& chunk, const Vector3& offset, std::vector<IntVector3>& hits)
 {
+    auto field = chunk->getField();
     Vector3 center = m_aabb.min + ((m_aabb.max - m_aabb.min) / 2.0f);
     Vector3 size = (m_aabb.max - m_aabb.min);
     Vector3 end = center + offset;
@@ -542,11 +543,11 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
                     int32_t ix = static_cast<int32_t>(fx / Chunk::k_tileSize);
                     int32_t iy = static_cast<int32_t>(fy / Chunk::k_tileSize);
                     int32_t iz = static_cast<int32_t>(fz / Chunk::k_tileSize);
-                    if (!field.hasBlockAt(ix, iy, iz)) {
+                    if (!field->hasBlockAt(ix, iy, iz)) {
                         continue;
                     }
 
-                    int32_t block = field.getBlockAt(ix, iy, iz);
+                    int32_t block = field->getBlockAt(ix, iy, iz);
                     if (block != 0) {
                         hits.emplace_back(IntVector3({ ix, iy, iz }));
                     }
@@ -573,11 +574,11 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
                 int32_t ix = static_cast<int32_t>(fx / Chunk::k_tileSize);
                 int32_t iy = static_cast<int32_t>(fy / Chunk::k_tileSize);
                 int32_t iz = static_cast<int32_t>(fz / Chunk::k_tileSize);
-                if (!field.hasBlockAt(ix, iy, iz)) {
+                if (!field->hasBlockAt(ix, iy, iz)) {
                     continue;
                 }
 
-                int32_t block = field.getBlockAt(ix, iy, iz);
+                int32_t block = field->getBlockAt(ix, iy, iz);
                 if (block != 0) {
                     hits.emplace_back(IntVector3({ ix, iy, iz }));
                 }
@@ -589,13 +590,14 @@ void BasicEntity::hitTilesFuzzy(Field& field, const Vector3& offset, std::vector
     distance += Chunk::k_tileSize;
 }
 
-void BasicEntity::hitTilesStrict(Field& field, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits)
+void BasicEntity::hitTilesStrict(const std::shared_ptr<Chunk>& chunk, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits)
 {
+    auto field = chunk->getField();
     Geom::OBB nodeOBB = node->getOBB();
     nodeOBB.center += offset;
 
     for (const auto& checkTile : checkTiles) {
-        if (!field.hasBlockAt(checkTile.x(), checkTile.y(), checkTile.z())) {
+        if (!field->hasBlockAt(checkTile.x(), checkTile.y(), checkTile.z())) {
             continue;
         }
 
@@ -618,7 +620,7 @@ void BasicEntity::hitTilesStrict(Field& field, const std::shared_ptr<Common::Gra
     }
     for (int32_t i = 0; i < node->getChildrenCount(); i++) {
         auto c = node->getChildAt(i);
-        hitTilesStrict(field, c, offset, checkTiles, hits);
+        hitTilesStrict(chunk, c, offset, checkTiles, hits);
     }
 }
 

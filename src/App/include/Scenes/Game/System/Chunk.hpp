@@ -10,7 +10,7 @@ namespace Entities {
     class PlayerEntity;
 }
 class Field;
-class Chunk {
+class Chunk : public std::enable_shared_from_this<Chunk> {
 public:
     static inline constexpr int32_t k_fieldSizeX = 132;
     static inline constexpr int32_t k_fieldSizeY = 16;
@@ -136,7 +136,7 @@ public:
     };
 
     explicit Chunk(
-        Field& field,
+        std::weak_ptr<Field> field,
         const IntVector2& position,
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
@@ -148,8 +148,7 @@ public:
     void draw3D(const std::shared_ptr<Renderer>& renderer);
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 
-    const Field& getField() const;
-    Field& getField();
+    std::shared_ptr<Field> getField() const;
 
     inline IntVector2 getPosition() const
     {
@@ -204,7 +203,7 @@ private:
     std::vector<std::shared_ptr<Entity>> m_entities;
 
     std::shared_ptr<ChunkGenerator> m_generator;
-    Field& m_field;
+    std::weak_ptr<Field> m_field;
     IntVector2 m_position;
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;

@@ -6,12 +6,13 @@
 
 namespace App::Scenes::Game::System {
 class Field;
+class Chunk;
 class DamageSource;
 class Entity : public std::enable_shared_from_this<Entity> {
 public:
     virtual ~Entity();
 
-    virtual void update(Field& field) = 0;
+    virtual void update(const std::shared_ptr<Chunk>& chunk) = 0;
     virtual void onGui() = 0;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) = 0;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) = 0;

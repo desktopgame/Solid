@@ -11,46 +11,54 @@ Field::Field(
     const std::shared_ptr<Texture>& borderTexture)
     : m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
-    , m_chunk()
+    , m_chunks()
     , m_player()
 {
 }
 
 void Field::generate()
 {
-    if (!m_chunk) {
-        m_chunk = std::make_shared<Chunk>(*this, IntVector2({ 0, 0 }), m_normalTexture, m_borderTexture);
-        m_chunk->generate();
+    if (m_chunks.empty()) {
+        auto self = shared_from_this();
+        auto chunk = std::make_shared<Chunk>(self, IntVector2({ 0, 0 }), m_normalTexture, m_borderTexture);
+        chunk->generate();
+        m_chunks.emplace_back(chunk);
     }
 }
 
 void Field::update()
 {
-    m_player->update(*this);
-    m_chunk->update();
+    auto chunk = getCurrentChunk();
+    m_player->update(chunk);
+    chunk->update();
 }
 void Field::onGui()
 {
     m_player->onGui();
-    m_chunk->onGui();
+    getCurrentChunk()->onGui();
 }
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     m_player->draw3D(renderer);
-    m_chunk->draw3D(renderer);
+    getCurrentChunk()->draw3D(renderer);
 }
 void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
-    m_chunk->draw2D(renderer);
+    getCurrentChunk()->draw2D(renderer);
+}
+
+std::shared_ptr<Chunk> Field::getCurrentChunk() const
+{
+    if (m_player) {
+        std::optional<std::shared_ptr<Chunk>> c;
+        if (tryFindChunk(c, m_player->getPosition())) {
+            return *c;
+        }
+    }
+    return m_chunks.at(0);
 }
 
 void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
 std::shared_ptr<Entities::PlayerEntity> Field::getPlayer() const { return m_player; }
 
-void Field::spwan(const std::shared_ptr<Entity>& entity) { m_chunk->spwan(entity); }
-std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_chunk->getEntityAt(index); }
-int32_t Field::getEntityCount() const { return m_chunk->getEntityCount(); }
-
-ChunkGenerator::Room Field::getRoomAt(int32_t index) const { return m_chunk->getRoomAt(index); }
-int32_t Field::getRoomCount() const { return m_chunk->getRoomCount(); }
 }

@@ -7,7 +7,7 @@ public:
     static std::shared_ptr<ProjectileEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);
     virtual ~ProjectileEntity();
 
-    virtual void idle(Field& field) override;
+    virtual void idle(const std::shared_ptr<Chunk>& chunk) override;
     virtual void onHitEnterEntity(const std::shared_ptr<Entity>& entity) override;
 
     void setOwner(const std::weak_ptr<Entity>& owner);
@@ -22,9 +22,9 @@ public:
 protected:
     ProjectileEntity(const std::shared_ptr<Common::Graphics::Node>& node);
 
-    virtual void onCollisionWall(Field& field, int32_t x, int32_t y, int32_t z) override;
-    virtual void onCollisionRoof(Field& field, int32_t x, int32_t y, int32_t z) override;
-    virtual void onCollisionFloor(Field& field, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
+    virtual void onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
 
     std::weak_ptr<Entity> m_owner;
     Vector3 m_direction;
