@@ -1,13 +1,13 @@
+#include <Scenes/Game/System/Chunk.hpp>
+#include <Scenes/Game/System/ChunkGenerator.hpp>
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Entity.hpp>
-#include <Scenes/Game/System/Field.hpp>
-#include <Scenes/Game/System/FieldGenerator.hpp>
 #include <algorithm>
 #include <imgui.h>
 
 namespace App::Scenes::Game::System {
 // public
-Field::Field(
+Chunk::Chunk(
     const std::shared_ptr<Texture>& normalTexture,
     const std::shared_ptr<Texture>& borderTexture)
     : m_blocks()
@@ -24,12 +24,12 @@ Field::Field(
     , m_indexLength()
     , m_instanceCount()
 #if _DEBUG
-    , m_debugDrawField(true)
+    , m_debugDrawChunk(true)
 #endif
 {
 }
 
-void Field::generate()
+void Chunk::generate()
 {
     m_vertexBuffer = CpuBuffer::create();
     m_indexBuffer = CpuBuffer::create();
@@ -46,7 +46,7 @@ void Field::generate()
     m_indexBuffer->update(indices.data());
 
     if (!m_generator) {
-        m_generator = std::make_shared<FieldGenerator>();
+        m_generator = std::make_shared<ChunkGenerator>();
         m_generator->generate();
     }
     const std::vector<Vector4>& instances = m_generator->getTiles();
@@ -77,9 +77,9 @@ void Field::generate()
     }
 }
 
-void Field::update()
+void Chunk::update()
 {
-    Field& self = *this;
+    Chunk& self = *this;
 
     m_player->update(self);
     for (auto& entity : m_entities) {
@@ -127,11 +127,11 @@ void Field::update()
     });
     m_entities.erase(iter, m_entities.end());
 }
-void Field::onGui()
+void Chunk::onGui()
 {
 #if _DEBUG
-    ImGui::Begin("Field");
-    ImGui::Checkbox("Draw", &m_debugDrawField);
+    ImGui::Begin("Chunk");
+    ImGui::Checkbox("Draw", &m_debugDrawChunk);
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     if (m_player) {
@@ -156,7 +156,7 @@ void Field::onGui()
     ImGui::End();
 #endif
 }
-void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
+void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     auto surface = Engine::getInstance()->getDevice()->getSurface();
     auto rc = RenderContext::get(Metadata::ProgramTable::TileInstance3D);
@@ -179,7 +179,7 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
     surface->uniformPS(ub, 0, m_normalTexture);
     surface->uniformPS(ub, 1, m_borderTexture);
 #if _DEBUG
-    if (m_debugDrawField)
+    if (m_debugDrawChunk)
 #endif
     {
         Engine::getInstance()->getDevice()->getSurface()->render(
@@ -199,7 +199,7 @@ void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
     }
     surface->endBatch(RenderContext::get(Metadata::MeshColor3D));
 }
-void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
+void Chunk::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
     m_player->draw2D(renderer);
     for (auto& entity : m_entities) {
@@ -207,15 +207,15 @@ void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
     }
 }
 
-void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
-std::shared_ptr<Entities::PlayerEntity> Field::getPlayer() const { return m_player; }
+void Chunk::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
+std::shared_ptr<Entities::PlayerEntity> Chunk::getPlayer() const { return m_player; }
 
-void Field::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
-std::shared_ptr<Entity> Field::getEntityAt(int32_t index) const { return m_entities.at(index); }
-int32_t Field::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }
+void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
+std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }
+int32_t Chunk::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }
 
-FieldGenerator::Room Field::getRoomAt(int32_t index) const { return m_generator->getRooms().at(index); }
-int32_t Field::getRoomCount() const
+ChunkGenerator::Room Chunk::getRoomAt(int32_t index) const { return m_generator->getRooms().at(index); }
+int32_t Chunk::getRoomCount() const
 {
     if (!m_generator) {
         return 0;

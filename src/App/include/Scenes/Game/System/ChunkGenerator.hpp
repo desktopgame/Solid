@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace App::Scenes::Game::System {
-class FieldGenerator {
+class ChunkGenerator {
 public:
     class Room {
     public:

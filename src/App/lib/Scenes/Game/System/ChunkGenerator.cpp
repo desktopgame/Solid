@@ -1,12 +1,12 @@
-#include <Scenes/Game/System/Field.hpp>
-#include <Scenes/Game/System/FieldGenerator.hpp>
+#include <Scenes/Game/System/Chunk.hpp>
+#include <Scenes/Game/System/ChunkGenerator.hpp>
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 
 namespace App::Scenes::Game::System {
 // Room
-FieldGenerator::Room::Room()
+ChunkGenerator::Room::Room()
     : size()
     , center()
     , index()
@@ -15,7 +15,7 @@ FieldGenerator::Room::Room()
 {
 }
 // Route
-FieldGenerator::Route::Route()
+ChunkGenerator::Route::Route()
     : prevRoomIndex()
     , nextRoomIndex()
     , roomIndex()
@@ -23,8 +23,8 @@ FieldGenerator::Route::Route()
 {
 }
 // public
-FieldGenerator::FieldGenerator() { }
-void FieldGenerator::generate()
+ChunkGenerator::ChunkGenerator() { }
+void ChunkGenerator::generate()
 {
     const int32_t k_sizeX = Field::k_fieldSizeX;
     const int32_t k_sizeY = Field::k_fieldSizeY;
@@ -277,11 +277,11 @@ void FieldGenerator::generate()
         }
     }
 }
-const std::vector<Vector4>& FieldGenerator::getTiles() const { return m_tiles; }
-const std::vector<FieldGenerator::Room>& FieldGenerator::getRooms() const { return m_rooms; }
+const std::vector<Vector4>& ChunkGenerator::getTiles() const { return m_tiles; }
+const std::vector<ChunkGenerator::Room>& ChunkGenerator::getRooms() const { return m_rooms; }
 
 // private
-void FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit)
+void ChunkGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit)
 {
     if (std::find(visit.begin(), visit.end(), index) != visit.end()) {
         return;
@@ -331,7 +331,7 @@ void FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms
     }
 }
 
-std::vector<int32_t> FieldGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms)
+std::vector<int32_t> ChunkGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms)
 {
     std::vector<int32_t> temp;
     markRecursive(index, rooms, temp);

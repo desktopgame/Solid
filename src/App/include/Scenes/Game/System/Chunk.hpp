@@ -9,7 +9,7 @@ class Entity;
 namespace Entities {
     class PlayerEntity;
 }
-class Field {
+class Chunk {
 public:
     static inline constexpr int32_t k_fieldSizeX = 128;
     static inline constexpr int32_t k_fieldSizeY = 16;

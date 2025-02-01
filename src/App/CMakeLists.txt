@@ -45,8 +45,8 @@ set(SOURCES
     ./include/Scenes/Debug/DebugScene.hpp
     ./include/Scenes/Demo/DemoScene.hpp
     ./include/Scenes/Game/GameScene.hpp
-    ./include/Scenes/Game/System/Field.hpp
-    ./include/Scenes/Game/System/FieldGenerator.hpp
+    ./include/Scenes/Game/System/Chunk.hpp
+    ./include/Scenes/Game/System/ChunkGenerator.hpp
     ./include/Scenes/Game/System/Entity.hpp
     ./include/Scenes/Game/System/DamageSource.hpp
     ./include/Scenes/Game/System/Entities/BasicEntity.hpp
@@ -65,8 +65,8 @@ set(SOURCES
     ./lib/Scenes/Debug/DebugScene.cpp
     ./lib/Scenes/Demo/DemoScene.cpp
     ./lib/Scenes/Game/GameScene.cpp
-    ./lib/Scenes/Game/System/Field.cpp
-    ./lib/Scenes/Game/System/FieldGenerator.cpp
+    ./lib/Scenes/Game/System/Chunk.cpp
+    ./lib/Scenes/Game/System/ChunkGenerator.cpp
     ./lib/Scenes/Game/System/Entity.cpp
     ./lib/Scenes/Game/System/DamageSource.cpp
     ./lib/Scenes/Game/System/Entities/BasicEntity.cpp
