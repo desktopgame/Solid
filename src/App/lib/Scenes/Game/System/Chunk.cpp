@@ -17,6 +17,7 @@ Chunk::Chunk(
     , m_generator()
     , m_field(field)
     , m_gridPosition(gridPosition)
+    , m_rooms()
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
     , m_vertexBuffer()
@@ -51,14 +52,29 @@ void Chunk::generate()
     if (!m_generator) {
         m_generator = std::make_shared<ChunkGenerator>();
         m_generator->generate();
+
+        for (const auto& room : m_generator->getRooms()) {
+            ChunkGenerator::Room r = room;
+            r.center.x() += getPhysicalMinX();
+            r.center.z() += getPhysicalMinZ();
+            m_rooms.emplace_back(r);
+        }
     }
     const std::vector<Vector4>& instances = m_generator->getTiles();
 
+    std::vector<Vector4> gpuDatas = instances;
+    for (auto& gpuData : gpuDatas) {
+        int32_t offsetX = (m_gridPosition.x() * Chunk::k_fieldSizeX);
+        int32_t offsetZ = (m_gridPosition.y() * Chunk::k_fieldSizeZ);
+        gpuData.x() += offsetX;
+        gpuData.z() += offsetZ;
+    }
+
     auto instBuf = CpuBuffer::create();
-    instBuf->allocate(sizeof(Vector4) * instances.size());
-    instBuf->update(instances.data());
+    instBuf->allocate(sizeof(Vector4) * gpuDatas.size());
+    instBuf->update(gpuDatas.data());
     m_instanceBuffers.emplace_back(instBuf);
-    m_instanceCount = static_cast<int32_t>(instances.size());
+    m_instanceCount = static_cast<int32_t>(gpuDatas.size());
 
     m_tileTransform.translateMatrixTable = k_translateMatrixTable;
     m_tileTransform.rotationMatrixTable = k_rotationMatrixTable;
@@ -187,12 +203,6 @@ void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_ba
 std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }
 int32_t Chunk::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }
 
-ChunkGenerator::Room Chunk::getRoomAt(int32_t index) const { return m_generator->getRooms().at(index); }
-int32_t Chunk::getRoomCount() const
-{
-    if (!m_generator) {
-        return 0;
-    }
-    return static_cast<int32_t>(m_generator->getRooms().size());
-}
+ChunkGenerator::Room Chunk::getRoomAt(int32_t index) const { return m_rooms.at(index); }
+int32_t Chunk::getRoomCount() const { return static_cast<int32_t>(m_rooms.size()); }
 }

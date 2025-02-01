@@ -20,9 +20,31 @@ void Field::generate()
 {
     if (m_chunks.empty()) {
         auto self = shared_from_this();
-        auto chunk = std::make_shared<Chunk>(self, IntVector2({ 0, 0 }), m_normalTexture, m_borderTexture);
-        chunk->generate();
-        m_chunks.emplace_back(chunk);
+        {
+            auto chunk = std::make_shared<Chunk>(self, IntVector2({ 0, 0 }), m_normalTexture, m_borderTexture);
+            chunk->generate();
+            m_chunks.emplace_back(chunk);
+        }
+        {
+            auto chunk = std::make_shared<Chunk>(self, IntVector2({ -1, 0 }), m_normalTexture, m_borderTexture);
+            chunk->generate();
+            m_chunks.emplace_back(chunk);
+        }
+        {
+            auto chunk = std::make_shared<Chunk>(self, IntVector2({ 1, 0 }), m_normalTexture, m_borderTexture);
+            chunk->generate();
+            m_chunks.emplace_back(chunk);
+        }
+        {
+            auto chunk = std::make_shared<Chunk>(self, IntVector2({ 0, -1 }), m_normalTexture, m_borderTexture);
+            chunk->generate();
+            m_chunks.emplace_back(chunk);
+        }
+        {
+            auto chunk = std::make_shared<Chunk>(self, IntVector2({ 0, 1 }), m_normalTexture, m_borderTexture);
+            chunk->generate();
+            m_chunks.emplace_back(chunk);
+        }
     }
 }
 
@@ -35,12 +57,21 @@ void Field::update()
 void Field::onGui()
 {
     m_player->onGui();
-    getCurrentChunk()->onGui();
+    ImGui::Begin("Chunk");
+    ImGui::LabelText("PlayerPos", "%f %f %f", m_player->getPosition().x(), m_player->getPosition().y(), m_player->getPosition().z());
+    ImGui::LabelText("Chunk.MinX", "%f", getCurrentChunk()->getPhysicalMinX());
+    ImGui::LabelText("Chunk.MixX", "%f", getCurrentChunk()->getPhysicalMaxX());
+    ImGui::LabelText("Chunk.MinZ", "%f", getCurrentChunk()->getPhysicalMinZ());
+    ImGui::LabelText("Chunk.MixZ", "%f", getCurrentChunk()->getPhysicalMaxZ());
+    ImGui::End();
 }
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
     m_player->draw3D(renderer);
-    getCurrentChunk()->draw3D(renderer);
+
+    for (auto c : m_chunks) {
+        c->draw3D(renderer);
+    }
 }
 void Field::draw2D(const std::shared_ptr<Renderer>& renderer)
 {

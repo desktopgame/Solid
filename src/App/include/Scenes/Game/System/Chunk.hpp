@@ -157,12 +157,12 @@ public:
 
     inline float getPhysicalCenterX() const
     {
-        return (m_gridPosition.x() * Chunk::k_fieldSizeX) + (Chunk::k_fieldSizeX / 2) * Chunk::k_tileSize;
+        return ((m_gridPosition.x() * Chunk::k_fieldSizeX) + (Chunk::k_fieldSizeX / 2)) * Chunk::k_tileSize;
     }
 
     inline float getPhysicalCenterZ() const
     {
-        return (m_gridPosition.y() * Chunk::k_fieldSizeZ) + (Chunk::k_fieldSizeZ / 2) * Chunk::k_tileSize;
+        return ((m_gridPosition.y() * Chunk::k_fieldSizeZ) + (Chunk::k_fieldSizeZ / 2)) * Chunk::k_tileSize;
     }
 
     inline float getPhysicalMinX() const
@@ -235,6 +235,7 @@ private:
     std::shared_ptr<ChunkGenerator> m_generator;
     std::weak_ptr<Field> m_field;
     IntVector2 m_gridPosition;
+    std::vector<ChunkGenerator::Room> m_rooms;
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
     std::shared_ptr<CpuBuffer> m_vertexBuffer;
