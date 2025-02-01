@@ -40,8 +40,8 @@ public:
         float fy = static_cast<float>(y) * Chunk::k_tileSize;
         float fz = static_cast<float>(z) * Chunk::k_tileSize;
         if (tryFindChunk(c, Vector3({ fx, fy, fz }))) {
-            x -= (*c)->getGridPosition().x() * Chunk::k_fieldSizeX;
-            z -= (*c)->getGridPosition().y() * Chunk::k_fieldSizeZ;
+            x -= (*c)->getGridPosition().x() * (Chunk::k_fieldSizeX - 1);
+            z -= (*c)->getGridPosition().y() * (Chunk::k_fieldSizeZ - 1);
             return (*c)->hasBlockAt(x, y, z);
         }
         return false;
@@ -54,8 +54,8 @@ public:
         float fy = static_cast<float>(y) * Chunk::k_tileSize;
         float fz = static_cast<float>(z) * Chunk::k_tileSize;
         if (tryFindChunk(c, Vector3({ fx, fy, fz }))) {
-            x -= (*c)->getGridPosition().x() * Chunk::k_fieldSizeX;
-            z -= (*c)->getGridPosition().y() * Chunk::k_fieldSizeZ;
+            x -= (*c)->getGridPosition().x() * (Chunk::k_fieldSizeX - 1);
+            z -= (*c)->getGridPosition().y() * (Chunk::k_fieldSizeZ - 1);
             return (*c)->getBlockAt(x, y, z);
         }
         return 0;

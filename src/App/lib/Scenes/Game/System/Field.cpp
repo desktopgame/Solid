@@ -71,8 +71,8 @@ bool Field::tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const 
         float chunkMinZ = chunk->getPhysicalMinZ();
         float chunkMaxZ = chunk->getPhysicalMaxZ();
 
-        if (pos.x() >= chunkMinX && pos.x() <= chunkMaxX) {
-            if (pos.z() >= chunkMinZ && pos.z() <= chunkMaxZ) {
+        if (pos.x() >= chunkMinX && pos.x() < chunkMaxX) {
+            if (pos.z() >= chunkMinZ && pos.z() < chunkMaxZ) {
                 outChunk = chunk;
                 found = true;
                 break;
