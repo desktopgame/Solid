@@ -18,7 +18,7 @@ static void physicsTest()
     auto field = std::make_shared<System::Field>(normalTex, borderTex);
     field->generate();
 
-    System::FieldGenerator::Room room = field->getRoomAt(0);
+    System::ChunkGenerator::Room room = field->getRoomAt(0);
     Random rand;
     for (int32_t i = 0; i < 10; i++) {
         int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;

@@ -1,5 +1,5 @@
 #pragma once
-#include <Scenes/Game/System/FieldGenerator.hpp>
+#include <Scenes/Game/System/ChunkGenerator.hpp>
 #include <library.hpp>
 #include <memory>
 #include <vector>
@@ -9,6 +9,7 @@ class Entity;
 namespace Entities {
     class PlayerEntity;
 }
+class Field;
 class Chunk {
 public:
     static inline constexpr int32_t k_fieldSizeX = 128;
@@ -132,6 +133,7 @@ public:
     };
 
     explicit Chunk(
+        Field& field,
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 
@@ -164,14 +166,11 @@ public:
         return m_blocks[toIndex(x, y, z)];
     }
 
-    void setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player);
-    std::shared_ptr<Entities::PlayerEntity> getPlayer() const;
-
     void spwan(const std::shared_ptr<Entity>& entity);
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
     int32_t getEntityCount() const;
 
-    FieldGenerator::Room getRoomAt(int32_t index) const;
+    ChunkGenerator::Room getRoomAt(int32_t index) const;
     int32_t getRoomCount() const;
 
     static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
@@ -190,10 +189,10 @@ public:
 private:
     // NOTE: _ITERATOR_DEBUG_LEVELや_CONTAINER_DEBUG_LEVELの影響を受けるstd::arrayは使わない
     int32_t m_blocks[k_fieldSizeX * k_fieldSizeY * k_fieldSizeZ];
-    std::shared_ptr<Entities::PlayerEntity> m_player;
     std::vector<std::shared_ptr<Entity>> m_entities;
 
-    std::shared_ptr<FieldGenerator> m_generator;
+    std::shared_ptr<ChunkGenerator> m_generator;
+    Field& m_field;
     std::shared_ptr<Texture> m_normalTexture;
     std::shared_ptr<Texture> m_borderTexture;
     std::shared_ptr<CpuBuffer> m_vertexBuffer;
@@ -205,7 +204,7 @@ private:
     int32_t m_instanceCount;
 
 #if _DEBUG
-    bool m_debugDrawField;
+    bool m_debugDrawChunk;
 #endif
 };
 }

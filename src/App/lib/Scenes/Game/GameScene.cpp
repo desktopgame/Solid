@@ -41,7 +41,7 @@ void GameScene::onEnter()
             if (i == mainRoomIndex) {
                 continue;
             }
-            System::FieldGenerator::Room room = m_field->getRoomAt(i);
+            System::ChunkGenerator::Room room = m_field->getRoomAt(i);
             for (int32_t j = 0; j < rand.range(1, 5); j++) {
                 // int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
                 // int32_t halfZ = (System::Chunk::k_roomSizeZ / 2) - 3;
@@ -57,7 +57,7 @@ void GameScene::onEnter()
             }
         }
 
-        System::FieldGenerator::Room mainRoom = m_field->getRoomAt(mainRoomIndex);
+        System::ChunkGenerator::Room mainRoom = m_field->getRoomAt(mainRoomIndex);
         m_debugPlayer = System::Entities::PlayerEntity::create(
             Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
         m_debugPlayer->setPosition(Vector3({ mainRoom.center.x() * System::Chunk::k_tileSize, 10, mainRoom.center.z() * System::Chunk::k_tileSize }));

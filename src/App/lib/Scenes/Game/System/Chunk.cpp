@@ -8,12 +8,13 @@
 namespace App::Scenes::Game::System {
 // public
 Chunk::Chunk(
+    Field& field,
     const std::shared_ptr<Texture>& normalTexture,
     const std::shared_ptr<Texture>& borderTexture)
     : m_blocks()
-    , m_player()
     , m_entities()
     , m_generator()
+    , m_field(field)
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
     , m_vertexBuffer()
@@ -79,11 +80,8 @@ void Chunk::generate()
 
 void Chunk::update()
 {
-    Chunk& self = *this;
-
-    m_player->update(self);
     for (auto& entity : m_entities) {
-        entity->update(self);
+        entity->update(m_field);
     }
 
     for (int32_t i = 0; i < static_cast<int32_t>(m_entities.size()); i++) {
@@ -129,32 +127,6 @@ void Chunk::update()
 }
 void Chunk::onGui()
 {
-#if _DEBUG
-    ImGui::Begin("Chunk");
-    ImGui::Checkbox("Draw", &m_debugDrawChunk);
-
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-    if (m_player) {
-        if (ImGui::TreeNodeEx("Player", flags)) {
-            m_player->onGui();
-            ImGui::TreePop();
-        }
-    }
-
-    int32_t index = 0;
-    for (const auto& entity : m_entities) {
-        char buf[16];
-        ::memset(buf, '\0', 16);
-        ::sprintf(buf, "Entity[%d]", index);
-        index += 1;
-
-        if (ImGui::TreeNodeEx(buf, flags)) {
-            entity->onGui();
-            ImGui::TreePop();
-        }
-    }
-    ImGui::End();
-#endif
 }
 void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
 {
@@ -191,7 +163,6 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
             m_instanceBuffers,
             m_instanceCount);
     }
-    m_player->draw3D(renderer);
 
     surface->beginBatch(RenderContext::get(Metadata::MeshColor3D));
     for (auto& entity : m_entities) {
@@ -201,14 +172,10 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
 }
 void Chunk::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
-    m_player->draw2D(renderer);
     for (auto& entity : m_entities) {
         entity->draw2D(renderer);
     }
 }
-
-void Chunk::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
-std::shared_ptr<Entities::PlayerEntity> Chunk::getPlayer() const { return m_player; }
 
 void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }
