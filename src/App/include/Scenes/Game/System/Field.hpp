@@ -40,6 +40,20 @@ public:
         return found;
     }
 
+    inline bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const IntVector2& gridPosition) const
+    {
+        bool found = false;
+
+        for (auto& chunk : m_chunks) {
+            if (chunk->getGridPosition() == gridPosition) {
+                outChunk = chunk;
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
     std::shared_ptr<Chunk> getCurrentChunk() const;
 
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
