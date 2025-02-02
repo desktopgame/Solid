@@ -17,7 +17,6 @@ Chunk::Chunk(
     , m_generator()
     , m_field(field)
     , m_gridPosition(gridPosition)
-    , m_rooms()
     , m_normalTexture(normalTexture)
     , m_borderTexture(borderTexture)
     , m_vertexBuffer()
@@ -52,13 +51,6 @@ void Chunk::generate()
     if (!m_generator) {
         m_generator = std::make_shared<ChunkGenerator>();
         m_generator->generate();
-
-        for (const auto& room : m_generator->getRooms()) {
-            ChunkGenerator::Room r = room;
-            r.center.x() += getPhysicalMinX();
-            r.center.z() += getPhysicalMinZ();
-            m_rooms.emplace_back(r);
-        }
     }
     const std::vector<Vector4>& instances = m_generator->getTiles();
 
@@ -203,6 +195,6 @@ void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_ba
 std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }
 int32_t Chunk::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }
 
-ChunkGenerator::Room Chunk::getRoomAt(int32_t index) const { return m_rooms.at(index); }
-int32_t Chunk::getRoomCount() const { return static_cast<int32_t>(m_rooms.size()); }
+ChunkGenerator::Room Chunk::getRoomAt(int32_t index) const { return m_generator->getRooms().at(index); }
+int32_t Chunk::getRoomCount() const { return static_cast<int32_t>(m_generator->getRooms().size()); }
 }
