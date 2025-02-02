@@ -212,7 +212,7 @@ void ChunkGenerator::generate()
             neighbor.size = IntVector3({ roomSizeX, Chunk::k_fieldSizeY, roomSizeZ });
 
             int32_t startX = room.center.x() + (room.size.x() / 2);
-            int32_t endX = neighbor.center.x() - (neighbor.size.x() / 2) - Chunk::k_roomSpace;
+            int32_t endX = neighbor.center.x() - (neighbor.size.x() / 2) - Chunk::k_roomSpace + 1;
             int32_t minX = Mathf::min(startX, endX);
             int32_t maxX = Mathf::max(startX, endX);
 
@@ -342,7 +342,7 @@ void ChunkGenerator::generate()
             neighbor.size = IntVector3({ roomSizeX, Chunk::k_fieldSizeY, roomSizeZ });
 
             int32_t startZ = room.center.z() + (room.size.z() / 2);
-            int32_t endZ = neighbor.center.z() - (neighbor.size.z() / 2) - Chunk::k_roomSpace;
+            int32_t endZ = neighbor.center.z() - (neighbor.size.z() / 2) - Chunk::k_roomSpace + 1;
             int32_t minZ = Mathf::min(startZ, endZ);
             int32_t maxZ = Mathf::max(startZ, endZ);
 
