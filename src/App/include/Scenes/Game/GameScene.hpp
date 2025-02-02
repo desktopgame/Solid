@@ -2,6 +2,7 @@
 #include <Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <Scenes/Game/System/Field.hpp>
+#include <Scenes/Game/System/Minimap.hpp>
 #include <library.hpp>
 #include <memory>
 #include <optional>
@@ -34,6 +35,7 @@ private:
     std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
     std::shared_ptr<Texture> m_aimTexture;
+    std::shared_ptr<System::Minimap> m_minimap;
 
 #if GAMESCENE_PROFILE
     const float k_fpsK = 0.05f;

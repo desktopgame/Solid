@@ -16,6 +16,7 @@ GameScene::GameScene()
     , m_debugPlayer()
     , m_debugEntity()
     , m_aimTexture()
+    , m_minimap()
 #if GAMESCENE_PROFILE
     , m_avgTime()
 #endif
@@ -68,6 +69,9 @@ void GameScene::onEnter()
     if (!m_aimTexture) {
         m_aimTexture = Texture::create("./assets/Textures/aim.png");
     }
+    if (!m_minimap) {
+        m_minimap = std::make_shared<System::Minimap>(m_field);
+    }
     if (Cursor::isVisible()) {
         Cursor::hide();
         Cursor::lock(Engine::getInstance()->getWindow());
@@ -81,6 +85,7 @@ void GameScene::onExit()
 void GameScene::onUpdate()
 {
     m_field->update();
+    m_minimap->update();
 }
 
 void GameScene::onGui()
@@ -106,6 +111,7 @@ void GameScene::onDraw3D()
 void GameScene::onDraw2D()
 {
     m_field->draw2D(m_renderer);
+    m_minimap->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
 
