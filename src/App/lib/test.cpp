@@ -18,7 +18,7 @@ static void physicsTest()
     auto field = std::make_shared<System::Field>(normalTex, borderTex);
     field->generate();
 
-    System::ChunkGenerator::Room room = field->getRoomAt(0);
+    System::ChunkGenerator::Room room = field->getCurrentChunk()->getRoomAt(0);
     Random rand;
     for (int32_t i = 0; i < 10; i++) {
         int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
@@ -31,7 +31,7 @@ static void physicsTest()
 
         auto enemy = System::Entities::SlimeEntity::create();
         enemy->setPosition(Vector3({ enemyPosX, 20, enemyPosZ }));
-        field->spwan(enemy);
+        field->getCurrentChunk()->spwan(enemy);
     }
     auto player = System::Entities::PlayerEntity::create(
         Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
@@ -54,8 +54,8 @@ static void physicsTest()
         field->update();
         elapsed += deltaTime;
 
-        for (int32_t i = 0; i < field->getEntityCount(); i++) {
-            auto e = field->getEntityAt(i);
+        for (int32_t i = 0; i < field->getCurrentChunk()->getEntityCount(); i++) {
+            auto e = field->getCurrentChunk()->getEntityAt(i);
             if (e == player) {
                 continue;
             }
