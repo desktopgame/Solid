@@ -1,7 +1,9 @@
 #include <Scenes/Game/System/Chunk.hpp>
 #include <Scenes/Game/System/ChunkGenerator.hpp>
 #include <Scenes/Game/System/Entities/PlayerEntity.hpp>
+#include <Scenes/Game/System/Entities/SlimeEntity.hpp>
 #include <Scenes/Game/System/Entity.hpp>
+#include <Scenes/Game/System/Field.hpp>
 #include <algorithm>
 #include <imgui.h>
 
@@ -51,6 +53,23 @@ void Chunk::generate()
     if (!m_generator) {
         m_generator = std::make_shared<ChunkGenerator>();
         m_generator->generate();
+
+        // TODO: 仮置きの敵生成処理
+        Random rand;
+        for (const auto& room : m_generator->getRooms()) {
+            int32_t enemyCount = rand.range(3, 10);
+            for (int32_t i = 0; i < enemyCount; i++) {
+                int32_t tileX = (room.center.x() + rand.range(-room.size.x() / 2, room.size.x() / 2));
+                int32_t tileZ = (room.center.z() + rand.range(-room.size.z() / 2, room.size.z() / 2));
+                IntVector3 globalTilePos = Field::toGlobalBlockPosition(m_gridPosition, tileX, 0, tileZ);
+
+                float enemyPosX = globalTilePos.x() * System::Chunk::k_tileSize;
+                float enemyPosZ = globalTilePos.z() * System::Chunk::k_tileSize;
+                auto enemy = System::Entities::SlimeEntity::create();
+                enemy->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
+                spwan(enemy);
+            }
+        }
     }
     const std::vector<Vector4>& instances = m_generator->getTiles();
 
