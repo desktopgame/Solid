@@ -33,6 +33,32 @@ public:
 
     std::vector<std::shared_ptr<Chunk>> getLoadedChunks() const;
 
+    static inline IntVector3 toLocalBlockPosition(int32_t x, int32_t y, int32_t z)
+    {
+        int32_t gridPosX = x / Chunk::k_fieldSizeX;
+        if (x < 0) {
+            gridPosX--;
+        }
+        int32_t gridPosZ = z / Chunk::k_fieldSizeZ;
+        if (z < 0) {
+            gridPosZ--;
+        }
+        int32_t localX = x;
+        localX -= gridPosX * Chunk::k_fieldSizeX;
+        int32_t localZ = z;
+        localZ -= gridPosZ * Chunk::k_fieldSizeZ;
+        return IntVector3({ localX, y, localZ });
+    }
+
+    static inline IntVector3 toGlobalBlockPosition(const IntVector2& gridPosition, int32_t x, int32_t y, int32_t z)
+    {
+        int32_t globalX = x;
+        globalX -= gridPosition.x() * Chunk::k_fieldSizeX;
+        int32_t globalZ = z;
+        globalZ -= gridPosition.y() * Chunk::k_fieldSizeZ;
+        return IntVector3({ globalX, y, globalZ });
+    }
+
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
         std::optional<std::shared_ptr<Chunk>> c;
