@@ -106,7 +106,13 @@ std::shared_ptr<Chunk> Field::loadChunk(const Vector3& pos)
     int32_t tileZ = pos.z() / Chunk::k_tileSize;
 
     int32_t gridPosX = tileX / Chunk::k_fieldSizeX;
+    if (tileX < 0) {
+        gridPosX--;
+    }
     int32_t gridPosZ = tileZ / Chunk::k_fieldSizeZ;
+    if (tileZ < 0) {
+        gridPosZ--;
+    }
 
     auto chunk = std::make_shared<Chunk>(shared_from_this(), IntVector2({ gridPosX, gridPosZ }), m_normalTexture, m_borderTexture);
     chunk->generate();
