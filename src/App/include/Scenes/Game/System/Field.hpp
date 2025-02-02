@@ -53,9 +53,19 @@ public:
     static inline IntVector3 toGlobalBlockPosition(const IntVector2& gridPosition, int32_t x, int32_t y, int32_t z)
     {
         int32_t globalX = x;
-        globalX -= gridPosition.x() * Chunk::k_fieldSizeX;
+        if (gridPosition.x() > 0) {
+            globalX += gridPosition.x() * Chunk::k_fieldSizeX;
+        } else if (gridPosition.x() < 0) {
+            x = Chunk::k_fieldSizeX - x;
+            globalX = (gridPosition.x() * Chunk::k_fieldSizeX) + x;
+        }
         int32_t globalZ = z;
-        globalZ -= gridPosition.y() * Chunk::k_fieldSizeZ;
+        if (gridPosition.y() > 0) {
+            globalZ += gridPosition.y() * Chunk::k_fieldSizeZ;
+        } else if (gridPosition.y() < 0) {
+            z = Chunk::k_fieldSizeZ - z;
+            globalZ = (gridPosition.y() * Chunk::k_fieldSizeZ) + z;
+        }
         return IntVector3({ globalX, y, globalZ });
     }
 
