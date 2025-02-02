@@ -35,18 +35,18 @@ public:
 
     static inline IntVector3 toLocalBlockPosition(int32_t x, int32_t y, int32_t z)
     {
-        int32_t gridPosX = x / Chunk::k_fieldSizeX;
+        int32_t gridPosX = x / Chunk::k_chunkSizeX;
         if (x < 0) {
             gridPosX--;
         }
-        int32_t gridPosZ = z / Chunk::k_fieldSizeZ;
+        int32_t gridPosZ = z / Chunk::k_chunkSizeZ;
         if (z < 0) {
             gridPosZ--;
         }
         int32_t localX = x;
-        localX -= gridPosX * Chunk::k_fieldSizeX;
+        localX -= gridPosX * Chunk::k_chunkSizeX;
         int32_t localZ = z;
-        localZ -= gridPosZ * Chunk::k_fieldSizeZ;
+        localZ -= gridPosZ * Chunk::k_chunkSizeZ;
         return IntVector3({ localX, y, localZ });
     }
 
@@ -54,17 +54,17 @@ public:
     {
         int32_t globalX = x;
         if (gridPosition.x() > 0) {
-            globalX += gridPosition.x() * Chunk::k_fieldSizeX;
+            globalX += gridPosition.x() * Chunk::k_chunkSizeX;
         } else if (gridPosition.x() < 0) {
-            x = Chunk::k_fieldSizeX - x;
-            globalX = (gridPosition.x() * Chunk::k_fieldSizeX) + x;
+            x = Chunk::k_chunkSizeX - x;
+            globalX = (gridPosition.x() * Chunk::k_chunkSizeX) + x;
         }
         int32_t globalZ = z;
         if (gridPosition.y() > 0) {
-            globalZ += gridPosition.y() * Chunk::k_fieldSizeZ;
+            globalZ += gridPosition.y() * Chunk::k_chunkSizeZ;
         } else if (gridPosition.y() < 0) {
-            z = Chunk::k_fieldSizeZ - z;
-            globalZ = (gridPosition.y() * Chunk::k_fieldSizeZ) + z;
+            z = Chunk::k_chunkSizeZ - z;
+            globalZ = (gridPosition.y() * Chunk::k_chunkSizeZ) + z;
         }
         return IntVector3({ globalX, y, globalZ });
     }
@@ -77,8 +77,8 @@ public:
         float fz = static_cast<float>(z) * Chunk::k_tileSize;
         if (tryFindChunk(c, Vector3({ fx, fy, fz }))) {
             IntVector2 gridPos = (*c)->getGridPosition();
-            x -= gridPos.x() * Chunk::k_fieldSizeX;
-            z -= gridPos.y() * Chunk::k_fieldSizeZ;
+            x -= gridPos.x() * Chunk::k_chunkSizeX;
+            z -= gridPos.y() * Chunk::k_chunkSizeZ;
             return (*c)->hasBlockAt(x, y, z);
         }
         return false;
@@ -92,8 +92,8 @@ public:
         float fz = static_cast<float>(z) * Chunk::k_tileSize;
         if (tryFindChunk(c, Vector3({ fx, fy, fz }))) {
             IntVector2 gridPos = (*c)->getGridPosition();
-            x -= gridPos.x() * Chunk::k_fieldSizeX;
-            z -= gridPos.y() * Chunk::k_fieldSizeZ;
+            x -= gridPos.x() * Chunk::k_chunkSizeX;
+            z -= gridPos.y() * Chunk::k_chunkSizeZ;
             return (*c)->getBlockAt(x, y, z);
         }
         return 0;

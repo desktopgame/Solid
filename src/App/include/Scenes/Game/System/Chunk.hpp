@@ -12,12 +12,12 @@ namespace Entities {
 class Field;
 class Chunk : public std::enable_shared_from_this<Chunk> {
 public:
-    static inline constexpr int32_t k_fieldSizeX = 132;
-    static inline constexpr int32_t k_fieldSizeY = 16;
-    static inline constexpr int32_t k_fieldSizeZ = 132;
+    static inline constexpr int32_t k_chunkSizeX = 132;
+    static inline constexpr int32_t k_chunkSizeY = 16;
+    static inline constexpr int32_t k_chunkSizeZ = 132;
     static inline constexpr int32_t k_roomSpace = 4;
-    static inline constexpr int32_t k_roomSizeX = (k_fieldSizeX - (k_roomSpace * 4)) / 3;
-    static inline constexpr int32_t k_roomSizeZ = (k_fieldSizeZ - (k_roomSpace * 4)) / 3;
+    static inline constexpr int32_t k_roomSizeX = (k_chunkSizeX - (k_roomSpace * 4)) / 3;
+    static inline constexpr int32_t k_roomSizeZ = (k_chunkSizeZ - (k_roomSpace * 4)) / 3;
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
     static_assert(k_roomSpace % 2 == 0);
@@ -157,43 +157,43 @@ public:
 
     inline float getPhysicalCenterX() const
     {
-        return ((m_gridPosition.x() * Chunk::k_fieldSizeX) + (Chunk::k_fieldSizeX / 2)) * Chunk::k_tileSize;
+        return ((m_gridPosition.x() * Chunk::k_chunkSizeX) + (Chunk::k_chunkSizeX / 2)) * Chunk::k_tileSize;
     }
 
     inline float getPhysicalCenterZ() const
     {
-        return ((m_gridPosition.y() * Chunk::k_fieldSizeZ) + (Chunk::k_fieldSizeZ / 2)) * Chunk::k_tileSize;
+        return ((m_gridPosition.y() * Chunk::k_chunkSizeZ) + (Chunk::k_chunkSizeZ / 2)) * Chunk::k_tileSize;
     }
 
     inline float getPhysicalMinX() const
     {
-        return getPhysicalCenterX() - ((Chunk::k_fieldSizeX * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalCenterX() - ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMaxX() const
     {
-        return getPhysicalCenterX() + ((Chunk::k_fieldSizeX * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalCenterX() + ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMinZ() const
     {
-        return getPhysicalCenterZ() - ((Chunk::k_fieldSizeZ * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalCenterZ() - ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMaxZ() const
     {
-        return getPhysicalCenterZ() + ((Chunk::k_fieldSizeZ * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalCenterZ() + ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
     }
 
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
-        if (x >= k_fieldSizeX || x < 0) {
+        if (x >= k_chunkSizeX || x < 0) {
             return false;
         }
-        if (y >= k_fieldSizeY || y < 0) {
+        if (y >= k_chunkSizeY || y < 0) {
             return false;
         }
-        if (z >= k_fieldSizeZ || z < 0) {
+        if (z >= k_chunkSizeZ || z < 0) {
             return false;
         }
         return true;
@@ -216,20 +216,20 @@ public:
 
     static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
     {
-        return (z * k_fieldSizeX * k_fieldSizeY) + (y * k_fieldSizeX) + x;
+        return (z * k_chunkSizeX * k_chunkSizeY) + (y * k_chunkSizeX) + x;
     }
     static inline IntVector3 toCoord(int32_t index)
     {
-        const int z = index / (k_fieldSizeX * k_fieldSizeY);
-        index -= (z * k_fieldSizeX * k_fieldSizeY);
-        const int y = index / k_fieldSizeX;
-        const int x = index % k_fieldSizeX;
+        const int z = index / (k_chunkSizeX * k_chunkSizeY);
+        index -= (z * k_chunkSizeX * k_chunkSizeY);
+        const int y = index / k_chunkSizeX;
+        const int x = index % k_chunkSizeX;
         return IntVector3({ x, y, z });
     }
 
 private:
     // NOTE: _ITERATOR_DEBUG_LEVELや_CONTAINER_DEBUG_LEVELの影響を受けるstd::arrayは使わない
-    int32_t m_blocks[k_fieldSizeX * k_fieldSizeY * k_fieldSizeZ];
+    int32_t m_blocks[k_chunkSizeX * k_chunkSizeY * k_chunkSizeZ];
     std::vector<std::shared_ptr<Entity>> m_entities;
 
     std::shared_ptr<ChunkGenerator> m_generator;

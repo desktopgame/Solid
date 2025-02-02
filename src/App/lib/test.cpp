@@ -44,7 +44,7 @@ static void physicsTest()
 
     Geom::AABB fieldAABB;
     fieldAABB.min = (Vector3({ 0, 0, 0 }) * System::Chunk::k_tileSize) - (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Chunk::k_tileSize);
-    fieldAABB.max = (Vector3({ System::Chunk::k_fieldSizeX, System::Chunk::k_fieldSizeY, System::Chunk::k_fieldSizeZ }) * System::Chunk::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Chunk::k_tileSize);
+    fieldAABB.max = (Vector3({ System::Chunk::k_chunkSizeX, System::Chunk::k_chunkSizeY, System::Chunk::k_chunkSizeZ }) * System::Chunk::k_tileSize) + (Vector3({ 0.5f, 0.5f, 0.5f }) * System::Chunk::k_tileSize);
 
     // 長すぎるとCIがタイムアウトするのでほどほどに
     const float duration = (60.0f * 10.0f * 1.0f);

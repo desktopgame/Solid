@@ -75,8 +75,8 @@ void Chunk::generate()
 
     std::vector<Vector4> gpuDatas = instances;
     for (auto& gpuData : gpuDatas) {
-        int32_t offsetX = (m_gridPosition.x() * Chunk::k_fieldSizeX);
-        int32_t offsetZ = (m_gridPosition.y() * Chunk::k_fieldSizeZ);
+        int32_t offsetX = (m_gridPosition.x() * Chunk::k_chunkSizeX);
+        int32_t offsetZ = (m_gridPosition.y() * Chunk::k_chunkSizeZ);
         gpuData.x() += offsetX;
         gpuData.z() += offsetZ;
     }
@@ -92,9 +92,9 @@ void Chunk::generate()
     m_tileTransform.normalVectorTable = k_normalVectorTable;
     m_tilePallet.table = k_palletTable;
 
-    for (int32_t x = 0; x < k_fieldSizeX; x++) {
-        for (int32_t y = 0; y < k_fieldSizeY; y++) {
-            for (int32_t z = 0; z < k_fieldSizeZ; z++) {
+    for (int32_t x = 0; x < k_chunkSizeX; x++) {
+        for (int32_t y = 0; y < k_chunkSizeY; y++) {
+            for (int32_t z = 0; z < k_chunkSizeZ; z++) {
                 m_blocks[toIndex(x, y, z)] = 0;
             }
         }

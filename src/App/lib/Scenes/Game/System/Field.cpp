@@ -104,11 +104,11 @@ std::shared_ptr<Chunk> Field::loadChunk(const Vector3& pos)
     int32_t tileX = pos.x() / Chunk::k_tileSize;
     int32_t tileZ = pos.z() / Chunk::k_tileSize;
 
-    int32_t gridPosX = tileX / Chunk::k_fieldSizeX;
+    int32_t gridPosX = tileX / Chunk::k_chunkSizeX;
     if (tileX < 0) {
         gridPosX--;
     }
-    int32_t gridPosZ = tileZ / Chunk::k_fieldSizeZ;
+    int32_t gridPosZ = tileZ / Chunk::k_chunkSizeZ;
     if (tileZ < 0) {
         gridPosZ--;
     }
