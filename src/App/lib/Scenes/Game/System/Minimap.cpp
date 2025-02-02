@@ -11,17 +11,52 @@ Minimap::Minimap(const std::shared_ptr<Field>& field)
 
 void Minimap::update()
 {
-    // フィールドの更新に合わせて処理
     auto field = m_field.lock();
     if (!field) {
         return;
     }
+
+    auto player = field->getPlayer();
+    if (!player) {
+        return;
+    }
+
+    const auto& playerPos = player->getPosition();
+    const float mapScale = m_size.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize);
+    const float visibleRange = m_size.x() / (2.0f * mapScale); // ミニマップに表示される範囲(物理座標)
+
+    // プレイヤーの位置からグリッド座標を計算
+    const int32_t gridX = static_cast<int32_t>(playerPos.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize));
+    const int32_t gridZ = static_cast<int32_t>(playerPos.z() / (Chunk::k_chunkSizeZ * Chunk::k_tileSize));
+
+    // ミニマップに表示される範囲のチャンクをロード
+    const int32_t chunkRange = static_cast<int32_t>(visibleRange / (Chunk::k_chunkSizeX * Chunk::k_tileSize)) + 1;
+
+    for (int32_t x = -chunkRange; x <= chunkRange; ++x) {
+        for (int32_t z = -chunkRange; z <= chunkRange; ++z) {
+            IntVector2 gridPos({ gridX + x, gridZ + z });
+            field->loadChunk(gridPos);
+        }
+    }
+}
+
+bool Minimap::isInMinimapRange(const Vector2& mapPos, const Vector2& size) const
+{
+    // ミニマップの表示範囲をチェック
+    const float halfWidth = m_size.x() * 0.5f;
+    const float halfHeight = m_size.y() * 0.5f;
+    const float objHalfWidth = size.x() * 0.5f;
+    const float objHalfHeight = size.y() * 0.5f;
+
+    // オブジェクトが完全にミニマップの範囲内に収まる場合のみtrue
+    return (mapPos.x() + objHalfWidth <= m_position.x() + halfWidth && mapPos.x() - objHalfWidth >= m_position.x() - halfWidth && mapPos.y() + objHalfHeight <= m_position.y() + halfHeight && mapPos.y() - objHalfHeight >= m_position.y() - halfHeight);
 }
 
 void Minimap::drawEntity(
     const std::shared_ptr<Renderer>& renderer,
     const std::shared_ptr<Entity>& entity,
     const std::shared_ptr<Chunk>& chunk,
+    const Vector3& playerPos,
     const Color& color) const
 {
     const auto& entityPos = entity->getPosition();
@@ -30,25 +65,103 @@ void Minimap::drawEntity(
         return; // チャンクの範囲外なのでスキップ
     }
 
-    // エンティティの位置をミニマップ座標に変換
-    const float normalizedX = (entityPos.x() - chunk->getPhysicalMinX()) / (chunk->getPhysicalMaxX() - chunk->getPhysicalMinX());
-    const float normalizedZ = (entityPos.z() - chunk->getPhysicalMinZ()) / (chunk->getPhysicalMaxZ() - chunk->getPhysicalMinZ());
+    // プレイヤーからの相対位置を計算
+    const float relativeX = entityPos.x() - playerPos.x();
+    const float relativeZ = entityPos.z() - playerPos.z();
 
-    // ミニマップの中心からのオフセットを計算
-    const float offsetX = (normalizedX - 0.5f) * m_size.x();
-    const float offsetZ = (normalizedZ - 0.5f) * m_size.y();
+    // ミニマップ上の位置を計算
+    const float mapScale = m_size.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize);
+    const Vector2 entitySize({ 5.0f, 5.0f });
+    Vector2 mapPos = Vector2({ m_position.x() + (relativeX * mapScale),
+        m_position.y() + (relativeZ * mapScale) });
 
-    Vector2 mapPos = Vector2({ m_position.x() + offsetX,
-        m_position.y() + offsetZ });
-
-    const float entitySize = 5.0f; // エンティティの表示サイズ
+    // ミニマップの範囲内かチェック
+    if (!isInMinimapRange(mapPos, entitySize)) {
+        return; // 範囲外なのでスキップ
+    }
 
     // エンティティを描画
     renderer->drawRect(
-        mapPos, // すでに中心位置
-        Vector2({ entitySize, entitySize }),
+        mapPos,
+        entitySize,
         0.0f, // 回転なし
         color);
+}
+
+void Minimap::drawRooms(
+    const std::shared_ptr<Renderer>& renderer,
+    const std::shared_ptr<Chunk>& chunk,
+    const Vector3& playerPos) const
+{
+    const float mapScale = m_size.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize);
+
+    for (int32_t i = 0; i < chunk->getRoomCount(); ++i) {
+        auto room = chunk->getRoomAt(i);
+
+        // 部屋のローカル座標をグローバル座標に変換
+        const auto gridPos = chunk->getGridPosition();
+        const float roomX = (gridPos.x() * Chunk::k_chunkSizeX + room.center.x()) * Chunk::k_tileSize;
+        const float roomZ = (gridPos.y() * Chunk::k_chunkSizeZ + room.center.z()) * Chunk::k_tileSize;
+
+        // プレイヤーからの相対位置を計算
+        const float relativeX = roomX - playerPos.x();
+        const float relativeZ = roomZ - playerPos.z();
+
+        Vector2 mapPos = Vector2({ m_position.x() + (relativeX * mapScale),
+            m_position.y() + (relativeZ * mapScale) });
+
+        // 部屋のサイズをミニマップスケールに変換
+        const Vector2 roomSize({ Chunk::k_roomSizeX * Chunk::k_tileSize * mapScale,
+            Chunk::k_roomSizeZ * Chunk::k_tileSize * mapScale });
+
+        // ミニマップの範囲に合わせてサイズと位置を調整
+        const float halfWidth = m_size.x() * 0.5f;
+        const float halfHeight = m_size.y() * 0.5f;
+        const float roomHalfWidth = roomSize.x() * 0.5f;
+        const float roomHalfHeight = roomSize.y() * 0.5f;
+
+        // 部屋がミニマップの範囲外に完全に出ている場合はスキップ
+        if (mapPos.x() + roomHalfWidth < m_position.x() - halfWidth || mapPos.x() - roomHalfWidth > m_position.x() + halfWidth || mapPos.y() + roomHalfHeight < m_position.y() - halfHeight || mapPos.y() - roomHalfHeight > m_position.y() + halfHeight) {
+            continue;
+        }
+
+        // 部屋のサイズと位置を調整
+        float adjustedX = mapPos.x();
+        float adjustedY = mapPos.y();
+        float adjustedWidth = roomSize.x();
+        float adjustedHeight = roomSize.y();
+
+        // X方向の調整
+        if (mapPos.x() - roomHalfWidth < m_position.x() - halfWidth) {
+            const float overflow = (m_position.x() - halfWidth) - (mapPos.x() - roomHalfWidth);
+            adjustedWidth -= overflow;
+            adjustedX += overflow * 0.5f;
+        }
+        if (mapPos.x() + roomHalfWidth > m_position.x() + halfWidth) {
+            const float overflow = (mapPos.x() + roomHalfWidth) - (m_position.x() + halfWidth);
+            adjustedWidth -= overflow;
+            adjustedX -= overflow * 0.5f;
+        }
+
+        // Y方向の調整
+        if (mapPos.y() - roomHalfHeight < m_position.y() - halfHeight) {
+            const float overflow = (m_position.y() - halfHeight) - (mapPos.y() - roomHalfHeight);
+            adjustedHeight -= overflow;
+            adjustedY += overflow * 0.5f;
+        }
+        if (mapPos.y() + roomHalfHeight > m_position.y() + halfHeight) {
+            const float overflow = (mapPos.y() + roomHalfHeight) - (m_position.y() + halfHeight);
+            adjustedHeight -= overflow;
+            adjustedY -= overflow * 0.5f;
+        }
+
+        // 調整後のサイズと位置で部屋を描画
+        renderer->drawRect(
+            Vector2({ adjustedX, adjustedY }),
+            Vector2({ adjustedWidth, adjustedHeight }),
+            0.0f,
+            Color({ 0.5f, 0.5f, 1.0f, 0.3f })); // 薄い青で半透明
+    }
 }
 
 void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
@@ -64,6 +177,20 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         return;
     }
 
+    auto player = field->getPlayer();
+    if (!player) {
+        return;
+    }
+
+    const auto& playerPos = player->getPosition();
+    const float mapScale = m_size.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize);
+    const float visibleRange = m_size.x() / (2.0f * mapScale); // ミニマップに表示される範囲(物理座標)
+
+    // プレイヤーの位置からグリッド座標を計算
+    const int32_t gridX = static_cast<int32_t>(playerPos.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize));
+    const int32_t gridZ = static_cast<int32_t>(playerPos.z() / (Chunk::k_chunkSizeZ * Chunk::k_tileSize));
+    const int32_t chunkRange = static_cast<int32_t>(visibleRange / (Chunk::k_chunkSizeX * Chunk::k_tileSize)) + 1;
+
     // ミニマップの背景を描画
     renderer->drawRect(
         m_position, // 中心位置
@@ -78,51 +205,33 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         0.0f, // 回転なし
         Color({ 1.0f, 1.0f, 1.0f, 0.3f })); // 半透明の白
 
-    // 部屋を描画
-    for (int32_t i = 0; i < currentChunk->getRoomCount(); ++i) {
-        auto room = currentChunk->getRoomAt(i);
+    // 表示範囲内の全てのチャンクの部屋とエンティティを描画
+    for (int32_t x = -chunkRange; x <= chunkRange; ++x) {
+        for (int32_t z = -chunkRange; z <= chunkRange; ++z) {
+            IntVector2 gridPos({ gridX + x, gridZ + z });
+            std::optional<std::shared_ptr<Chunk>> chunk;
+            if (field->tryFindChunk(chunk, gridPos)) {
+                // 部屋を描画
+                drawRooms(renderer, *chunk, playerPos);
 
-        // 部屋のローカル座標をグローバル座標に変換
-        const auto gridPos = currentChunk->getGridPosition();
-        const float roomX = (gridPos.x() * Chunk::k_chunkSizeX + room.center.x()) * Chunk::k_tileSize;
-        const float roomZ = (gridPos.y() * Chunk::k_chunkSizeZ + room.center.z()) * Chunk::k_tileSize;
-
-        const float normalizedX = (roomX - currentChunk->getPhysicalMinX()) / (currentChunk->getPhysicalMaxX() - currentChunk->getPhysicalMinX());
-        const float normalizedZ = (roomZ - currentChunk->getPhysicalMinZ()) / (currentChunk->getPhysicalMaxZ() - currentChunk->getPhysicalMinZ());
-
-        // ミニマップの中心からのオフセットを計算
-        const float offsetX = (normalizedX - 0.5f) * m_size.x();
-        const float offsetZ = (normalizedZ - 0.5f) * m_size.y();
-
-        Vector2 mapPos = Vector2({ m_position.x() + offsetX,
-            m_position.y() + offsetZ });
-
-        // 部屋のサイズをミニマップスケールに変換
-        const float roomSizeX = (Chunk::k_roomSizeX * Chunk::k_tileSize) / (currentChunk->getPhysicalMaxX() - currentChunk->getPhysicalMinX()) * m_size.x();
-        const float roomSizeZ = (Chunk::k_roomSizeZ * Chunk::k_tileSize) / (currentChunk->getPhysicalMaxZ() - currentChunk->getPhysicalMinZ()) * m_size.y();
-
-        // 部屋を描画(統一した色で)
-        renderer->drawRect(
-            mapPos,
-            Vector2({ roomSizeX, roomSizeZ }),
-            0.0f,
-            Color({ 0.5f, 0.5f, 1.0f, 0.3f })); // 薄い青で半透明
-    }
-
-    // プレイヤーを描画
-    auto player = field->getPlayer();
-    if (player) {
-        drawEntity(renderer, player, currentChunk, Color({ 0.0f, 1.0f, 0.0f, 1.0f })); // 緑色
-    }
-
-    // その他のエンティティを描画
-    for (int32_t i = 0; i < currentChunk->getEntityCount(); ++i) {
-        auto entity = currentChunk->getEntityAt(i);
-        if (!entity) {
-            continue;
+                // エンティティを描画
+                for (int32_t i = 0; i < (*chunk)->getEntityCount(); ++i) {
+                    auto entity = (*chunk)->getEntityAt(i);
+                    if (!entity) {
+                        continue;
+                    }
+                    drawEntity(renderer, entity, *chunk, playerPos, Color({ 1.0f, 0.0f, 0.0f, 1.0f })); // 赤色
+                }
+            }
         }
-        drawEntity(renderer, entity, currentChunk, Color({ 1.0f, 0.0f, 0.0f, 1.0f })); // 赤色
     }
+
+    // プレイヤーを中央に描画
+    renderer->drawRect(
+        m_position, // 中心位置
+        Vector2({ 5.0f, 5.0f }), // エンティティサイズ
+        0.0f,
+        Color({ 0.0f, 1.0f, 0.0f, 1.0f })); // 緑色
 }
 
 }
