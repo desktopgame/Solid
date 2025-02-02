@@ -78,6 +78,37 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         0.0f, // 回転なし
         Color({ 1.0f, 1.0f, 1.0f, 0.3f })); // 半透明の白
 
+    // 部屋を描画
+    for (int32_t i = 0; i < currentChunk->getRoomCount(); ++i) {
+        auto room = currentChunk->getRoomAt(i);
+
+        // 部屋のローカル座標をグローバル座標に変換
+        const auto gridPos = currentChunk->getGridPosition();
+        const float roomX = (gridPos.x() * Chunk::k_chunkSizeX + room.center.x()) * Chunk::k_tileSize;
+        const float roomZ = (gridPos.y() * Chunk::k_chunkSizeZ + room.center.z()) * Chunk::k_tileSize;
+
+        const float normalizedX = (roomX - currentChunk->getPhysicalMinX()) / (currentChunk->getPhysicalMaxX() - currentChunk->getPhysicalMinX());
+        const float normalizedZ = (roomZ - currentChunk->getPhysicalMinZ()) / (currentChunk->getPhysicalMaxZ() - currentChunk->getPhysicalMinZ());
+
+        // ミニマップの中心からのオフセットを計算
+        const float offsetX = (normalizedX - 0.5f) * m_size.x();
+        const float offsetZ = (normalizedZ - 0.5f) * m_size.y();
+
+        Vector2 mapPos = Vector2({ m_position.x() + offsetX,
+            m_position.y() + offsetZ });
+
+        // 部屋のサイズをミニマップスケールに変換
+        const float roomSizeX = (Chunk::k_roomSizeX * Chunk::k_tileSize) / (currentChunk->getPhysicalMaxX() - currentChunk->getPhysicalMinX()) * m_size.x();
+        const float roomSizeZ = (Chunk::k_roomSizeZ * Chunk::k_tileSize) / (currentChunk->getPhysicalMaxZ() - currentChunk->getPhysicalMinZ()) * m_size.y();
+
+        // 部屋を描画(統一した色で)
+        renderer->drawRect(
+            mapPos,
+            Vector2({ roomSizeX, roomSizeZ }),
+            0.0f,
+            Color({ 0.5f, 0.5f, 1.0f, 0.3f })); // 薄い青で半透明
+    }
+
     // プレイヤーを描画
     auto player = field->getPlayer();
     if (player) {
