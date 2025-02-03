@@ -50,9 +50,12 @@ void ChunkGenerator::generate()
     int32_t roomIndex = 0;
     for (int32_t j = 0; j < 3; j++) {
         for (int32_t i = 0; i < 3; i++) {
+            int32_t centerX = (i * k_space) + (roomSizeX * i) + (roomSizeX / 2);
+            int32_t centerZ = (j * k_space) + (roomSizeZ * j) + (roomSizeZ / 2);
+
             Room room;
             room.index = roomIndex;
-            room.center = IntVector3({ ((i + 1) * k_space) + (roomSizeX * i) + (roomSizeX / 2), 0, ((j + 1) * k_space) + (roomSizeZ * j) + (roomSizeZ / 2) });
+            room.center = IntVector3({ centerX, 0, centerZ });
             room.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
             m_rooms.emplace_back(room);
             roomIndex++;
@@ -142,34 +145,15 @@ void ChunkGenerator::generate()
             }
         }
         if (room.index % 3 == 0) {
-            Room neighbor;
-            neighbor.center = room.center - IntVector3({ Chunk::k_roomSpace * 2, 0, 0 }) - IntVector3({ Chunk::k_roomSizeX, 0, 0 });
-            neighbor.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
-
-            int32_t startX = room.center.x() - (room.size.x() / 2);
-            int32_t endX = neighbor.center.x() + (neighbor.size.x() / 2) + Chunk::k_roomSpace;
-            int32_t minX = Mathf::min(startX, endX);
-            int32_t maxX = Mathf::max(startX, endX);
-
-            for (int32_t x = minX; x <= maxX; x++) {
-                for (int32_t y = 0; y < Chunk::k_chunkSizeY; y++) {
-                    table[x][y][neighbor.center.z() - 2] = k_blockRouteWall;
-                    table[x][y][neighbor.center.z() + 2] = k_blockRouteWall;
+            int32_t leftX = room.center.x() - ((room.size.x() / 2));
+            int32_t startZ = room.center.z() - 1;
+            int32_t endZ = room.center.z() + 1;
+            int32_t minZ = Mathf::min(startZ, endZ);
+            int32_t maxZ = Mathf::max(startZ, endZ);
+            for (int32_t z = startZ; z <= endZ; z++) {
+                for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
+                    table[leftX][y][z] = k_blockNone;
                 }
-                table[x][0][neighbor.center.z() - 1] = k_blockRouteFloor;
-                table[x][0][neighbor.center.z()] = k_blockRouteFloor;
-                table[x][0][neighbor.center.z() + 1] = k_blockRouteFloor;
-                table[x][Chunk::k_chunkSizeY - 1][neighbor.center.z() - 1] = k_blockRouteRoof;
-                table[x][Chunk::k_chunkSizeY - 1][neighbor.center.z()] = k_blockRouteRoof;
-                table[x][Chunk::k_chunkSizeY - 1][neighbor.center.z() + 1] = k_blockRouteRoof;
-            }
-            for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
-                table[minX][y][neighbor.center.z() - 1] = k_blockNone;
-                table[minX][y][neighbor.center.z()] = k_blockNone;
-                table[minX][y][neighbor.center.z() + 1] = k_blockNone;
-                table[maxX][y][neighbor.center.z() - 1] = k_blockNone;
-                table[maxX][y][neighbor.center.z()] = k_blockNone;
-                table[maxX][y][neighbor.center.z() + 1] = k_blockNone;
             }
         }
         if (right >= 0 && right < 9 && room.index % 3 == 1) {
@@ -208,11 +192,11 @@ void ChunkGenerator::generate()
         }
         if (room.index % 3 == 2) {
             Room neighbor;
-            neighbor.center = room.center + IntVector3({ Chunk::k_roomSpace * 2, 0, 0 }) + IntVector3({ Chunk::k_roomSizeX, 0, 0 });
+            neighbor.center = room.center + IntVector3({ Chunk::k_roomSpace, 0, 0 }) + IntVector3({ Chunk::k_roomSizeX, 0, 0 });
             neighbor.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
 
             int32_t startX = room.center.x() + (room.size.x() / 2);
-            int32_t endX = neighbor.center.x() - (neighbor.size.x() / 2) - Chunk::k_roomSpace + 1;
+            int32_t endX = neighbor.center.x() - (neighbor.size.x() / 2) - 1;
             int32_t minX = Mathf::min(startX, endX);
             int32_t maxX = Mathf::max(startX, endX);
 
@@ -272,6 +256,7 @@ void ChunkGenerator::generate()
             }
         }
         if (room.index < 3) {
+            /*
             Room neighbor;
             neighbor.center = room.center - IntVector3({ 0, 0, Chunk::k_roomSpace * 2 }) - IntVector3({ 0, 0, Chunk::k_roomSizeZ });
             neighbor.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
@@ -300,7 +285,7 @@ void ChunkGenerator::generate()
                 table[neighbor.center.x() - 1][y][maxZ] = k_blockNone;
                 table[neighbor.center.x()][y][maxZ] = k_blockNone;
                 table[neighbor.center.x() + 1][y][maxZ] = k_blockNone;
-            }
+            }*/
         }
         if (bottom >= 0 && bottom < 9 && room.index <= 5) {
             auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [bottom](const auto& e) -> bool {
@@ -337,35 +322,6 @@ void ChunkGenerator::generate()
             }
         }
         if (room.index > 5) {
-            Room neighbor;
-            neighbor.center = room.center + IntVector3({ 0, 0, Chunk::k_roomSpace * 2 }) + IntVector3({ 0, 0, Chunk::k_roomSizeZ });
-            neighbor.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
-
-            int32_t startZ = room.center.z() + (room.size.z() / 2);
-            int32_t endZ = neighbor.center.z() - (neighbor.size.z() / 2) - Chunk::k_roomSpace + 1;
-            int32_t minZ = Mathf::min(startZ, endZ);
-            int32_t maxZ = Mathf::max(startZ, endZ);
-
-            for (int32_t z = minZ; z <= maxZ; z++) {
-                for (int32_t y = 0; y < Chunk::k_chunkSizeY; y++) {
-                    table[neighbor.center.x() - 2][y][z] = k_blockRouteWall;
-                    table[neighbor.center.x() + 2][y][z] = k_blockRouteWall;
-                }
-                table[neighbor.center.x() - 1][0][z] = k_blockRouteFloor;
-                table[neighbor.center.x()][0][z] = k_blockRouteFloor;
-                table[neighbor.center.x() + 1][0][z] = k_blockRouteFloor;
-                table[neighbor.center.x() - 1][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
-                table[neighbor.center.x()][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
-                table[neighbor.center.x() + 1][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
-            }
-            for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
-                table[neighbor.center.x() - 1][y][minZ] = k_blockNone;
-                table[neighbor.center.x()][y][minZ] = k_blockNone;
-                table[neighbor.center.x() + 1][y][minZ] = k_blockNone;
-                table[neighbor.center.x() - 1][y][maxZ] = k_blockNone;
-                table[neighbor.center.x()][y][maxZ] = k_blockNone;
-                table[neighbor.center.x() + 1][y][maxZ] = k_blockNone;
-            }
         }
     }
 
