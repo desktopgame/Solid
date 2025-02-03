@@ -256,36 +256,16 @@ void ChunkGenerator::generate()
             }
         }
         if (room.index < 3) {
-            /*
-            Room neighbor;
-            neighbor.center = room.center - IntVector3({ 0, 0, Chunk::k_roomSpace * 2 }) - IntVector3({ 0, 0, Chunk::k_roomSizeZ });
-            neighbor.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
-
-            int32_t startZ = room.center.z() - (room.size.z() / 2);
-            int32_t endZ = neighbor.center.z() + (neighbor.size.z() / 2) + Chunk::k_roomSpace;
-            int32_t minZ = Mathf::min(startZ, endZ);
-            int32_t maxZ = Mathf::max(startZ, endZ);
-
-            for (int32_t z = minZ; z <= maxZ; z++) {
-                for (int32_t y = 0; y < Chunk::k_chunkSizeY; y++) {
-                    table[neighbor.center.x() - 2][y][z] = k_blockRouteWall;
-                    table[neighbor.center.x() + 2][y][z] = k_blockRouteWall;
+            int32_t nearZ = room.center.z() - ((room.size.z() / 2));
+            int32_t startX = room.center.x() - 1;
+            int32_t endX = room.center.x() + 1;
+            int32_t minX = Mathf::min(startX, endX);
+            int32_t maxX = Mathf::max(startX, endX);
+            for (int32_t x = startX; x <= endX; x++) {
+                for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
+                    table[x][y][nearZ] = k_blockNone;
                 }
-                table[neighbor.center.x() - 1][0][z] = k_blockRouteFloor;
-                table[neighbor.center.x()][0][z] = k_blockRouteFloor;
-                table[neighbor.center.x() + 1][0][z] = k_blockRouteFloor;
-                table[neighbor.center.x() - 1][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
-                table[neighbor.center.x()][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
-                table[neighbor.center.x() + 1][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
             }
-            for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
-                table[neighbor.center.x() - 1][y][minZ] = k_blockNone;
-                table[neighbor.center.x()][y][minZ] = k_blockNone;
-                table[neighbor.center.x() + 1][y][minZ] = k_blockNone;
-                table[neighbor.center.x() - 1][y][maxZ] = k_blockNone;
-                table[neighbor.center.x()][y][maxZ] = k_blockNone;
-                table[neighbor.center.x() + 1][y][maxZ] = k_blockNone;
-            }*/
         }
         if (bottom >= 0 && bottom < 9 && room.index <= 5) {
             auto iter = std::find_if(m_rooms.begin(), m_rooms.end(), [bottom](const auto& e) -> bool {
@@ -322,6 +302,35 @@ void ChunkGenerator::generate()
             }
         }
         if (room.index > 5) {
+            Room neighbor;
+            neighbor.center = room.center + IntVector3({ 0, 0, Chunk::k_roomSpace }) + IntVector3({ 0, 0, Chunk::k_roomSizeZ });
+            neighbor.size = IntVector3({ roomSizeX, Chunk::k_chunkSizeY, roomSizeZ });
+
+            int32_t startZ = room.center.z() + (room.size.z() / 2);
+            int32_t endZ = neighbor.center.z() - (neighbor.size.z() / 2) - 1;
+            int32_t minZ = Mathf::min(startZ, endZ);
+            int32_t maxZ = Mathf::max(startZ, endZ);
+
+            for (int32_t z = minZ; z <= maxZ; z++) {
+                for (int32_t y = 0; y < Chunk::k_chunkSizeY; y++) {
+                    table[neighbor.center.x() - 2][y][z] = k_blockRouteWall;
+                    table[neighbor.center.x() + 2][y][z] = k_blockRouteWall;
+                }
+                table[neighbor.center.x() - 1][0][z] = k_blockRouteFloor;
+                table[neighbor.center.x()][0][z] = k_blockRouteFloor;
+                table[neighbor.center.x() + 1][0][z] = k_blockRouteFloor;
+                table[neighbor.center.x() - 1][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
+                table[neighbor.center.x()][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
+                table[neighbor.center.x() + 1][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
+            }
+            for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
+                table[neighbor.center.x() - 1][y][minZ] = k_blockNone;
+                table[neighbor.center.x()][y][minZ] = k_blockNone;
+                table[neighbor.center.x() + 1][y][minZ] = k_blockNone;
+                table[neighbor.center.x() - 1][y][maxZ] = k_blockNone;
+                table[neighbor.center.x()][y][maxZ] = k_blockNone;
+                table[neighbor.center.x() + 1][y][maxZ] = k_blockNone;
+            }
         }
     }
 
