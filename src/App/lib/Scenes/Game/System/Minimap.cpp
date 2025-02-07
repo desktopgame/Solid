@@ -166,73 +166,75 @@ void Minimap::drawRooms(
 {
     const float mapScale = m_size.x() / (Chunk::k_chunkSizeX * Chunk::k_tileSize);
 
-    for (int32_t i = 0; i < chunk->getRoomCount(); ++i) {
-        auto room = chunk->getRoomAt(i);
+    /*
+        for (int32_t i = 0; i < chunk->getRoomCount(); ++i) {
+            auto room = chunk->getRoomAt(i);
 
-        // 部屋のローカル座標をグローバル座標に変換
-        const auto gridPos = chunk->getGridPosition();
-        const float roomX = (gridPos.x() * Chunk::k_chunkSizeX + room.center.x()) * Chunk::k_tileSize;
-        const float roomZ = (gridPos.y() * Chunk::k_chunkSizeZ + room.center.z()) * Chunk::k_tileSize;
+            // 部屋のローカル座標をグローバル座標に変換
+            const auto gridPos = chunk->getGridPosition();
+            const float roomX = (gridPos.x() * Chunk::k_chunkSizeX + room.center.x()) * Chunk::k_tileSize;
+            const float roomZ = (gridPos.y() * Chunk::k_chunkSizeZ + room.center.z()) * Chunk::k_tileSize;
 
-        // プレイヤーからの相対位置を計算
-        const float relativeX = roomX - playerPos.x();
-        const float relativeZ = roomZ - playerPos.z();
+            // プレイヤーからの相対位置を計算
+            const float relativeX = roomX - playerPos.x();
+            const float relativeZ = roomZ - playerPos.z();
 
-        Vector2 mapPos = Vector2({ m_position.x() + (relativeX * mapScale),
-            m_position.y() + (relativeZ * mapScale) });
+            Vector2 mapPos = Vector2({ m_position.x() + (relativeX * mapScale),
+                m_position.y() + (relativeZ * mapScale) });
 
-        // 部屋のサイズをミニマップスケールに変換
-        const Vector2 roomSize({ Chunk::k_roomSizeX * Chunk::k_tileSize * mapScale,
-            Chunk::k_roomSizeZ * Chunk::k_tileSize * mapScale });
+            // 部屋のサイズをミニマップスケールに変換
+            const Vector2 roomSize({ Chunk::k_roomSizeX * Chunk::k_tileSize * mapScale,
+                Chunk::k_roomSizeZ * Chunk::k_tileSize * mapScale });
 
-        // ミニマップの範囲に合わせてサイズと位置を調整
-        const float halfWidth = m_size.x() * 0.5f;
-        const float halfHeight = m_size.y() * 0.5f;
-        const float roomHalfWidth = roomSize.x() * 0.5f;
-        const float roomHalfHeight = roomSize.y() * 0.5f;
+            // ミニマップの範囲に合わせてサイズと位置を調整
+            const float halfWidth = m_size.x() * 0.5f;
+            const float halfHeight = m_size.y() * 0.5f;
+            const float roomHalfWidth = roomSize.x() * 0.5f;
+            const float roomHalfHeight = roomSize.y() * 0.5f;
 
-        // 部屋がミニマップの範囲外に完全に出ている場合はスキップ
-        if (mapPos.x() + roomHalfWidth < m_position.x() - halfWidth || mapPos.x() - roomHalfWidth > m_position.x() + halfWidth || mapPos.y() + roomHalfHeight < m_position.y() - halfHeight || mapPos.y() - roomHalfHeight > m_position.y() + halfHeight) {
-            continue;
+            // 部屋がミニマップの範囲外に完全に出ている場合はスキップ
+            if (mapPos.x() + roomHalfWidth < m_position.x() - halfWidth || mapPos.x() - roomHalfWidth > m_position.x() + halfWidth || mapPos.y() + roomHalfHeight < m_position.y() - halfHeight || mapPos.y() - roomHalfHeight > m_position.y() + halfHeight) {
+                continue;
+            }
+
+            // 部屋のサイズと位置を調整
+            float adjustedX = mapPos.x();
+            float adjustedY = mapPos.y();
+            float adjustedWidth = roomSize.x();
+            float adjustedHeight = roomSize.y();
+
+            // X方向の調整
+            if (mapPos.x() - roomHalfWidth < m_position.x() - halfWidth) {
+                const float overflow = (m_position.x() - halfWidth) - (mapPos.x() - roomHalfWidth);
+                adjustedWidth -= overflow;
+                adjustedX += overflow * 0.5f;
+            }
+            if (mapPos.x() + roomHalfWidth > m_position.x() + halfWidth) {
+                const float overflow = (mapPos.x() + roomHalfWidth) - (m_position.x() + halfWidth);
+                adjustedWidth -= overflow;
+                adjustedX -= overflow * 0.5f;
+            }
+
+            // Y方向の調整
+            if (mapPos.y() - roomHalfHeight < m_position.y() - halfHeight) {
+                const float overflow = (m_position.y() - halfHeight) - (mapPos.y() - roomHalfHeight);
+                adjustedHeight -= overflow;
+                adjustedY += overflow * 0.5f;
+            }
+            if (mapPos.y() + roomHalfHeight > m_position.y() + halfHeight) {
+                const float overflow = (mapPos.y() + roomHalfHeight) - (m_position.y() + halfHeight);
+                adjustedHeight -= overflow;
+                adjustedY -= overflow * 0.5f;
+            }
+
+            // 調整後のサイズと位置で部屋を描画
+            renderer->drawRect(
+                Vector2({ adjustedX, adjustedY }),
+                Vector2({ adjustedWidth, adjustedHeight }),
+                0.0f,
+                Color({ 0.5f, 0.5f, 1.0f, 0.3f })); // 薄い青で半透明
         }
-
-        // 部屋のサイズと位置を調整
-        float adjustedX = mapPos.x();
-        float adjustedY = mapPos.y();
-        float adjustedWidth = roomSize.x();
-        float adjustedHeight = roomSize.y();
-
-        // X方向の調整
-        if (mapPos.x() - roomHalfWidth < m_position.x() - halfWidth) {
-            const float overflow = (m_position.x() - halfWidth) - (mapPos.x() - roomHalfWidth);
-            adjustedWidth -= overflow;
-            adjustedX += overflow * 0.5f;
-        }
-        if (mapPos.x() + roomHalfWidth > m_position.x() + halfWidth) {
-            const float overflow = (mapPos.x() + roomHalfWidth) - (m_position.x() + halfWidth);
-            adjustedWidth -= overflow;
-            adjustedX -= overflow * 0.5f;
-        }
-
-        // Y方向の調整
-        if (mapPos.y() - roomHalfHeight < m_position.y() - halfHeight) {
-            const float overflow = (m_position.y() - halfHeight) - (mapPos.y() - roomHalfHeight);
-            adjustedHeight -= overflow;
-            adjustedY += overflow * 0.5f;
-        }
-        if (mapPos.y() + roomHalfHeight > m_position.y() + halfHeight) {
-            const float overflow = (mapPos.y() + roomHalfHeight) - (m_position.y() + halfHeight);
-            adjustedHeight -= overflow;
-            adjustedY -= overflow * 0.5f;
-        }
-
-        // 調整後のサイズと位置で部屋を描画
-        renderer->drawRect(
-            Vector2({ adjustedX, adjustedY }),
-            Vector2({ adjustedWidth, adjustedHeight }),
-            0.0f,
-            Color({ 0.5f, 0.5f, 1.0f, 0.3f })); // 薄い青で半透明
-    }
+        */
 }
 
 }

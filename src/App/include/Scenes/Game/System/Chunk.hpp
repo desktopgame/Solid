@@ -15,8 +15,6 @@ public:
     static inline constexpr int32_t k_chunkSizeX = 42;
     static inline constexpr int32_t k_chunkSizeY = 16;
     static inline constexpr int32_t k_chunkSizeZ = 42;
-    static inline constexpr int32_t k_roomSizeX = k_chunkSizeX;
-    static inline constexpr int32_t k_roomSizeZ = k_chunkSizeZ;
     static inline constexpr int32_t k_routeLength = 4;
     static inline constexpr int32_t k_routeWidth = 4;
     static inline constexpr float k_tileSize = 5.0f;
@@ -211,9 +209,6 @@ public:
     void spwan(const std::shared_ptr<Entity>& entity);
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
     int32_t getEntityCount() const;
-
-    ChunkGenerator::Room getRoomAt(int32_t index) const;
-    int32_t getRoomCount() const;
 
     static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
     {

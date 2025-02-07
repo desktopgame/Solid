@@ -5,23 +5,6 @@
 #include <iostream>
 
 namespace App::Scenes::Game::System {
-// Room
-ChunkGenerator::Room::Room()
-    : size()
-    , center()
-    , index()
-    , removed()
-    , connected()
-{
-}
-// Route
-ChunkGenerator::Route::Route()
-    : prevRoomIndex()
-    , nextRoomIndex()
-    , roomIndex()
-    , center()
-{
-}
 // public
 ChunkGenerator::ChunkGenerator() { }
 void ChunkGenerator::generate()
@@ -37,11 +20,6 @@ void ChunkGenerator::generate()
     const int32_t k_blockRouteFloor = 4;
     const int32_t k_blockRouteRoof = 5;
     const int32_t k_blockRouteWall = 6;
-
-    Random rand;
-
-    m_rooms.clear();
-    m_routes.clear();
 
     // ブロック座標を記憶する配列を確保
     // スタックを使いすぎないように動的確保
@@ -140,63 +118,5 @@ void ChunkGenerator::generate()
     }
 }
 const std::vector<Vector4>& ChunkGenerator::getTiles() const { return m_tiles; }
-const std::vector<ChunkGenerator::Room>& ChunkGenerator::getRooms() const { return m_rooms; }
-
 // private
-void ChunkGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms, std::vector<int32_t>& visit)
-{
-    if (std::find(visit.begin(), visit.end(), index) != visit.end()) {
-        return;
-    }
-    visit.emplace_back(index);
-
-    // 通路を繋ぐ
-    auto& room = *std::find_if(rooms.begin(), rooms.end(), [index](const auto& e) -> bool {
-        return e.index == index;
-    });
-    int32_t left = room.index - 1;
-    int32_t right = room.index + 1;
-    int32_t top = room.index - 3;
-    int32_t bottom = room.index + 3;
-
-    if (left >= 0 && left < 9 && room.index % 3 > 0) {
-        auto iter = std::find_if(rooms.begin(), rooms.end(), [left](const auto& e) -> bool {
-            return e.index == left;
-        });
-        if (iter != rooms.end()) {
-            markRecursive(left, rooms, visit);
-        }
-    }
-    if (right >= 0 && right < 9 && room.index % 3 < 2) {
-        auto iter = std::find_if(rooms.begin(), rooms.end(), [right](const auto& e) -> bool {
-            return e.index == right;
-        });
-        if (iter != rooms.end()) {
-            markRecursive(right, rooms, visit);
-        }
-    }
-    if (top >= 0 && top < 9 && room.index >= 3) {
-        auto iter = std::find_if(rooms.begin(), rooms.end(), [top](const auto& e) -> bool {
-            return e.index == top;
-        });
-        if (iter != rooms.end()) {
-            markRecursive(top, rooms, visit);
-        }
-    }
-    if (bottom >= 0 && bottom < 9 && room.index <= 5) {
-        auto iter = std::find_if(rooms.begin(), rooms.end(), [bottom](const auto& e) -> bool {
-            return e.index == bottom;
-        });
-        if (iter != rooms.end()) {
-            markRecursive(bottom, rooms, visit);
-        }
-    }
-}
-
-std::vector<int32_t> ChunkGenerator::markRecursive(int32_t index, const std::vector<Room>& rooms)
-{
-    std::vector<int32_t> temp;
-    markRecursive(index, rooms, temp);
-    return temp;
-}
 }
