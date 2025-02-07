@@ -37,33 +37,9 @@ void GameScene::onEnter()
 
         auto chunk = m_field->getCurrentChunk();
 
-        Random rand;
-        int32_t mainRoomIndex = rand.range(0, chunk->getRoomCount() - 1);
-
-        for (int32_t i = 0; i < chunk->getRoomCount(); i++) {
-            if (i == mainRoomIndex) {
-                continue;
-            }
-            System::ChunkGenerator::Room room = chunk->getRoomAt(i);
-            for (int32_t j = 0; j < rand.range(1, 5); j++) {
-                // int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
-                // int32_t halfZ = (System::Chunk::k_roomSizeZ / 2) - 3;
-                // int32_t tileOffsetX = rand.range(-halfX, halfX);
-                // int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
-
-                float enemyPosX = (room.center.x() + 0) * System::Chunk::k_tileSize;
-                float enemyPosZ = (room.center.z() + 0) * System::Chunk::k_tileSize;
-
-                m_debugEntity = System::Entities::SlimeEntity::create();
-                m_debugEntity->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
-                chunk->spwan(m_debugEntity);
-            }
-        }
-
-        System::ChunkGenerator::Room mainRoom = chunk->getRoomAt(mainRoomIndex);
         m_debugPlayer = System::Entities::PlayerEntity::create(
             Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
-        m_debugPlayer->setPosition(Vector3({ mainRoom.center.x() * System::Chunk::k_tileSize, 10, mainRoom.center.z() * System::Chunk::k_tileSize }));
+        m_debugPlayer->setPosition(Vector3({ (System::Chunk::k_chunkSizeX / 2) * System::Chunk::k_tileSize, 10, (System::Chunk::k_chunkSizeZ / 2) * System::Chunk::k_tileSize }));
         m_field->setPlayer(m_debugPlayer);
     }
     if (!m_aimTexture) {
@@ -85,7 +61,7 @@ void GameScene::onExit()
 void GameScene::onUpdate()
 {
     m_field->update();
-    m_minimap->update();
+    // m_minimap->update();
 }
 
 void GameScene::onGui()
@@ -111,7 +87,7 @@ void GameScene::onDraw3D()
 void GameScene::onDraw2D()
 {
     m_field->draw2D(m_renderer);
-    m_minimap->draw2D(m_renderer);
+    // m_minimap->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
 

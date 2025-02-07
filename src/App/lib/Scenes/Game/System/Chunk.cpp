@@ -55,6 +55,7 @@ void Chunk::generate()
         m_generator->generate();
 
         // TODO: 仮置きの敵生成処理
+        /*
         Random rand;
         for (const auto& room : m_generator->getRooms()) {
             int32_t enemyCount = rand.range(3, 10);
@@ -70,6 +71,7 @@ void Chunk::generate()
                 spwan(enemy);
             }
         }
+        */
     }
     const std::vector<Vector4>& instances = m_generator->getTiles();
 
