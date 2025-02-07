@@ -59,7 +59,7 @@ void GameScene::onExit()
 void GameScene::onUpdate()
 {
     m_field->update();
-    // m_minimap->update();
+    m_minimap->update();
 }
 
 void GameScene::onGui()
@@ -85,7 +85,7 @@ void GameScene::onDraw3D()
 void GameScene::onDraw2D()
 {
     m_field->draw2D(m_renderer);
-    // m_minimap->draw2D(m_renderer);
+    m_minimap->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
 
