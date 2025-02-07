@@ -36,10 +36,8 @@ void GameScene::onEnter()
         m_field->generate();
 
         auto chunk = m_field->getCurrentChunk();
-
-        m_debugPlayer = System::Entities::PlayerEntity::create(
-            Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
-        m_debugPlayer->setPosition(Vector3({ (System::Chunk::k_chunkSizeX / 2) * System::Chunk::k_tileSize, 10, (System::Chunk::k_chunkSizeZ / 2) * System::Chunk::k_tileSize }));
+        m_debugPlayer = System::Entities::PlayerEntity::create(Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
+        m_debugPlayer->setPosition(Vector3({ chunk->getPhysicalCenterX(), 10, chunk->getPhysicalCenterZ() }));
         m_field->setPlayer(m_debugPlayer);
     }
     if (!m_aimTexture) {
