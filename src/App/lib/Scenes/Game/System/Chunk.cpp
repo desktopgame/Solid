@@ -55,23 +55,19 @@ void Chunk::generate()
         m_generator->generate();
 
         // TODO: 仮置きの敵生成処理
-        /*
         Random rand;
-        for (const auto& room : m_generator->getRooms()) {
-            int32_t enemyCount = rand.range(3, 10);
-            for (int32_t i = 0; i < enemyCount; i++) {
-                int32_t tileX = (room.center.x() + rand.range(-room.size.x() / 2, room.size.x() / 2));
-                int32_t tileZ = (room.center.z() + rand.range(-room.size.z() / 2, room.size.z() / 2));
-                IntVector3 globalTilePos = Field::toGlobalBlockPosition(m_gridPosition, tileX, 0, tileZ);
+        int32_t enemyCount = rand.range(3, 10);
+        for (int32_t i = 0; i < enemyCount; i++) {
+            int32_t tileX = rand.range(Chunk::k_chunkInsetMinX, Chunk::k_chunkInsetMaxX - 1);
+            int32_t tileZ = rand.range(Chunk::k_chunkInsetMinZ, Chunk::k_chunkInsetMaxZ - 1);
+            IntVector3 globalTilePos = Field::toGlobalBlockPosition(m_gridPosition, tileX, 0, tileZ);
 
-                float enemyPosX = globalTilePos.x() * System::Chunk::k_tileSize;
-                float enemyPosZ = globalTilePos.z() * System::Chunk::k_tileSize;
-                auto enemy = System::Entities::SlimeEntity::create();
-                enemy->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
-                spwan(enemy);
-            }
+            float enemyPosX = globalTilePos.x() * System::Chunk::k_tileSize;
+            float enemyPosZ = globalTilePos.z() * System::Chunk::k_tileSize;
+            auto enemy = System::Entities::SlimeEntity::create();
+            enemy->setPosition(Vector3({ enemyPosX, 10, enemyPosZ }));
+            spwan(enemy);
         }
-        */
     }
     const std::vector<Vector4>& instances = m_generator->getTiles();
 

@@ -17,6 +17,10 @@ public:
     static inline constexpr int32_t k_chunkSizeZ = 42;
     static inline constexpr int32_t k_routeLength = 4;
     static inline constexpr int32_t k_routeWidth = 4;
+    static inline constexpr int32_t k_chunkInsetMinX = 1;
+    static inline constexpr int32_t k_chunkInsetMaxX = k_chunkSizeX - k_routeLength;
+    static inline constexpr int32_t k_chunkInsetMinZ = 1;
+    static inline constexpr int32_t k_chunkInsetMaxZ = k_chunkSizeZ - k_routeLength;
     static inline constexpr float k_tileSize = 5.0f;
     static inline constexpr float k_gravity = 9.8f * 5.0f;
     static_assert(k_chunkSizeX % 2 == 0);
