@@ -1,6 +1,10 @@
 Color2D.meta
+Color2D_StencilRead.meta
+Color2D_StencilWrite.meta
 Text2D.meta
 Texture2D.meta
+Texture2D_StencilRead.meta
+Texture2D_StencilWrite.meta
 MeshColor3D.meta
 MeshTexture3D.meta
 MeshWireframe3D.meta
