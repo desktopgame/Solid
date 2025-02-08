@@ -42,6 +42,7 @@ public:
     void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
 
     void stencilRef(uint32_t value);
+    void stencilClear();
 
     void uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
     void uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
@@ -112,6 +113,7 @@ private:
     class PresentCommand;
     class SyncCommand;
     class StencilRefCommand;
+    class StencilClearCommand;
     class RenderCommand1;
     class RenderCommand2;
     class RenderCommand3;

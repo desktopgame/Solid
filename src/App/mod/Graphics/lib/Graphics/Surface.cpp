@@ -309,6 +309,22 @@ public:
     uint32_t value;
 };
 
+class Surface::StencilClearCommand : public ICommand {
+public:
+    explicit StencilClearCommand()
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CLEAR_FLAGS clearDepthFlags = D3D12_CLEAR_FLAG_STENCIL;
+        commandList->ClearDepthStencilView(dsvHandle, clearDepthFlags, 1.0f, 0, 0, nullptr);
+    }
+
+    Surface* surface;
+};
+
 class Surface::RenderCommand1 : public ICommand {
 public:
     explicit RenderCommand1()
@@ -558,6 +574,7 @@ public:
     CommandPool<PresentCommand> presentCommandPool;
     CommandPool<SyncCommand> syncCommandPool;
     CommandPool<StencilRefCommand> stencilRefCommandPool;
+    CommandPool<StencilClearCommand> stencilClearCommandPool;
     CommandPool<RenderCommand1> renderCommand1Pool;
     CommandPool<RenderCommand2> renderCommand2Pool;
     CommandPool<RenderCommand3> renderCommand3Pool;
@@ -664,6 +681,7 @@ void Surface::endPresent()
     m_impl->presentCommandPool.releaseAll();
     m_impl->syncCommandPool.releaseAll();
     m_impl->stencilRefCommandPool.releaseAll();
+    m_impl->stencilClearCommandPool.releaseAll();
     m_impl->renderCommand1Pool.releaseAll();
     m_impl->renderCommand2Pool.releaseAll();
     m_impl->renderCommand3Pool.releaseAll();
@@ -686,6 +704,13 @@ void Surface::stencilRef(uint32_t value)
 {
     auto cmd = m_impl->stencilRefCommandPool.rent();
     cmd->value = value;
+    m_impl->queue.enqueue(cmd);
+}
+
+void Surface::stencilClear()
+{
+    auto cmd = m_impl->stencilClearCommandPool.rent();
+    cmd->surface = this;
     m_impl->queue.enqueue(cmd);
 }
 
