@@ -13,5 +13,8 @@ float4 psMain(Output input) : SV_TARGET {
     col.x = input.color.x;
     col.y = input.color.y;
     col.z = input.color.z;
+    if (col.w <= 0) {
+        discard;
+    }
     return col;
 }

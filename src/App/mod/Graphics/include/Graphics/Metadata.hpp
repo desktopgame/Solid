@@ -312,6 +312,9 @@ namespace Lib::Graphics::Metadata {
             "    col.x = input.color.x;\n"
             "    col.y = input.color.y;\n"
             "    col.z = input.color.z;\n"
+            "    if (col.w <= 0) {\n"
+            "        discard;\n"
+            "    }\n"
             "    return col;\n"
             "}\n"
             ,
