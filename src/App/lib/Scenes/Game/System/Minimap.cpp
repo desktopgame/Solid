@@ -25,27 +25,24 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         (k_backgroundSize.y() - (k_routeLength * 4)) / 3,
     });
 
-    std::vector<std::shared_ptr<Chunk>> chunks;
+    std::vector<IntVector2> localGridPositions;
     auto playerPos = player->getPosition();
     auto currentChunk = m_field->getCurrentChunk();
     auto currentChunkGridPos = currentChunk->getGridPosition();
-    chunks.emplace_back(currentChunk);
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ -1, 0 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ 1, 0 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ 0, -1 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ 0, 1 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ -1, -1 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ 1, 1 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ -1, 1 })));
-    chunks.emplace_back(m_field->loadChunk(currentChunkGridPos + IntVector2({ 1, -1 })));
+    localGridPositions.emplace_back(IntVector2({ 0, 0 }));
+
+    IntVector2 startGridPos = localGridPositions.front() - IntVector2({ 2, 2 });
+    for (int32_t i = 0; i <= 4; i++) {
+        for (int32_t j = 0; j <= 4; j++) {
+            localGridPositions.emplace_back(startGridPos + IntVector2({ i, j }));
+        }
+    }
 
     auto mapScrollAmount = (Vector3({ playerPos.x(), 0, playerPos.z() }) - Vector3({ currentChunk->getPhysicalCenterX(), 0, currentChunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
     mapScrollAmount.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
     mapScrollAmount.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
 
-    for (const auto chunk : chunks) {
-        IntVector2 gridPos = chunk->getGridPosition();
-        IntVector2 localGridPos = currentChunkGridPos - gridPos;
+    for (const auto localGridPos : localGridPositions) {
 
         int32_t col = localGridPos.x() + 1;
         int32_t row = localGridPos.y() + 1;
@@ -56,8 +53,14 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         offsetX += mapScrollAmount.x();
         offsetY += mapScrollAmount.z();
 
+        Vector4 color = Vector4({ 0, 0, 0, 1 });
+        if (Mathf::abs(offsetX) - k_chunkSize.x() / 2.0f >= k_backgroundSize.x() / 2.0f || Mathf::abs(offsetY) - k_chunkSize.y() / 2.0f >= k_backgroundSize.y() / 2.0f) {
+            continue;
+        }
+
+        m_field->loadChunk(currentChunk->getGridPosition() + localGridPos);
         renderer->drawRect(
-            k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, Vector4({ 0, 0, 0, 1 }));
+            k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, color);
     }
 
     renderer->drawRect(
