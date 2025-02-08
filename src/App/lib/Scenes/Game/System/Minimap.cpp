@@ -18,6 +18,8 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         return;
     }
 
+    renderer->stencilRef(1);
+    renderer->stencilWrite();
     renderer->drawRect(k_backgroundCenter, k_backgroundSize, 0.0f, Vector4({ 1, 1, 1, 0.5f }));
 
     const Vector2 k_chunkSize({
@@ -42,6 +44,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
     mapScrollAmount.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
     mapScrollAmount.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
 
+    renderer->stencilRead();
     for (const auto localGridPos : localGridPositions) {
 
         int32_t col = localGridPos.x() + 1;
@@ -82,5 +85,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
 
     renderer->drawRect(
         k_backgroundCenter, Vector2({ 5, 5 }), 0.0f, Vector4({ 0, 1, 0, 1 }));
+
+    renderer->stencilNone();
 }
 }
