@@ -70,6 +70,18 @@ foreach ($metaMetaData in Get-Content "./embed/Meta.meta" -Encoding UTF8) {
     }
     $programs += $metaMetaData.SubString(0, $metaMetaData.IndexOf("."))
     $properties = @{}
+    foreach ($metaData in Get-Content $("./embed/Default.meta") -Encoding UTF8) {
+        if ($metaData -match '^\s*$' -or $metaData -match '^\s*[;#]') {
+            return
+        }
+        if ($metaData -eq "") {
+            return
+        }
+        $words = $metaData -split "="
+        $key = $words[0].Trim()
+        $value = $words[1].Trim()
+        $properties[$key] = $value
+    }
     foreach ($metaData in Get-Content $("./embed/$metaMetaData") -Encoding UTF8) {
         if ($metaData -match '^\s*$' -or $metaData -match '^\s*[;#]') {
             return
@@ -120,7 +132,7 @@ foreach ($properties in $propertiesList) {
     $stencilFrontBackDepthFailOp = (GetOrThrow $properties "Stencil.BackFace.DepthFailOp")
     $stencilFrontBackPassOp = (GetOrThrow $properties "Stencil.BackFace.PassOp")
     $stencilFrontBackFunc = (GetOrThrow $properties "Stencil.BackFace.Func")
-    Write-Output ("            Stencil { {0}, {1}, Reflect::StencilOp::{2}, Reflect::StencilOp::{3}, Reflect::StencilOp::{4}, Reflect::StencilFunc::{5}, Reflect::StencilOp::{6}, Reflect::StencilOp::{7}, Reflect::StencilOp::{8}, Reflect::StencilFunc::{9} }," -f $stencilRead $stencilWrite $stencilFrontFaceFailOp $stencilFrontFaceDepthFailOp $stencilFrontFacePassOp $stencilFrontFaceFunc $stencilFrontBackFailOp $stencilFrontBackDepthFailOp $stencilFrontBackPassOp $stencilFrontBackFunc)
+    Write-Output ("            Stencil {{ {0}, {1}, Reflect::StencilOp::{2}, Reflect::StencilOp::{3}, Reflect::StencilOp::{4}, Reflect::StencilFunc::{5}, Reflect::StencilOp::{6}, Reflect::StencilOp::{7}, Reflect::StencilOp::{8}, Reflect::StencilFunc::{9} }}," -f $stencilRead, $stencilWrite, $stencilFrontFaceFailOp, $stencilFrontFaceDepthFailOp, $stencilFrontFacePassOp, $stencilFrontFaceFunc, $stencilFrontBackFailOp, $stencilFrontBackDepthFailOp, $stencilFrontBackPassOp, $stencilFrontBackFunc)
 
     Write-Output "            // vs"
     $vsCode = (GetOrThrow $properties "VS.Code")

@@ -1,0 +1,10 @@
+Stencil.Write=false
+Stencil.Read=false
+Stencil.FrontFace.FailOp=Keep
+Stencil.FrontFace.DepthFailOp=Keep
+Stencil.FrontFace.PassOp=Keep
+Stencil.FrontFace.Func=Never
+Stencil.BackFace.FailOp=Keep
+Stencil.BackFace.DepthFailOp=Keep
+Stencil.BackFace.PassOp=Keep
+Stencil.BackFace.Func=Never
