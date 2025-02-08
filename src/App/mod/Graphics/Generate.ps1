@@ -110,7 +110,17 @@ foreach ($properties in $propertiesList) {
     Write-Output "            // isWireframe"
     Write-Output ("            {0}," -f (GetOrThrow $properties "IsWireframe"))
     Write-Output "            // stencil"
-    Write-Output ("            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },")
+    $stencilRead = (GetOrThrow $properties "Stencil.Read")
+    $stencilWrite = (GetOrThrow $properties "Stencil.Write")
+    $stencilFrontFaceFailOp = (GetOrThrow $properties "Stencil.FrontFace.FailOp")
+    $stencilFrontFaceDepthFailOp = (GetOrThrow $properties "Stencil.FrontFace.DepthFailOp")
+    $stencilFrontFacePassOp = (GetOrThrow $properties "Stencil.FrontFace.PassOp")
+    $stencilFrontFaceFunc = (GetOrThrow $properties "Stencil.FrontFace.Func")
+    $stencilFrontBackFailOp = (GetOrThrow $properties "Stencil.BackFace.FailOp")
+    $stencilFrontBackDepthFailOp = (GetOrThrow $properties "Stencil.BackFace.DepthFailOp")
+    $stencilFrontBackPassOp = (GetOrThrow $properties "Stencil.BackFace.PassOp")
+    $stencilFrontBackFunc = (GetOrThrow $properties "Stencil.BackFace.Func")
+    Write-Output ("            Stencil { {0}, {1}, Reflect::StencilOp::{2}, Reflect::StencilOp::{3}, Reflect::StencilOp::{4}, Reflect::StencilFunc::{5}, Reflect::StencilOp::{6}, Reflect::StencilOp::{7}, Reflect::StencilOp::{8}, Reflect::StencilFunc::{9} }," -f $stencilRead $stencilWrite $stencilFrontFaceFailOp $stencilFrontFaceDepthFailOp $stencilFrontFacePassOp $stencilFrontFaceFunc $stencilFrontBackFailOp $stencilFrontBackDepthFailOp $stencilFrontBackPassOp $stencilFrontBackFunc)
 
     Write-Output "            // vs"
     $vsCode = (GetOrThrow $properties "VS.Code")
