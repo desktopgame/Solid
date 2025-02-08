@@ -58,9 +58,22 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             continue;
         }
 
-        m_field->loadChunk(currentChunk->getGridPosition() + localGridPos);
+        // NOTE: ここ、localGridPosを足すのが正しい認識。でも引くと正しい描画結果になる
+        auto chunk = m_field->loadChunk(currentChunk->getGridPosition() - localGridPos);
         renderer->drawRect(
             k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, color);
+
+        for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
+            auto entity = chunk->getEntityAt(i);
+            auto entityPos = entity->getPosition();
+
+            auto entityOffset = -(entityPos - Vector3({ chunk->getPhysicalCenterX(), 0, chunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
+            entityOffset.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
+            entityOffset.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
+
+            renderer->drawRect(
+                k_backgroundCenter + Vector2({ offsetX + entityOffset.x(), offsetY + entityOffset.z() }), Vector2({ 5, 5 }), 0.0f, Vector4({ 1, 0, 0, 1 }));
+        }
     }
 
     renderer->drawRect(
