@@ -61,8 +61,17 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         }
 
         auto chunk = m_field->loadChunk(currentChunk->getGridPosition() + localGridPos);
+        Vector4 chunkColor = Vector4({ 0, 0.5f, 0, 1 });
+        for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
+            auto entity = chunk->getEntityAt(i);
+            if (entity->getCategory() == Entity::Category::Enemy) {
+                chunkColor = Vector4({ 0.5f, 0, 0, 1 });
+                break;
+            }
+        }
+
         renderer->drawRect(
-            k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, Vector4({ 0, 0, 0, 1 }));
+            k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, chunkColor);
 
         for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
             auto entity = chunk->getEntityAt(i);
