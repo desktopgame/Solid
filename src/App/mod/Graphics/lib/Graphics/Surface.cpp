@@ -179,6 +179,12 @@ public:
         PointLight::draw(commandList);
         surface->bloomRead(0);
 
+        // ライト終わったので2D描画に使えるようにステンシルをリセットする
+        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = surface->m_depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CLEAR_FLAGS clearDepthFlags = D3D12_CLEAR_FLAG_STENCIL;
+        commandList->ClearDepthStencilView(dsvHandle, clearDepthFlags, 1.0f, 0, 0, nullptr);
+        commandList->OMSetStencilRef(0);
+
         //
         // Bloom0番をソースとしてBloom1番に高輝度成分を書き込む
         //
