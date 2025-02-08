@@ -295,6 +295,20 @@ public:
     std::shared_ptr<DualBuffer> dualBuffer;
 };
 
+class Surface::StencilRefCommand : public ICommand {
+public:
+    explicit StencilRefCommand()
+    {
+    }
+
+    void execute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) override
+    {
+        commandList->OMSetStencilRef(value);
+    }
+
+    uint32_t value;
+};
+
 class Surface::RenderCommand1 : public ICommand {
 public:
     explicit RenderCommand1()
@@ -543,6 +557,7 @@ public:
     CommandPool<EndBatchCommand> endBatchCommandPool;
     CommandPool<PresentCommand> presentCommandPool;
     CommandPool<SyncCommand> syncCommandPool;
+    CommandPool<StencilRefCommand> stencilRefCommandPool;
     CommandPool<RenderCommand1> renderCommand1Pool;
     CommandPool<RenderCommand2> renderCommand2Pool;
     CommandPool<RenderCommand3> renderCommand3Pool;
@@ -648,6 +663,7 @@ void Surface::endPresent()
     m_impl->endBatchCommandPool.releaseAll();
     m_impl->presentCommandPool.releaseAll();
     m_impl->syncCommandPool.releaseAll();
+    m_impl->stencilRefCommandPool.releaseAll();
     m_impl->renderCommand1Pool.releaseAll();
     m_impl->renderCommand2Pool.releaseAll();
     m_impl->renderCommand3Pool.releaseAll();
@@ -663,6 +679,13 @@ void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
 {
     auto cmd = m_impl->syncCommandPool.rent();
     cmd->dualBuffer = dualBuffer;
+    m_impl->queue.enqueue(cmd);
+}
+
+void Surface::stencilRef(uint32_t value)
+{
+    auto cmd = m_impl->stencilRefCommandPool.rent();
+    cmd->value = value;
     m_impl->queue.enqueue(cmd);
 }
 
