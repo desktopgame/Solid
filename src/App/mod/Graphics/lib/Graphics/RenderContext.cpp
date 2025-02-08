@@ -44,6 +44,52 @@ static D3D12_PRIMITIVE_TOPOLOGY_TYPE convPrimitiveTopologyType(Reflect::Primitiv
 #pragma clang diagnostic pop
     return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
 }
+static D3D12_STENCIL_OP convStencilOp(Reflect::StencilOp stencilOp)
+{
+    switch (stencilOp) {
+    case Reflect::StencilOp::Keep:
+        return D3D12_STENCIL_OP_KEEP;
+    case Reflect::StencilOp::Zero:
+        return D3D12_STENCIL_OP_ZERO;
+    case Reflect::StencilOp::Replace:
+        return D3D12_STENCIL_OP_REPLACE;
+    case Reflect::StencilOp::IncrSat:
+        return D3D12_STENCIL_OP_INCR_SAT;
+    case Reflect::StencilOp::DecrSat:
+        return D3D12_STENCIL_OP_DECR_SAT;
+    case Reflect::StencilOp::Invert:
+        return D3D12_STENCIL_OP_INVERT;
+    case Reflect::StencilOp::Incr:
+        return D3D12_STENCIL_OP_INCR;
+    case Reflect::StencilOp::Decr:
+        return D3D12_STENCIL_OP_DECR;
+    }
+    return (D3D12_STENCIL_OP)0;
+}
+static D3D12_COMPARISON_FUNC convStencilFunc(Reflect::StencilFunc stencilFunc)
+{
+    switch (stencilFunc) {
+    case Reflect::StencilFunc::None:
+        return (D3D12_COMPARISON_FUNC)0;
+    case Reflect::StencilFunc::Never:
+        return D3D12_COMPARISON_FUNC_NEVER;
+    case Reflect::StencilFunc::Less:
+        return D3D12_COMPARISON_FUNC_LESS;
+    case Reflect::StencilFunc::Equal:
+        return D3D12_COMPARISON_FUNC_EQUAL;
+    case Reflect::StencilFunc::LessEqual:
+        return D3D12_COMPARISON_FUNC_LESS_EQUAL;
+    case Reflect::StencilFunc::Greater:
+        return D3D12_COMPARISON_FUNC_GREATER;
+    case Reflect::StencilFunc::NotEqual:
+        return D3D12_COMPARISON_FUNC_NOT_EQUAL;
+    case Reflect::StencilFunc::GreaterEqual:
+        return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+    case Reflect::StencilFunc::Always:
+        return D3D12_COMPARISON_FUNC_ALWAYS;
+    }
+    return (D3D12_COMPARISON_FUNC)0;
+}
 // public
 std::shared_ptr<RenderContext> RenderContext::get(Metadata::ProgramTable entry)
 {
@@ -345,6 +391,18 @@ void RenderContext::init(Metadata::ProgramTable entry)
     psoDesc.DepthStencilState.DepthWriteMask = depthWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
     psoDesc.DepthStencilState.DepthFunc = depthTest ? D3D12_COMPARISON_FUNC_LESS : D3D12_COMPARISON_FUNC_ALWAYS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    // stencil
+    psoDesc.DepthStencilState.StencilEnable = program.stencil.isRead || program.stencil.isWrite;
+    psoDesc.DepthStencilState.StencilReadMask = program.stencil.isRead ? D3D12_DEFAULT_STENCIL_READ_MASK : 0;
+    psoDesc.DepthStencilState.StencilWriteMask = program.stencil.isWrite ? D3D12_DEFAULT_STENCIL_WRITE_MASK : 0;
+    psoDesc.DepthStencilState.FrontFace.StencilFailOp = convStencilOp(program.stencil.frontFaceFailOp);
+    psoDesc.DepthStencilState.FrontFace.StencilDepthFailOp = convStencilOp(program.stencil.frontFaceDepthFailOp);
+    psoDesc.DepthStencilState.FrontFace.StencilPassOp = convStencilOp(program.stencil.frontFacePassOp);
+    psoDesc.DepthStencilState.FrontFace.StencilFunc = convStencilFunc(program.stencil.frontFaceFunc);
+    psoDesc.DepthStencilState.BackFace.StencilFailOp = convStencilOp(program.stencil.backFaceFailOp);
+    psoDesc.DepthStencilState.BackFace.StencilDepthFailOp = convStencilOp(program.stencil.backFaceDepthFailOp);
+    psoDesc.DepthStencilState.BackFace.StencilPassOp = convStencilOp(program.stencil.backFacePassOp);
+    psoDesc.DepthStencilState.BackFace.StencilFunc = convStencilFunc(program.stencil.backFaceFunc);
     // blend
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
