@@ -35,7 +35,10 @@ void Field::update()
 
     auto chunk = getCurrentChunk();
     m_player->update(chunk);
-    chunk->update();
+
+    for (auto& chunk : m_loadedChunks) {
+        chunk->update();
+    }
 }
 void Field::onGui()
 {
