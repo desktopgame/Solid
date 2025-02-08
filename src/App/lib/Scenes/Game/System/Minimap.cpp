@@ -53,7 +53,6 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         offsetX += mapScrollAmount.x();
         offsetY += mapScrollAmount.z();
 
-        Vector4 color = Vector4({ 0, 0, 0, 1 });
         if (Mathf::abs(offsetX) - k_chunkSize.x() / 2.0f >= k_backgroundSize.x() / 2.0f || Mathf::abs(offsetY) - k_chunkSize.y() / 2.0f >= k_backgroundSize.y() / 2.0f) {
             continue;
         }
@@ -61,7 +60,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         // NOTE: ここ、localGridPosを足すのが正しい認識。でも引くと正しい描画結果になる
         auto chunk = m_field->loadChunk(currentChunk->getGridPosition() - localGridPos);
         renderer->drawRect(
-            k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, color);
+            k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, Vector4({ 0, 0, 0, 1 }));
 
         for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
             auto entity = chunk->getEntityAt(i);
@@ -71,8 +70,14 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             entityOffset.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
             entityOffset.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
 
+            entityOffset.x() += offsetX;
+            entityOffset.z() += offsetY;
+
+            if (Mathf::abs(entityOffset.x()) - 5.0f / 2.0f >= k_backgroundSize.x() / 2.0f || Mathf::abs(entityOffset.z()) - 5.0f / 2.0f >= k_backgroundSize.y() / 2.0f) {
+                continue;
+            }
             renderer->drawRect(
-                k_backgroundCenter + Vector2({ offsetX + entityOffset.x(), offsetY + entityOffset.z() }), Vector2({ 5, 5 }), 0.0f, Vector4({ 1, 0, 0, 1 }));
+                k_backgroundCenter + Vector2({ entityOffset.x(), entityOffset.z() }), Vector2({ 5, 5 }), 0.0f, Vector4({ 1, 0, 0, 1 }));
         }
     }
 
