@@ -18,21 +18,6 @@ static void physicsTest()
     auto field = std::make_shared<System::Field>(normalTex, borderTex);
     field->generate();
 
-    System::ChunkGenerator::Room room = field->getCurrentChunk()->getRoomAt(0);
-    Random rand;
-    for (int32_t i = 0; i < 10; i++) {
-        int32_t halfX = (System::Chunk::k_roomSizeX / 2) - 3;
-        int32_t halfZ = (System::Chunk::k_roomSizeZ / 2) - 3;
-        int32_t tileOffsetX = rand.range(-halfX, halfX);
-        int32_t tileOffsetZ = rand.range(-halfZ, halfZ);
-
-        float enemyPosX = (room.center.x() + 0) * System::Chunk::k_tileSize;
-        float enemyPosZ = (room.center.z() + 0) * System::Chunk::k_tileSize;
-
-        auto enemy = System::Entities::SlimeEntity::create();
-        enemy->setPosition(Vector3({ enemyPosX, 20, enemyPosZ }));
-        field->getCurrentChunk()->spwan(enemy);
-    }
     auto player = System::Entities::PlayerEntity::create(
         Common::Graphics::Node::deserialize("./assets/Models/Player.json"));
     player->setPosition(Vector3({ 999, 999, 999 }));
