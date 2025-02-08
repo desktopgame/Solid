@@ -24,8 +24,14 @@ Renderer::Renderer()
     , m_fontMap()
     , m_fontSize(16)
     , m_rectObject()
+    , m_rectSwObject()
+    , m_rectSrObject()
     , m_circleObject()
+    , m_circleSwObject()
+    , m_circleSrObject()
     , m_spriteObject()
+    , m_spriteSwObject()
+    , m_spriteSrObject()
     , m_textObject()
     , m_planeObject()
     , m_planeWireframeObject()
@@ -355,6 +361,14 @@ void Renderer::initRect()
     m_rectObject.indexBuffer->update(indices.data());
     m_rectObject.indexLength = indices.size();
     m_rectObject.rc = RenderContext::get(Metadata::ProgramTable::Color2D);
+    m_rectSwObject.vertexBuffer = m_rectObject.vertexBuffer;
+    m_rectSwObject.indexBuffer = m_rectObject.indexBuffer;
+    m_rectSwObject.indexLength = indices.size();
+    m_rectSwObject.rc = RenderContext::get(Metadata::ProgramTable::Color2D_StencilWrite);
+    m_rectSrObject.vertexBuffer = m_rectObject.vertexBuffer;
+    m_rectSrObject.indexBuffer = m_rectObject.indexBuffer;
+    m_rectSrObject.indexLength = indices.size();
+    m_rectSrObject.rc = RenderContext::get(Metadata::ProgramTable::Color2D_StencilRead);
 }
 
 void Renderer::initCircle()
@@ -373,6 +387,14 @@ void Renderer::initCircle()
     m_circleObject.indexBuffer->update(indices.data());
     m_circleObject.indexLength = indices.size();
     m_circleObject.rc = RenderContext::get(Metadata::ProgramTable::Color2D);
+    m_circleSwObject.vertexBuffer = m_circleObject.vertexBuffer;
+    m_circleSwObject.indexBuffer = m_circleObject.indexBuffer;
+    m_circleSwObject.indexLength = indices.size();
+    m_circleSwObject.rc = RenderContext::get(Metadata::ProgramTable::Color2D_StencilWrite);
+    m_circleSrObject.vertexBuffer = m_circleObject.vertexBuffer;
+    m_circleSrObject.indexBuffer = m_circleObject.indexBuffer;
+    m_circleSrObject.indexLength = indices.size();
+    m_circleSrObject.rc = RenderContext::get(Metadata::ProgramTable::Color2D_StencilRead);
 }
 
 void Renderer::initSprite()
@@ -391,6 +413,14 @@ void Renderer::initSprite()
     m_spriteObject.indexBuffer->update(indices.data());
     m_spriteObject.indexLength = indices.size();
     m_spriteObject.rc = RenderContext::get(Metadata::ProgramTable::Texture2D);
+    m_spriteSwObject.vertexBuffer = m_spriteObject.vertexBuffer;
+    m_spriteSwObject.indexBuffer = m_spriteObject.indexBuffer;
+    m_spriteSwObject.indexLength = indices.size();
+    m_spriteSwObject.rc = RenderContext::get(Metadata::ProgramTable::Texture2D_StencilWrite);
+    m_spriteSrObject.vertexBuffer = m_spriteObject.vertexBuffer;
+    m_spriteSrObject.indexBuffer = m_spriteObject.indexBuffer;
+    m_spriteSrObject.indexLength = indices.size();
+    m_spriteSrObject.rc = RenderContext::get(Metadata::ProgramTable::Texture2D_StencilRead);
 }
 
 void Renderer::initText()

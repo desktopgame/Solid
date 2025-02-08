@@ -81,8 +81,14 @@ private:
     int32_t m_fontSize;
 
     Object m_rectObject;
+    Object m_rectSwObject;
+    Object m_rectSrObject;
     Object m_circleObject;
+    Object m_circleSwObject;
+    Object m_circleSrObject;
     Object m_spriteObject;
+    Object m_spriteSwObject;
+    Object m_spriteSrObject;
     Object m_textObject;
     Object m_planeObject;
     Object m_planeWireframeObject;
