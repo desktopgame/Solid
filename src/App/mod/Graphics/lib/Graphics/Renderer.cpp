@@ -23,6 +23,7 @@ Renderer::Renderer()
     : m_matrixStack()
     , m_fontMap()
     , m_fontSize(16)
+    , m_stencilMode(0)
     , m_rectObject()
     , m_rectSwObject()
     , m_rectSrObject()
@@ -52,6 +53,16 @@ void Renderer::textFont(const std::shared_ptr<FontMap>& fontMap) { m_fontMap = f
 
 void Renderer::textFontSize(int32_t fontSize) { m_fontSize = fontSize; }
 
+void Renderer::stencilRead() { m_stencilMode = 1; }
+
+void Renderer::stencilWrite() { m_stencilMode = 2; }
+
+void Renderer::stencilNone() { m_stencilMode = 0; }
+
+void Renderer::stencilRef(uint32_t value) { Engine::getInstance()->getDevice()->getSurface()->stencilRef(value); }
+
+void Renderer::stencilClear() { Engine::getInstance()->getDevice()->getSurface()->stencilClear(); }
+
 void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color)
 {
     initRect();
@@ -71,7 +82,17 @@ void Renderer::drawRect(const Math::Vector2& position, const Math::Vector2& size
     uColor.value = color;
     surface->uniformVS(ub, 1, &uColor);
 
-    renderObject(m_rectObject, ub);
+    switch (m_stencilMode) {
+    case 0:
+        renderObject(m_rectObject, ub);
+        break;
+    case 1:
+        renderObject(m_rectSrObject, ub);
+        break;
+    case 2:
+        renderObject(m_rectSwObject, ub);
+        break;
+    }
 }
 
 void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color)
@@ -92,7 +113,18 @@ void Renderer::drawCircle(const Math::Vector2& position, const Math::Vector2& si
     Reflect::UVector4 uColor;
     uColor.value = color;
     surface->uniformVS(ub, 1, &uColor);
-    renderObject(m_circleObject, ub);
+
+    switch (m_stencilMode) {
+    case 0:
+        renderObject(m_circleObject, ub);
+        break;
+    case 1:
+        renderObject(m_circleSrObject, ub);
+        break;
+    case 2:
+        renderObject(m_circleSwObject, ub);
+        break;
+    }
 }
 
 void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color)
@@ -114,7 +146,18 @@ void Renderer::drawSprite(const Math::Vector2& position, const Math::Vector2& si
     uColor.value = color;
     surface->uniformVS(ub, 1, &uColor);
     surface->uniformPS(ub, 0, texture);
-    renderObject(m_spriteObject, ub);
+
+    switch (m_stencilMode) {
+    case 0:
+        renderObject(m_spriteObject, ub);
+        break;
+    case 1:
+        renderObject(m_spriteSrObject, ub);
+        break;
+    case 2:
+        renderObject(m_spriteSwObject, ub);
+        break;
+    }
 }
 
 void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAlignY alignY, const std::u16string& label, const Color& color)

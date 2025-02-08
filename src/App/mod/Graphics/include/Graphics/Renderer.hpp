@@ -34,6 +34,12 @@ public:
     void textFont(const std::shared_ptr<FontMap>& fontMap);
     void textFontSize(int32_t fontSize);
 
+    void stencilRead();
+    void stencilWrite();
+    void stencilNone();
+    void stencilRef(uint32_t value);
+    void stencilClear();
+
     void drawRect(const Math::Vector2& position, const Math::Vector2& size, float degree, const Color& color);
     void drawCircle(const Math::Vector2& position, const Math::Vector2& size, const Color& color);
     void drawSprite(const Math::Vector2& position, const Math::Vector2& size, float degree, const std::shared_ptr<Texture>& texture, const Color& color);
@@ -79,6 +85,9 @@ private:
     // text
     std::shared_ptr<FontMap> m_fontMap;
     int32_t m_fontSize;
+
+    // stencil
+    int32_t m_stencilMode;
 
     Object m_rectObject;
     Object m_rectSwObject;
