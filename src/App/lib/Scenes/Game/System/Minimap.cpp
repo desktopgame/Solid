@@ -38,7 +38,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         }
     }
 
-    auto mapScrollAmount = (Vector3({ playerPos.x(), 0, playerPos.z() }) - Vector3({ currentChunk->getPhysicalCenterX(), 0, currentChunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
+    auto mapScrollAmount = -(Vector3({ playerPos.x(), 0, playerPos.z() }) - Vector3({ currentChunk->getPhysicalCenterX(), 0, currentChunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
     mapScrollAmount.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
     mapScrollAmount.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
 
@@ -57,8 +57,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             continue;
         }
 
-        // NOTE: ここ、localGridPosを足すのが正しい認識。でも引くと正しい描画結果になる
-        auto chunk = m_field->loadChunk(currentChunk->getGridPosition() - localGridPos);
+        auto chunk = m_field->loadChunk(currentChunk->getGridPosition() + localGridPos);
         renderer->drawRect(
             k_backgroundCenter + Vector2({ offsetX, offsetY }), k_chunkSize, 0.0f, Vector4({ 0, 0, 0, 1 }));
 
@@ -66,7 +65,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             auto entity = chunk->getEntityAt(i);
             auto entityPos = entity->getPosition();
 
-            auto entityOffset = -(entityPos - Vector3({ chunk->getPhysicalCenterX(), 0, chunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
+            auto entityOffset = (entityPos - Vector3({ chunk->getPhysicalCenterX(), 0, chunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
             entityOffset.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
             entityOffset.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
 
