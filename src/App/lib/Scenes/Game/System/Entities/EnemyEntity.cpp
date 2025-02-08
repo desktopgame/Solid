@@ -11,6 +11,7 @@ EnemyEntity::~EnemyEntity() { }
 EnemyEntity::EnemyEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : BasicEntity(node)
 {
+    m_category = Entity::Category::Enemy;
 }
 
 bool EnemyEntity::damage(const std::shared_ptr<DamageSource>& damageSource)

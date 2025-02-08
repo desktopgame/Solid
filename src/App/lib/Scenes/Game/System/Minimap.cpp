@@ -68,6 +68,10 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             auto entity = chunk->getEntityAt(i);
             auto entityPos = entity->getPosition();
 
+            if (entity->getCategory() == Entity::Category::PlayerTeam || entity->getCategory() == Entity::Category::EnemyTeam) {
+                continue;
+            }
+
             auto entityOffset = (entityPos - Vector3({ chunk->getPhysicalCenterX(), 0, chunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
             entityOffset.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
             entityOffset.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);

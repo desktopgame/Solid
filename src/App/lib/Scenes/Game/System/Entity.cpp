@@ -73,6 +73,8 @@ void Entity::setRotation(const Vector3& rotation)
 }
 Vector3 Entity::getRotation() const { return m_rotation; }
 
+Entity::Category Entity::getCategory() const { return m_category; }
+
 const uuids::uuid& Entity::getUuid() const { return m_uuid; }
 // protected
 Entity::Entity()
@@ -81,6 +83,7 @@ Entity::Entity()
     , m_currentHP(10)
     , m_position()
     , m_rotation()
+    , m_category()
     , m_uuid()
 {
     std::random_device rd;

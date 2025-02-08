@@ -10,6 +10,18 @@ class Chunk;
 class DamageSource;
 class Entity : public std::enable_shared_from_this<Entity> {
 public:
+    enum class Category : uint32_t {
+        None = 0,
+        // プレイヤー
+        Player,
+        // プレイヤー陣営（プレイヤーの発射した弾丸など）
+        PlayerTeam,
+        // エネミー
+        Enemy,
+        // エネミー陣営（エネミーの発射した弾丸など）
+        EnemyTeam
+    };
+
     virtual ~Entity();
 
     virtual void update(const std::shared_ptr<Chunk>& chunk) = 0;
@@ -39,6 +51,8 @@ public:
     void setRotation(const Vector3& rotation);
     Vector3 getRotation() const;
 
+    Category getCategory() const;
+
     const uuids::uuid& getUuid() const;
 
 protected:
@@ -53,6 +67,7 @@ protected:
     int32_t m_currentHP;
     Vector3 m_position;
     Vector3 m_rotation;
+    Category m_category;
     uuids::uuid m_uuid;
 };
 }

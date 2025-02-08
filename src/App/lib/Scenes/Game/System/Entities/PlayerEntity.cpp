@@ -71,7 +71,7 @@ void PlayerEntity::idle(const std::shared_ptr<Chunk>& chunk)
     }
 
     if (mouse->isTrigger(Mouse::Button::Left)) {
-        auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_bulletNode->clone());
+        auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_bulletNode->clone(), Entity::Category::PlayerTeam);
         proj->setOwner(shared_from_this());
         proj->setPosition(getPosition() + Vector3({ 0, 5, 0 }));
         proj->setRotation(Vector3({ m_cameraAngleX, Mathf::normalizeDegree(-m_cameraAngleY), 0.0f }));
@@ -100,5 +100,6 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_cameraMoveSpeed(40.0f)
     , m_cameraRotateSpeed(0.8f)
 {
+    m_category = Entity::Category::Player;
 }
 }

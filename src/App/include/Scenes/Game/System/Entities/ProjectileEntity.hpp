@@ -4,7 +4,7 @@
 namespace App::Scenes::Game::System::Entities {
 class ProjectileEntity : public BasicEntity {
 public:
-    static std::shared_ptr<ProjectileEntity> create(const std::shared_ptr<Common::Graphics::Node>& node);
+    static std::shared_ptr<ProjectileEntity> create(const std::shared_ptr<Common::Graphics::Node>& node, Category category);
     virtual ~ProjectileEntity();
 
     virtual void idle(const std::shared_ptr<Chunk>& chunk) override;
@@ -20,7 +20,7 @@ public:
     float getSpeed() const;
 
 protected:
-    ProjectileEntity(const std::shared_ptr<Common::Graphics::Node>& node);
+    ProjectileEntity(const std::shared_ptr<Common::Graphics::Node>& node, Category category);
 
     virtual void onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
     virtual void onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;

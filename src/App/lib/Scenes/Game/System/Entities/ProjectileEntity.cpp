@@ -5,9 +5,9 @@
 
 namespace App::Scenes::Game::System::Entities {
 // public
-std::shared_ptr<ProjectileEntity> ProjectileEntity::create(const std::shared_ptr<Common::Graphics::Node>& node)
+std::shared_ptr<ProjectileEntity> ProjectileEntity::create(const std::shared_ptr<Common::Graphics::Node>& node, Category category)
 {
-    return std::shared_ptr<ProjectileEntity>(new ProjectileEntity(node));
+    return std::shared_ptr<ProjectileEntity>(new ProjectileEntity(node, category));
 }
 ProjectileEntity::~ProjectileEntity() { }
 
@@ -47,12 +47,13 @@ Vector3 ProjectileEntity::getDirection() const { return m_direction; }
 void ProjectileEntity::setSpeed(float speed) { m_speed = speed; }
 float ProjectileEntity::getSpeed() const { return m_speed; }
 // protected
-ProjectileEntity::ProjectileEntity(const std::shared_ptr<Common::Graphics::Node>& node)
+ProjectileEntity::ProjectileEntity(const std::shared_ptr<Common::Graphics::Node>& node, Category category)
     : BasicEntity(node)
     , m_direction()
     , m_speed()
 {
     setReceiveGravity(false);
+    m_category = category;
 }
 
 void ProjectileEntity::onCollisionWall(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) { m_currentHP = 0; }
