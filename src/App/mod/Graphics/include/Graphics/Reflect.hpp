@@ -39,6 +39,29 @@ enum class PrimitiveType {
     LineStrip,
 };
 
+enum class StencilOp {
+    Keep,
+    Zero,
+    Replace,
+    IncrSat,
+    DecrSat,
+    Invert,
+    Incr,
+    Decr,
+};
+
+enum class StencilFunc {
+    None,
+    Never,
+    Less,
+    Equal,
+    LessEqual,
+    Greater,
+    NotEqual,
+    GreaterEqual,
+    Always
+};
+
 class UCamera {
 public:
     Math::Matrix modelMatrix;
