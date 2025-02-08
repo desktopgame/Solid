@@ -14,12 +14,27 @@ namespace Lib::Graphics::Metadata {
         Type type;
     };
 
+    class Stencil {
+    public:
+        bool isRead;
+        bool isWrite;
+        Reflect::StencilOp frontFaceFailOp;
+        Reflect::StencilOp frontFaceDepthFailOp;
+        Reflect::StencilOp frontFacePassOp;
+        Reflect::StencilFunc frontFaceFunc;
+        Reflect::StencilOp backFaceFailOp;
+        Reflect::StencilOp backFaceDepthFailOp;
+        Reflect::StencilOp backFacePassOp;
+        Reflect::StencilFunc backFaceFunc;
+    };
+
     class Program {
     public:
         Reflect::InputLayout inputLayout;
         std::vector<Reflect::InstanceBufferType> instanceBufferLayout;
         Reflect::PrimitiveType primitiveType;
         bool isWireframe;
+        Stencil stencil;
         const char* vsCode;
         std::vector<Uniform> vsUniforms;
         const char* gsCode;
@@ -56,6 +71,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -116,6 +133,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -188,6 +207,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -256,6 +277,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -332,6 +355,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -415,6 +440,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             true,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -487,6 +514,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -631,6 +660,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -708,6 +739,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -792,6 +825,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -1014,6 +1049,8 @@ namespace Lib::Graphics::Metadata {
             Reflect::PrimitiveType::Triangles,
             // isWireframe
             false,
+            // stencil
+            Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
