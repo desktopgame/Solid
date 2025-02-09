@@ -11,7 +11,7 @@ ColorIcon::ColorIcon()
 void ColorIcon::update() { }
 void ColorIcon::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
-    renderer->drawRect(getPosition(), getSize(), 0.0f, m_color);
+    renderer->drawRect(getGlobalPosition(), getSize(), 0.0f, m_color);
 }
 
 void ColorIcon::setColor(const Graphics::Color& color) { m_color = color; }

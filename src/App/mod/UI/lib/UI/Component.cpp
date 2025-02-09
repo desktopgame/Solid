@@ -1,4 +1,5 @@
 #include <UI/Component.hpp>
+#include <UI/Container.hpp>
 
 namespace Lib::UI {
 // public
@@ -21,6 +22,15 @@ Math::Vector2 Component::getSize() const { return m_size; }
 
 void Component::setPosition(const Math::Vector2& position) { m_position = position; }
 Math::Vector2 Component::getPosition() const { return m_position; }
+
+Math::Vector2 Component::getGlobalPosition() const
+{
+    auto spParent = m_parent.lock();
+    if (spParent) {
+        return spParent->getGlobalPosition() + m_position;
+    }
+    return m_position;
+}
 
 void Component::setMinimumSize(const Math::Vector2& minimumSize) { m_minimumSize = minimumSize; }
 Math::Vector2 Component::getMinimumSize() const { return m_minimumSize; }

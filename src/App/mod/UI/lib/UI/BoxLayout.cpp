@@ -58,11 +58,13 @@ void BoxLayout::resizeContainer(const std::shared_ptr<Container>& parent, const 
     Math::Vector2 maximumSize = parent->getMaximumSize();
     parent->setSize(Math::Vector2({ Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), requiredSize.x()),
         Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), requiredSize.y()) }));
+    parent->setPreferredSize(Math::Vector2({ Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), requiredSize.x()),
+        Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), requiredSize.y()) }));
 }
 void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 {
-    auto left = parent->getPosition() - Math::Vector2({ parent->getSize().x() / 2.0f, 0.0f });
-    auto top = parent->getPosition() + Math::Vector2({ 0.0f, parent->getSize().y() / 2.0f });
+    auto left = -Math::Vector2({ parent->getSize().x() / 2.0f, 0.0f });
+    auto top = Math::Vector2({ 0.0f, parent->getSize().y() / 2.0f });
     float offsetX = k_space;
     float offsetY = -k_space;
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
@@ -72,12 +74,12 @@ void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 
         switch (m_orientation) {
         case BoxLayout::Orientation::Horizontal:
-            e->component->setPosition(left + Math::Vector2({ offsetX, 0.0f }));
+            e->component->setPosition(left + Math::Vector2({ offsetX + (prefSize.x() / 2.0f), 0.0f }));
             offsetX += prefSize.x();
             offsetX += k_space;
             break;
         case BoxLayout::Orientation::Vertical:
-            e->component->setPosition(top - Math::Vector2({ 0.0f, offsetY }));
+            e->component->setPosition(top + Math::Vector2({ 0.0f, offsetY - (prefSize.y() / 2.0f) }));
             offsetY -= prefSize.y();
             offsetY -= k_space;
             break;
