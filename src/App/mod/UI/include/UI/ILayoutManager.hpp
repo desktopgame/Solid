@@ -9,7 +9,7 @@ public:
     explicit ILayoutManager() = default;
     virtual ~ILayoutManager() = default;
 
-    void layoutContainer(const std::shared_ptr<Container>& parent);
+    virtual void layoutContainer(const std::shared_ptr<Container>& parent) = 0;
 
 private:
 };

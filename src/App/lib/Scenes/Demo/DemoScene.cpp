@@ -14,6 +14,7 @@ DemoScene::DemoScene()
     , m_globalLightDir({ 1, 1, 0 })
     , m_pointLightPos({ 0, 0, 0 })
     , m_pointLightPositions()
+    , m_panel()
     , m_sceneCompleted()
     , m_renderer()
 {
@@ -30,6 +31,11 @@ void DemoScene::onEnter()
     m_globalLightDir = Vector3({ 1, 1, 0 });
     m_pointLightPositions.clear();
     m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
+    if (!m_panel) {
+        m_panel = std::make_shared<Panel>();
+        m_panel->setPosition(Vector2({ 200, 150 }));
+        m_panel->setSize(Vector2({ 200, 200 }));
+    }
 }
 void DemoScene::onExit()
 {
@@ -117,6 +123,8 @@ void DemoScene::onDraw2D()
     m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
     m_renderer->textFontSize(20);
     m_renderer->drawText(backgroundCenter - Vector2({ 0, 100 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"2D描画のテスト", Vector4({ 0, 0, 0, 1 }));
+
+    m_panel->draw2D(m_renderer);
 }
 
 bool DemoScene::tryTransition(std::string& outNextScene)
