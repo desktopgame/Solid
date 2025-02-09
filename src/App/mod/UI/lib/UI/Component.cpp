@@ -8,6 +8,7 @@ Component::Component()
     , m_position()
     , m_minimumSize({ 0, 0 })
     , m_maximumSize({ 9999, 9999 })
+    , m_preferredSize({ 0, 0 })
 {
 }
 Component::~Component() { }
@@ -26,4 +27,7 @@ Math::Vector2 Component::getMinimumSize() const { return m_minimumSize; }
 
 void Component::setMaximumSize(const Math::Vector2& maximumSize) { m_maximumSize = maximumSize; }
 Math::Vector2 Component::getMaximumSize() const { return m_maximumSize; }
+
+void Component::setPreferredSize(const Math::Vector2& preferredSize) { m_preferredSize = preferredSize; }
+Math::Vector2 Component::getPreferredSizeSize() const { return m_preferredSize; }
 }
