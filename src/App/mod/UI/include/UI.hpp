@@ -1,4 +1,5 @@
 #pragma once
+#include <UI/BorderLayout.hpp>
 #include <UI/Box.hpp>
 #include <UI/BoxLayout.hpp>
 #include <UI/Button.hpp>

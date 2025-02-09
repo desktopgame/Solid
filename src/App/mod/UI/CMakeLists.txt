@@ -20,6 +20,7 @@ set(SOURCES
     ./include/UI/Button.hpp
     ./include/UI/Box.hpp
     ./include/UI/BoxLayout.hpp
+    ./include/UI/BorderLayout.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
     ./lib/UI/LayoutElement.cpp
@@ -29,6 +30,7 @@ set(SOURCES
     ./lib/UI/Button.cpp
     ./lib/UI/Box.cpp
     ./lib/UI/BoxLayout.cpp
+    ./lib/UI/BorderLayout.cpp
 )
 source_group(
     TREE
