@@ -25,7 +25,7 @@ public:
     int32_t getLayoutElementCount() const;
 
 private:
-    void layoutTopdown();
+    void layoutTopdown(const Math::Vector2& availableSize);
     void layoutBottomup();
 
     std::shared_ptr<ILayoutManager> m_layoutManager;

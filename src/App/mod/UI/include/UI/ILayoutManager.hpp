@@ -1,4 +1,5 @@
 #pragma once
+#include <Math/Vector.hpp>
 #include <memory>
 
 namespace Lib::UI {
@@ -9,7 +10,7 @@ public:
     explicit ILayoutManager() = default;
     virtual ~ILayoutManager() = default;
 
-    virtual void resizeContainer(const std::shared_ptr<Container>& parent) = 0;
+    virtual void resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize) = 0;
     virtual void layoutContainer(const std::shared_ptr<Container>& parent) = 0;
 
 private:

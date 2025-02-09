@@ -25,7 +25,7 @@ void Container::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 
 void Container::doLayout()
 {
-    layoutTopdown();
+    layoutTopdown(getSize());
     layoutBottomup();
 }
 
@@ -55,16 +55,18 @@ int32_t Container::getLayoutElementCount() const
     return static_cast<int32_t>(m_children.size());
 }
 // private
-void Container::layoutTopdown()
+void Container::layoutTopdown(const Math::Vector2& availableSize)
 {
     if (m_layoutManager && getParent()) {
         auto self = std::static_pointer_cast<Container>(shared_from_this());
-        m_layoutManager->resizeContainer(self);
+        m_layoutManager->resizeContainer(self, availableSize);
     }
+
+    auto parentAvailableSize = getSize();
     for (auto c : m_children) {
         auto container = std::dynamic_pointer_cast<Container>(c->component);
         if (container) {
-            container->layoutTopdown();
+            container->layoutTopdown(parentAvailableSize);
         }
     }
 }
