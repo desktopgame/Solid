@@ -17,6 +17,6 @@ public:
     Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint) override;
 
 private:
-    bool findLocation(const std::shared_ptr<Container>& parent, const std::string& location);
+    std::shared_ptr<Component> findByLocation(const std::shared_ptr<Container>& parent, const std::string& location);
 };
 }
