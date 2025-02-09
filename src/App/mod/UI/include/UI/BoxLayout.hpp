@@ -12,6 +12,7 @@ public:
     explicit BoxLayout(Orientation orientation);
     void resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize);
     void layoutContainer(const std::shared_ptr<Container>& parent);
+    Math::Vector2 availableSizeFor(const std::shared_ptr<LayoutElement>& layoutElement);
 
 private:
     Orientation m_orientation;

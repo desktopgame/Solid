@@ -19,4 +19,9 @@ void BoxLayout::resizeContainer(const std::shared_ptr<Container>& parent, const 
 void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 {
 }
+
+Math::Vector2 BoxLayout::availableSizeFor(const std::shared_ptr<LayoutElement>& layoutElement)
+{
+    return Math::Vector2({ 0, 0 });
+}
 }
