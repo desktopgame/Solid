@@ -38,6 +38,7 @@ void DemoScene::onEnter()
         m_panel->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical));
 
         auto h1 = std::make_shared<Panel>();
+        h1->setBackgroundColor(Color({ 0.3f, 0.3f, 0.3f, 1.0f }));
         h1->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));
         {
             auto icon1 = std::make_shared<ColorIcon>();
@@ -53,6 +54,7 @@ void DemoScene::onEnter()
         m_panel->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
 
         auto h2 = std::make_shared<Panel>();
+        h2->setBackgroundColor(Color({ 0.8f, 0.3f, 0.3f, 1.0f }));
         h2->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));
         {
             auto icon1 = std::make_shared<ColorIcon>();
