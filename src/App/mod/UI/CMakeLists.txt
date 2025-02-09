@@ -19,6 +19,7 @@ set(SOURCES
     ./include/UI/BoxLayout.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
+    ./lib/UI/LayoutElement.cpp
     ./lib/UI/ColorIcon.cpp
     ./lib/UI/Panel.cpp
     ./lib/UI/BoxLayout.cpp
