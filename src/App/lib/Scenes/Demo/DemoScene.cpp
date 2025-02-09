@@ -35,6 +35,39 @@ void DemoScene::onEnter()
         m_panel = std::make_shared<Panel>();
         m_panel->setPosition(Vector2({ 200, 150 }));
         m_panel->setSize(Vector2({ 200, 200 }));
+        m_panel->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical));
+
+        auto h1 = std::make_shared<Panel>();
+        h1->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));
+        {
+            auto icon1 = std::make_shared<ColorIcon>();
+            icon1->setPreferredSize(Vector2({ 50, 50 }));
+            icon1->setColor(Color({ 1, 0, 0, 1 }));
+            h1->addLayoutElement(std::make_shared<LayoutElement>(icon1, nullptr));
+
+            auto icon2 = std::make_shared<ColorIcon>();
+            icon2->setPreferredSize(Vector2({ 50, 50 }));
+            icon2->setColor(Color({ 1, 1, 0, 1 }));
+            h1->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
+        }
+        m_panel->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
+
+        auto h2 = std::make_shared<Panel>();
+        h2->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));
+        {
+            auto icon1 = std::make_shared<ColorIcon>();
+            icon1->setPreferredSize(Vector2({ 50, 50 }));
+            icon1->setColor(Color({ 0.5f, 0, 0, 1 }));
+            h2->addLayoutElement(std::make_shared<LayoutElement>(icon1, nullptr));
+
+            auto icon2 = std::make_shared<ColorIcon>();
+            icon2->setPreferredSize(Vector2({ 50, 50 }));
+            icon2->setColor(Color({ 0.5f, 0.5f, 0, 1 }));
+            h2->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
+        }
+        m_panel->addLayoutElement(std::make_shared<LayoutElement>(h2, nullptr));
+
+        m_panel->doLayout();
     }
 }
 void DemoScene::onExit()

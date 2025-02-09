@@ -22,6 +22,8 @@ public:
     void setPosition(const Math::Vector2& position);
     Math::Vector2 getPosition() const;
 
+    Math::Vector2 getGlobalPosition() const;
+
     void setMinimumSize(const Math::Vector2& minimumSize);
     Math::Vector2 getMinimumSize() const;
 
