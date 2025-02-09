@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/FontMap.hpp>
 #include <Graphics/Renderer.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
@@ -39,6 +40,12 @@ public:
     void setBackgroundColor(const Graphics::Color& backgroundColor);
     Graphics::Color getBackgroundColor() const;
 
+    void setFont(const std::shared_ptr<Graphics::FontMap>& fontMap);
+    std::shared_ptr<Graphics::FontMap> getFont() const;
+
+    void setFontSize(int32_t fontSize);
+    int32_t getFontSize() const;
+
 private:
     std::weak_ptr<Container> m_parent;
 
@@ -50,5 +57,7 @@ private:
     Math::Vector2 m_preferredSize;
     Graphics::Color m_foregroundColor;
     Graphics::Color m_backgroundColor;
+    std::shared_ptr<Graphics::FontMap> m_fontMap;
+    int32_t m_fontSize;
 };
 }
