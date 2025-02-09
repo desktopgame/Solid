@@ -10,7 +10,7 @@ Panel::~Panel() { }
 
 void Panel::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
-    renderer->drawRect(getGlobalPosition(), getSize(), 0.0f, Graphics::Color({ 0.2f, 0.2f, 0.2f, 1.0f }));
+    renderer->drawRect(getGlobalPosition(), getSize(), 0.0f, getBackgroundColor());
     Container::draw2D(renderer);
 }
 }

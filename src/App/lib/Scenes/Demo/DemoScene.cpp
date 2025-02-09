@@ -42,12 +42,12 @@ void DemoScene::onEnter()
         {
             auto icon1 = std::make_shared<ColorIcon>();
             icon1->setPreferredSize(Vector2({ 50, 50 }));
-            icon1->setColor(Color({ 1, 0, 0, 1 }));
+            icon1->setForegroundColor(Color({ 1, 0, 0, 1 }));
             h1->addLayoutElement(std::make_shared<LayoutElement>(icon1, nullptr));
 
             auto icon2 = std::make_shared<ColorIcon>();
             icon2->setPreferredSize(Vector2({ 50, 50 }));
-            icon2->setColor(Color({ 1, 1, 0, 1 }));
+            icon2->setForegroundColor(Color({ 1, 1, 0, 1 }));
             h1->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
         }
         m_panel->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
@@ -57,12 +57,12 @@ void DemoScene::onEnter()
         {
             auto icon1 = std::make_shared<ColorIcon>();
             icon1->setPreferredSize(Vector2({ 50, 50 }));
-            icon1->setColor(Color({ 0.5f, 0, 0, 1 }));
+            icon1->setForegroundColor(Color({ 0.5f, 0, 0, 1 }));
             h2->addLayoutElement(std::make_shared<LayoutElement>(icon1, nullptr));
 
             auto icon2 = std::make_shared<ColorIcon>();
             icon2->setPreferredSize(Vector2({ 50, 50 }));
-            icon2->setColor(Color({ 0.5f, 0.5f, 0, 1 }));
+            icon2->setForegroundColor(Color({ 0.5f, 0.5f, 0, 1 }));
             h2->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
         }
         m_panel->addLayoutElement(std::make_shared<LayoutElement>(h2, nullptr));

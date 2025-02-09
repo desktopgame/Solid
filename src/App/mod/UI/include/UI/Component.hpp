@@ -33,6 +33,12 @@ public:
     void setPreferredSize(const Math::Vector2& preferredSize);
     Math::Vector2 getPreferredSizeSize() const;
 
+    void setForegroundColor(const Graphics::Color& foregroundColor);
+    Graphics::Color getForegroundColor() const;
+
+    void setBackgroundColor(const Graphics::Color& backgroundColor);
+    Graphics::Color getBackgroundColor() const;
+
 private:
     std::weak_ptr<Container> m_parent;
 
@@ -42,5 +48,7 @@ private:
     Math::Vector2 m_minimumSize;
     Math::Vector2 m_maximumSize;
     Math::Vector2 m_preferredSize;
+    Graphics::Color m_foregroundColor;
+    Graphics::Color m_backgroundColor;
 };
 }
