@@ -12,10 +12,10 @@ public:
     static inline constexpr float k_space = 5.0f;
 
     explicit BoxLayout(Orientation orientation);
-    void resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize);
-    void layoutContainer(const std::shared_ptr<Container>& parent);
-    Math::Vector2 computePreferredSize(const std::shared_ptr<Container>& parent);
-    Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container);
+    void resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize) override;
+    void layoutContainer(const std::shared_ptr<Container>& parent) override;
+    Math::Vector2 computePreferredSize(const std::shared_ptr<Container>& parent) override;
+    Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container) override;
 
 private:
     Orientation m_orientation;
