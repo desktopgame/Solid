@@ -7,6 +7,7 @@ class BorderLayout : public ILayoutManager {
 public:
     class Hint : public LayoutHint {
     public:
+        explicit Hint(const std::string& location);
         std::string location;
     };
 

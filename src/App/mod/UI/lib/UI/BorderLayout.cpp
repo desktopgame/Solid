@@ -2,6 +2,11 @@
 #include <UI/Container.hpp>
 
 namespace Lib::UI {
+// Hint
+BorderLayout::Hint::Hint(const std::string& location)
+    : location(location)
+{
+}
 // public
 void BorderLayout::resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize)
 {
@@ -21,101 +26,104 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     }
 
     // TOP
-    {
-        auto component = findByLocation(parent, "TOP");
-        auto newSize = component->getPreferredSizeSize();
+    auto top = findByLocation(parent, "TOP");
+    if (top) {
+        auto newSize = top->getPreferredSizeSize();
 
-        if (component->isFlexible()) {
+        if (top->isFlexible()) {
             newSize.x() = parentSize.x();
         }
-        component->setSize(newSize);
-        component->setPosition(Math::Vector2({ 0, (parentSize.y() / 2.0f) - (newSize.y() / 2.0f) }));
+        top->setSize(newSize);
+        top->setPosition(Math::Vector2({ 0, (parentSize.y() / 2.0f) - (newSize.y() / 2.0f) }));
     }
     // BOTTOM
-    {
-        auto component = findByLocation(parent, "BOTTOM");
-        auto newSize = component->getPreferredSizeSize();
+    auto bottom = findByLocation(parent, "BOTTOM");
+    if (bottom) {
+        auto newSize = bottom->getPreferredSizeSize();
 
-        if (component->isFlexible()) {
+        if (bottom->isFlexible()) {
             newSize.x() = parentSize.x();
         }
-        component->setSize(newSize);
-        component->setPosition(Math::Vector2({ 0, -(parentSize.y() / 2.0f) + (newSize.y() / 2.0f) }));
+        bottom->setSize(newSize);
+        bottom->setPosition(Math::Vector2({ 0, -(parentSize.y() / 2.0f) + (newSize.y() / 2.0f) }));
     }
     // LEFT
-    {
-        auto component = findByLocation(parent, "LEFT");
-        auto newSize = component->getPreferredSizeSize();
+    auto left = findByLocation(parent, "LEFT");
+    if (left) {
+        auto newSize = left->getPreferredSizeSize();
 
-        float remainHeight = parentSize.y();
+        float useHeight = 0.0f;
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSizeSize().y();
+            useHeight += top->getPreferredSizeSize().y();
+            useHeight += (parentSize.y() - top->getPreferredSizeSize().y()) / 2.0f;
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSizeSize().y();
+            useHeight += bottom->getPreferredSizeSize().y();
+            useHeight += (parentSize.y() - bottom->getPreferredSizeSize().y()) / 2.0f;
         }
 
-        if (component->isFlexible()) {
-            newSize.y() = remainHeight;
+        if (left->isFlexible()) {
+            newSize.y() = (parentSize.y() - useHeight);
         }
-        component->setSize(newSize);
-        component->setPosition(Math::Vector2({ -(parentSize.x() / 2.0f) + (newSize.x() / 2.0f), 0 }));
+        left->setSize(newSize);
+        left->setPosition(Math::Vector2({ -(parentSize.x() / 2.0f) + (newSize.x() / 2.0f), 0 }));
     }
     // RIGHT
-    {
-        auto component = findByLocation(parent, "RIGHT");
-        auto newSize = component->getPreferredSizeSize();
+    auto right = findByLocation(parent, "RIGHT");
+    if (right) {
+        auto newSize = right->getPreferredSizeSize();
 
-        float remainHeight = parentSize.y();
+        float useHeight = 0.0f;
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSizeSize().y();
+            useHeight += top->getPreferredSizeSize().y();
+            useHeight += (parentSize.y() - top->getPreferredSizeSize().y()) / 2.0f;
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSizeSize().y();
+            useHeight += bottom->getPreferredSizeSize().y();
+            useHeight += (parentSize.y() - bottom->getPreferredSizeSize().y()) / 2.0f;
         }
 
-        if (component->isFlexible()) {
-            newSize.y() = remainHeight;
+        if (right->isFlexible()) {
+            newSize.y() = (parentSize.y() - useHeight);
         }
-        component->setSize(newSize);
-        component->setPosition(Math::Vector2({ (parentSize.x() / 2.0f) - (newSize.x() / 2.0f), 0 }));
+        right->setSize(newSize);
+        right->setPosition(Math::Vector2({ (parentSize.x() / 2.0f) - (newSize.x() / 2.0f), 0 }));
     }
     // CENTER
-    {
-        auto component = findByLocation(parent, "CENTER");
-        auto newSize = component->getPreferredSizeSize();
+    auto center = findByLocation(parent, "CENTER");
+    if (center) {
+        auto newSize = center->getPreferredSizeSize();
 
-        float remainWidth = parentSize.x();
-        float remainHeight = parentSize.y();
+        float useWidth = 0.0f;
+        float useHeight = 0.0f;
 
-        auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSizeSize().y();
+            useHeight += top->getPreferredSizeSize().y();
+            useHeight += (parentSize.y() - top->getPreferredSizeSize().y()) / 2.0f;
         }
-        auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSizeSize().y();
+            useHeight += bottom->getPreferredSizeSize().y();
+            useHeight += (parentSize.y() - bottom->getPreferredSizeSize().y()) / 2.0f;
         }
-
-        auto left = findByLocation(parent, "LEFT");
         if (left) {
-            remainWidth -= left->getPreferredSizeSize().x();
+            useWidth += left->getPreferredSizeSize().x();
+            useWidth += (parentSize.x() - left->getPreferredSizeSize().x()) / 2.0f;
         }
-        auto right = findByLocation(parent, "RIGHT");
         if (right) {
-            remainWidth -= right->getPreferredSizeSize().x();
+            useWidth += right->getPreferredSizeSize().x();
+            useWidth += (parentSize.x() - right->getPreferredSizeSize().x()) / 2.0f;
         }
 
-        if (component->isFlexible()) {
-            newSize.x() = remainWidth;
-            newSize.y() = remainHeight;
+        if (center->isFlexible()) {
+            newSize.x() = (parentSize.x() - useWidth);
+            newSize.y() = (parentSize.y() - useHeight);
         }
-        component->setSize(newSize);
-        component->setPosition(Math::Vector2({ 0, 0 }));
+        center->setSize(newSize);
+        center->setPosition(Math::Vector2({ 0, 0 }));
     }
 }
 Math::Vector2 BorderLayout::computePreferredSize(const std::shared_ptr<Container>& parent)
@@ -210,7 +218,7 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
     return availableSize;
 }
 // private
-std::shared_ptr<Component> findByLocation(const std::shared_ptr<Container>& parent, const std::string& location)
+std::shared_ptr<Component> BorderLayout::findByLocation(const std::shared_ptr<Container>& parent, const std::string& location)
 {
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto element = parent->getLayoutElementAt(i);
