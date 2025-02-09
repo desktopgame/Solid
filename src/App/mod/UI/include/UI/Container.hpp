@@ -10,6 +10,9 @@ public:
     explicit Container();
     virtual ~Container();
 
+    virtual void update() override;
+    virtual void draw2D(const std::shared_ptr<Graphics::Renderer>& renderer) override;
+
     void addLayoutElement(const std::shared_ptr<LayoutElement>& layoutElement);
     void removeLayoutElementAt(int32_t index);
     std::shared_ptr<LayoutElement> getLayoutElementAt(int32_t index) const;

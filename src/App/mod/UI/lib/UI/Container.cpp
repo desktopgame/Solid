@@ -9,6 +9,19 @@ Container::Container()
 }
 Container::~Container() { }
 
+void Container::update()
+{
+    for (const auto& c : m_children) {
+        c->component->update();
+    }
+}
+void Container::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
+{
+    for (const auto& c : m_children) {
+        c->component->draw2D(renderer);
+    }
+}
+
 void Container::addLayoutElement(const std::shared_ptr<LayoutElement>& child)
 {
     m_children.emplace_back(child);
