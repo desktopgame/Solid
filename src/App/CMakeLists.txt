@@ -27,6 +27,7 @@ add_subdirectory(./mod/Graphics)
 add_subdirectory(./mod/OS)
 add_subdirectory(./mod/Scene)
 add_subdirectory(./mod/Utils)
+add_subdirectory(./mod/UI)
 #
 # Build Options
 #
@@ -109,6 +110,7 @@ target_include_directories(
     "${MODS}/Scene/include"
     "${MODS}/Uuid/include"
     "${MODS}/Utils/include"
+    "${MODS}/UI/include"
 )
 target_link_libraries(
     App
@@ -121,6 +123,7 @@ target_link_libraries(
     Lib-OS
     Lib-Scene
     Lib-Utils
+    Lib-UI
 )
 
 enable_testing()

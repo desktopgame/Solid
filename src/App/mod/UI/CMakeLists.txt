@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 3.25)
+project(
+    Lib-UI
+    VERSION 0.0.1
+    LANGUAGES CXX
+)
+#
+# Build Options
+#
+set(SOURCES
+    ./include/UI.hpp
+    ./include/UI/Component.hpp
+    ./include/UI/Container.hpp
+    ./lib/UI/Component.cpp
+    ./lib/UI/Container.cpp
+)
+source_group(
+    TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+    ${SOURCES}
+)
+add_library(
+    Lib-UI
+    STATIC
+    ${SOURCES}
+)
+lib_target_compile_params(Lib-UI)
+lib_target_link_params(Lib-UI)
+target_include_directories(
+    Lib-UI
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${MODS}/Graphics/include"
+    "${MODS}/Math/include"
+    "${MODS}/Utils/include"
+)
+target_link_libraries(
+    Lib-UI
+    PRIVATE
+    Lib-Graphics
+    Lib-Math
+    Lib-Utils
+)

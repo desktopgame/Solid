@@ -27,6 +27,7 @@ target_include_directories(
     "${MODS}/OS/include"
     "${MODS}/Scene/include"
     "${MODS}/Utils/include"
+    "${MODS}/UI/include"
 )
 target_link_libraries(
     App-Test
@@ -38,4 +39,5 @@ target_link_libraries(
     Lib-OS
     Lib-Scene
     Lib-Utils
+    Lib-UI
 )
