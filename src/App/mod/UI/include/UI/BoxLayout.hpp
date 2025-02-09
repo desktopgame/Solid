@@ -10,6 +10,7 @@ public:
     };
 
     explicit BoxLayout(Orientation orientation);
+    void resizeContainer(const std::shared_ptr<Container>& parent);
     void layoutContainer(const std::shared_ptr<Container>& parent);
 
 private:
