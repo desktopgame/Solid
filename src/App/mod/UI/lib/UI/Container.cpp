@@ -4,6 +4,7 @@ namespace Lib::UI {
 
 Container::Container()
     : Component()
+    , m_layoutManager()
     , m_children()
 {
 }
@@ -20,6 +21,29 @@ void Container::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     for (const auto& c : m_children) {
         c->component->draw2D(renderer);
     }
+}
+
+void Container::doLayout()
+{
+    for (auto c : m_children) {
+        auto container = std::dynamic_pointer_cast<Container>(c->component);
+        if (container) {
+            container->doLayout();
+        }
+    }
+    if (m_layoutManager) {
+        auto self = std::static_pointer_cast<Container>(shared_from_this());
+        m_layoutManager->layoutContainer(self);
+    }
+}
+
+void Container::setLayout(const std::shared_ptr<ILayoutManager>& layoutManager)
+{
+    m_layoutManager = layoutManager;
+}
+std::shared_ptr<ILayoutManager> Container::getLayout()
+{
+    return m_layoutManager;
 }
 
 void Container::addLayoutElement(const std::shared_ptr<LayoutElement>& child)

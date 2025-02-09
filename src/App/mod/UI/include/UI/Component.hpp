@@ -5,7 +5,7 @@
 
 namespace Lib::UI {
 class Container;
-class Component {
+class Component : public std::enable_shared_from_this<Component> {
 public:
     explicit Component();
     virtual ~Component();
