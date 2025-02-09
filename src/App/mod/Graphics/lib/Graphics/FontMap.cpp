@@ -55,4 +55,24 @@ std::vector<std::shared_ptr<FontSprite>> FontMap::load(
     }
     return v;
 }
+Math::Vector2 FontMap::measure(int32_t size, const std::u16string& text, bool ignoreLineSpace)
+{
+    auto fontSprites = load(size, text);
+    Math::Vector2 offset({ 0, 0 });
+    float maxY = -1;
+    for (auto fontSprite : fontSprites) {
+        auto size = fontSprite->metrics.size.y();
+        if (ignoreLineSpace) {
+            size = (fontSprite->metrics.size.y() - fontSprite->metrics.bearing.y());
+        }
+        if (maxY < size) {
+            maxY = size;
+        }
+    }
+    offset.y() = maxY;
+    for (auto fontSprite : fontSprites) {
+        offset.x() += fontSprite->metrics.advance.x() >> 6;
+    }
+    return offset;
+}
 }

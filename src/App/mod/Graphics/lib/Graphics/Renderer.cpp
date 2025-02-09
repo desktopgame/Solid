@@ -217,23 +217,8 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
 
 Math::Vector2 Renderer::measureText(const std::u16string& label, TextAlignY alignY)
 {
-    auto fontSprites = m_fontMap->load(this->m_fontSize, label);
-    Math::Vector2 offset({ 0, 0 });
-    float maxY = -1;
-    for (auto fontSprite : fontSprites) {
-        auto size = fontSprite->metrics.size.y();
-        if (alignY == TextAlignY::Bottom) {
-            size = (fontSprite->metrics.size.y() - fontSprite->metrics.bearing.y());
-        }
-        if (maxY < size) {
-            maxY = size;
-        }
-    }
-    offset.y() = maxY;
-    for (auto fontSprite : fontSprites) {
-        offset.x() += fontSprite->metrics.advance.x() >> 6;
-    }
-    return offset;
+    bool ignoreLineSpace = alignY == TextAlignY::Bottom;
+    return m_fontMap->measure(this->m_fontSize, label, ignoreLineSpace);
 }
 
 void Renderer::drawPlane(const Math::Vector3& position, const Math::Vector2& scale, const Math::Quaternion& rotation, const Math::Vector4& color, bool isWireframe)
