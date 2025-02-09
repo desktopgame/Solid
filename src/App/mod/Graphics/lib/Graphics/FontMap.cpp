@@ -75,4 +75,8 @@ Math::Vector2 FontMap::measure(int32_t size, const std::u16string& text, bool ig
     }
     return offset;
 }
+Math::Vector2 FontMap::measure(int32_t size, const std::u16string& text)
+{
+    return measure(size, text, false);
+}
 }

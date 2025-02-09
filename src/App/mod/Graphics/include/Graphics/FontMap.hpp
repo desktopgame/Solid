@@ -17,6 +17,7 @@ public:
     std::shared_ptr<FontSprite> load(int32_t size, unsigned long charcode);
 
     Math::Vector2 measure(int32_t size, const std::u16string& text, bool ignoreLineSpace);
+    Math::Vector2 measure(int32_t size, const std::u16string& text);
 
 private:
     class Container;

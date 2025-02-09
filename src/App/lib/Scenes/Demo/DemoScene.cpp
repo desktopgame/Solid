@@ -32,15 +32,15 @@ void DemoScene::onEnter()
     m_pointLightPositions.clear();
     m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
     if (!m_root) {
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
         m_root = Box::createVerticalBox();
         m_root->setPosition(Vector2({ 200, 150 }));
         m_root->setSize(Vector2({ 200, 200 }));
 
         auto label = std::make_shared<Label>();
-        m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
-        label->setFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
+        label->setFont(font);
         label->setText(u"UIテスト");
-        label->setPreferredSize(m_renderer->measureText(label->getText(), Renderer::TextAlignY::Center));
+        label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
         m_root->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
 
         auto h1 = Box::createHorizontalBox();
