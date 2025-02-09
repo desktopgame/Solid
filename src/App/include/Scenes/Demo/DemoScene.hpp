@@ -29,7 +29,7 @@ private:
     Vector3 m_globalLightDir;
     Vector3 m_pointLightPos;
     std::vector<Vector3> m_pointLightPositions;
-    std::shared_ptr<Panel> m_panel;
+    std::shared_ptr<Container> m_root;
     bool m_sceneCompleted;
     std::shared_ptr<Renderer> m_renderer;
 };

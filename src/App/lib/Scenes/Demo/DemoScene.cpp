@@ -14,7 +14,7 @@ DemoScene::DemoScene()
     , m_globalLightDir({ 1, 1, 0 })
     , m_pointLightPos({ 0, 0, 0 })
     , m_pointLightPositions()
-    , m_panel()
+    , m_root()
     , m_sceneCompleted()
     , m_renderer()
 {
@@ -31,22 +31,20 @@ void DemoScene::onEnter()
     m_globalLightDir = Vector3({ 1, 1, 0 });
     m_pointLightPositions.clear();
     m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
-    if (!m_panel) {
-        m_panel = std::make_shared<Panel>();
-        m_panel->setPosition(Vector2({ 200, 150 }));
-        m_panel->setSize(Vector2({ 200, 200 }));
-        m_panel->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical));
+    if (!m_root) {
+        m_root = Box::createVerticalBox();
+        m_root->setPosition(Vector2({ 200, 150 }));
+        m_root->setSize(Vector2({ 200, 200 }));
 
         auto label = std::make_shared<Label>();
         m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
         label->setFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
         label->setText(u"UIテスト");
         label->setPreferredSize(m_renderer->measureText(label->getText(), Renderer::TextAlignY::Center));
-        m_panel->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
 
-        auto h1 = std::make_shared<Panel>();
+        auto h1 = Box::createHorizontalBox();
         h1->setBackgroundColor(Color({ 0.3f, 0.3f, 0.3f, 1.0f }));
-        h1->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));
         {
             auto icon1 = std::make_shared<ColorIcon>();
             icon1->setPreferredSize(Vector2({ 50, 50 }));
@@ -58,11 +56,10 @@ void DemoScene::onEnter()
             icon2->setForegroundColor(Color({ 1, 1, 0, 1 }));
             h1->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
         }
-        m_panel->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
 
-        auto h2 = std::make_shared<Panel>();
+        auto h2 = Box::createHorizontalBox();
         h2->setBackgroundColor(Color({ 0.8f, 0.3f, 0.3f, 1.0f }));
-        h2->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));
         {
             auto icon1 = std::make_shared<ColorIcon>();
             icon1->setPreferredSize(Vector2({ 50, 50 }));
@@ -74,9 +71,9 @@ void DemoScene::onEnter()
             icon2->setForegroundColor(Color({ 0.5f, 0.5f, 0, 1 }));
             h2->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
         }
-        m_panel->addLayoutElement(std::make_shared<LayoutElement>(h2, nullptr));
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(h2, nullptr));
 
-        m_panel->doLayout();
+        m_root->doLayout();
     }
 }
 void DemoScene::onExit()
@@ -166,7 +163,7 @@ void DemoScene::onDraw2D()
     m_renderer->textFontSize(20);
     m_renderer->drawText(backgroundCenter - Vector2({ 0, 100 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"2D描画のテスト", Vector4({ 0, 0, 0, 1 }));
 
-    m_panel->draw2D(m_renderer);
+    m_root->draw2D(m_renderer);
 }
 
 bool DemoScene::tryTransition(std::string& outNextScene)

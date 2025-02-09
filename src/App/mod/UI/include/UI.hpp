@@ -1,4 +1,5 @@
 #pragma once
+#include <UI/Box.hpp>
 #include <UI/BoxLayout.hpp>
 #include <UI/ColorIcon.hpp>
 #include <UI/Component.hpp>
