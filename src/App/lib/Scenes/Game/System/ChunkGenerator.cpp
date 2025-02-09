@@ -21,6 +21,8 @@ void ChunkGenerator::generate()
     const int32_t k_blockRouteRoof = 5;
     const int32_t k_blockRouteWall = 6;
 
+    (void)k_blockNone;
+
     // ブロック座標を記憶する配列を確保
     // スタックを使いすぎないように動的確保
     std::vector<std::vector<std::vector<int32_t>>> table(Chunk::k_chunkSizeX);
@@ -46,24 +48,24 @@ void ChunkGenerator::generate()
     int32_t rightRouteMaxZ = rightRouteMinZ + Chunk::k_routeWidth;
     for (int32_t x = Chunk::k_chunkSizeX - Chunk::k_routeLength; x < Chunk::k_chunkSizeX; x++) {
         for (int32_t z = rightRouteMinZ; z < rightRouteMaxZ; z++) {
-            table[x][0][z] = k_blockRoomFloor;
-            table[x][Chunk::k_chunkSizeY - 1][z] = k_blockRoomRoof;
+            table[x][0][z] = k_blockRouteFloor;
+            table[x][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
         }
         for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
-            table[x][y][rightRouteMinZ - 1] = k_blockRoomWall;
-            table[x][y][rightRouteMaxZ] = k_blockRoomWall;
+            table[x][y][rightRouteMinZ - 1] = k_blockRouteWall;
+            table[x][y][rightRouteMaxZ] = k_blockRouteWall;
         }
     }
     int32_t topRouteMinX = (Chunk::k_chunkSizeX - Chunk::k_routeLength) / 2 - Chunk::k_routeWidth / 2;
     int32_t topRouteMaxX = topRouteMinX + Chunk::k_routeWidth;
     for (int32_t z = Chunk::k_chunkSizeZ - Chunk::k_routeLength; z < Chunk::k_chunkSizeZ; z++) {
         for (int32_t x = topRouteMinX; x < topRouteMaxX; x++) {
-            table[x][0][z] = k_blockRoomFloor;
-            table[x][Chunk::k_chunkSizeY - 1][z] = k_blockRoomRoof;
+            table[x][0][z] = k_blockRouteFloor;
+            table[x][Chunk::k_chunkSizeY - 1][z] = k_blockRouteRoof;
         }
         for (int32_t y = 1; y < Chunk::k_chunkSizeY - 1; y++) {
-            table[topRouteMinX - 1][y][z] = k_blockRoomWall;
-            table[topRouteMaxX][y][z] = k_blockRoomWall;
+            table[topRouteMinX - 1][y][z] = k_blockRouteWall;
+            table[topRouteMaxX][y][z] = k_blockRouteWall;
         }
     }
 
@@ -73,15 +75,15 @@ void ChunkGenerator::generate()
             if (x >= topRouteMinX && x < topRouteMaxX) {
                 continue;
             }
-            table[x][y][0] = k_blockRouteWall;
-            table[x][y][Chunk::k_chunkSizeZ - Chunk::k_routeLength - 1] = k_blockRouteWall;
+            table[x][y][0] = k_blockRoomWall;
+            table[x][y][Chunk::k_chunkSizeZ - Chunk::k_routeLength - 1] = k_blockRoomWall;
         }
         for (int32_t z = 0; z < Chunk::k_chunkSizeZ - Chunk::k_routeLength; z++) {
             if (z >= rightRouteMinZ && z < rightRouteMaxZ) {
                 continue;
             }
-            table[0][y][z] = k_blockRouteWall;
-            table[Chunk::k_chunkSizeX - Chunk::k_routeLength - 1][y][z] = k_blockRouteWall;
+            table[0][y][z] = k_blockRoomWall;
+            table[Chunk::k_chunkSizeX - Chunk::k_routeLength - 1][y][z] = k_blockRoomWall;
         }
     }
 

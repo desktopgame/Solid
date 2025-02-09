@@ -30,7 +30,6 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
     std::vector<IntVector2> localGridPositions;
     auto playerPos = player->getPosition();
     auto currentChunk = m_field->getCurrentChunk();
-    auto currentChunkGridPos = currentChunk->getGridPosition();
     localGridPositions.emplace_back(IntVector2({ 0, 0 }));
 
     IntVector2 startGridPos = localGridPositions.front() - IntVector2({ 2, 2 });
