@@ -7,6 +7,9 @@ public:
     static std::shared_ptr<Container> createHorizontalBox();
     static std::shared_ptr<Container> createVerticalBox();
 
+    static std::shared_ptr<Container> createHorizontalGlue();
+    static std::shared_ptr<Container> createVerticalGlue();
+
 private:
     Box() = delete;
     ~Box() = delete;

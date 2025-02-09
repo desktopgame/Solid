@@ -10,6 +10,7 @@ Component::Component()
     , m_minimumSize({ 0, 0 })
     , m_maximumSize({ 9999, 9999 })
     , m_preferredSize({ 0, 0 })
+    , m_isFlexible(false)
     , m_foregroundColor({ 1.0f, 1.0f, 1.0f, 1.0f })
     , m_backgroundColor({ 0.2f, 0.2f, 0.2f, 1.0f })
     , m_fontMap()
@@ -44,6 +45,9 @@ Math::Vector2 Component::getMaximumSize() const { return m_maximumSize; }
 
 void Component::setPreferredSize(const Math::Vector2& preferredSize) { m_preferredSize = preferredSize; }
 Math::Vector2 Component::getPreferredSizeSize() const { return m_preferredSize; }
+
+void Component::setFlexible(bool isFlexible) { m_isFlexible = isFlexible; }
+bool Component::isFlexible() const { return m_isFlexible; }
 
 void Component::setForegroundColor(const Graphics::Color& foregroundColor) { m_foregroundColor = foregroundColor; }
 Graphics::Color Component::getForegroundColor() const { return m_foregroundColor; }

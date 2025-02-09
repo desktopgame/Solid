@@ -34,6 +34,9 @@ public:
     void setPreferredSize(const Math::Vector2& preferredSize);
     Math::Vector2 getPreferredSizeSize() const;
 
+    void setFlexible(bool isFlexible);
+    bool isFlexible() const;
+
     void setForegroundColor(const Graphics::Color& foregroundColor);
     Graphics::Color getForegroundColor() const;
 
@@ -55,6 +58,7 @@ private:
     Math::Vector2 m_minimumSize;
     Math::Vector2 m_maximumSize;
     Math::Vector2 m_preferredSize;
+    bool m_isFlexible;
     Graphics::Color m_foregroundColor;
     Graphics::Color m_backgroundColor;
     std::shared_ptr<Graphics::FontMap> m_fontMap;
