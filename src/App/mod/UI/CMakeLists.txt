@@ -14,8 +14,10 @@ set(SOURCES
     ./include/UI/ILayoutManager.hpp
     ./include/UI/LayoutElement.hpp
     ./include/UI/LayoutHint.hpp
+    ./include/UI/ColorIcon.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
+    ./lib/UI/ColorIcon.cpp
 )
 source_group(
     TREE

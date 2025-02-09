@@ -1,3 +1,7 @@
 #pragma once
+#include <UI/ColorIcon.hpp>
 #include <UI/Component.hpp>
 #include <UI/Container.hpp>
+#include <UI/ILayoutManager.hpp>
+#include <UI/LayoutElement.hpp>
+#include <UI/LayoutHint.hpp>
