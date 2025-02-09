@@ -41,6 +41,7 @@ std::shared_ptr<ILayoutManager> Container::getLayout()
 void Container::addLayoutElement(const std::shared_ptr<LayoutElement>& child)
 {
     m_children.emplace_back(child);
+    child->component->setParent(std::static_pointer_cast<Container>(shared_from_this()));
 }
 void Container::removeLayoutElementAt(int32_t index)
 {
