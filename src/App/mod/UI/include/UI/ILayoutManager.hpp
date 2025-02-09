@@ -14,7 +14,7 @@ public:
     virtual void resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize) = 0;
     virtual void layoutContainer(const std::shared_ptr<Container>& parent) = 0;
     virtual Math::Vector2 computePreferredSize(const std::shared_ptr<Container>& parent) = 0;
-    virtual Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container) = 0;
+    virtual Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint) = 0;
 
 private:
 };

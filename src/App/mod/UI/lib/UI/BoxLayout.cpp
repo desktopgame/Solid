@@ -156,7 +156,7 @@ Math::Vector2 BoxLayout::computePreferredSize(const std::shared_ptr<Container>& 
     }
     return requiredSize;
 }
-Math::Vector2 BoxLayout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container)
+Math::Vector2 BoxLayout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint)
 {
     int32_t elementCount = parent->getLayoutElementCount();
     Math::Vector2 parentSize = parent->getSize();

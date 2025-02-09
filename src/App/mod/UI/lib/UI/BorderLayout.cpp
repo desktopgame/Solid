@@ -17,7 +17,7 @@ Math::Vector2 BorderLayout::computePreferredSize(const std::shared_ptr<Container
 {
     return Math::Vector2({ 0, 0 });
 }
-Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container)
+Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint)
 {
     return Math::Vector2({ 0, 0 });
 }

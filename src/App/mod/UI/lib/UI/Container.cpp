@@ -67,7 +67,7 @@ void Container::layoutTopdown(const Math::Vector2& availableSize)
         for (auto c : m_children) {
             auto container = std::dynamic_pointer_cast<Container>(c->component);
             if (container) {
-                container->layoutTopdown(m_layoutManager->availableSizeFor(self, container));
+                container->layoutTopdown(m_layoutManager->availableSizeFor(self, container, c->hint));
             }
         }
     }
