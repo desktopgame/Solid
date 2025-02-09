@@ -17,6 +17,7 @@ set(SOURCES
     ./include/UI/ColorIcon.hpp
     ./include/UI/Panel.hpp
     ./include/UI/Label.hpp
+    ./include/UI/Button.hpp
     ./include/UI/Box.hpp
     ./include/UI/BoxLayout.hpp
     ./lib/UI/Component.cpp
@@ -25,6 +26,7 @@ set(SOURCES
     ./lib/UI/ColorIcon.cpp
     ./lib/UI/Panel.cpp
     ./lib/UI/Label.cpp
+    ./lib/UI/Button.cpp
     ./lib/UI/Box.cpp
     ./lib/UI/BoxLayout.cpp
 )

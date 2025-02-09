@@ -35,7 +35,7 @@ void DemoScene::onEnter()
         auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
         m_root = Box::createVerticalBox();
         m_root->setPosition(Vector2({ 200, 150 }));
-        m_root->setSize(Vector2({ 200, 200 }));
+        m_root->setSize(Vector2({ 300, 300 }));
 
         auto label = std::make_shared<Label>();
         label->setFont(font);
@@ -55,6 +55,12 @@ void DemoScene::onEnter()
             icon2->setPreferredSize(Vector2({ 50, 50 }));
             icon2->setForegroundColor(Color({ 1, 1, 0, 1 }));
             h1->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
+
+            auto button = std::make_shared<Button>();
+            button->setFont(font);
+            button->setText(u"ボタン");
+            button->setPreferredSize(Vector2({ 100, 50 }));
+            h1->addLayoutElement(std::make_shared<LayoutElement>(button, nullptr));
         }
         m_root->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
 
