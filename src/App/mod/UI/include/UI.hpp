@@ -5,3 +5,4 @@
 #include <UI/ILayoutManager.hpp>
 #include <UI/LayoutElement.hpp>
 #include <UI/LayoutHint.hpp>
+#include <UI/Panel.hpp>
