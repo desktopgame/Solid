@@ -37,6 +37,13 @@ void DemoScene::onEnter()
         m_panel->setSize(Vector2({ 200, 200 }));
         m_panel->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical));
 
+        auto label = std::make_shared<Label>();
+        m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
+        label->setFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
+        label->setText(u"UIテスト");
+        label->setPreferredSize(m_renderer->measureText(label->getText(), Renderer::TextAlignY::Center));
+        m_panel->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+
         auto h1 = std::make_shared<Panel>();
         h1->setBackgroundColor(Color({ 0.3f, 0.3f, 0.3f, 1.0f }));
         h1->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Horizontal));

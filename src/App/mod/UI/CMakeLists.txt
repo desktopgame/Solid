@@ -16,12 +16,14 @@ set(SOURCES
     ./include/UI/LayoutHint.hpp
     ./include/UI/ColorIcon.hpp
     ./include/UI/Panel.hpp
+    ./include/UI/Label.hpp
     ./include/UI/BoxLayout.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
     ./lib/UI/LayoutElement.cpp
     ./lib/UI/ColorIcon.cpp
     ./lib/UI/Panel.cpp
+    ./lib/UI/Label.cpp
     ./lib/UI/BoxLayout.cpp
 )
 source_group(

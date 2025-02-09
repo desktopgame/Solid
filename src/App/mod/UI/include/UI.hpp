@@ -4,6 +4,7 @@
 #include <UI/Component.hpp>
 #include <UI/Container.hpp>
 #include <UI/ILayoutManager.hpp>
+#include <UI/Label.hpp>
 #include <UI/LayoutElement.hpp>
 #include <UI/LayoutHint.hpp>
 #include <UI/Panel.hpp>
