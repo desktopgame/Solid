@@ -58,15 +58,15 @@ int32_t Container::getLayoutElementCount() const
 void Container::layoutTopdown(const Math::Vector2& availableSize)
 {
     if (m_layoutManager) {
+        auto self = std::static_pointer_cast<Container>(shared_from_this());
         if (getParent()) {
-            auto self = std::static_pointer_cast<Container>(shared_from_this());
             m_layoutManager->resizeContainer(self, availableSize);
         }
 
         for (auto c : m_children) {
             auto container = std::dynamic_pointer_cast<Container>(c->component);
             if (container) {
-                container->layoutTopdown(m_layoutManager->availableSizeFor(c));
+                container->layoutTopdown(m_layoutManager->availableSizeFor(self, c));
             }
         }
     }
