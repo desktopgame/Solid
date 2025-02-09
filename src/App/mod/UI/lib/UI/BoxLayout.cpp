@@ -21,24 +21,95 @@ void BoxLayout::resizeContainer(const std::shared_ptr<Container>& parent, const 
 }
 void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 {
+    int32_t elementCount = parent->getLayoutElementCount();
+    if (elementCount == 0) {
+        return;
+    }
+
     auto left = -Math::Vector2({ parent->getSize().x() / 2.0f, 0.0f });
     auto top = Math::Vector2({ 0.0f, parent->getSize().y() / 2.0f });
     float offsetX = k_space;
     float offsetY = -k_space;
-    for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
+
+    // 残りサイズを取得
+    float remainSpace = 0.0f;
+    switch (m_orientation) {
+    case BoxLayout::Orientation::Horizontal:
+        remainSpace = parent->getSize().x() - ((elementCount + 1) * k_space);
+        break;
+    case BoxLayout::Orientation::Vertical:
+        remainSpace = parent->getSize().y() - ((elementCount + 1) * k_space);
+        break;
+    }
+
+    // フレックスなコンポーネントを数え、フレックスでないサイズ分残りサイズを減らす
+    int32_t flexibleComponents = 0;
+    for (int32_t i = 0; i < elementCount; i++) {
         auto e = parent->getLayoutElementAt(i);
         auto prefSize = e->component->getPreferredSizeSize();
         e->component->setSize(prefSize);
 
+        if (e->component->isFlexible()) {
+            flexibleComponents++;
+            continue;
+        }
+
         switch (m_orientation) {
         case BoxLayout::Orientation::Horizontal:
-            e->component->setPosition(left + Math::Vector2({ offsetX + (prefSize.x() / 2.0f), 0.0f }));
-            offsetX += prefSize.x();
+            remainSpace -= prefSize.x();
+            break;
+        case BoxLayout::Orientation::Vertical:
+            remainSpace -= prefSize.y();
+            break;
+        }
+    }
+
+    // フレックスなコンポーネントにサイズを割り当てる
+    int32_t div = flexibleComponents;
+    for (int32_t i = 0; i < elementCount; i++) {
+        auto e = parent->getLayoutElementAt(i);
+        auto minimumSize = e->component->getMinimumSize();
+        auto maximumSize = e->component->getMaximumSize();
+
+        if (!e->component->isFlexible()) {
+            continue;
+        }
+
+        Math::Vector2 size;
+        switch (m_orientation) {
+        case BoxLayout::Orientation::Horizontal: {
+            float useWidth = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), remainSpace / static_cast<float>(div));
+            size.x() = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), useWidth);
+            size.y() = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), parent->getSize().y());
+            remainSpace -= useWidth;
+            div--;
+            break;
+        }
+        case BoxLayout::Orientation::Vertical: {
+            float useHeight = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), remainSpace / static_cast<float>(div));
+            size.x() = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), parent->getSize().x());
+            size.y() = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), useHeight);
+            remainSpace -= useHeight;
+            div--;
+            break;
+        }
+        }
+        e->component->setSize(size);
+    }
+
+    for (int32_t i = 0; i < elementCount; i++) {
+        auto e = parent->getLayoutElementAt(i);
+        auto size = e->component->getSize();
+
+        switch (m_orientation) {
+        case BoxLayout::Orientation::Horizontal:
+            e->component->setPosition(left + Math::Vector2({ offsetX + (size.x() / 2.0f), 0.0f }));
+            offsetX += size.x();
             offsetX += k_space;
             break;
         case BoxLayout::Orientation::Vertical:
-            e->component->setPosition(top + Math::Vector2({ 0.0f, offsetY - (prefSize.y() / 2.0f) }));
-            offsetY -= prefSize.y();
+            e->component->setPosition(top + Math::Vector2({ 0.0f, offsetY - (size.y() / 2.0f) }));
+            offsetY -= size.y();
             offsetY -= k_space;
             break;
         }
