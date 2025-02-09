@@ -1,5 +1,6 @@
 #pragma once
 #include <UI/Component.hpp>
+#include <UI/LayoutElement.hpp>
 #include <memory>
 #include <vector>
 
@@ -9,12 +10,12 @@ public:
     explicit Container();
     virtual ~Container();
 
-    void addChildren(const std::shared_ptr<Component>& child);
-    void removeChildAt(int32_t index);
-    std::shared_ptr<Component> getChildAt(int32_t index) const;
-    int32_t getChildCount() const;
+    void addLayoutElement(const std::shared_ptr<LayoutElement>& layoutElement);
+    void removeLayoutElementAt(int32_t index);
+    std::shared_ptr<LayoutElement> getLayoutElementAt(int32_t index) const;
+    int32_t getLayoutElementCount() const;
 
 private:
-    std::vector<std::shared_ptr<Component>> m_children;
+    std::vector<std::shared_ptr<LayoutElement>> m_children;
 };
 }

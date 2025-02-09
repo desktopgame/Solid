@@ -11,7 +11,7 @@ public:
     virtual ~Component();
 
     virtual void update() = 0;
-    virtual void draw2D(const std::shared_ptr<Renderer>& renderer) = 0;
+    virtual void draw2D(const std::shared_ptr<Graphics::Renderer>& renderer) = 0;
 
     void setParent(const std::shared_ptr<Container>& parent);
     std::shared_ptr<Container> getParent() const;
