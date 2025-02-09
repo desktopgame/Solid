@@ -37,6 +37,26 @@ Math::Vector2 Component::getGlobalPosition() const
     return m_position;
 }
 
+bool Component::isContains(const Math::Vector2& position)
+{
+    Math::Vector2 center = getGlobalPosition();
+    float width = m_size.x();
+    float height = m_size.y();
+    float left = center.x() - (width / 2.0f);
+    float top = center.y() + (height / 2.0f);
+    float right = center.x() + (width / 2.0f);
+    float bottom = center.y() - (height / 2.0f);
+
+    if (position.x() < left || position.x() > right) {
+        return false;
+    }
+
+    if (position.y() < bottom || position.y() > top) {
+        return false;
+    }
+    return true;
+}
+
 void Component::setMinimumSize(const Math::Vector2& minimumSize) { m_minimumSize = minimumSize; }
 Math::Vector2 Component::getMinimumSize() const { return m_minimumSize; }
 

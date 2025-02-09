@@ -25,6 +25,8 @@ public:
 
     Math::Vector2 getGlobalPosition() const;
 
+    bool isContains(const Math::Vector2& position);
+
     void setMinimumSize(const Math::Vector2& minimumSize);
     Math::Vector2 getMinimumSize() const;
 

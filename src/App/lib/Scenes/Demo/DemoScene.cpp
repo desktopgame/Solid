@@ -57,6 +57,9 @@ void DemoScene::onEnter()
             h1->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
 
             auto button = std::make_shared<Button>();
+            button->setOnClick([]() -> void {
+                std::cout << "Button clicked!" << std::endl;
+            });
             button->setFont(font);
             button->setText(u"ボタン");
             button->setPreferredSize(Vector2({ 100, 50 }));
@@ -89,6 +92,7 @@ void DemoScene::onExit()
 void DemoScene::onUpdate()
 {
     m_fpsController.update();
+    m_root->update();
 }
 
 void DemoScene::onGui()

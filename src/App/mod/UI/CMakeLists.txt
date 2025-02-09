@@ -48,6 +48,7 @@ target_include_directories(
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${MODS}/Graphics/include"
+    "${MODS}/Input/include"
     "${MODS}/Math/include"
     "${MODS}/Utils/include"
 )
@@ -55,6 +56,7 @@ target_link_libraries(
     Lib-UI
     PRIVATE
     Lib-Graphics
+    Lib-Input
     Lib-Math
     Lib-Utils
 )
