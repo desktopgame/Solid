@@ -50,48 +50,54 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     // LEFT
     auto left = findByLocation(parent, "LEFT");
     if (left) {
-        auto newSize = left->getPreferredSizeSize();
-
-        float useHeight = 0.0f;
-        auto top = findByLocation(parent, "TOP");
-        if (top) {
-            useHeight += top->getPreferredSizeSize().y();
-            useHeight += (parentSize.y() - top->getPreferredSizeSize().y()) / 2.0f;
-        }
-        auto bottom = findByLocation(parent, "BOTTOM");
-        if (bottom) {
-            useHeight += bottom->getPreferredSizeSize().y();
-            useHeight += (parentSize.y() - bottom->getPreferredSizeSize().y()) / 2.0f;
-        }
-
         if (left->isFlexible()) {
-            newSize.y() = (parentSize.y() - useHeight);
+            auto newSize = left->getPreferredSizeSize();
+            Math::Vector2 newPos;
+
+            if (top && bottom) {
+                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+            } else if (top) {
+                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
+                newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
+            } else if (bottom) {
+                newSize.y() = parentSize.y() - bottom->getPreferredSizeSize().y();
+                newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + newSize.y() / 2.0f;
+            } else {
+                newSize.y() = parentSize.y();
+            }
+            newPos.x() = (-parentSize.x() / 2.0f) + newSize.x() / 2.0f;
+            left->setPosition(newPos);
+            left->setSize(newSize);
+        } else {
+            left->setPosition(Math::Vector2({ 0, 0 }));
+            left->setSize(left->getPreferredSizeSize());
         }
-        left->setSize(newSize);
-        left->setPosition(Math::Vector2({ -(parentSize.x() / 2.0f) + (newSize.x() / 2.0f), 0 }));
     }
     // RIGHT
     auto right = findByLocation(parent, "RIGHT");
     if (right) {
-        auto newSize = right->getPreferredSizeSize();
-
-        float useHeight = 0.0f;
-        auto top = findByLocation(parent, "TOP");
-        if (top) {
-            useHeight += top->getPreferredSizeSize().y();
-            useHeight += (parentSize.y() - top->getPreferredSizeSize().y()) / 2.0f;
-        }
-        auto bottom = findByLocation(parent, "BOTTOM");
-        if (bottom) {
-            useHeight += bottom->getPreferredSizeSize().y();
-            useHeight += (parentSize.y() - bottom->getPreferredSizeSize().y()) / 2.0f;
-        }
-
         if (right->isFlexible()) {
-            newSize.y() = (parentSize.y() - useHeight);
+            auto newSize = right->getPreferredSizeSize();
+            Math::Vector2 newPos;
+
+            if (top && bottom) {
+                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+            } else if (top) {
+                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
+                newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
+            } else if (bottom) {
+                newSize.y() = parentSize.y() - bottom->getPreferredSizeSize().y();
+                newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + newSize.y() / 2.0f;
+            } else {
+                newSize.y() = parentSize.y();
+            }
+            newPos.x() = (parentSize.x() / 2.0f) - newSize.x() / 2.0f;
+            right->setPosition(newPos);
+            right->setSize(newSize);
+        } else {
+            right->setPosition(Math::Vector2({ 0, 0 }));
+            right->setSize(right->getPreferredSizeSize());
         }
-        right->setSize(newSize);
-        right->setPosition(Math::Vector2({ (parentSize.x() / 2.0f) - (newSize.x() / 2.0f), 0 }));
     }
     // CENTER
     auto center = findByLocation(parent, "CENTER");
