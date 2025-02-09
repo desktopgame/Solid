@@ -16,10 +16,12 @@ set(SOURCES
     ./include/UI/LayoutHint.hpp
     ./include/UI/ColorIcon.hpp
     ./include/UI/Panel.hpp
+    ./include/UI/BoxLayout.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
     ./lib/UI/ColorIcon.cpp
     ./lib/UI/Panel.cpp
+    ./lib/UI/BoxLayout.cpp
 )
 source_group(
     TREE
