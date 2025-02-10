@@ -14,3 +14,4 @@
 #include <UI/RootPane.hpp>
 #include <UI/Slider.hpp>
 #include <UI/TabbedPane.hpp>
+#include <UI/Toggle.hpp>

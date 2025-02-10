@@ -22,6 +22,7 @@ set(SOURCES
     ./include/UI/TabbedPane.hpp
     ./include/UI/RootPane.hpp
     ./include/UI/Slider.hpp
+    ./include/UI/Toggle.hpp
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
     ./lib/UI/Component.cpp
@@ -34,6 +35,7 @@ set(SOURCES
     ./lib/UI/Box.cpp
     ./lib/UI/TabbedPane.cpp
     ./lib/UI/Slider.cpp
+    ./lib/UI/Toggle.cpp
     ./lib/UI/RootPane.cpp
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp
