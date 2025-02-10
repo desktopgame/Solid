@@ -35,7 +35,8 @@ private:
     std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
     std::shared_ptr<Texture> m_aimTexture;
-    std::shared_ptr<System::Minimap> m_minimap;
+
+    std::shared_ptr<RootPane> m_minimap;
 
 #if GAMESCENE_PROFILE
     const float k_fpsK = 0.05f;

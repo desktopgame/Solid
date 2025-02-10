@@ -5,6 +5,7 @@ namespace App::Scenes::Game::System {
 Minimap::Minimap(const std::shared_ptr<Field>& field)
     : m_field(field)
 {
+    setPreferredSize(Vector2({ 200, 200 }));
 }
 
 void Minimap::update()
@@ -17,6 +18,9 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
     if (!m_field || !player) {
         return;
     }
+
+    auto k_backgroundCenter = getGlobalPosition();
+    auto k_backgroundSize = getSize();
 
     renderer->stencilRef(1);
     renderer->stencilWrite();

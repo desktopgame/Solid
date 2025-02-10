@@ -44,7 +44,21 @@ void GameScene::onEnter()
         m_aimTexture = Texture::create("./assets/Textures/aim.png");
     }
     if (!m_minimap) {
-        m_minimap = std::make_shared<System::Minimap>(m_field);
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+
+        m_minimap = RootPane::create();
+
+        auto title = std::make_shared<Label>();
+        title->setFont(font);
+        title->setText(u"Minimap");
+        title->setPreferredSize(font->measure(title->getFontSize(), title->getText()) + Vector2({ 0, 10 }));
+        m_minimap->addLayoutElement(std::make_shared<LayoutElement>(title, std::make_shared<BorderLayout::Hint>("TOP")));
+        m_minimap->addLayoutElement(std::make_shared<LayoutElement>(std::make_shared<System::Minimap>(m_field), std::make_shared<BorderLayout::Hint>("CENTER")));
+
+        m_minimap->setPosition(Vector2({ 200, 150 }));
+        m_minimap->setSize(Vector2({ 250, 250 }));
+
+        m_minimap->doLayout();
     }
     if (Cursor::isVisible()) {
         Cursor::hide();

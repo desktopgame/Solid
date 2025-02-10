@@ -6,16 +6,14 @@
 #include <memory>
 
 namespace App::Scenes::Game::System {
-class Minimap {
+class Minimap : public Component {
 public:
-    static inline const Vector2 k_backgroundCenter = Vector2({ 200, 150 });
-    static inline const Vector2 k_backgroundSize = Vector2({ 200, 200 });
     static inline const float k_routeLength = 5;
 
     explicit Minimap(const std::shared_ptr<Field>& field);
 
-    void update();
-    void draw2D(const std::shared_ptr<Renderer>& renderer);
+    void update() override;
+    void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
 private:
     std::shared_ptr<Field> m_field;
