@@ -43,6 +43,7 @@ private:
     float m_horizontalScrollPosition;
     float m_verticalScrollPosition;
     int32_t m_status;
-    bool m_warp;
+    bool m_hWarp;
+    bool m_vWarp;
 };
 }

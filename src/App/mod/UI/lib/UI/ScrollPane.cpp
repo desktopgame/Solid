@@ -20,13 +20,17 @@ void ScrollPane::Layout::layoutContainer(const std::shared_ptr<Container>& paren
 {
     auto scrollPane = std::static_pointer_cast<ScrollPane>(parent);
     auto view = scrollPane->getView();
+    auto viewSize = view->getPreferredSize();
+    float hPos = scrollPane->getHorizontalScrollPosition();
+    float vPos = scrollPane->getVerticalScrollPosition();
 
-    if (view->isFlexible()) {
-        view->setSize(parent->getSize() - Math::Vector2({ k_scrollBarSize, k_scrollBarSize }));
-    } else {
-        view->setSize(view->getPreferredSize());
-    }
-    view->setPosition(Math::Vector2({ -k_scrollBarSize / 2.0f, k_scrollBarSize / 2.0f }));
+    view->setSize(viewSize);
+
+    float scrollOffsetX = hPos * (viewSize.x() - scrollPane->getSize().x() + k_scrollBarSize);
+    float scrollOffsetY = vPos * (viewSize.y() - scrollPane->getSize().y() + k_scrollBarSize);
+    view->setPosition(Math::Vector2({ //
+        -(scrollPane->getSize().x() / 2.0f) + (viewSize.x() / 2.0f) - scrollOffsetX,
+        (scrollPane->getSize().y() / 2.0f) - (viewSize.y() / 2.0f) + scrollOffsetY }));
 }
 Math::Vector2 ScrollPane::Layout::computePreferredSize(const std::shared_ptr<Container>& parent)
 {
@@ -59,7 +63,8 @@ ScrollPane::ScrollPane()
     , m_horizontalScrollPosition()
     , m_verticalScrollPosition()
     , m_status()
-    , m_warp()
+    , m_hWarp()
+    , m_vWarp()
 {
     setLayout(std::make_shared<ScrollPane::Layout>());
 }
@@ -77,6 +82,7 @@ void ScrollPane::update()
     auto size = getSize();
     float horizontalScrollbarSize = getHorizontalScrollbarSize();
     float verticalScrollbarSize = getVerticalScrollbarSize();
+    bool scrollChanged = false;
 
     Math::Vector2 horizontalScrollbarOffset = getHorizontalScrollbarOffset();
     Math::Vector2 verticalScrollbarOffset = getVerticalScrollbarOffset();
@@ -98,18 +104,20 @@ void ScrollPane::update()
         m_status = k_scrollbarHover;
 
         if (mouseStatus == Input::ButtonState::Trigger) {
-            m_warp = true;
+            m_hWarp = true;
         }
-        if (mouseStatus == Input::ButtonState::Pressed && m_warp) {
+        if (mouseStatus == Input::ButtonState::Pressed && m_hWarp) {
             m_status = k_scrollbarActive;
             float delta = -((center.x() + horizontalScrollbarOffset.x() - screenPos.x()) / size.x());
             setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
+            scrollChanged = true;
         }
-    } else if (m_warp) {
+    } else if (m_hWarp) {
         if (mouseStatus == Input::ButtonState::Pressed) {
             m_status = k_scrollbarActive;
             float delta = -((center.x() + horizontalScrollbarOffset.x() - screenPos.x()) / size.x());
             setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
+            scrollChanged = true;
         }
     }
 
@@ -130,21 +138,30 @@ void ScrollPane::update()
         m_status = k_scrollbarHover;
 
         if (mouseStatus == Input::ButtonState::Trigger) {
-            m_warp = true;
+            m_vWarp = true;
         }
-        if (mouseStatus == Input::ButtonState::Pressed && m_warp) {
+        if (mouseStatus == Input::ButtonState::Pressed && m_vWarp) {
             m_status = k_scrollbarActive;
-            setVerticalScrollPosition(getVerticalScrollPosition() + ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y()));
+            float delta = ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y());
+            setVerticalScrollPosition(getVerticalScrollPosition() + delta);
+            scrollChanged = true;
         }
-    } else if (m_warp) {
+    } else if (m_vWarp) {
         if (mouseStatus == Input::ButtonState::Pressed) {
             m_status = k_scrollbarActive;
-            setVerticalScrollPosition(getVerticalScrollPosition() + ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y()));
+            float delta = ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y());
+            setVerticalScrollPosition(getVerticalScrollPosition() + delta);
+            scrollChanged = true;
         }
     }
 
+    if (scrollChanged) {
+        doLayout();
+    }
+
     if (mouseStatus == Input::ButtonState::Released) {
-        m_warp = false;
+        m_hWarp = false;
+        m_vWarp = false;
     }
 
     m_view->update();
