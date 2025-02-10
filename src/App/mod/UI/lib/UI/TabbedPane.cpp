@@ -1,3 +1,6 @@
+#include <Graphics/Screen.hpp>
+#include <Input/InputSystem.hpp>
+#include <Input/Mouse.hpp>
 #include <UI/TabbedPane.hpp>
 
 namespace Lib::UI {
@@ -65,6 +68,44 @@ TabbedPane::TabbedPane()
 
 void TabbedPane::update()
 {
+    auto inputSystem = Input::InputSystem::getInstance();
+    auto mousePos = inputSystem->getMouse()->getPosition();
+    auto mouseStatus = inputSystem->getMouse()->getState(Input::Mouse::Button::Left);
+
+    auto screenPos = (((Math::Vector2)mousePos / (Math::Vector2)Graphics::Screen::getSize()) - Math::Vector2({ 0.5f, 0.5f })) * (Math::Vector2)Graphics::Screen::getSize();
+    screenPos.y() *= -1;
+
+    auto center = getGlobalPosition();
+    float k_tabWidth = getSize().x() / static_cast<float>(getLayoutElementCount());
+    float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
+    for (int32_t i = 0; i < getLayoutElementCount(); i++) {
+        std::string title = std::to_string(i);
+        std::u16string uTitle = std::u16string(title.begin(), title.end());
+        if (i < m_titles.size()) {
+            uTitle = m_titles.at(i);
+        }
+        Math::Vector2 tabCenter = Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) });
+        Math::Vector2 tabSize = Math::Vector2({ k_tabWidth, k_tabHeight });
+        float tabLeft = tabCenter.x() - (tabSize.x() / 2.0f);
+        float tabRight = tabCenter.x() + (tabSize.x() / 2.0f);
+        float tabBottom = tabCenter.y() - (tabSize.y() / 2.0f);
+        float tabTop = tabCenter.y() + (tabSize.y() / 2.0f);
+
+        bool tabHover = true;
+        if (screenPos.x() < tabLeft || screenPos.x() > tabRight) {
+            tabHover = false;
+        }
+        if (screenPos.y() < tabBottom || screenPos.y() > tabTop) {
+            tabHover = false;
+        }
+
+        if (tabHover && mouseStatus == Input::ButtonState::Trigger) {
+            m_selectedIndex = i;
+            break;
+        }
+        tabOffset += k_tabWidth;
+    }
+
     if (getLayoutElementCount() > 0) {
         getLayoutElementAt(m_selectedIndex)->component->update();
     }
@@ -74,6 +115,9 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     auto center = getGlobalPosition();
     renderer->drawRect(center, getSize(), 0.0f, getBackgroundColor());
     renderer->drawRect(center + Math::Vector2({ 0, (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ getSize().x(), k_tabHeight }), 0.0f, Math::Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }));
+
+    renderer->textFont(getFont());
+    renderer->textFontSize(getFontSize());
 
     float k_tabWidth = getSize().x() / static_cast<float>(getLayoutElementCount());
     float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
@@ -90,6 +134,7 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
             renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Graphics::Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
             renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth - 2.0f, k_tabHeight - 2.0f }), 0.0f, Graphics::Color({ 0.4f, 0.4f, 0.4f, 1.0f }));
         }
+        renderer->drawText(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Graphics::Renderer::TextAlignX::Center, Graphics::Renderer::TextAlignY::Center, uTitle, getForegroundColor());
         tabOffset += k_tabWidth;
     }
 
