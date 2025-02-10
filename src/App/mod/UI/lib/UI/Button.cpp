@@ -54,10 +54,10 @@ void Button::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
         renderer->drawRect(center, getSize() - Math::Vector2({ 2, 2 }), 0.0f, getBackgroundColor());
         break;
     case k_buttonHover:
-        renderer->drawRect(center, getSize() - Math::Vector2({ 2, 2 }), 0.0f, Graphics::Color({ 0.2f, 0.6f, 0.2f, 1.0f }));
+        renderer->drawRect(center, getSize() - Math::Vector2({ 2, 2 }), 0.0f, Graphics::Color({ 0.4f, 0.6f, 0.4f, 1.0f }));
         break;
     case k_buttonActive:
-        renderer->drawRect(center, getSize() - Math::Vector2({ 2, 2 }), 0.0f, Graphics::Color({ 0.4f, 0.6f, 0.4f, 1.0f }));
+        renderer->drawRect(center, getSize() - Math::Vector2({ 2, 2 }), 0.0f, Graphics::Color({ 0.2f, 0.6f, 0.2f, 1.0f }));
         break;
     }
     renderer->textFont(getFont());

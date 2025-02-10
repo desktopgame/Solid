@@ -33,54 +33,81 @@ void DemoScene::onEnter()
     m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
     if (!m_root) {
         auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
-        m_root = Box::createVerticalBox();
+        m_root = std::make_shared<TabbedPane>();
+        m_root->setFont(font);
         m_root->setPosition(Vector2({ 200, 150 }));
         m_root->setSize(Vector2({ 300, 300 }));
 
-        auto label = std::make_shared<Label>();
-        label->setFont(font);
-        label->setText(u"UIテスト");
-        label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
-        m_root->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+        // tab1 -- BorderLayoutのテスト
+        auto tab1 = std::make_shared<Panel>();
+        tab1->setLayout(std::make_shared<BorderLayout>());
+        tab1->setFlexible(true);
+        auto topCI = std::make_shared<ColorIcon>();
+        topCI->setForegroundColor(Color({ 1, 0, 0, 1 }));
+        topCI->setPreferredSize(Vector2({ 50, 50 }));
+        topCI->setFlexible(true);
+        tab1->addLayoutElement(std::make_shared<LayoutElement>(topCI, std::make_shared<BorderLayout::Hint>("TOP")));
+        auto bottomCI = std::make_shared<ColorIcon>();
+        bottomCI->setForegroundColor(Color({ 0, 1, 0, 1 }));
+        bottomCI->setPreferredSize(Vector2({ 50, 50 }));
+        bottomCI->setFlexible(true);
+        tab1->addLayoutElement(std::make_shared<LayoutElement>(bottomCI, std::make_shared<BorderLayout::Hint>("BOTTOM")));
+        auto leftCI = std::make_shared<ColorIcon>();
+        leftCI->setForegroundColor(Color({ 0, 0, 1, 1 }));
+        leftCI->setPreferredSize(Vector2({ 50, 50 }));
+        leftCI->setFlexible(true);
+        tab1->addLayoutElement(std::make_shared<LayoutElement>(leftCI, std::make_shared<BorderLayout::Hint>("LEFT")));
+        auto rightCI = std::make_shared<ColorIcon>();
+        rightCI->setForegroundColor(Color({ 0, 1, 1, 1 }));
+        rightCI->setPreferredSize(Vector2({ 50, 50 }));
+        rightCI->setFlexible(true);
+        tab1->addLayoutElement(std::make_shared<LayoutElement>(rightCI, std::make_shared<BorderLayout::Hint>("RIGHT")));
+        auto centerCI = std::make_shared<ColorIcon>();
+        centerCI->setForegroundColor(Color({ 1, 1, 1, 1 }));
+        centerCI->setPreferredSize(Vector2({ 50, 50 }));
+        centerCI->setFlexible(true);
+        tab1->addLayoutElement(std::make_shared<LayoutElement>(centerCI, std::make_shared<BorderLayout::Hint>("CENTER")));
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(tab1, nullptr));
+        m_root->setTitleAt(0, u"BorderLayout");
 
-        auto h1 = Box::createHorizontalBox();
-        h1->setBackgroundColor(Color({ 0.3f, 0.3f, 0.3f, 1.0f }));
-        {
-            auto icon1 = std::make_shared<ColorIcon>();
-            icon1->setPreferredSize(Vector2({ 50, 50 }));
-            icon1->setForegroundColor(Color({ 1, 0, 0, 1 }));
-            h1->addLayoutElement(std::make_shared<LayoutElement>(icon1, nullptr));
+        // tab2 -- BorderLayoutのテスト
+        auto tab2 = std::make_shared<Panel>();
+        tab2->setLayout(std::make_shared<BorderLayout>());
+        tab2->setFlexible(true);
+        auto vbox = Box::createVerticalBox();
+        auto hbox1 = Box::createHorizontalBox();
 
-            auto icon2 = std::make_shared<ColorIcon>();
-            icon2->setPreferredSize(Vector2({ 50, 50 }));
-            icon2->setForegroundColor(Color({ 1, 1, 0, 1 }));
-            h1->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
+        auto button1 = std::make_shared<Button>();
+        button1->setFont(font);
+        button1->setText(u"Button1");
+        button1->setPreferredSize(Vector2({ 80, 40 }));
+        hbox1->addLayoutElement(std::make_shared<LayoutElement>(button1, nullptr));
 
-            auto button = std::make_shared<Button>();
-            button->setOnClick([]() -> void {
-                std::cout << "Button clicked!" << std::endl;
-            });
-            button->setFont(font);
-            button->setText(u"ボタン");
-            button->setPreferredSize(Vector2({ 100, 50 }));
-            h1->addLayoutElement(std::make_shared<LayoutElement>(button, nullptr));
-        }
-        m_root->addLayoutElement(std::make_shared<LayoutElement>(h1, nullptr));
+        auto button2 = std::make_shared<Button>();
+        button2->setFont(font);
+        button2->setText(u"Button2");
+        button2->setPreferredSize(Vector2({ 80, 40 }));
+        hbox1->addLayoutElement(std::make_shared<LayoutElement>(button2, nullptr));
 
-        auto h2 = Box::createHorizontalBox();
-        h2->setBackgroundColor(Color({ 0.8f, 0.3f, 0.3f, 1.0f }));
-        {
-            auto icon1 = std::make_shared<ColorIcon>();
-            icon1->setPreferredSize(Vector2({ 50, 50 }));
-            icon1->setForegroundColor(Color({ 0.5f, 0, 0, 1 }));
-            h2->addLayoutElement(std::make_shared<LayoutElement>(icon1, nullptr));
+        auto hbox2 = Box::createHorizontalBox();
 
-            auto icon2 = std::make_shared<ColorIcon>();
-            icon2->setPreferredSize(Vector2({ 50, 50 }));
-            icon2->setForegroundColor(Color({ 0.5f, 0.5f, 0, 1 }));
-            h2->addLayoutElement(std::make_shared<LayoutElement>(icon2, nullptr));
-        }
-        m_root->addLayoutElement(std::make_shared<LayoutElement>(h2, nullptr));
+        auto button3 = std::make_shared<Button>();
+        button3->setFont(font);
+        button3->setText(u"Button3");
+        button3->setPreferredSize(Vector2({ 80, 40 }));
+        hbox2->addLayoutElement(std::make_shared<LayoutElement>(button3, nullptr));
+
+        auto button4 = std::make_shared<Button>();
+        button4->setFont(font);
+        button4->setText(u"Button4");
+        button4->setPreferredSize(Vector2({ 80, 40 }));
+        hbox2->addLayoutElement(std::make_shared<LayoutElement>(button4, nullptr));
+
+        vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox1, nullptr));
+        vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox2, nullptr));
+        tab2->addLayoutElement(std::make_shared<LayoutElement>(vbox, std::make_shared<BorderLayout::Hint>("CENTER")));
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(tab2, nullptr));
+        m_root->setTitleAt(1, u"BoxLayout");
 
         m_root->doLayout();
     }

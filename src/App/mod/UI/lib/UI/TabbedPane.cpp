@@ -73,7 +73,7 @@ void TabbedPane::update()
     m_hoverIndex = -1;
     auto center = getGlobalPosition();
     float k_tabWidth = getSize().x() / static_cast<float>(getLayoutElementCount());
-    float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
+    float tabOffset = center.x() - (getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
     for (int32_t i = 0; i < getLayoutElementCount(); i++) {
         std::string title = std::to_string(i);
         std::u16string uTitle = std::u16string(title.begin(), title.end());
