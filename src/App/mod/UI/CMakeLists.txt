@@ -23,6 +23,7 @@ set(SOURCES
     ./include/UI/RootPane.hpp
     ./include/UI/Slider.hpp
     ./include/UI/Toggle.hpp
+    ./include/UI/ScrollPane.hpp
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
     ./lib/UI/Component.cpp
@@ -36,6 +37,7 @@ set(SOURCES
     ./lib/UI/TabbedPane.cpp
     ./lib/UI/Slider.cpp
     ./lib/UI/Toggle.cpp
+    ./lib/UI/ScrollPane.cpp
     ./lib/UI/RootPane.cpp
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp

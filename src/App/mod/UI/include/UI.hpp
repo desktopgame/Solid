@@ -12,6 +12,7 @@
 #include <UI/LayoutHint.hpp>
 #include <UI/Panel.hpp>
 #include <UI/RootPane.hpp>
+#include <UI/ScrollPane.hpp>
 #include <UI/Slider.hpp>
 #include <UI/TabbedPane.hpp>
 #include <UI/Toggle.hpp>
