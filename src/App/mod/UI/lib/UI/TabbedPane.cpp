@@ -26,7 +26,7 @@ void TabbedPane::Layout::layoutContainer(const std::shared_ptr<Container>& paren
             prefSize.y() = Math::Mathf::min(parentSize.y() - k_tabHeight, maxSize.y());
         }
         e->component->setSize(prefSize);
-        e->component->setPosition(Math::Vector2({ 0, -((parentSize.y()) / 4.0f) + k_tabHeight }));
+        e->component->setPosition(Math::Vector2({ 0, -((parentSize.y()) / 2.0f) + (prefSize.y() / 2.0f) }));
     }
 }
 Math::Vector2 TabbedPane::Layout::computePreferredSize(const std::shared_ptr<Container>& parent)
