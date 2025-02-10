@@ -27,7 +27,6 @@ public:
     int32_t getSelectedIndex() const;
 
 private:
-    static inline constexpr float k_tabWidth = 100.0f;
     static inline constexpr float k_tabHeight = 50.0f;
 
     std::vector<std::u16string> m_titles;

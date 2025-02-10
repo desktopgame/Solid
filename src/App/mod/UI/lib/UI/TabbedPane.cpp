@@ -75,6 +75,7 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     renderer->drawRect(center, getSize(), 0.0f, getBackgroundColor());
     renderer->drawRect(center + Math::Vector2({ 0, (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ getSize().x(), k_tabHeight }), 0.0f, Math::Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }));
 
+    float k_tabWidth = getSize().x() / static_cast<float>(getLayoutElementCount());
     float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
     for (int32_t i = 0; i < getLayoutElementCount(); i++) {
         std::string title = std::to_string(i);
@@ -82,7 +83,14 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
         if (i < m_titles.size()) {
             uTitle = m_titles.at(i);
         }
-        renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Math::Vector4({ 1, 0, 0, 1 }));
+        if (i == m_selectedIndex) {
+            renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Graphics::Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+            renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth - 2.0f, k_tabHeight - 2.0f }), 0.0f, Graphics::Color({ 0.2f, 0.6f, 0.2f, 1.0f }));
+        } else {
+            renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Graphics::Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+            renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth - 2.0f, k_tabHeight - 2.0f }), 0.0f, Graphics::Color({ 0.4f, 0.4f, 0.4f, 1.0f }));
+        }
+        tabOffset += k_tabWidth;
     }
 
     if (getLayoutElementCount() > 0) {
