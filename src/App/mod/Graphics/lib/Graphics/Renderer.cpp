@@ -192,8 +192,8 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
     }
     for (char16_t c : label) {
         auto fontSprite = m_fontMap->load(m_fontSize, c);
-        float xpos = offset.x() + fontSprite->metrics.bearing.x() + (fontSprite->metrics.size.x() / 2);
-        float ypos = offset.y() - (fontSprite->metrics.size.y() - fontSprite->metrics.bearing.y()) + (fontSprite->metrics.size.y() / 2);
+        float xpos = (float)offset.x() + (float)fontSprite->metrics.bearing.x() + ((float)fontSprite->metrics.size.x() / 2.0f);
+        float ypos = (float)offset.y() - ((float)fontSprite->metrics.size.y() - (float)fontSprite->metrics.bearing.y()) + ((float)fontSprite->metrics.size.y() / 2.0f);
 
         auto ub = UniformPool::rent(Metadata::Text2D);
         auto modelMatrix = applyMatrix(Math::Matrix::transform(
