@@ -75,6 +75,16 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     renderer->drawRect(center, getSize(), 0.0f, getBackgroundColor());
     renderer->drawRect(center + Math::Vector2({ 0, (getSize().y() / 2.0f) - 25.0f }), Math::Vector2({ getSize().x(), 50.0f }), 0.0f, Math::Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }));
 
+    float tabOffset = -(getSize().x() / 2.0f) + 50.0f;
+    for (int32_t i = 0; i < getLayoutElementCount(); i++) {
+        std::string title = std::to_string(i);
+        std::u16string uTitle = std::u16string(title.begin(), title.end());
+        if (i < m_titles.size()) {
+            uTitle = m_titles.at(i);
+        }
+        renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - 25.0f }), Math::Vector2({ 100.0f, 50.0f }), 0.0f, Math::Vector4({ 1, 0, 0, 1 }));
+    }
+
     if (getLayoutElementCount() > 0) {
         getLayoutElementAt(m_selectedIndex)->component->draw2D(renderer);
     }
