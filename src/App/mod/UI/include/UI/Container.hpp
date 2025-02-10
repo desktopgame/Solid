@@ -6,6 +6,9 @@
 #include <vector>
 
 namespace Lib::UI {
+/**
+ * 他のコンポーネントを含むことが出来るコンポーネントです。
+ */
 class Container : public Component {
 public:
     explicit Container();
@@ -14,14 +17,47 @@ public:
     virtual void update() override;
     virtual void draw2D(const std::shared_ptr<Graphics::Renderer>& renderer) override;
 
+    /**
+     * レイアウト・マネージャを呼び出し、コンポーネントを整列させます。
+     * 自動では実行されない点に注意してください。
+     */
     void doLayout();
 
+    /**
+     * コンテナーのレイアウト・マネージャを設定します。
+     * @param layoutManager
+     */
     void setLayout(const std::shared_ptr<ILayoutManager>& layoutManager);
+
+    /**
+     * コンテナーのレイアウト・マネージャを返します。
+     * @return
+     */
     std::shared_ptr<ILayoutManager> getLayout();
 
+    /**
+     * コンテナー内に配置される要素を追加します。
+     * @param layoutElement
+     */
     void addLayoutElement(const std::shared_ptr<LayoutElement>& layoutElement);
+
+    /**
+     * コンテナーから要素を削除します。
+     * @param index
+     */
     void removeLayoutElementAt(int32_t index);
+
+    /**
+     * コンテナー内の要素を返します。
+     * @param index
+     * @return
+     */
     std::shared_ptr<LayoutElement> getLayoutElementAt(int32_t index) const;
+
+    /**
+     * コンテナー内の要素数を返します。
+     * @return
+     */
     int32_t getLayoutElementCount() const;
 
 private:
