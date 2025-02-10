@@ -13,9 +13,17 @@ void TabbedPane::Layout::resizeContainer(const std::shared_ptr<Container>& paren
 }
 void TabbedPane::Layout::layoutContainer(const std::shared_ptr<Container>& parent)
 {
+    auto parentSize = parent->getSize();
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto e = parent->getLayoutElementAt(i);
-        e->component->setPosition(Math::Vector2({ 0, -50 }));
+        auto prefSize = e->component->getPreferredSizeSize();
+        auto maxSize = e->component->getMaximumSize();
+        if (e->component->isFlexible()) {
+            prefSize.x() = Math::Mathf::min(parentSize.x(), maxSize.x());
+            prefSize.y() = Math::Mathf::min(parentSize.y() - 50.0f, maxSize.y());
+        }
+        e->component->setSize(prefSize);
+        e->component->setPosition(Math::Vector2({ 0, -((parentSize.y()) / 4.0f) + 50.0f }));
     }
 }
 Math::Vector2 TabbedPane::Layout::computePreferredSize(const std::shared_ptr<Container>& parent)
