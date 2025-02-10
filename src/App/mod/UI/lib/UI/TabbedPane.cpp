@@ -62,6 +62,7 @@ TabbedPane::TabbedPane()
     : Container()
     , m_titles()
     , m_selectedIndex(0)
+    , m_hoverIndex(-1)
 {
     setLayout(std::make_shared<TabbedPane::Layout>());
 }
@@ -75,6 +76,7 @@ void TabbedPane::update()
     auto screenPos = (((Math::Vector2)mousePos / (Math::Vector2)Graphics::Screen::getSize()) - Math::Vector2({ 0.5f, 0.5f })) * (Math::Vector2)Graphics::Screen::getSize();
     screenPos.y() *= -1;
 
+    m_hoverIndex = -1;
     auto center = getGlobalPosition();
     float k_tabWidth = getSize().x() / static_cast<float>(getLayoutElementCount());
     float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
@@ -99,9 +101,13 @@ void TabbedPane::update()
             tabHover = false;
         }
 
-        if (tabHover && mouseStatus == Input::ButtonState::Trigger) {
-            m_selectedIndex = i;
-            break;
+        if (tabHover) {
+            m_hoverIndex = i;
+
+            if (mouseStatus == Input::ButtonState::Trigger) {
+                m_selectedIndex = i;
+                break;
+            }
         }
         tabOffset += k_tabWidth;
     }
@@ -130,6 +136,9 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
         if (i == m_selectedIndex) {
             renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Graphics::Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
             renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth - 2.0f, k_tabHeight - 2.0f }), 0.0f, Graphics::Color({ 0.2f, 0.6f, 0.2f, 1.0f }));
+        } else if (i == m_hoverIndex) {
+            renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Graphics::Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
+            renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth - 2.0f, k_tabHeight - 2.0f }), 0.0f, Graphics::Color({ 0.4f, 0.6f, 0.4f, 1.0f }));
         } else {
             renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Graphics::Color({ 0.0f, 0.0f, 0.0f, 1.0f }));
             renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth - 2.0f, k_tabHeight - 2.0f }), 0.0f, Graphics::Color({ 0.4f, 0.4f, 0.4f, 1.0f }));

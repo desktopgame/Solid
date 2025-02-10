@@ -31,5 +31,6 @@ private:
 
     std::vector<std::u16string> m_titles;
     int32_t m_selectedIndex;
+    int32_t m_hoverIndex;
 };
 }
