@@ -21,8 +21,13 @@ public:
     void setView(const std::shared_ptr<Component>& view);
     std::shared_ptr<Component> getView() const;
 
+    float getHorizontalScrollbarSize() const;
+    float getVerticalScrollbarSize() const;
+
 private:
     static inline constexpr float k_scrollBarSize = 10.0f;
     std::shared_ptr<Component> m_view;
+    float m_horizontalScrollPosition;
+    float m_verticalScrollPosition;
 };
 }

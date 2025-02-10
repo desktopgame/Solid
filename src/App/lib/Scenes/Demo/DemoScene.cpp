@@ -34,8 +34,8 @@ void DemoScene::onEnter()
     if (!m_root) {
         auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
         m_root = RootPane::create();
-        m_root->setPosition(Vector2({ 200, 150 }));
-        m_root->setSize(Vector2({ 300, 300 }));
+        m_root->setPosition(Vector2({ 100, 150 }));
+        m_root->setSize(Vector2({ 400, 300 }));
 
         auto tabbedPane = std::make_shared<TabbedPane>();
         tabbedPane->setFont(font);
@@ -115,6 +115,27 @@ void DemoScene::onEnter()
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab2, nullptr));
         tabbedPane->setTitleAt(1, u"BoxLayout");
 
+        // tab3 -- ScrollPaneのテスト
+        auto tab3 = std::make_shared<Panel>();
+        tab3->setLayout(std::make_shared<BorderLayout>());
+        tab3->setFlexible(true);
+        auto scrollContent = Box::createVerticalBox();
+        scrollContent->setBackgroundColor(Color({ 1, 0, 0, 1 }));
+        for (int32_t i = 0; i < 20; i++) {
+            auto sample = std::make_shared<ColorIcon>();
+            // sample->setFont(font);
+            // sample->setText(u"Sample");
+            sample->setPreferredSize(Vector2({ 80, 40 }));
+            scrollContent->addLayoutElement(std::make_shared<LayoutElement>(sample, nullptr));
+        }
+        auto scrollPane = std::make_shared<ScrollPane>();
+        scrollPane->setFlexible(true);
+        scrollPane->setView(scrollContent);
+        tab3->addLayoutElement(std::make_shared<LayoutElement>(scrollPane, std::make_shared<BorderLayout::Hint>("CENTER")));
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab3, nullptr));
+        tabbedPane->setTitleAt(2, u"ScrollPane");
+
+        m_root->doLayout();
         m_root->doLayout();
     }
 }
