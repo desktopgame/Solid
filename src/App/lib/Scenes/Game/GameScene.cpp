@@ -55,8 +55,8 @@ void GameScene::onEnter()
         m_minimap->addLayoutElement(std::make_shared<LayoutElement>(title, std::make_shared<BorderLayout::Hint>("TOP")));
         m_minimap->addLayoutElement(std::make_shared<LayoutElement>(std::make_shared<System::Minimap>(m_field), std::make_shared<BorderLayout::Hint>("CENTER")));
 
-        m_minimap->setPosition(Vector2({ 200, 150 }));
-        m_minimap->setSize(Vector2({ 250, 250 }));
+        m_minimap->setSize(Vector2({ 160, 190 }));
+        m_minimap->setPosition(((Vector2)Screen::getSize() / 2.0f) - (m_minimap->getSize() / 2.0f));
 
         m_minimap->doLayout();
     }

@@ -5,7 +5,7 @@ namespace App::Scenes::Game::System {
 Minimap::Minimap(const std::shared_ptr<Field>& field)
     : m_field(field)
 {
-    setPreferredSize(Vector2({ 200, 200 }));
+    setPreferredSize(Vector2({ 150, 150 }));
 }
 
 void Minimap::update()
