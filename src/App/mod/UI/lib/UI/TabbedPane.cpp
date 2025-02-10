@@ -47,15 +47,9 @@ Math::Vector2 TabbedPane::Layout::computePreferredSize(const std::shared_ptr<Con
 }
 Math::Vector2 TabbedPane::Layout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint)
 {
-    auto availableSize = container->getPreferredSizeSize();
-    if (Math::Mathf::equals(availableSize.x(), 0.0f) || Math::Mathf::equals(availableSize.y(), 0.0f)) {
-        auto layout = container->getLayout();
-        if (layout) {
-            availableSize = layout->computePreferredSize(container);
-        }
-    }
-    availableSize.y() = Math::Mathf::max(availableSize.y() - k_tabHeight, 0.0f);
-    return availableSize;
+    auto parentSize = parent->getSize();
+    return Math::Vector2({ parentSize.x(),
+        parentSize.y() - k_tabHeight });
 }
 // public
 TabbedPane::TabbedPane()
