@@ -28,9 +28,19 @@ void ScrollPane::Layout::layoutContainer(const std::shared_ptr<Container>& paren
 
     float scrollOffsetX = hPos * (viewSize.x() - scrollPane->getSize().x() + k_scrollBarSize);
     float scrollOffsetY = vPos * (viewSize.y() - scrollPane->getSize().y() + k_scrollBarSize);
+
+    float baseOffsetX = -(scrollPane->getSize().x() / 2.0f) + (viewSize.x() / 2.0f);
+    float baseOffsetY = (scrollPane->getSize().y() / 2.0f) - (viewSize.y() / 2.0f);
+
+    if (viewSize.x() < scrollPane->getSize().x()) {
+        baseOffsetX = 0;
+    }
+    if (viewSize.y() < scrollPane->getSize().y()) {
+        baseOffsetY = 0;
+    }
     view->setPosition(Math::Vector2({ //
-        -(scrollPane->getSize().x() / 2.0f) + (viewSize.x() / 2.0f) - scrollOffsetX,
-        (scrollPane->getSize().y() / 2.0f) - (viewSize.y() / 2.0f) + scrollOffsetY }));
+        baseOffsetX - scrollOffsetX,
+        baseOffsetY + scrollOffsetY }));
 }
 Math::Vector2 ScrollPane::Layout::computePreferredSize(const std::shared_ptr<Container>& parent)
 {
