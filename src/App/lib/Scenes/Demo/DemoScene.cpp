@@ -105,10 +105,9 @@ void DemoScene::onEnter()
         slider1->setValue(0.0f);
         hbox2->addLayoutElement(std::make_shared<LayoutElement>(slider1, nullptr));
 
-        auto slider2 = std::make_shared<Slider>();
-        slider2->setPreferredSize(Vector2({ 80, 40 }));
-        slider2->setValue(1.0f);
-        hbox2->addLayoutElement(std::make_shared<LayoutElement>(slider2, nullptr));
+        auto toggle = std::make_shared<Toggle>();
+        toggle->setPreferredSize(Vector2({ 80, 40 }));
+        hbox2->addLayoutElement(std::make_shared<LayoutElement>(toggle, nullptr));
 
         vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox1, nullptr));
         vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox2, nullptr));

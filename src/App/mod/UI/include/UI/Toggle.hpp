@@ -13,6 +13,8 @@ public:
     bool isSelected() const;
 
 private:
+    static inline constexpr float k_width = 25.0f;
+    static inline constexpr float k_height = 25.0f;
     bool m_isSelected;
 };
 }
