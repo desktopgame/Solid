@@ -34,6 +34,8 @@ Renderer::Renderer()
     , m_spriteSwObject()
     , m_spriteSrObject()
     , m_textObject()
+    , m_textSwObject()
+    , m_textSrObject()
     , m_planeObject()
     , m_planeWireframeObject()
     , m_planeLineObject()
@@ -210,7 +212,18 @@ void Renderer::drawText(const Math::Vector2& position, TextAlignX alignX, TextAl
         uColor.value = color;
         surface->uniformVS(ub, 1, &uColor);
         surface->uniformPS(ub, 0, fontSprite->texture);
-        renderObject(m_textObject, ub);
+
+        switch (m_stencilMode) {
+        case 0:
+            renderObject(m_textObject, ub);
+            break;
+        case 1:
+            renderObject(m_textSrObject, ub);
+            break;
+        case 2:
+            renderObject(m_textSwObject, ub);
+            break;
+        }
         offset.x() += fontSprite->metrics.advance.x() >> 6;
     }
 }
@@ -467,6 +480,14 @@ void Renderer::initText()
     m_textObject.indexBuffer->update(indices.data());
     m_textObject.indexLength = indices.size();
     m_textObject.rc = RenderContext::get(Metadata::ProgramTable::Text2D);
+    m_textSwObject.vertexBuffer = m_textObject.vertexBuffer;
+    m_textSwObject.indexBuffer = m_textObject.indexBuffer;
+    m_textSwObject.indexLength = indices.size();
+    m_textSwObject.rc = RenderContext::get(Metadata::ProgramTable::Text2D_StencilWrite);
+    m_textSrObject.vertexBuffer = m_textObject.vertexBuffer;
+    m_textSrObject.indexBuffer = m_textObject.indexBuffer;
+    m_textSrObject.indexLength = indices.size();
+    m_textSrObject.rc = RenderContext::get(Metadata::ProgramTable::Text2D_StencilRead);
 }
 
 void Renderer::initPlane(Object& dst, bool isWireframe)

@@ -99,6 +99,8 @@ private:
     Object m_spriteSwObject;
     Object m_spriteSrObject;
     Object m_textObject;
+    Object m_textSwObject;
+    Object m_textSrObject;
     Object m_planeObject;
     Object m_planeWireframeObject;
     Object m_planeLineObject;

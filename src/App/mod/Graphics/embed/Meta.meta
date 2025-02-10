@@ -2,6 +2,8 @@ Color2D.meta
 Color2D_StencilRead.meta
 Color2D_StencilWrite.meta
 Text2D.meta
+Text2D_StencilRead.meta
+Text2D_StencilWrite.meta
 Texture2D.meta
 Texture2D_StencilRead.meta
 Texture2D_StencilWrite.meta

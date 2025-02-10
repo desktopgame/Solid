@@ -122,9 +122,9 @@ void DemoScene::onEnter()
         auto scrollContent = Box::createVerticalBox();
         scrollContent->setBackgroundColor(Color({ 1, 0, 0, 1 }));
         for (int32_t i = 0; i < 20; i++) {
-            auto sample = std::make_shared<ColorIcon>();
-            // sample->setFont(font);
-            // sample->setText(u"Sample");
+            auto sample = std::make_shared<Label>();
+            sample->setFont(font);
+            sample->setText(u"Sample");
             sample->setPreferredSize(Vector2({ 80, 40 }));
             scrollContent->addLayoutElement(std::make_shared<LayoutElement>(sample, nullptr));
         }

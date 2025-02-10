@@ -50,6 +50,8 @@ namespace Lib::Graphics::Metadata {
         Color2D_StencilRead,
         Color2D_StencilWrite,
         Text2D,
+        Text2D_StencilRead,
+        Text2D_StencilWrite,
         Texture2D,
         Texture2D_StencilRead,
         Texture2D_StencilWrite,
@@ -263,6 +265,160 @@ namespace Lib::Graphics::Metadata {
             false,
             // stencil
             Stencil { false, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
+            // vs
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float2 texCoord : TEXCOORD;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "cbuffer cbuff0 : register(b0) {\n"
+            "    matrix modelMatrix;\n"
+            "    matrix viewMatrix;\n"
+            "    matrix projectionMatrix;\n"
+            "}\n"
+            "cbuffer cbuff1 : register(b1) { float4 color; }\n"
+            "\n"
+            "Output vsMain(float2 pos : POSITION, float2 texCoord : TEXCOORD) {\n"
+            "    Output output;\n"
+            "    output.svpos = mul(modelMatrix, float4(pos, 0, 1));\n"
+            "    output.svpos = mul(viewMatrix, output.svpos);\n"
+            "    output.svpos = mul(projectionMatrix, output.svpos);\n"
+            "    output.texCoord = texCoord;\n"
+            "    output.color = color;\n"
+            "    return output;\n"
+            "}\n"
+            ,
+            // vsUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
+            // ps
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float2 texCoord : TEXCOORD;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "\n"
+            "Texture2D<float4> tex : register(t0);\n"
+            "SamplerState smp : register(s0);\n"
+            "\n"
+            "float4 psMain(Output input) : SV_TARGET {\n"
+            "    float4 col = float4(tex.Sample(smp, input.texCoord));\n"
+            "    col.w = col.x * input.color.w;\n"
+            "    col.x = input.color.x;\n"
+            "    col.y = input.color.y;\n"
+            "    col.z = input.color.z;\n"
+            "    if (col.w <= 0) {\n"
+            "        discard;\n"
+            "    }\n"
+            "    return col;\n"
+            "}\n"
+            ,
+            // psUniforms
+            std::vector<Uniform> {
+                Uniform { 0, Uniform::Type::SRV },
+            },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
+            },
+        },
+        Program {
+            // inputLayout
+            Reflect::InputLayout::VertexTexCoord2D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
+            // isWireframe
+            false,
+            // stencil
+            Stencil { true, false, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Equal, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
+            // vs
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float2 texCoord : TEXCOORD;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "cbuffer cbuff0 : register(b0) {\n"
+            "    matrix modelMatrix;\n"
+            "    matrix viewMatrix;\n"
+            "    matrix projectionMatrix;\n"
+            "}\n"
+            "cbuffer cbuff1 : register(b1) { float4 color; }\n"
+            "\n"
+            "Output vsMain(float2 pos : POSITION, float2 texCoord : TEXCOORD) {\n"
+            "    Output output;\n"
+            "    output.svpos = mul(modelMatrix, float4(pos, 0, 1));\n"
+            "    output.svpos = mul(viewMatrix, output.svpos);\n"
+            "    output.svpos = mul(projectionMatrix, output.svpos);\n"
+            "    output.texCoord = texCoord;\n"
+            "    output.color = color;\n"
+            "    return output;\n"
+            "}\n"
+            ,
+            // vsUniforms
+            std::vector<Uniform> {
+                Uniform { sizeof(Reflect::UCamera), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
+            },
+            // gs
+            nullptr,
+            // gsUniforms
+            std::vector<Uniform> {
+            },
+            // ps
+            "struct Output {\n"
+            "    float4 svpos : SV_POSITION;\n"
+            "    float2 texCoord : TEXCOORD;\n"
+            "    float4 color : COLOR;\n"
+            "};\n"
+            "\n"
+            "Texture2D<float4> tex : register(t0);\n"
+            "SamplerState smp : register(s0);\n"
+            "\n"
+            "float4 psMain(Output input) : SV_TARGET {\n"
+            "    float4 col = float4(tex.Sample(smp, input.texCoord));\n"
+            "    col.w = col.x * input.color.w;\n"
+            "    col.x = input.color.x;\n"
+            "    col.y = input.color.y;\n"
+            "    col.z = input.color.z;\n"
+            "    if (col.w <= 0) {\n"
+            "        discard;\n"
+            "    }\n"
+            "    return col;\n"
+            "}\n"
+            ,
+            // psUniforms
+            std::vector<Uniform> {
+                Uniform { 0, Uniform::Type::SRV },
+            },
+            // cs
+            nullptr,
+            // csUniforms
+            std::vector<Uniform> {
+            },
+        },
+        Program {
+            // inputLayout
+            Reflect::InputLayout::VertexTexCoord2D,
+            // instanceBufferLayout
+            std::vector<Reflect::InstanceBufferType> {
+            },
+            // primitiveType
+            Reflect::PrimitiveType::Triangles,
+            // isWireframe
+            false,
+            // stencil
+            Stencil { false, true, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Replace, Reflect::StencilFunc::Always, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilOp::Keep, Reflect::StencilFunc::Never },
             // vs
             "struct Output {\n"
             "    float4 svpos : SV_POSITION;\n"
@@ -1444,6 +1600,18 @@ namespace Lib::Graphics::Metadata {
 
     template<>
     class Signature<ProgramTable::Text2D> {
+    public:
+        static inline void set() { }
+    };
+
+    template<>
+    class Signature<ProgramTable::Text2D_StencilRead> {
+    public:
+        static inline void set() { }
+    };
+
+    template<>
+    class Signature<ProgramTable::Text2D_StencilWrite> {
     public:
         static inline void set() { }
     };
