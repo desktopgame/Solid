@@ -47,7 +47,7 @@ void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     int32_t flexibleComponents = 0;
     for (int32_t i = 0; i < elementCount; i++) {
         auto e = parent->getLayoutElementAt(i);
-        auto prefSize = e->component->getPreferredSizeSize();
+        auto prefSize = e->component->getPreferredSize();
         auto minSize = e->component->getMinimumSize();
         if (e->component->isFlexible()) {
             switch (m_orientation) {
@@ -138,7 +138,7 @@ Math::Vector2 BoxLayout::computePreferredSize(const std::shared_ptr<Container>& 
     float maxHeight = 0.0f;
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto e = parent->getLayoutElementAt(i);
-        auto prefSize = e->component->getPreferredSizeSize();
+        auto prefSize = e->component->getPreferredSize();
 
         switch (m_orientation) {
         case BoxLayout::Orientation::Horizontal:
@@ -176,7 +176,7 @@ Math::Vector2 BoxLayout::availableSizeFor(const std::shared_ptr<Container>& pare
         return parentSize;
     }
 
-    auto availableSize = container->getPreferredSizeSize();
+    auto availableSize = container->getPreferredSize();
     if (Math::Mathf::equals(availableSize.x(), 0.0f) || Math::Mathf::equals(availableSize.y(), 0.0f)) {
         auto layout = container->getLayout();
         if (layout) {

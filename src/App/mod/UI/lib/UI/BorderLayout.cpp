@@ -28,7 +28,7 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     // TOP
     auto top = findByLocation(parent, "TOP");
     if (top) {
-        auto newSize = top->getPreferredSizeSize();
+        auto newSize = top->getPreferredSize();
 
         if (top->isFlexible()) {
             newSize.x() = parentSize.x();
@@ -39,7 +39,7 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     // BOTTOM
     auto bottom = findByLocation(parent, "BOTTOM");
     if (bottom) {
-        auto newSize = bottom->getPreferredSizeSize();
+        auto newSize = bottom->getPreferredSize();
 
         if (bottom->isFlexible()) {
             newSize.x() = parentSize.x();
@@ -50,24 +50,24 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     // LEFT
     auto left = findByLocation(parent, "LEFT");
     if (left) {
-        auto newSize = left->getPreferredSizeSize();
+        auto newSize = left->getPreferredSize();
         Math::Vector2 newPos;
 
         if (top && bottom) {
             if (left->isFlexible()) {
-                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - top->getPreferredSize().y() - bottom->getPreferredSize().y();
             }
-            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + (newSize.y() / 2.0f);
+            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSize().y() / 2.0f) + (newSize.y() / 2.0f);
         } else if (top) {
             if (left->isFlexible()) {
-                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - top->getPreferredSize().y();
             }
-            newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
+            newPos.y() = top->getPosition().y() - (top->getPreferredSize().y() / 2.0f) - newSize.y() / 2.0f;
         } else if (bottom) {
             if (left->isFlexible()) {
-                newSize.y() = parentSize.y() - bottom->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - bottom->getPreferredSize().y();
             }
-            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + newSize.y() / 2.0f;
+            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSize().y() / 2.0f) + newSize.y() / 2.0f;
         } else {
             if (left->isFlexible()) {
                 newSize.y() = parentSize.y();
@@ -80,24 +80,24 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     // RIGHT
     auto right = findByLocation(parent, "RIGHT");
     if (right) {
-        auto newSize = right->getPreferredSizeSize();
+        auto newSize = right->getPreferredSize();
         Math::Vector2 newPos;
 
         if (top && bottom) {
             if (right->isFlexible()) {
-                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - top->getPreferredSize().y() - bottom->getPreferredSize().y();
             }
-            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + (newSize.y() / 2.0f);
+            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSize().y() / 2.0f) + (newSize.y() / 2.0f);
         } else if (top) {
             if (right->isFlexible()) {
-                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - top->getPreferredSize().y();
             }
-            newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
+            newPos.y() = top->getPosition().y() - (top->getPreferredSize().y() / 2.0f) - newSize.y() / 2.0f;
         } else if (bottom) {
             if (right->isFlexible()) {
-                newSize.y() = parentSize.y() - bottom->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - bottom->getPreferredSize().y();
             }
-            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + newSize.y() / 2.0f;
+            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSize().y() / 2.0f) + newSize.y() / 2.0f;
         } else {
             if (right->isFlexible()) {
                 newSize.y() = parentSize.y();
@@ -110,24 +110,24 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     // CENTER
     auto center = findByLocation(parent, "CENTER");
     if (center) {
-        auto newSize = center->getPreferredSizeSize();
+        auto newSize = center->getPreferredSize();
         Math::Vector2 newPos;
 
         if (top && bottom) {
             if (center->isFlexible()) {
-                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - top->getPreferredSize().y() - bottom->getPreferredSize().y();
             }
-            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + (newSize.y() / 2.0f);
+            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSize().y() / 2.0f) + (newSize.y() / 2.0f);
         } else if (top) {
             if (center->isFlexible()) {
-                newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - top->getPreferredSize().y();
             }
-            newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
+            newPos.y() = top->getPosition().y() - (top->getPreferredSize().y() / 2.0f) - newSize.y() / 2.0f;
         } else if (bottom) {
             if (center->isFlexible()) {
-                newSize.y() = parentSize.y() - bottom->getPreferredSizeSize().y();
+                newSize.y() = parentSize.y() - bottom->getPreferredSize().y();
             }
-            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + newSize.y() / 2.0f;
+            newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSize().y() / 2.0f) + newSize.y() / 2.0f;
         } else {
             if (center->isFlexible()) {
                 newSize.y() = parentSize.y();
@@ -135,19 +135,19 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
         }
         if (left && right) {
             if (center->isFlexible()) {
-                newSize.x() = parentSize.x() - left->getPreferredSizeSize().x() - right->getPreferredSizeSize().x();
+                newSize.x() = parentSize.x() - left->getPreferredSize().x() - right->getPreferredSize().x();
             }
-            newPos.x() = left->getPosition().x() + (left->getPreferredSizeSize().x() / 2.0f) + (newSize.x() / 2.0f);
+            newPos.x() = left->getPosition().x() + (left->getPreferredSize().x() / 2.0f) + (newSize.x() / 2.0f);
         } else if (left) {
             if (center->isFlexible()) {
-                newSize.x() = parentSize.x() - left->getPreferredSizeSize().x();
+                newSize.x() = parentSize.x() - left->getPreferredSize().x();
             }
-            newPos.x() = left->getPosition().x() + (left->getPreferredSizeSize().x() / 2.0f) + newSize.x() / 2.0f;
+            newPos.x() = left->getPosition().x() + (left->getPreferredSize().x() / 2.0f) + newSize.x() / 2.0f;
         } else if (right) {
             if (center->isFlexible()) {
-                newSize.x() = parentSize.x() - right->getPreferredSizeSize().x();
+                newSize.x() = parentSize.x() - right->getPreferredSize().x();
             }
-            newPos.x() = right->getPosition().x() - (right->getPreferredSizeSize().x() / 2.0f) - newSize.x() / 2.0f;
+            newPos.x() = right->getPosition().x() - (right->getPreferredSize().x() / 2.0f) - newSize.x() / 2.0f;
         } else {
             if (center->isFlexible()) {
                 newSize.x() = parentSize.x();
@@ -161,15 +161,15 @@ Math::Vector2 BorderLayout::computePreferredSize(const std::shared_ptr<Container
 {
     Math::Vector2 preferredSize;
     auto top = findByLocation(parent, "TOP");
-    auto topPS = top ? top->getPreferredSizeSize() : Math::Vector2();
+    auto topPS = top ? top->getPreferredSize() : Math::Vector2();
     auto bottom = findByLocation(parent, "BOTTOM");
-    auto bottomPS = bottom ? bottom->getPreferredSizeSize() : Math::Vector2();
+    auto bottomPS = bottom ? bottom->getPreferredSize() : Math::Vector2();
     auto left = findByLocation(parent, "LEFT");
-    auto leftPS = left ? left->getPreferredSizeSize() : Math::Vector2();
+    auto leftPS = left ? left->getPreferredSize() : Math::Vector2();
     auto right = findByLocation(parent, "RIGHT");
-    auto rightPS = right ? right->getPreferredSizeSize() : Math::Vector2();
+    auto rightPS = right ? right->getPreferredSize() : Math::Vector2();
     auto center = findByLocation(parent, "CENTER");
-    auto centerPS = center ? center->getPreferredSizeSize() : Math::Vector2();
+    auto centerPS = center ? center->getPreferredSize() : Math::Vector2();
 
     preferredSize.x() = leftPS.y() + Math::Mathf::max(leftPS.y(), Math::Mathf::max(centerPS.y(), rightPS.y())) + rightPS.y();
     preferredSize.y() = topPS.y() + Math::Mathf::max(topPS.y(), Math::Mathf::max(centerPS.y(), bottomPS.y())) + bottomPS.y();
@@ -181,7 +181,7 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
     Math::Vector2 parentSize = parent->getSize();
     Math::Vector2 availableSize;
 
-    auto preferredSizeSize = container->getPreferredSizeSize();
+    auto preferredSizeSize = container->getPreferredSize();
     if (Math::Mathf::equals(availableSize.x(), 0.0f) || Math::Mathf::equals(availableSize.y(), 0.0f)) {
         auto layout = container->getLayout();
         if (layout) {
@@ -201,11 +201,11 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
         float remainHeight = parentSize.y();
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSizeSize().y();
+            remainHeight -= top->getPreferredSize().y();
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSizeSize().y();
+            remainHeight -= bottom->getPreferredSize().y();
         }
         availableSize.y() = remainHeight;
     } else if (borderLayoutHint->location == "RIGHT") {
@@ -214,11 +214,11 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
         float remainHeight = parentSize.y();
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSizeSize().y();
+            remainHeight -= top->getPreferredSize().y();
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSizeSize().y();
+            remainHeight -= bottom->getPreferredSize().y();
         }
         availableSize.y() = remainHeight;
     } else if (borderLayoutHint->location == "CENTER") {
@@ -227,20 +227,20 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
 
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSizeSize().y();
+            remainHeight -= top->getPreferredSize().y();
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSizeSize().y();
+            remainHeight -= bottom->getPreferredSize().y();
         }
 
         auto left = findByLocation(parent, "LEFT");
         if (left) {
-            remainWidth -= left->getPreferredSizeSize().x();
+            remainWidth -= left->getPreferredSize().x();
         }
         auto right = findByLocation(parent, "RIGHT");
         if (right) {
-            remainWidth -= right->getPreferredSizeSize().x();
+            remainWidth -= right->getPreferredSize().x();
         }
 
         availableSize.x() = remainWidth;

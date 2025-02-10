@@ -113,7 +113,7 @@ public:
      * コンポーネントの推奨サイズを返します。
      * @return
      */
-    Math::Vector2 getPreferredSizeSize() const;
+    Math::Vector2 getPreferredSize() const;
 
     /**
      * このコンポーネントが親コンテナー内で伸縮可能なら true を設定します。

@@ -64,7 +64,7 @@ void Component::setMaximumSize(const Math::Vector2& maximumSize) { m_maximumSize
 Math::Vector2 Component::getMaximumSize() const { return m_maximumSize; }
 
 void Component::setPreferredSize(const Math::Vector2& preferredSize) { m_preferredSize = preferredSize; }
-Math::Vector2 Component::getPreferredSizeSize() const { return m_preferredSize; }
+Math::Vector2 Component::getPreferredSize() const { return m_preferredSize; }
 
 void Component::setFlexible(bool isFlexible) { m_isFlexible = isFlexible; }
 bool Component::isFlexible() const { return m_isFlexible; }

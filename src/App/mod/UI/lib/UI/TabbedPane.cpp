@@ -19,7 +19,7 @@ void TabbedPane::Layout::layoutContainer(const std::shared_ptr<Container>& paren
     auto parentSize = parent->getSize();
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto e = parent->getLayoutElementAt(i);
-        auto prefSize = e->component->getPreferredSizeSize();
+        auto prefSize = e->component->getPreferredSize();
         auto maxSize = e->component->getMaximumSize();
         if (e->component->isFlexible()) {
             prefSize.x() = Math::Mathf::min(parentSize.x(), maxSize.x());
@@ -34,7 +34,7 @@ Math::Vector2 TabbedPane::Layout::computePreferredSize(const std::shared_ptr<Con
     Math::Vector2 preferredSize;
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto e = parent->getLayoutElementAt(i);
-        auto prefSize = e->component->getPreferredSizeSize();
+        auto prefSize = e->component->getPreferredSize();
 
         if (preferredSize.x() < prefSize.x()) {
             preferredSize.x() = prefSize.x();
