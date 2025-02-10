@@ -86,11 +86,11 @@ void DemoScene::onEnter()
         auto vbox = Box::createVerticalBox();
         auto hbox1 = Box::createHorizontalBox();
 
-        auto button1 = std::make_shared<Button>();
-        button1->setFont(font);
-        button1->setText(u"Button1");
-        button1->setPreferredSize(Vector2({ 80, 40 }));
-        hbox1->addLayoutElement(std::make_shared<LayoutElement>(button1, nullptr));
+        auto label1 = std::make_shared<Label>();
+        label1->setFont(font);
+        label1->setText(u"Label");
+        label1->setPreferredSize(Vector2({ 80, 40 }));
+        hbox1->addLayoutElement(std::make_shared<LayoutElement>(label1, nullptr));
 
         auto button2 = std::make_shared<Button>();
         button2->setFont(font);
@@ -100,17 +100,15 @@ void DemoScene::onEnter()
 
         auto hbox2 = Box::createHorizontalBox();
 
-        auto button3 = std::make_shared<Button>();
-        button3->setFont(font);
-        button3->setText(u"Button3");
-        button3->setPreferredSize(Vector2({ 80, 40 }));
-        hbox2->addLayoutElement(std::make_shared<LayoutElement>(button3, nullptr));
+        auto slider1 = std::make_shared<Slider>();
+        slider1->setPreferredSize(Vector2({ 80, 40 }));
+        slider1->setValue(0.0f);
+        hbox2->addLayoutElement(std::make_shared<LayoutElement>(slider1, nullptr));
 
-        auto button4 = std::make_shared<Button>();
-        button4->setFont(font);
-        button4->setText(u"Button4");
-        button4->setPreferredSize(Vector2({ 80, 40 }));
-        hbox2->addLayoutElement(std::make_shared<LayoutElement>(button4, nullptr));
+        auto slider2 = std::make_shared<Slider>();
+        slider2->setPreferredSize(Vector2({ 80, 40 }));
+        slider2->setValue(1.0f);
+        hbox2->addLayoutElement(std::make_shared<LayoutElement>(slider2, nullptr));
 
         vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox1, nullptr));
         vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox2, nullptr));
