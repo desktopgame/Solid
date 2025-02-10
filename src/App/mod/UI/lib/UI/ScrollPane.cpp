@@ -75,8 +75,6 @@ void ScrollPane::update()
 
     auto center = getGlobalPosition();
     auto size = getSize();
-    // auto viewSize = m_view->getSize();
-    // auto viewportSize = size - Math::Vector2({ k_scrollBarSize, k_scrollBarSize });
     float horizontalScrollbarSize = getHorizontalScrollbarSize();
     float verticalScrollbarSize = getVerticalScrollbarSize();
 
@@ -104,12 +102,14 @@ void ScrollPane::update()
         }
         if (mouseStatus == Input::ButtonState::Pressed && m_warp) {
             m_status = k_scrollbarActive;
-            setHorizontalScrollPosition(getHorizontalScrollPosition() + ((screenPos.x() - center.x() + horizontalScrollbarOffset.x()) / size.x()));
+            float delta = -((center.x() + horizontalScrollbarOffset.x() - screenPos.x()) / size.x());
+            setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
         }
     } else if (m_warp) {
         if (mouseStatus == Input::ButtonState::Pressed) {
             m_status = k_scrollbarActive;
-            setHorizontalScrollPosition(getHorizontalScrollPosition() + ((screenPos.x() - center.x() + horizontalScrollbarOffset.x()) / size.x()));
+            float delta = -((center.x() + horizontalScrollbarOffset.x() - screenPos.x()) / size.x());
+            setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
         }
     }
 
@@ -179,7 +179,7 @@ void ScrollPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     renderer->drawRect(center - Math::Vector2({ 0, (size.y() / 2.0f) - (k_scrollBarSize / 2.0f) }), Math::Vector2({ size.x(), k_scrollBarSize }), 0.0f, Math::Vector4({ 0.2f, 0.2f, 0.6f, 1.0f }));
 
     renderer->drawRect(center + getVerticalScrollbarOffset(), Math::Vector2({ k_scrollBarSize, verticalScrollbarSize }), 0.0f, Math::Vector4({ 0.4f, 0.4f, 0.6f, 1.0f }));
-    renderer->drawRect(center - getHorizontalScrollbarOffset(), Math::Vector2({ horizontalScrollbarSize, k_scrollBarSize }), 0.0f, Math::Vector4({ 0.4f, 0.4f, 0.6f, 1.0f }));
+    renderer->drawRect(center + getHorizontalScrollbarOffset(), Math::Vector2({ horizontalScrollbarSize, k_scrollBarSize }), 0.0f, Math::Vector4({ 0.4f, 0.4f, 0.6f, 1.0f }));
 }
 
 void ScrollPane::setView(const std::shared_ptr<Component>& view)
@@ -226,8 +226,8 @@ Math::Vector2 ScrollPane::getHorizontalScrollbarOffset() const
     auto size = getSize();
     float horizontalScrollbarSize = getHorizontalScrollbarSize();
     Math::Vector2 horizontalScrollbarOffset = Math::Vector2({ //
-        (size.x() / 2.0f) - (horizontalScrollbarSize / 2.0f) + ((size.x() - horizontalScrollbarSize - k_scrollBarSize)) * m_horizontalScrollPosition,
-        (size.y() / 2.0f) - (k_scrollBarSize / 2.0f) });
+        -(size.x() / 2.0f) + (horizontalScrollbarSize / 2.0f) + ((size.x() - horizontalScrollbarSize - k_scrollBarSize)) * m_horizontalScrollPosition,
+        -(size.y() / 2.0f) + (k_scrollBarSize / 2.0f) });
     return horizontalScrollbarOffset;
 }
 Math::Vector2 ScrollPane::getVerticalScrollbarOffset() const
