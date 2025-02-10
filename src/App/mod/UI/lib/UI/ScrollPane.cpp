@@ -80,6 +80,7 @@ void ScrollPane::update()
 
     auto center = getGlobalPosition();
     auto size = getSize();
+    auto viewportSize = size - Math::Vector2({ k_scrollBarSize, k_scrollBarSize });
     float horizontalScrollbarSize = getHorizontalScrollbarSize();
     float verticalScrollbarSize = getVerticalScrollbarSize();
     bool scrollChanged = false;
@@ -109,14 +110,18 @@ void ScrollPane::update()
         if (mouseStatus == Input::ButtonState::Pressed && m_hWarp) {
             m_status = k_scrollbarActive;
             float delta = -((center.x() + horizontalScrollbarOffset.x() - screenPos.x()) / size.x());
-            setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
+            if (!Math::Mathf::equals(horizontalScrollbarSize, viewportSize.x())) {
+                setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
+            }
             scrollChanged = true;
         }
     } else if (m_hWarp) {
         if (mouseStatus == Input::ButtonState::Pressed) {
             m_status = k_scrollbarActive;
             float delta = -((center.x() + horizontalScrollbarOffset.x() - screenPos.x()) / size.x());
-            setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
+            if (!Math::Mathf::equals(horizontalScrollbarSize, viewportSize.x())) {
+                setHorizontalScrollPosition(getHorizontalScrollPosition() + delta);
+            }
             scrollChanged = true;
         }
     }
@@ -143,14 +148,18 @@ void ScrollPane::update()
         if (mouseStatus == Input::ButtonState::Pressed && m_vWarp) {
             m_status = k_scrollbarActive;
             float delta = ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y());
-            setVerticalScrollPosition(getVerticalScrollPosition() + delta);
+            if (!Math::Mathf::equals(verticalScrollbarSize, viewportSize.y())) {
+                setVerticalScrollPosition(getVerticalScrollPosition() + delta);
+            }
             scrollChanged = true;
         }
     } else if (m_vWarp) {
         if (mouseStatus == Input::ButtonState::Pressed) {
             m_status = k_scrollbarActive;
             float delta = ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y());
-            setVerticalScrollPosition(getVerticalScrollPosition() + delta);
+            if (!Math::Mathf::equals(verticalScrollbarSize, viewportSize.y())) {
+                setVerticalScrollPosition(getVerticalScrollPosition() + delta);
+            }
             scrollChanged = true;
         }
     }
