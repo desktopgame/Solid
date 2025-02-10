@@ -50,6 +50,7 @@ Math::Vector2 TabbedPane::Layout::availableSizeFor(const std::shared_ptr<Contain
 TabbedPane::TabbedPane()
     : Container()
     , m_titles()
+    , m_selectedIndex(0)
 {
     setLayout(std::make_shared<TabbedPane::Layout>());
 }
@@ -62,7 +63,9 @@ void TabbedPane::update()
 }
 void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
-    renderer->drawRect(getGlobalPosition(), getSize(), 0.0f, getBackgroundColor());
+    auto center = getGlobalPosition();
+    renderer->drawRect(center, getSize(), 0.0f, getBackgroundColor());
+    renderer->drawRect(center + Math::Vector2({ 0, (getSize().y() / 2.0f) - 25.0f }), Math::Vector2({ getSize().x(), 50.0f }), 0.0f, Math::Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }));
 
     if (getLayoutElementCount() > 0) {
         getLayoutElementAt(m_selectedIndex)->component->draw2D(renderer);
