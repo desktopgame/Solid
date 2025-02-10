@@ -120,7 +120,7 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     renderer->textFontSize(getFontSize());
 
     float k_tabWidth = getSize().x() / static_cast<float>(getLayoutElementCount());
-    float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
+    float tabOffset = center.x() - (getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
     for (int32_t i = 0; i < getLayoutElementCount(); i++) {
         std::string title = std::to_string(i);
         std::u16string uTitle = std::u16string(title.begin(), title.end());
@@ -148,7 +148,7 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 
 void TabbedPane::setTitleAt(int32_t index, const std::u16string& title)
 {
-    m_titles.reserve(getLayoutElementCount());
+    m_titles.resize(getLayoutElementCount());
     m_titles.at(index) = title;
 }
 std::u16string TabbedPane::getTitleAt(int32_t index) { return m_titles.at(index); }
