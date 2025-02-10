@@ -20,6 +20,7 @@ set(SOURCES
     ./include/UI/Button.hpp
     ./include/UI/Box.hpp
     ./include/UI/TabbedPane.hpp
+    ./include/UI/RootPane.hpp
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
     ./lib/UI/Component.cpp
@@ -31,6 +32,7 @@ set(SOURCES
     ./lib/UI/Button.cpp
     ./lib/UI/Box.cpp
     ./lib/UI/TabbedPane.cpp
+    ./lib/UI/RootPane.cpp
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp
 )

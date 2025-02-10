@@ -33,13 +33,22 @@ void DemoScene::onEnter()
     m_pointLightPositions.emplace_back(Vector3({ 8, 0, 8 }));
     if (!m_root) {
         auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
-        m_root = std::make_shared<TabbedPane>();
-        m_root->setFont(font);
+        m_root = RootPane::create();
         m_root->setPosition(Vector2({ 200, 150 }));
         m_root->setSize(Vector2({ 300, 300 }));
 
+        auto tabbedPane = std::make_shared<TabbedPane>();
+        tabbedPane->setFont(font);
+
+        // auto ci = std::make_shared<ColorIcon>();
+        // ci->setFlexible(true);
+        // ci->setPreferredSize(Vector2({ 50, 50 }));
+        // m_root->addLayoutElement(std::make_shared<LayoutElement>(ci, std::make_shared<BorderLayout::Hint>("CENTER")));
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
+
         // tab1 -- BorderLayoutのテスト
-        auto tab1 = std::make_shared<Panel>();
+        auto tab1
+            = std::make_shared<Panel>();
         tab1->setLayout(std::make_shared<BorderLayout>());
         tab1->setFlexible(true);
         auto topCI = std::make_shared<ColorIcon>();
@@ -67,8 +76,8 @@ void DemoScene::onEnter()
         centerCI->setPreferredSize(Vector2({ 50, 50 }));
         centerCI->setFlexible(true);
         tab1->addLayoutElement(std::make_shared<LayoutElement>(centerCI, std::make_shared<BorderLayout::Hint>("CENTER")));
-        m_root->addLayoutElement(std::make_shared<LayoutElement>(tab1, nullptr));
-        m_root->setTitleAt(0, u"BorderLayout");
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab1, nullptr));
+        tabbedPane->setTitleAt(0, u"BorderLayout");
 
         // tab2 -- BorderLayoutのテスト
         auto tab2 = std::make_shared<Panel>();
@@ -106,8 +115,8 @@ void DemoScene::onEnter()
         vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox1, nullptr));
         vbox->addLayoutElement(std::make_shared<LayoutElement>(hbox2, nullptr));
         tab2->addLayoutElement(std::make_shared<LayoutElement>(vbox, std::make_shared<BorderLayout::Hint>("CENTER")));
-        m_root->addLayoutElement(std::make_shared<LayoutElement>(tab2, nullptr));
-        m_root->setTitleAt(1, u"BoxLayout");
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab2, nullptr));
+        tabbedPane->setTitleAt(1, u"BoxLayout");
 
         m_root->doLayout();
     }
