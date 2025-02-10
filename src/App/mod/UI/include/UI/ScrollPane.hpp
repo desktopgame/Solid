@@ -25,7 +25,11 @@ public:
     float getVerticalScrollbarSize() const;
 
 private:
+    Math::Vector2 getHorizontalScrollbarOffset() const;
+    Math::Vector2 getVerticalScrollbarOffset() const;
+
     static inline constexpr float k_scrollBarSize = 10.0f;
+
     std::shared_ptr<Component> m_view;
     float m_horizontalScrollPosition;
     float m_verticalScrollPosition;
