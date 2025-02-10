@@ -56,6 +56,7 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 
             if (top && bottom) {
                 newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+                newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + (newSize.y() / 2.0f);
             } else if (top) {
                 newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
                 newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
@@ -82,6 +83,7 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 
             if (top && bottom) {
                 newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+                newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + (newSize.y() / 2.0f);
             } else if (top) {
                 newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
                 newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
@@ -109,6 +111,7 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 
             if (top && bottom) {
                 newSize.y() = parentSize.y() - top->getPreferredSizeSize().y() - bottom->getPreferredSizeSize().y();
+                newPos.y() = bottom->getPosition().y() + (bottom->getPreferredSizeSize().y() / 2.0f) + (newSize.y() / 2.0f);
             } else if (top) {
                 newSize.y() = parentSize.y() - top->getPreferredSizeSize().y();
                 newPos.y() = top->getPosition().y() - (top->getPreferredSizeSize().y() / 2.0f) - newSize.y() / 2.0f;
@@ -120,6 +123,7 @@ void BorderLayout::layoutContainer(const std::shared_ptr<Container>& parent)
             }
             if (left && right) {
                 newSize.x() = parentSize.x() - left->getPreferredSizeSize().x() - right->getPreferredSizeSize().x();
+                newPos.x() = left->getPosition().x() + (left->getPreferredSizeSize().x() / 2.0f) + (newSize.x() / 2.0f);
             } else if (left) {
                 newSize.x() = parentSize.x() - left->getPreferredSizeSize().x();
                 newPos.x() = left->getPosition().x() + (left->getPreferredSizeSize().x() / 2.0f) + newSize.x() / 2.0f;

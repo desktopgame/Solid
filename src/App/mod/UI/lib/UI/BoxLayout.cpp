@@ -22,6 +22,7 @@ void BoxLayout::resizeContainer(const std::shared_ptr<Container>& parent, const 
 void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
 {
     int32_t elementCount = parent->getLayoutElementCount();
+    Math::Vector2 parentSize = parent->getSize();
     if (elementCount == 0) {
         return;
     }
@@ -47,6 +48,17 @@ void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
     for (int32_t i = 0; i < elementCount; i++) {
         auto e = parent->getLayoutElementAt(i);
         auto prefSize = e->component->getPreferredSizeSize();
+        auto minSize = e->component->getMinimumSize();
+        if (e->component->isFlexible()) {
+            switch (m_orientation) {
+            case BoxLayout::Orientation::Horizontal:
+                prefSize.y() = Math::Mathf::max(minSize.y(), parentSize.y() - (k_space * 2));
+                break;
+            case BoxLayout::Orientation::Vertical:
+                prefSize.x() = Math::Mathf::max(minSize.x(), parentSize.x() - (k_space * 2));
+                break;
+            }
+        }
         e->component->setSize(prefSize);
 
         if (e->component->isFlexible()) {
