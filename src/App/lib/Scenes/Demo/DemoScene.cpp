@@ -136,7 +136,6 @@ void DemoScene::onEnter()
         tabbedPane->setTitleAt(2, u"ScrollPane");
 
         m_root->doLayout();
-        m_root->doLayout();
     }
 }
 void DemoScene::onExit()
