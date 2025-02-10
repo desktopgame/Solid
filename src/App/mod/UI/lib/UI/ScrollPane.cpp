@@ -1,3 +1,7 @@
+#include <Graphics/Screen.hpp>
+#include <Input/InputSystem.hpp>
+#include <Input/Mouse.hpp>
+#include <Math/Mathf.hpp>
 #include <UI/ScrollPane.hpp>
 #include <stdexcept>
 
@@ -54,12 +58,95 @@ ScrollPane::ScrollPane()
     , m_view()
     , m_horizontalScrollPosition()
     , m_verticalScrollPosition()
+    , m_status()
+    , m_warp()
 {
     setLayout(std::make_shared<ScrollPane::Layout>());
 }
 
 void ScrollPane::update()
 {
+    auto inputSystem = Input::InputSystem::getInstance();
+    auto mousePos = inputSystem->getMouse()->getPosition();
+    auto mouseStatus = inputSystem->getMouse()->getState(Input::Mouse::Button::Left);
+
+    auto screenPos = (((Math::Vector2)mousePos / (Math::Vector2)Graphics::Screen::getSize()) - Math::Vector2({ 0.5f, 0.5f })) * (Math::Vector2)Graphics::Screen::getSize();
+    screenPos.y() *= -1;
+
+    auto center = getGlobalPosition();
+    auto size = getSize();
+    // auto viewSize = m_view->getSize();
+    // auto viewportSize = size - Math::Vector2({ k_scrollBarSize, k_scrollBarSize });
+    float horizontalScrollbarSize = getHorizontalScrollbarSize();
+    float verticalScrollbarSize = getVerticalScrollbarSize();
+
+    Math::Vector2 horizontalScrollbarOffset = getHorizontalScrollbarOffset();
+    Math::Vector2 verticalScrollbarOffset = getVerticalScrollbarOffset();
+
+    float horizontalScrollbarLeft = center.x() + horizontalScrollbarOffset.x() - (horizontalScrollbarSize / 2.0f);
+    float horizontalScrollbarRight = center.x() + horizontalScrollbarOffset.x() + (horizontalScrollbarSize / 2.0f);
+    float horizontalScrollbarTop = center.y() + horizontalScrollbarOffset.y() + (k_scrollBarSize / 2.0f);
+    float horizontalScrollbarBottom = center.y() + horizontalScrollbarOffset.y() - (k_scrollBarSize / 2.0f);
+
+    bool hoverHorizontalScrollbar = true;
+    if (screenPos.x() < horizontalScrollbarLeft || screenPos.x() > horizontalScrollbarRight) {
+        hoverHorizontalScrollbar = false;
+    }
+    if (screenPos.y() < horizontalScrollbarBottom || screenPos.y() > horizontalScrollbarTop) {
+        hoverHorizontalScrollbar = false;
+    }
+
+    if (hoverHorizontalScrollbar) {
+        m_status = k_scrollbarHover;
+
+        if (mouseStatus == Input::ButtonState::Trigger) {
+            m_warp = true;
+        }
+        if (mouseStatus == Input::ButtonState::Pressed && m_warp) {
+            m_status = k_scrollbarActive;
+            setHorizontalScrollPosition(getHorizontalScrollPosition() + ((screenPos.x() - center.x() + horizontalScrollbarOffset.x()) / size.x()));
+        }
+    } else if (m_warp) {
+        if (mouseStatus == Input::ButtonState::Pressed) {
+            m_status = k_scrollbarActive;
+            setHorizontalScrollPosition(getHorizontalScrollPosition() + ((screenPos.x() - center.x() + horizontalScrollbarOffset.x()) / size.x()));
+        }
+    }
+
+    float verticalScrollbarLeft = center.x() + verticalScrollbarOffset.x() - (k_scrollBarSize / 2.0f);
+    float verticalScrollbarRight = center.x() + verticalScrollbarOffset.x() + (k_scrollBarSize / 2.0f);
+    float verticalScrollbarTop = center.y() + verticalScrollbarOffset.y() + (verticalScrollbarSize / 2.0f);
+    float verticalScrollbarBottom = center.y() + verticalScrollbarOffset.y() - (verticalScrollbarSize / 2.0f);
+
+    bool hoverVerticalScrollbar = true;
+    if (screenPos.x() < verticalScrollbarLeft || screenPos.x() > verticalScrollbarRight) {
+        hoverVerticalScrollbar = false;
+    }
+    if (screenPos.y() < verticalScrollbarBottom || screenPos.y() > verticalScrollbarTop) {
+        hoverVerticalScrollbar = false;
+    }
+
+    if (hoverVerticalScrollbar) {
+        m_status = k_scrollbarHover;
+
+        if (mouseStatus == Input::ButtonState::Trigger) {
+            m_warp = true;
+        }
+        if (mouseStatus == Input::ButtonState::Pressed && m_warp) {
+            m_status = k_scrollbarActive;
+            setVerticalScrollPosition(getVerticalScrollPosition() + ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y()));
+        }
+    } else if (m_warp) {
+        if (mouseStatus == Input::ButtonState::Pressed) {
+            m_status = k_scrollbarActive;
+            setVerticalScrollPosition(getVerticalScrollPosition() + ((center.y() + verticalScrollbarOffset.y() - screenPos.y()) / size.y()));
+        }
+    }
+
+    if (mouseStatus == Input::ButtonState::Released) {
+        m_warp = false;
+    }
+
     m_view->update();
 }
 void ScrollPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
@@ -104,6 +191,12 @@ void ScrollPane::setView(const std::shared_ptr<Component>& view)
     addLayoutElement(std::make_shared<LayoutElement>(view, nullptr));
 }
 std::shared_ptr<Component> ScrollPane::getView() const { return m_view; }
+
+void ScrollPane::setHorizontalScrollPosition(float horizontalScrollPosition) { m_horizontalScrollPosition = Math::Mathf::clamp(0.0f, 1.0f, horizontalScrollPosition); }
+float ScrollPane::getHorizontalScrollPosition() const { return m_horizontalScrollPosition; }
+
+void ScrollPane::setVerticalScrollPosition(float verticalScrollPosition) { m_verticalScrollPosition = Math::Mathf::clamp(0.0f, 1.0f, verticalScrollPosition); }
+float ScrollPane::getVerticalScrollPosition() const { return m_verticalScrollPosition; }
 
 float ScrollPane::getHorizontalScrollbarSize() const
 {

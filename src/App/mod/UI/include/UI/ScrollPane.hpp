@@ -21,6 +21,12 @@ public:
     void setView(const std::shared_ptr<Component>& view);
     std::shared_ptr<Component> getView() const;
 
+    void setHorizontalScrollPosition(float horizontalScrollPosition);
+    float getHorizontalScrollPosition() const;
+
+    void setVerticalScrollPosition(float verticalScrollPosition);
+    float getVerticalScrollPosition() const;
+
     float getHorizontalScrollbarSize() const;
     float getVerticalScrollbarSize() const;
 
@@ -29,9 +35,14 @@ private:
     Math::Vector2 getVerticalScrollbarOffset() const;
 
     static inline constexpr float k_scrollBarSize = 10.0f;
+    static inline constexpr int32_t k_scrollbarNone = 0;
+    static inline constexpr int32_t k_scrollbarHover = 1;
+    static inline constexpr int32_t k_scrollbarActive = 2;
 
     std::shared_ptr<Component> m_view;
     float m_horizontalScrollPosition;
     float m_verticalScrollPosition;
+    int32_t m_status;
+    bool m_warp;
 };
 }
