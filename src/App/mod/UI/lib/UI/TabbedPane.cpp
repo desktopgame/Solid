@@ -54,10 +54,19 @@ TabbedPane::TabbedPane()
     setLayout(std::make_shared<TabbedPane::Layout>());
 }
 
-void TabbedPane::update() { }
+void TabbedPane::update()
+{
+    if (getLayoutElementCount() > 0) {
+        getLayoutElementAt(m_selectedIndex)->component->update();
+    }
+}
 void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
     renderer->drawRect(getGlobalPosition(), getSize(), 0.0f, getBackgroundColor());
+
+    if (getLayoutElementCount() > 0) {
+        getLayoutElementAt(m_selectedIndex)->component->draw2D(renderer);
+    }
 }
 
 void TabbedPane::setTitleAt(int32_t index, const std::u16string& title)
