@@ -80,14 +80,14 @@ void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
         case BoxLayout::Orientation::Horizontal: {
             float useWidth = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), remainSpace / static_cast<float>(div));
             size.x() = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), useWidth);
-            size.y() = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), parent->getSize().y());
+            size.y() = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), parent->getSize().y() - (k_space * 2));
             remainSpace -= useWidth;
             div--;
             break;
         }
         case BoxLayout::Orientation::Vertical: {
             float useHeight = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), remainSpace / static_cast<float>(div));
-            size.x() = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), parent->getSize().x());
+            size.x() = Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), parent->getSize().x() - (k_space * 2));
             size.y() = Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), useHeight);
             remainSpace -= useHeight;
             div--;
