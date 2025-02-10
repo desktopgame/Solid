@@ -20,10 +20,10 @@ void TabbedPane::Layout::layoutContainer(const std::shared_ptr<Container>& paren
         auto maxSize = e->component->getMaximumSize();
         if (e->component->isFlexible()) {
             prefSize.x() = Math::Mathf::min(parentSize.x(), maxSize.x());
-            prefSize.y() = Math::Mathf::min(parentSize.y() - 50.0f, maxSize.y());
+            prefSize.y() = Math::Mathf::min(parentSize.y() - k_tabHeight, maxSize.y());
         }
         e->component->setSize(prefSize);
-        e->component->setPosition(Math::Vector2({ 0, -((parentSize.y()) / 4.0f) + 50.0f }));
+        e->component->setPosition(Math::Vector2({ 0, -((parentSize.y()) / 4.0f) + k_tabHeight }));
     }
 }
 Math::Vector2 TabbedPane::Layout::computePreferredSize(const std::shared_ptr<Container>& parent)
@@ -51,7 +51,7 @@ Math::Vector2 TabbedPane::Layout::availableSizeFor(const std::shared_ptr<Contain
             availableSize = layout->computePreferredSize(container);
         }
     }
-    availableSize.y() = Math::Mathf::max(availableSize.y() - 50.0f, 0.0f);
+    availableSize.y() = Math::Mathf::max(availableSize.y() - k_tabHeight, 0.0f);
     return availableSize;
 }
 // public
@@ -73,16 +73,16 @@ void TabbedPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
     auto center = getGlobalPosition();
     renderer->drawRect(center, getSize(), 0.0f, getBackgroundColor());
-    renderer->drawRect(center + Math::Vector2({ 0, (getSize().y() / 2.0f) - 25.0f }), Math::Vector2({ getSize().x(), 50.0f }), 0.0f, Math::Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }));
+    renderer->drawRect(center + Math::Vector2({ 0, (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ getSize().x(), k_tabHeight }), 0.0f, Math::Vector4({ 0.5f, 0.5f, 0.5f, 1.0f }));
 
-    float tabOffset = -(getSize().x() / 2.0f) + 50.0f;
+    float tabOffset = -(getSize().x() / 2.0f) + (k_tabWidth / 2.0f);
     for (int32_t i = 0; i < getLayoutElementCount(); i++) {
         std::string title = std::to_string(i);
         std::u16string uTitle = std::u16string(title.begin(), title.end());
         if (i < m_titles.size()) {
             uTitle = m_titles.at(i);
         }
-        renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - 25.0f }), Math::Vector2({ 100.0f, 50.0f }), 0.0f, Math::Vector4({ 1, 0, 0, 1 }));
+        renderer->drawRect(Math::Vector2({ tabOffset, center.y() + (getSize().y() / 2.0f) - (k_tabHeight / 2.0f) }), Math::Vector2({ k_tabWidth, k_tabHeight }), 0.0f, Math::Vector4({ 1, 0, 0, 1 }));
     }
 
     if (getLayoutElementCount() > 0) {
