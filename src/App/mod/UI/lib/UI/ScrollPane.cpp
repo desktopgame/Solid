@@ -195,8 +195,6 @@ void ScrollPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
     auto center = getGlobalPosition();
     auto size = getSize();
-    auto viewSize = m_view->getSize();
-    auto viewportSize = size - Math::Vector2({ k_scrollBarSize, k_scrollBarSize });
     renderer->stencilClear();
     renderer->stencilWrite();
     renderer->stencilRef(1);
@@ -210,13 +208,6 @@ void ScrollPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     // scrollbar
     float horizontalScrollbarSize = getHorizontalScrollbarSize();
     float verticalScrollbarSize = getVerticalScrollbarSize();
-    (void)horizontalScrollbarSize;
-    (void)verticalScrollbarSize;
-    (void)m_horizontalScrollPosition;
-    (void)m_verticalScrollPosition;
-    (void)m_horizontalScrollPosition;
-    (void)viewSize;
-    (void)viewportSize;
     renderer->drawRect(center + Math::Vector2({ (size.x() / 2.0f) - (k_scrollBarSize / 2.0f), 0 }), Math::Vector2({ k_scrollBarSize, size.y() }), 0.0f, Math::Vector4({ 0.2f, 0.2f, 0.6f, 1.0f }));
     renderer->drawRect(center - Math::Vector2({ 0, (size.y() / 2.0f) - (k_scrollBarSize / 2.0f) }), Math::Vector2({ size.x(), k_scrollBarSize }), 0.0f, Math::Vector4({ 0.2f, 0.2f, 0.6f, 1.0f }));
 
