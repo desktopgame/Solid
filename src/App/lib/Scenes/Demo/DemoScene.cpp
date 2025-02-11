@@ -122,10 +122,10 @@ void DemoScene::onEnter()
         auto scrollContent = Box::createVerticalBox();
         scrollContent->setFlexible(true);
         scrollContent->setBackgroundColor(Color({ 1, 0, 0, 1 }));
-        for (int32_t i = 0; i < 3; i++) {
+        for (int32_t i = 0; i < 10; i++) {
             auto line = Box::createHorizontalBox();
             line->setFlexible(true);
-            for (int32_t j = 0; j < 3; j++) {
+            for (int32_t j = 0; j < 5; j++) {
                 auto sample = std::make_shared<Button>();
                 sample->setFont(font);
                 sample->setText(u"Sample");
@@ -137,7 +137,7 @@ void DemoScene::onEnter()
         auto scrollPane = std::make_shared<ScrollPane>();
         scrollPane->setFlexible(true);
         scrollPane->setView(scrollContent);
-        tab3->addLayoutElement(std::make_shared<LayoutElement>(scrollContent, std::make_shared<BorderLayout::Hint>("CENTER")));
+        tab3->addLayoutElement(std::make_shared<LayoutElement>(scrollPane, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab3, nullptr));
         tabbedPane->setTitleAt(2, u"ScrollPane");
 
