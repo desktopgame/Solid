@@ -183,7 +183,11 @@ void ScrollPane::update()
         m_vWarp = false;
     }
 
-    if (isContains(screenPos) && !hoverHorizontalScrollbar && !hoverVerticalScrollbar) {
+    if (mouseStatus == Input::ButtonState::Trigger || mouseStatus == Input::ButtonState::Pressed) {
+        if (isContains(screenPos) && !hoverHorizontalScrollbar && !hoverVerticalScrollbar) {
+            m_view->update();
+        }
+    } else {
         m_view->update();
     }
 }
