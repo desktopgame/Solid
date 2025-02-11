@@ -12,11 +12,14 @@ namespace App::Scenes::Game {
 GameScene::GameScene()
     : m_globalLightDir({ 1, 1, 0 })
     , m_renderer()
+    , m_fontMap()
     , m_field()
     , m_debugPlayer()
     , m_debugEntity()
     , m_aimTexture()
     , m_minimap()
+    , m_pauseUI()
+    , m_requestPauseClose()
 #if GAMESCENE_PROFILE
     , m_avgTime()
 #endif
@@ -28,6 +31,9 @@ void GameScene::onEnter()
 {
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
+    }
+    if (!m_fontMap) {
+        m_fontMap = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
     }
     if (!m_field) {
         auto normalTex = Texture::create("./assets/Textures/tileNormal2.png");
@@ -65,6 +71,36 @@ void GameScene::onEnter()
         m_pauseUI->setPosition(Vector2({ 0, 0 }));
         m_pauseUI->setSize(Vector2({ 500, 400 }));
 
+        auto tabbedPane = std::make_shared<TabbedPane>();
+        tabbedPane->setFont(m_fontMap);
+
+        auto tabStatus = std::make_shared<Panel>();
+        tabStatus->setLayout(std::make_shared<BorderLayout>());
+        tabStatus->setFlexible(true);
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabStatus, nullptr));
+        tabbedPane->setTitleAt(0, u"STATUS");
+
+        auto tabMap = std::make_shared<Panel>();
+        tabMap->setLayout(std::make_shared<BorderLayout>());
+        tabMap->setFlexible(true);
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabMap, nullptr));
+        tabbedPane->setTitleAt(1, u"MAP");
+
+        auto tabSystem = std::make_shared<Panel>();
+        tabSystem->setLayout(std::make_shared<BorderLayout>());
+        tabSystem->setFlexible(true);
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabSystem, nullptr));
+        tabbedPane->setTitleAt(2, u"SYSTEM");
+
+        auto closeButton = std::make_shared<Button>();
+        closeButton->setFont(m_fontMap);
+        closeButton->setText(u"CLOSE");
+        closeButton->setPreferredSize(Vector2({ 200, 40 }));
+        closeButton->setOnClick(std::bind(&GameScene::onClickPauseClose, this));
+
+        m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
+        m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(closeButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
+
         m_pauseUI->doLayout();
     }
     if (Cursor::isVisible()) {
@@ -88,7 +124,7 @@ void GameScene::onUpdate()
         m_minimap->update();
     }
 
-    if (keyboard->isTrigger(KeyCode::E)) {
+    if (keyboard->isTrigger(KeyCode::E) || m_requestPauseClose) {
         if (Cursor::isVisible()) {
             Cursor::hide();
             Cursor::lock(Engine::getInstance()->getWindow());
@@ -96,6 +132,7 @@ void GameScene::onUpdate()
             Cursor::show();
             Cursor::unlock();
         }
+        m_requestPauseClose = false;
     }
 }
 
@@ -148,4 +185,8 @@ bool GameScene::tryTransition(std::string& outNextScene)
     return false;
 }
 // private
+void GameScene::onClickPauseClose()
+{
+    m_requestPauseClose = true;
+}
 }

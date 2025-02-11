@@ -28,9 +28,12 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    void onClickPauseClose();
+
     Vector3 m_globalLightDir;
 
     std::shared_ptr<Renderer> m_renderer;
+    std::shared_ptr<FontMap> m_fontMap;
     std::shared_ptr<System::Field> m_field;
     std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
@@ -38,6 +41,7 @@ private:
 
     std::shared_ptr<RootPane> m_minimap;
     std::shared_ptr<RootPane> m_pauseUI;
+    bool m_requestPauseClose;
 
 #if GAMESCENE_PROFILE
     const float k_fpsK = 0.05f;
