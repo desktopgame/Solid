@@ -75,15 +75,15 @@ void Container::layoutTopdown(const Math::Vector2& availableSize)
 void Container::layoutBottomup()
 {
     if (m_layoutManager) {
+        auto self = std::static_pointer_cast<Container>(shared_from_this());
+        m_layoutManager->layoutContainer(self);
+
         for (auto c : m_children) {
             auto container = std::dynamic_pointer_cast<Container>(c->component);
             if (container) {
                 container->layoutBottomup();
             }
         }
-
-        auto self = std::static_pointer_cast<Container>(shared_from_this());
-        m_layoutManager->layoutContainer(self);
     }
 }
 }
