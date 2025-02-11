@@ -39,11 +39,6 @@ void DemoScene::onEnter()
 
         auto tabbedPane = std::make_shared<TabbedPane>();
         tabbedPane->setFont(font);
-
-        // auto ci = std::make_shared<ColorIcon>();
-        // ci->setFlexible(true);
-        // ci->setPreferredSize(Vector2({ 50, 50 }));
-        // m_root->addLayoutElement(std::make_shared<LayoutElement>(ci, std::make_shared<BorderLayout::Hint>("CENTER")));
         m_root->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
 
         // tab1 -- BorderLayoutのテスト
