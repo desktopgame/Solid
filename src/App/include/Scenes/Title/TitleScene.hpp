@@ -18,8 +18,12 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    void onClickStartButton();
+    void onClickSettingButton();
+
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<FontMap> m_fontMap;
     std::shared_ptr<RootPane> m_baseUI;
+    std::string m_nextScene;
 };
 }

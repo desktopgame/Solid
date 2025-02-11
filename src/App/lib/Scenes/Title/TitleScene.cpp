@@ -6,6 +6,7 @@ TitleScene::TitleScene()
     : m_renderer()
     , m_fontMap()
     , m_baseUI()
+    , m_nextScene()
 {
 }
 TitleScene::~TitleScene()
@@ -41,6 +42,7 @@ void TitleScene::onEnter()
         startButton->setFontSize(32);
         startButton->setText(u"START");
         startButton->setPreferredSize(Vector2({ 200, 50 }));
+        startButton->setOnClick(std::bind(&TitleScene::onClickStartButton, this));
         menu->addLayoutElement(std::make_shared<LayoutElement>(startButton, nullptr));
 
         auto settingButton = std::make_shared<Button>();
@@ -48,6 +50,7 @@ void TitleScene::onEnter()
         settingButton->setFontSize(32);
         settingButton->setText(u"SETTING");
         settingButton->setPreferredSize(Vector2({ 200, 50 }));
+        settingButton->setOnClick(std::bind(&TitleScene::onClickSettingButton, this));
         menu->addLayoutElement(std::make_shared<LayoutElement>(settingButton, nullptr));
 
         menu->addLayoutElement(std::make_shared<LayoutElement>(Box::createVerticalGlue(), nullptr));
@@ -55,6 +58,7 @@ void TitleScene::onEnter()
 
         m_baseUI->doLayout();
     }
+    m_nextScene = "";
 }
 void TitleScene::onExit() { }
 
@@ -71,6 +75,16 @@ void TitleScene::onDraw2D()
 
 bool TitleScene::tryTransition(std::string& outNextScene)
 {
+    if (m_nextScene != "") {
+        outNextScene = m_nextScene;
+        return true;
+    }
     return false;
 }
+// private
+void TitleScene::onClickStartButton()
+{
+    m_nextScene = "Game";
+}
+void TitleScene::onClickSettingButton() { }
 }
