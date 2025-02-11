@@ -183,7 +183,9 @@ void ScrollPane::update()
         m_vWarp = false;
     }
 
-    m_view->update();
+    if (isContains(screenPos) && !hoverHorizontalScrollbar && !hoverVerticalScrollbar) {
+        m_view->update();
+    }
 }
 void ScrollPane::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 {
