@@ -37,9 +37,23 @@ void DemoScene::onEnter()
         m_root->setPosition(Vector2({ 0, 0 }));
         m_root->setSize(Vector2({ 500, 400 }));
 
+        auto content = std::make_shared<Panel>();
+        content->setFlexible(true);
+        content->setLayout(std::make_shared<BorderLayout>());
+
+        auto header = Box::createHorizontalBox();
+        auto title = std::make_shared<Label>();
+        title->setFont(font);
+        title->setText(u"UIのテスト");
+        title->setPreferredSize(font->measure(title->getFontSize(), title->getText()));
+        header->addLayoutElement(std::make_shared<LayoutElement>(title, nullptr));
+        content->addLayoutElement(std::make_shared<LayoutElement>(header, std::make_shared<BorderLayout::Hint>("TOP")));
+
         auto tabbedPane = std::make_shared<TabbedPane>();
         tabbedPane->setFont(font);
-        m_root->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
+        content->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
+
+        m_root->addLayoutElement(std::make_shared<LayoutElement>(content, std::make_shared<BorderLayout::Hint>("CENTER")));
 
         // tab1 -- BorderLayoutのテスト
         auto tab1
