@@ -63,7 +63,7 @@ void GameScene::onEnter()
     if (!m_pauseUI) {
         m_pauseUI = RootPane::create();
         m_pauseUI->setPosition(Vector2({ 0, 0 }));
-        m_pauseUI->setSize(Vector2({ 400, 300 }));
+        m_pauseUI->setSize(Vector2({ 500, 400 }));
 
         m_pauseUI->doLayout();
     }
@@ -79,11 +79,24 @@ void GameScene::onExit()
 
 void GameScene::onUpdate()
 {
+    auto keyboard = InputSystem::getInstance()->getKeyboard();
+
     if (Cursor::isVisible()) {
         m_pauseUI->update();
+    } else {
+        m_field->update();
+        m_minimap->update();
     }
-    m_field->update();
-    m_minimap->update();
+
+    if (keyboard->isTrigger(KeyCode::E)) {
+        if (Cursor::isVisible()) {
+            Cursor::hide();
+            Cursor::lock(Engine::getInstance()->getWindow());
+        } else {
+            Cursor::show();
+            Cursor::unlock();
+        }
+    }
 }
 
 void GameScene::onGui()

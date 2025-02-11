@@ -60,16 +60,6 @@ void PlayerEntity::idle(const std::shared_ptr<Chunk>& chunk)
         }
     }
 
-    if (keyboard->isTrigger(KeyCode::E)) {
-        if (Cursor::isVisible()) {
-            Cursor::hide();
-            Cursor::lock(Engine::getInstance()->getWindow());
-        } else {
-            Cursor::show();
-            Cursor::unlock();
-        }
-    }
-
     if (mouse->isTrigger(Mouse::Button::Left)) {
         auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_bulletNode->clone(), Entity::Category::PlayerTeam);
         proj->setOwner(shared_from_this());
