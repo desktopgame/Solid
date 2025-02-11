@@ -107,6 +107,14 @@ void BoxLayout::layoutContainer(const std::shared_ptr<Container>& parent)
         }
         }
         e->component->setSize(size);
+
+        auto container = std::dynamic_pointer_cast<Container>(e->component);
+        if (container) {
+            auto layout = container->getLayout();
+            if (layout) {
+                layout->layoutContainer(container);
+            }
+        }
     }
 
     for (int32_t i = 0; i < elementCount; i++) {
@@ -139,6 +147,15 @@ Math::Vector2 BoxLayout::computePreferredSize(const std::shared_ptr<Container>& 
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto e = parent->getLayoutElementAt(i);
         auto prefSize = e->component->getPreferredSize();
+        if (Math::Mathf::equals(prefSize.x(), 0.0f) || Math::Mathf::equals(prefSize.y(), 0.0f)) {
+            auto container = std::dynamic_pointer_cast<Container>(e->component);
+            if (container) {
+                auto layout = container->getLayout();
+                if (layout) {
+                    prefSize = layout->computePreferredSize(container);
+                }
+            }
+        }
 
         switch (m_orientation) {
         case BoxLayout::Orientation::Horizontal:
