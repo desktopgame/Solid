@@ -25,8 +25,8 @@ void Container::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
 
 void Container::doLayout()
 {
-    layoutTopdown(getSize());
-    layoutBottomup();
+    layoutMeasure(getSize());
+    layoutArrange();
 }
 
 void Container::setLayout(const std::shared_ptr<ILayoutManager>& layoutManager)
@@ -56,7 +56,7 @@ int32_t Container::getLayoutElementCount() const
     return static_cast<int32_t>(m_children.size());
 }
 // private
-void Container::layoutTopdown(const Math::Vector2& availableSize)
+void Container::layoutMeasure(const Math::Vector2& availableSize)
 {
     if (m_layoutManager) {
         auto self = std::static_pointer_cast<Container>(shared_from_this());
@@ -67,12 +67,12 @@ void Container::layoutTopdown(const Math::Vector2& availableSize)
         for (auto c : m_children) {
             auto container = std::dynamic_pointer_cast<Container>(c->component);
             if (container) {
-                container->layoutTopdown(m_layoutManager->availableSizeFor(self, container, c->hint));
+                container->layoutMeasure(m_layoutManager->availableSizeFor(self, container, c->hint));
             }
         }
     }
 }
-void Container::layoutBottomup()
+void Container::layoutArrange()
 {
     if (m_layoutManager) {
         auto self = std::static_pointer_cast<Container>(shared_from_this());
@@ -81,7 +81,7 @@ void Container::layoutBottomup()
         for (auto c : m_children) {
             auto container = std::dynamic_pointer_cast<Container>(c->component);
             if (container) {
-                container->layoutBottomup();
+                container->layoutArrange();
             }
         }
     }
