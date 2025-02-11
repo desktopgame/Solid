@@ -37,6 +37,7 @@ private:
     std::shared_ptr<Texture> m_aimTexture;
 
     std::shared_ptr<RootPane> m_minimap;
+    std::shared_ptr<RootPane> m_pauseUI;
 
 #if GAMESCENE_PROFILE
     const float k_fpsK = 0.05f;

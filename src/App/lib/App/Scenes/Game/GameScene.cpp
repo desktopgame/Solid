@@ -60,6 +60,13 @@ void GameScene::onEnter()
 
         m_minimap->doLayout();
     }
+    if (!m_pauseUI) {
+        m_pauseUI = RootPane::create();
+        m_pauseUI->setPosition(Vector2({ 0, 0 }));
+        m_pauseUI->setSize(Vector2({ 400, 300 }));
+
+        m_pauseUI->doLayout();
+    }
     if (Cursor::isVisible()) {
         Cursor::hide();
         Cursor::lock(Engine::getInstance()->getWindow());
@@ -72,6 +79,9 @@ void GameScene::onExit()
 
 void GameScene::onUpdate()
 {
+    if (Cursor::isVisible()) {
+        m_pauseUI->update();
+    }
     m_field->update();
     m_minimap->update();
 }
@@ -102,6 +112,10 @@ void GameScene::onDraw2D()
     m_minimap->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
+
+    if (Cursor::isVisible()) {
+        m_pauseUI->draw2D(m_renderer);
+    }
 
 #if GAMESCENE_PROFILE
     float dt = Time::deltaTime();
