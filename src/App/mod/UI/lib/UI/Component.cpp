@@ -15,6 +15,7 @@ Component::Component()
     , m_backgroundColor({ 0.2f, 0.2f, 0.2f, 1.0f })
     , m_fontMap()
     , m_fontSize(16)
+    , m_name()
 {
 }
 Component::~Component() { }
@@ -80,4 +81,7 @@ std::shared_ptr<Graphics::FontMap> Component::getFont() const { return m_fontMap
 
 void Component::setFontSize(int32_t fontSize) { m_fontSize = fontSize; }
 int32_t Component::getFontSize() const { return m_fontSize; }
+
+void Component::setName(const std::string& name) { m_name = name; }
+std::string Component::getName() const { return m_name; }
 }

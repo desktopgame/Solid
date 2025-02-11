@@ -3,6 +3,7 @@
 #include <Graphics/Renderer.hpp>
 #include <Math/Vector.hpp>
 #include <memory>
+#include <string>
 
 namespace Lib::UI {
 class Container;
@@ -175,6 +176,18 @@ public:
      */
     int32_t getFontSize() const;
 
+    /**
+     * コンポーネントの名前を設定します。
+     * @param name
+     */
+    void setName(const std::string& name);
+
+    /**
+     * コンポーネントの名前を返します。
+     * @return
+     */
+    std::string getName() const;
+
 private:
     std::weak_ptr<Container> m_parent;
 
@@ -189,5 +202,6 @@ private:
     Graphics::Color m_backgroundColor;
     std::shared_ptr<Graphics::FontMap> m_fontMap;
     int32_t m_fontSize;
+    std::string m_name;
 };
 }
