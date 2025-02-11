@@ -29,6 +29,7 @@ public:
 
 private:
     void onClickPauseClose();
+    void onClickExitButton();
 
     Vector3 m_globalLightDir;
 
@@ -42,6 +43,8 @@ private:
     std::shared_ptr<RootPane> m_minimap;
     std::shared_ptr<RootPane> m_pauseUI;
     bool m_requestPauseClose;
+
+    std::string m_nextScene;
 
 #if GAMESCENE_PROFILE
     const float k_fpsK = 0.05f;

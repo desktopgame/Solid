@@ -20,6 +20,7 @@ GameScene::GameScene()
     , m_minimap()
     , m_pauseUI()
     , m_requestPauseClose()
+    , m_nextScene()
 #if GAMESCENE_PROFILE
     , m_avgTime()
 #endif
@@ -77,6 +78,12 @@ void GameScene::onEnter()
         auto tabStatus = std::make_shared<Panel>();
         tabStatus->setLayout(std::make_shared<BorderLayout>());
         tabStatus->setFlexible(true);
+        auto statusForm = std::make_shared<Form>(m_fontMap, 16, Vector2({ 150, 50 }));
+        statusForm->addLabel(u"Maximum-HP", u"100");
+        statusForm->addLabel(u"ATK", u"100");
+        statusForm->addLabel(u"DEF", u"100");
+        statusForm->addLabel(u"SPD", u"100");
+        tabStatus->addLayoutElement(std::make_shared<LayoutElement>(statusForm, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabStatus, nullptr));
         tabbedPane->setTitleAt(0, u"STATUS");
 
@@ -89,6 +96,23 @@ void GameScene::onEnter()
         auto tabSystem = std::make_shared<Panel>();
         tabSystem->setLayout(std::make_shared<BorderLayout>());
         tabSystem->setFlexible(true);
+
+        auto contentPanel = std::make_shared<Panel>();
+        contentPanel->setBackgroundColor(Color({ 0.5f, 0.5f, 0.5f, 1.0f }));
+        contentPanel->setLayout(std::make_shared<BorderLayout>());
+        contentPanel->setFlexible(true);
+
+        auto returnButtonBox = Box::createVerticalBox();
+        auto returnButton = std::make_shared<Button>();
+        returnButton->setFont(m_fontMap);
+        returnButton->setText(u"EXIT");
+        returnButton->setPreferredSize(Vector2({ 200, 40 }));
+        returnButton->setOnClick(std::bind(&GameScene::onClickExitButton, this));
+        returnButtonBox->addLayoutElement(std::make_shared<LayoutElement>(Box::createVerticalGlue(), std::make_shared<BorderLayout::Hint>("BOTTOM")));
+        returnButtonBox->addLayoutElement(std::make_shared<LayoutElement>(returnButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
+        returnButtonBox->addLayoutElement(std::make_shared<LayoutElement>(Box::createVerticalGlue(), std::make_shared<BorderLayout::Hint>("BOTTOM")));
+        tabSystem->addLayoutElement(std::make_shared<LayoutElement>(contentPanel, std::make_shared<BorderLayout::Hint>("CENTER")));
+        tabSystem->addLayoutElement(std::make_shared<LayoutElement>(returnButtonBox, std::make_shared<BorderLayout::Hint>("BOTTOM")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabSystem, nullptr));
         tabbedPane->setTitleAt(2, u"SYSTEM");
 
@@ -107,6 +131,7 @@ void GameScene::onEnter()
         Cursor::hide();
         Cursor::lock(Engine::getInstance()->getWindow());
     }
+    m_nextScene = "";
 }
 
 void GameScene::onExit()
@@ -182,11 +207,23 @@ void GameScene::onDraw2D()
 
 bool GameScene::tryTransition(std::string& outNextScene)
 {
+    if (m_nextScene != "") {
+        outNextScene = m_nextScene;
+        return true;
+    }
     return false;
 }
 // private
 void GameScene::onClickPauseClose()
 {
     m_requestPauseClose = true;
+}
+void GameScene::onClickExitButton()
+{
+#if _DEBUG
+    m_nextScene = "Debug";
+#else
+    m_nextScene = "Title";
+#endif
 }
 }
