@@ -117,13 +117,6 @@ void GameScene::onUpdate()
 {
     auto keyboard = InputSystem::getInstance()->getKeyboard();
 
-    if (Cursor::isVisible()) {
-        m_pauseUI->update();
-    } else {
-        m_field->update();
-        m_minimap->update();
-    }
-
     if (keyboard->isTrigger(KeyCode::E) || m_requestPauseClose) {
         if (Cursor::isVisible()) {
             Cursor::hide();
@@ -133,6 +126,13 @@ void GameScene::onUpdate()
             Cursor::unlock();
         }
         m_requestPauseClose = false;
+    }
+
+    if (Cursor::isVisible()) {
+        m_pauseUI->update();
+    } else {
+        m_field->update();
+        m_minimap->update();
     }
 }
 
