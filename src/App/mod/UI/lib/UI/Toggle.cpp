@@ -8,6 +8,7 @@ namespace Lib::UI {
 Toggle::Toggle()
     : Component()
     , m_isSelected(false)
+    , m_onSelected()
 {
     setMinimumSize(Math::Vector2({ k_width, k_height }));
     setPreferredSize(Math::Vector2({ k_width, k_height }));
@@ -42,6 +43,16 @@ void Toggle::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     }
 }
 
-void Toggle::setSelected(bool selected) { m_isSelected = selected; }
+void Toggle::setSelected(bool selected)
+{
+    m_isSelected = selected;
+    if (m_onSelected) {
+        m_onSelected(selected);
+    }
+}
 bool Toggle::isSelected() const { return m_isSelected; }
+
+void Toggle::setOnSelected(const std::function<void(bool)> onSelected) { m_onSelected = onSelected; }
+std::function<void(bool)> Toggle::getOnSelected() const { return m_onSelected; }
+
 }

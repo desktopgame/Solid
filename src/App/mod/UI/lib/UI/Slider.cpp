@@ -11,6 +11,7 @@ Slider::Slider()
     , m_value()
     , m_status(0)
     , m_warp(false)
+    , m_onValueChanged()
 {
 }
 
@@ -80,6 +81,16 @@ void Slider::draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     }
 }
 
-void Slider::setValue(float value) { m_value = Math::Mathf::clamp(0.0f, 1.0f, value); }
+void Slider::setValue(float value)
+{
+    value = Math::Mathf::clamp(0.0f, 1.0f, value);
+    m_value = value;
+    if (m_onValueChanged) {
+        m_onValueChanged(m_value);
+    }
+}
 float Slider::getValue() const { return m_value; }
+
+void Slider::setOnValueChanged(const std::function<void(float)>& onValueChanged) { m_onValueChanged = onValueChanged; }
+std::function<void(float)> Slider::getOnValueChanged() const { return m_onValueChanged; }
 }
