@@ -79,7 +79,7 @@ void DemoScene::onEnter()
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab1, nullptr));
         tabbedPane->setTitleAt(0, u"BorderLayout");
 
-        // tab2 -- BorderLayoutのテスト
+        // tab2 -- BoxLayoutのテスト
         auto tab2 = std::make_shared<Panel>();
         tab2->setLayout(std::make_shared<BorderLayout>());
         tab2->setFlexible(true);
