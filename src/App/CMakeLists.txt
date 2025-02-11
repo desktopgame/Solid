@@ -45,6 +45,7 @@ set(SOURCES
     ./include/Common/Util/FpsController.hpp
     ./include/Scenes/Debug/DebugScene.hpp
     ./include/Scenes/Demo/DemoScene.hpp
+    ./include/Scenes/Title/TitleScene.hpp
     ./include/Scenes/Game/GameScene.hpp
     ./include/Scenes/Game/System/Field.hpp
     ./include/Scenes/Game/System/Chunk.hpp
@@ -67,6 +68,7 @@ set(SOURCES
     ./lib/Common/Util/FpsController.cpp
     ./lib/Scenes/Debug/DebugScene.cpp
     ./lib/Scenes/Demo/DemoScene.cpp
+    ./lib/Scenes/Title/TitleScene.cpp
     ./lib/Scenes/Game/GameScene.cpp
     ./lib/Scenes/Game/System/Field.cpp
     ./lib/Scenes/Game/System/Chunk.cpp

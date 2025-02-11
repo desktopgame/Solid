@@ -73,7 +73,7 @@ void DebugScene::onGui()
     if (ImGui::Button("Demo")) {
         m_nextScene = "Demo";
     } else if (ImGui::Button("Game")) {
-        m_nextScene = "Game";
+        m_nextScene = "Title";
     }
     ImGui::End();
 }

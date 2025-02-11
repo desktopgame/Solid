@@ -11,6 +11,7 @@
 #include <Scenes/Debug/DebugScene.hpp>
 #include <Scenes/Demo/DemoScene.hpp>
 #include <Scenes/Game/GameScene.hpp>
+#include <Scenes/Title/TitleScene.hpp>
 #include <test.hpp>
 using namespace App::Common;
 using namespace App::Scenes;
@@ -29,6 +30,7 @@ static int appMain(int argc, char* argv[])
     auto inputSystem = InputSystem::getInstance()->startup(window);
 
     std::unordered_map<std::string, std::shared_ptr<IScene>> sceneMap;
+    sceneMap.insert_or_assign("Title", std::make_shared<Title::TitleScene>());
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
     sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
