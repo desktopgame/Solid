@@ -34,8 +34,8 @@ void DemoScene::onEnter()
     if (!m_root) {
         auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
         m_root = RootPane::create();
-        m_root->setPosition(Vector2({ 100, 150 }));
-        m_root->setSize(Vector2({ 400, 300 }));
+        m_root->setPosition(Vector2({ 0, 0 }));
+        m_root->setSize(Vector2({ 500, 400 }));
 
         auto tabbedPane = std::make_shared<TabbedPane>();
         tabbedPane->setFont(font);
@@ -80,6 +80,7 @@ void DemoScene::onEnter()
         tab2->setFlexible(true);
         auto vbox = Box::createVerticalBox();
         auto hbox1 = Box::createHorizontalBox();
+        hbox1->setBackgroundColor(Color({ 0.1f, 0.5f, 0.1f, 1.0f }));
 
         auto label1 = std::make_shared<Label>();
         label1->setFont(font);
@@ -94,6 +95,7 @@ void DemoScene::onEnter()
         hbox1->addLayoutElement(std::make_shared<LayoutElement>(button2, nullptr));
 
         auto hbox2 = Box::createHorizontalBox();
+        hbox2->setBackgroundColor(Color({ 0.5f, 0.1f, 0.1f, 1.0f }));
 
         auto slider1 = std::make_shared<Slider>();
         slider1->setPreferredSize(Vector2({ 80, 40 }));
@@ -120,7 +122,7 @@ void DemoScene::onEnter()
         for (int32_t i = 0; i < 10; i++) {
             auto line = Box::createHorizontalBox();
             line->setFlexible(true);
-            for (int32_t j = 0; j < 5; j++) {
+            for (int32_t j = 0; j < 10; j++) {
                 auto sample = std::make_shared<Button>();
                 sample->setFont(font);
                 sample->setText(u"Sample");
@@ -212,20 +214,20 @@ void DemoScene::onDraw2D()
     if (!m_isDraw2D) {
         return;
     }
-    Vector2 backgroundCenter = Vector2({ -Screen::getWidth() / 4.0f, Screen::getHeight() / 4.0f });
-    Vector2 backgroundSize = (Vector2)Screen::getSize() / 2.0f;
+    Vector2 backgroundCenter = Vector2({ -325, 50 });
+    Vector2 backgroundSize = Vector2({ 100, 200 });
     m_renderer->drawRect(
         backgroundCenter,
         backgroundSize,
         0.0f,
         Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
 
-    m_renderer->drawCircle(backgroundCenter + Vector2({ -50, 0 }), Vector2({ 50, 50 }), Vector4({ 1, 0, 0, 1 }));
-    m_renderer->drawRect(backgroundCenter + Vector2({ 50, 0 }), Vector2({ 50, 50 }), 45.0f, Vector4({ 0, 1, 0, 1 }));
+    m_renderer->drawCircle(backgroundCenter + Vector2({ 0, -30 }), Vector2({ 50, 50 }), Vector4({ 1, 0, 0, 1 }));
+    m_renderer->drawRect(backgroundCenter + Vector2({ 0, 50 }), Vector2({ 50, 50 }), 45.0f, Vector4({ 0, 1, 0, 1 }));
 
     m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
     m_renderer->textFontSize(20);
-    m_renderer->drawText(backgroundCenter - Vector2({ 0, 100 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"2D描画のテスト", Vector4({ 0, 0, 0, 1 }));
+    m_renderer->drawText(backgroundCenter - Vector2({ 0, 80 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"テスト", Vector4({ 0, 0, 0, 1 }));
 
     m_root->draw2D(m_renderer);
 }
