@@ -152,6 +152,20 @@ void DemoScene::onEnter()
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab3, nullptr));
         tabbedPane->setTitleAt(2, u"ScrollPane");
 
+        // tab4 -- Formのテスト
+        auto tab4 = std::make_shared<Panel>();
+        tab4->setLayout(std::make_shared<BorderLayout>());
+        tab4->setFlexible(true);
+        auto form = std::make_shared<Form>(font, 16, Vector2({ 120, 50 }));
+        form->addLabel(u"Label", u"TextValue");
+        form->addButton(u"Button", u"ClickMe", nullptr);
+        form->addToggle(u"Toggle", nullptr);
+        form->addSlider(u"Slider", nullptr);
+
+        tab4->addLayoutElement(std::make_shared<LayoutElement>(form, std::make_shared<BorderLayout::Hint>("CENTER")));
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tab4, nullptr));
+        tabbedPane->setTitleAt(3, u"Form");
+
         m_root->doLayout();
     }
 }

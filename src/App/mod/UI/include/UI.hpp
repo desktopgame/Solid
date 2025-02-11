@@ -6,6 +6,7 @@
 #include <UI/ColorIcon.hpp>
 #include <UI/Component.hpp>
 #include <UI/Container.hpp>
+#include <UI/Form.hpp>
 #include <UI/ILayoutManager.hpp>
 #include <UI/Label.hpp>
 #include <UI/LayoutElement.hpp>
