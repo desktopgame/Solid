@@ -52,12 +52,12 @@ set(SOURCES
     ./include/App/Scenes/Game/System/ChunkGenerator.hpp
     ./include/App/Scenes/Game/System/Entity.hpp
     ./include/App/Scenes/Game/System/DamageSource.hpp
-    ./include/App/Scenes/Game/System/Minimap.hpp
     ./include/App/Scenes/Game/System/Entities/BasicEntity.hpp
     ./include/App/Scenes/Game/System/Entities/PlayerEntity.hpp
     ./include/App/Scenes/Game/System/Entities/EnemyEntity.hpp
     ./include/App/Scenes/Game/System/Entities/SlimeEntity.hpp
     ./include/App/Scenes/Game/System/Entities/ProjectileEntity.hpp
+    ./include/App/Scenes/Game/UI/Minimap.hpp
     ./lib/App/main.cpp
     ./lib/App/test.cpp
     ./lib/App/Common/Graphics/Node.cpp
@@ -75,12 +75,12 @@ set(SOURCES
     ./lib/App/Scenes/Game/System/ChunkGenerator.cpp
     ./lib/App/Scenes/Game/System/Entity.cpp
     ./lib/App/Scenes/Game/System/DamageSource.cpp
-    ./lib/App/Scenes/Game/System/Minimap.cpp
     ./lib/App/Scenes/Game/System/Entities/BasicEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/PlayerEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/EnemyEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/SlimeEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/ProjectileEntity.cpp
+    ./lib/App/Scenes/Game/UI/Minimap.cpp
 )
 source_group(
     TREE

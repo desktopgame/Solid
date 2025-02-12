@@ -5,17 +5,17 @@
 #include <App/library.hpp>
 #include <memory>
 
-namespace App::Scenes::Game::System {
+namespace App::Scenes::Game::UI {
 class Minimap : public Component {
 public:
     static inline const float k_routeLength = 5;
 
-    explicit Minimap(const std::shared_ptr<Field>& field);
+    explicit Minimap(const std::shared_ptr<System::Field>& field);
 
     void update() override;
     void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
 private:
-    std::shared_ptr<Field> m_field;
+    std::shared_ptr<System::Field> m_field;
 };
 }

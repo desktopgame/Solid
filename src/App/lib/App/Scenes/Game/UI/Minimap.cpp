@@ -1,8 +1,8 @@
-#include <App/Scenes/Game/System/Minimap.hpp>
+#include <App/Scenes/Game/UI/Minimap.hpp>
 
-namespace App::Scenes::Game::System {
+namespace App::Scenes::Game::UI {
 // public
-Minimap::Minimap(const std::shared_ptr<Field>& field)
+Minimap::Minimap(const std::shared_ptr<System::Field>& field)
     : m_field(field)
 {
     setPreferredSize(Vector2({ 150, 150 }));
@@ -43,9 +43,9 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         }
     }
 
-    auto mapScrollAmount = -(Vector3({ playerPos.x(), 0, playerPos.z() }) - Vector3({ currentChunk->getPhysicalCenterX(), 0, currentChunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
-    mapScrollAmount.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
-    mapScrollAmount.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
+    auto mapScrollAmount = -(Vector3({ playerPos.x(), 0, playerPos.z() }) - Vector3({ currentChunk->getPhysicalCenterX(), 0, currentChunk->getPhysicalCenterZ() })) / System::Chunk::k_tileSize;
+    mapScrollAmount.x() *= (k_chunkSize.x()) / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength);
+    mapScrollAmount.z() *= (k_chunkSize.y()) / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength);
 
     renderer->stencilRead();
     for (const auto localGridPos : localGridPositions) {
@@ -67,7 +67,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         Vector4 chunkColor = Vector4({ 0, 0.5f, 0, 1 });
         for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
             auto entity = chunk->getEntityAt(i);
-            if (entity->getCategory() == Entity::Category::Enemy) {
+            if (entity->getCategory() == System::Entity::Category::Enemy) {
                 chunkColor = Vector4({ 0.5f, 0, 0, 1 });
                 break;
             }
@@ -80,13 +80,13 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             auto entity = chunk->getEntityAt(i);
             auto entityPos = entity->getPosition();
 
-            if (entity->getCategory() == Entity::Category::PlayerTeam || entity->getCategory() == Entity::Category::EnemyTeam) {
+            if (entity->getCategory() == System::Entity::Category::PlayerTeam || entity->getCategory() == System::Entity::Category::EnemyTeam) {
                 continue;
             }
 
-            auto entityOffset = (entityPos - Vector3({ chunk->getPhysicalCenterX(), 0, chunk->getPhysicalCenterZ() })) / Chunk::k_tileSize;
-            entityOffset.x() *= (k_chunkSize.x()) / static_cast<float>(Chunk::k_chunkSizeX - Chunk::k_routeLength);
-            entityOffset.z() *= (k_chunkSize.y()) / static_cast<float>(Chunk::k_chunkSizeZ - Chunk::k_routeLength);
+            auto entityOffset = (entityPos - Vector3({ chunk->getPhysicalCenterX(), 0, chunk->getPhysicalCenterZ() })) / System::Chunk::k_tileSize;
+            entityOffset.x() *= (k_chunkSize.x()) / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength);
+            entityOffset.z() *= (k_chunkSize.y()) / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength);
 
             entityOffset.x() += offsetX;
             entityOffset.z() += offsetY;
