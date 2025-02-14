@@ -33,6 +33,10 @@ public:
 
     std::vector<std::shared_ptr<Chunk>> getLoadedChunks() const;
 
+    std::shared_ptr<Chunk> getChunkAt(int32_t index) const;
+
+    int32_t getChunkCount() const;
+
     static inline IntVector3 toLocalBlockPosition(int32_t x, int32_t y, int32_t z)
     {
         int32_t gridPosX = x / Chunk::k_chunkSizeX;

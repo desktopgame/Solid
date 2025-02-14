@@ -166,6 +166,10 @@ std::vector<std::shared_ptr<Chunk>> Field::getLoadedChunks() const
     return m_loadedChunks;
 }
 
+std::shared_ptr<Chunk> Field::getChunkAt(int32_t index) const { return m_chunks.at(index); }
+
+int32_t Field::getChunkCount() const { return static_cast<int32_t>(m_chunks.size()); }
+
 void Field::setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player) { m_player = player; }
 std::shared_ptr<Entities::PlayerEntity> Field::getPlayer() const { return m_player; }
 }

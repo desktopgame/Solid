@@ -2,6 +2,7 @@
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <App/Scenes/Game/System/Field.hpp>
+#include <App/Scenes/Game/UI/Map.hpp>
 #include <App/Scenes/Game/UI/Minimap.hpp>
 #include <App/library.hpp>
 #include <memory>
@@ -41,6 +42,7 @@ private:
     std::shared_ptr<Texture> m_aimTexture;
 
     std::shared_ptr<RootPane> m_minimap;
+    std::shared_ptr<UI::Map> m_map;
     std::shared_ptr<RootPane> m_pauseUI;
     bool m_requestPauseClose;
 

@@ -78,7 +78,7 @@ void GameScene::onEnter()
         auto tabStatus = std::make_shared<Panel>();
         tabStatus->setLayout(std::make_shared<BorderLayout>());
         tabStatus->setFlexible(true);
-        auto statusForm = std::make_shared<Form>(m_fontMap, 16, Vector2({ 150, 50 }));
+        auto statusForm = std::make_shared<Form>(m_fontMap, 16, Vector2({ 150, 30 }));
         statusForm->addLabel(u"Maximum-HP", u"100");
         statusForm->addLabel(u"ATK", u"100");
         statusForm->addLabel(u"DEF", u"100");
@@ -90,6 +90,15 @@ void GameScene::onEnter()
         auto tabMap = std::make_shared<Panel>();
         tabMap->setLayout(std::make_shared<BorderLayout>());
         tabMap->setFlexible(true);
+        m_map = std::make_shared<UI::Map>(m_field);
+        auto mapScroll = std::make_shared<ScrollPane>();
+        mapScroll->setView(m_map);
+        auto sideBar = std::make_shared<Panel>();
+        sideBar->setFlexible(true);
+        sideBar->setBackgroundColor(Color({ 1.0f, 1.0f, 0, 1.0f }));
+        sideBar->setPreferredSize(Vector2({ 120, 0 }));
+        tabMap->addLayoutElement(std::make_shared<LayoutElement>(mapScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
+        tabMap->addLayoutElement(std::make_shared<LayoutElement>(sideBar, std::make_shared<BorderLayout::Hint>("RIGHT")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabMap, nullptr));
         tabbedPane->setTitleAt(1, u"MAP");
 
@@ -149,6 +158,9 @@ void GameScene::onUpdate()
         } else {
             Cursor::show();
             Cursor::unlock();
+
+            m_map->setup();
+            m_pauseUI->doLayout();
         }
         m_requestPauseClose = false;
     }
