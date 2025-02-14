@@ -58,6 +58,7 @@ set(SOURCES
     ./include/App/Scenes/Game/System/Entities/SlimeEntity.hpp
     ./include/App/Scenes/Game/System/Entities/ProjectileEntity.hpp
     ./include/App/Scenes/Game/UI/Minimap.hpp
+    ./include/App/Scenes/Game/UI/Map.hpp
     ./lib/App/main.cpp
     ./lib/App/test.cpp
     ./lib/App/Common/Graphics/Node.cpp
@@ -81,6 +82,7 @@ set(SOURCES
     ./lib/App/Scenes/Game/System/Entities/SlimeEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/ProjectileEntity.cpp
     ./lib/App/Scenes/Game/UI/Minimap.cpp
+    ./lib/App/Scenes/Game/UI/Map.cpp
 )
 source_group(
     TREE
