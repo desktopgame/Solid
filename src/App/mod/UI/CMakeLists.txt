@@ -41,7 +41,6 @@ set(SOURCES
     ./lib/UI/Toggle.cpp
     ./lib/UI/ScrollPane.cpp
     ./lib/UI/Form.cpp
-    ./lib/UI/List.cpp
     ./lib/UI/RootPane.cpp
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp
