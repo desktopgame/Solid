@@ -4,6 +4,7 @@
 #include <App/Scenes/Game/GameScene.hpp>
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/SlimeEntity.hpp>
+#include <App/Scenes/Game/UI/Piece.hpp>
 #include <cmath>
 #include <imgui.h>
 
@@ -95,8 +96,13 @@ void GameScene::onEnter()
         mapScroll->setView(m_map);
         auto sideBar = std::make_shared<Panel>();
         sideBar->setFlexible(true);
+        sideBar->setLayout(std::make_shared<BorderLayout>());
         sideBar->setBackgroundColor(Color({ 1.0f, 1.0f, 0, 1.0f }));
-        sideBar->setPreferredSize(Vector2({ 120, 0 }));
+        sideBar->setMinimumSize(Vector2({ 120, 100 }));
+        auto piece = std::make_shared<UI::Piece>(std::vector<UI::Piece::Cell> {
+            UI::Piece::Cell(IntVector2({ 0, 0 })),
+            UI::Piece::Cell(IntVector2({ 1, 0 })) });
+        sideBar->addLayoutElement(std::make_shared<LayoutElement>(piece, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(mapScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(sideBar, std::make_shared<BorderLayout::Hint>("RIGHT")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabMap, nullptr));
