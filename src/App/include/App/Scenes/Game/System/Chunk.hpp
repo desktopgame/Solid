@@ -158,34 +158,64 @@ public:
         return m_gridPosition;
     }
 
+    static inline float getPhysicalCenterX(int32_t gridPosX)
+    {
+        return ((gridPosX * Chunk::k_chunkSizeX) + (Chunk::k_chunkSizeX / 2)) * Chunk::k_tileSize;
+    }
+
     inline float getPhysicalCenterX() const
     {
-        return ((m_gridPosition.x() * Chunk::k_chunkSizeX) + (Chunk::k_chunkSizeX / 2)) * Chunk::k_tileSize;
+        return getPhysicalCenterX(m_gridPosition.x());
+    }
+
+    static inline float getPhysicalCenterZ(int32_t gridPosY)
+    {
+        return ((gridPosY * Chunk::k_chunkSizeZ) + (Chunk::k_chunkSizeZ / 2)) * Chunk::k_tileSize;
     }
 
     inline float getPhysicalCenterZ() const
     {
-        return ((m_gridPosition.y() * Chunk::k_chunkSizeZ) + (Chunk::k_chunkSizeZ / 2)) * Chunk::k_tileSize;
+        return getPhysicalCenterZ(m_gridPosition.y());
+    }
+
+    static inline float getPhysicalMinX(int32_t gridPosX)
+    {
+        return getPhysicalCenterX(gridPosX) - ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMinX() const
     {
-        return getPhysicalCenterX() - ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalMinX(m_gridPosition.x());
+    }
+
+    static inline float getPhysicalMaxX(int32_t gridPosX)
+    {
+        return getPhysicalCenterX(gridPosX) + ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMaxX() const
     {
-        return getPhysicalCenterX() + ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalMaxX(m_gridPosition.x());
+    }
+
+    static inline float getPhysicalMinZ(int32_t gridPosY)
+    {
+        return getPhysicalCenterZ(gridPosY) - ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMinZ() const
     {
-        return getPhysicalCenterZ() - ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalMinZ(m_gridPosition.y());
+    }
+
+    static inline float getPhysicalMaxZ(int32_t gridPosY)
+    {
+        return getPhysicalCenterZ(gridPosY) + ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
     }
 
     inline float getPhysicalMaxZ() const
     {
-        return getPhysicalCenterZ() + ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
+        return getPhysicalMaxZ(m_gridPosition.y());
     }
 
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const

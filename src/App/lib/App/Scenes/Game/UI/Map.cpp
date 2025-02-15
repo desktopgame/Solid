@@ -116,5 +116,28 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             }
         }
     }
+
+    // プレイヤーを描画
+    auto player = m_field->getPlayer();
+    auto playerPos = player->getPosition();
+    auto leftChunkX = System::Chunk::getPhysicalMinX(m_minChunkX);
+    auto topChunkZ = System::Chunk::getPhysicalMaxZ(m_maxChunkY);
+
+    auto offsetX = (playerPos.x() - leftChunkX) / System::Chunk::k_tileSize;
+    auto offsetY = (playerPos.z() - topChunkZ) / System::Chunk::k_tileSize;
+    offsetX *= (k_chunkWidth / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength));
+    offsetY *= (k_chunkHeight / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength));
+
+    // auto h = (m_chunkCountY * System::Chunk::k_chunkSizeZ) * (k_chunkHeight / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength));
+
+    renderer->drawRect(
+        Vector2({
+            left + offsetX,
+            top + offsetY,
+        }),
+        Vector2({ //
+            5.0f,
+            5.0f }),
+        0.0f, Vector4({ 0, 1, 0, 1 }));
 }
 }
