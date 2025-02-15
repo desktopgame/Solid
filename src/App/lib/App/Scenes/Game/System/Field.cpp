@@ -42,26 +42,11 @@ void Field::update()
 }
 void Field::onGui()
 {
-    ImGui::Begin("Field");
-    {
-        auto playerPos = m_player->getPosition();
-        ImGui::LabelText("PlayerPos", "%f %f %f", playerPos.x(), playerPos.y(), playerPos.z());
-    }
-    {
-        auto chunk = getCurrentChunk();
-        auto chunkGridPos = chunk->getGridPosition();
-        ImGui::LabelText("ChunkGridPos", "%d - %d", chunkGridPos.x(), chunkGridPos.y());
-        ImGui::LabelText("ChunkMinX", "%f", chunk->getPhysicalMinX());
-        ImGui::LabelText("ChunkMaxX", "%f", chunk->getPhysicalMaxX());
-        ImGui::LabelText("ChunkMinZ", "%f", chunk->getPhysicalMinZ());
-        ImGui::LabelText("ChunkMaxZ", "%f", chunk->getPhysicalMaxZ());
-    }
     m_player->onGui();
 
     for (auto& chunk : m_loadedChunks) {
         chunk->onGui();
     }
-    ImGui::End();
 }
 void Field::draw3D(const std::shared_ptr<Renderer>& renderer)
 {

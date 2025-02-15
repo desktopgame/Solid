@@ -128,8 +128,6 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
     offsetX *= (k_chunkWidth / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength));
     offsetY *= (k_chunkHeight / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength));
 
-    // auto h = (m_chunkCountY * System::Chunk::k_chunkSizeZ) * (k_chunkHeight / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength));
-
     renderer->drawRect(
         Vector2({
             left + offsetX,
