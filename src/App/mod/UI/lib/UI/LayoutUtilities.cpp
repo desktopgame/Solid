@@ -17,4 +17,17 @@ Math::Vector2 LayoutUtilities::measurePreferredSize(const std::shared_ptr<Compon
     }
     return prefSize;
 }
+
+Math::Vector2 LayoutUtilities::measurePreferredSize(const std::shared_ptr<Container>& c)
+{
+    if (!c) {
+        return Math::Vector2({ 0, 0 });
+    }
+    auto prefSize = c->getPreferredSize();
+    if (Math::Mathf::equals(prefSize.x(), 0.0f) || Math::Mathf::equals(prefSize.y(), 0.0f)) {
+        auto layout = c->getLayout();
+        prefSize = layout->computePreferredSize(c);
+    }
+    return prefSize;
+}
 }
