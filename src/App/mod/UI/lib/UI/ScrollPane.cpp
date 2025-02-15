@@ -2,6 +2,7 @@
 #include <Input/InputSystem.hpp>
 #include <Input/Mouse.hpp>
 #include <Math/Mathf.hpp>
+#include <UI/LayoutUtilities.hpp>
 #include <UI/ScrollPane.hpp>
 #include <stdexcept>
 

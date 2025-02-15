@@ -1,6 +1,7 @@
 #include <Graphics/Screen.hpp>
 #include <Input/InputSystem.hpp>
 #include <Input/Mouse.hpp>
+#include <UI/LayoutUtilities.hpp>
 #include <UI/TabbedPane.hpp>
 
 namespace Lib::UI {
@@ -34,7 +35,7 @@ Math::Vector2 TabbedPane::Layout::computePreferredSize(const std::shared_ptr<Con
     Math::Vector2 preferredSize;
     for (int32_t i = 0; i < parent->getLayoutElementCount(); i++) {
         auto e = parent->getLayoutElementAt(i);
-        auto prefSize = e->component->getPreferredSize();
+        auto prefSize = LayoutUtilities::measurePreferredSize(e->component);
 
         if (preferredSize.x() < prefSize.x()) {
             preferredSize.x() = prefSize.x();

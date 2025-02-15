@@ -2,6 +2,7 @@
 #include <UI/BoxLayout.hpp>
 #include <UI/Component.hpp>
 #include <UI/Container.hpp>
+#include <UI/LayoutUtilities.hpp>
 
 namespace Lib::UI {
 

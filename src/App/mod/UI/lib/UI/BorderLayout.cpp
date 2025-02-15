@@ -1,5 +1,6 @@
 #include <UI/BorderLayout.hpp>
 #include <UI/Container.hpp>
+#include <UI/LayoutUtilities.hpp>
 
 namespace Lib::UI {
 // Hint
@@ -161,33 +162,15 @@ Math::Vector2 BorderLayout::computePreferredSize(const std::shared_ptr<Container
 {
     Math::Vector2 preferredSize;
     auto top = findByLocation(parent, "TOP");
-    auto topPS = top ? top->getPreferredSize() : Math::Vector2();
+    auto topPS = LayoutUtilities::measurePreferredSize(top);
     auto bottom = findByLocation(parent, "BOTTOM");
-    auto bottomPS = bottom ? bottom->getPreferredSize() : Math::Vector2();
+    auto bottomPS = LayoutUtilities::measurePreferredSize(bottom);
     auto left = findByLocation(parent, "LEFT");
-    auto leftPS = left ? left->getPreferredSize() : Math::Vector2();
+    auto leftPS = LayoutUtilities::measurePreferredSize(left);
     auto right = findByLocation(parent, "RIGHT");
-    auto rightPS = right ? right->getPreferredSize() : Math::Vector2();
+    auto rightPS = LayoutUtilities::measurePreferredSize(right);
     auto center = findByLocation(parent, "CENTER");
-    auto centerPS = center ? center->getPreferredSize() : Math::Vector2();
-    if (Math::Mathf::equals(centerPS.x(), 0.0f) || Math::Mathf::equals(centerPS.y(), 0.0f)) {
-        auto container = std::dynamic_pointer_cast<Container>(center);
-        if (container) {
-            auto layout = container->getLayout();
-            if (layout) {
-                centerPS = layout->computePreferredSize(container);
-            }
-        }
-    }
-    if (Math::Mathf::equals(rightPS.x(), 0.0f) || Math::Mathf::equals(rightPS.y(), 0.0f)) {
-        auto container = std::dynamic_pointer_cast<Container>(right);
-        if (container) {
-            auto layout = container->getLayout();
-            if (layout) {
-                rightPS = layout->computePreferredSize(container);
-            }
-        }
-    }
+    auto centerPS = LayoutUtilities::measurePreferredSize(center);
 
     preferredSize.x() = leftPS.y() + Math::Mathf::max(leftPS.y(), Math::Mathf::max(centerPS.y(), rightPS.y())) + rightPS.y();
     preferredSize.y() = topPS.y() + Math::Mathf::max(topPS.y(), Math::Mathf::max(centerPS.y(), bottomPS.y())) + bottomPS.y();
