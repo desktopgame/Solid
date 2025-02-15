@@ -110,6 +110,7 @@ void GameScene::onEnter()
         list->addItem(u"Hello8");
         list->addItem(u"Hello9");
         list->addItem(u"Hello10");
+        list->setFlexible(true);
         auto listScroll = std::make_shared<ScrollPane>();
         listScroll->setView(list);
         auto sideBar = std::make_shared<Panel>();
@@ -155,7 +156,6 @@ void GameScene::onEnter()
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(closeButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
 
-        m_pauseUI->doLayout();
         m_pauseUI->doLayout();
     }
     if (Cursor::isVisible()) {

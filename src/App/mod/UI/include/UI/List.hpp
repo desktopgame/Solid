@@ -78,11 +78,6 @@ public:
         }
     }
 
-    void modifyItems()
-    {
-        setPreferredSize(computePreferredSize());
-    }
-
     void addItem(const T& item)
     {
         m_items.emplace_back(item);

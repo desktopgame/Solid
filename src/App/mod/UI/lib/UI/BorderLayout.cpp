@@ -170,6 +170,24 @@ Math::Vector2 BorderLayout::computePreferredSize(const std::shared_ptr<Container
     auto rightPS = right ? right->getPreferredSize() : Math::Vector2();
     auto center = findByLocation(parent, "CENTER");
     auto centerPS = center ? center->getPreferredSize() : Math::Vector2();
+    if (Math::Mathf::equals(centerPS.x(), 0.0f) || Math::Mathf::equals(centerPS.y(), 0.0f)) {
+        auto container = std::dynamic_pointer_cast<Container>(center);
+        if (container) {
+            auto layout = container->getLayout();
+            if (layout) {
+                centerPS = layout->computePreferredSize(container);
+            }
+        }
+    }
+    if (Math::Mathf::equals(rightPS.x(), 0.0f) || Math::Mathf::equals(rightPS.y(), 0.0f)) {
+        auto container = std::dynamic_pointer_cast<Container>(right);
+        if (container) {
+            auto layout = container->getLayout();
+            if (layout) {
+                rightPS = layout->computePreferredSize(container);
+            }
+        }
+    }
 
     preferredSize.x() = leftPS.y() + Math::Mathf::max(leftPS.y(), Math::Mathf::max(centerPS.y(), rightPS.y())) + rightPS.y();
     preferredSize.y() = topPS.y() + Math::Mathf::max(topPS.y(), Math::Mathf::max(centerPS.y(), bottomPS.y())) + bottomPS.y();
