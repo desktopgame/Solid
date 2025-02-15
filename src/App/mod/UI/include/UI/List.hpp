@@ -1,5 +1,6 @@
 #pragma once
 #include <UI/Container.hpp>
+#include <UI/ILayoutManager.hpp>
 #include <UI/IListCellRenderer.hpp>
 #include <vector>
 
@@ -7,12 +8,36 @@ namespace Lib::UI {
 template <typename T>
 class List : public Container {
 public:
+    class Layout : public ILayoutManager {
+    public:
+        void resizeContainer(const std::shared_ptr<Container>& parent, const Math::Vector2& availableSize) override
+        {
+            Math::Vector2 minimumSize = parent->getMinimumSize();
+            Math::Vector2 maximumSize = parent->getMaximumSize();
+            parent->setSize(Math::Vector2({ Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), availableSize.x()),
+                Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), availableSize.y()) }));
+            parent->setPreferredSize(Math::Vector2({ Math::Mathf::clamp(minimumSize.x(), maximumSize.x(), availableSize.x()),
+                Math::Mathf::clamp(minimumSize.y(), maximumSize.y(), availableSize.y()) }));
+        }
+        void layoutContainer(const std::shared_ptr<Container>& parent) override { }
+        Math::Vector2 computePreferredSize(const std::shared_ptr<Container>& parent) override
+        {
+            auto list = std::static_pointer_cast<List<T>>(parent);
+            return list->computePreferredSize();
+        }
+        Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint) override
+        {
+            return Vector2({ 0, 0 });
+        }
+    };
+
     explicit List()
         : Container()
         , m_items()
         , m_cellRenderer()
         , m_selectedIndex(-1)
     {
+        setLayout(std::make_shared<Layout>());
     }
 
     void update() { }
@@ -36,7 +61,7 @@ public:
 
             float spaceOffsetX = k_space;
             float spaceOffsetY = (i + 1) * k_space;
-            comp->setPosition(Vector2({ spaceOffsetX, spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f) }));
+            comp->setPosition(Vector2({ left + spaceOffsetX, top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) }));
             comp->setSize(prefSize);
             comp->draw2D(renderer);
 
@@ -85,13 +110,7 @@ public:
         return m_cellRenderer;
     }
 
-private:
-    static inline constexpr float k_space = 5.0f;
-    std::vector<T> m_items;
-    std::shared_ptr<IListCellRenderer<T>> m_cellRenderer;
-    int32_t m_selectedIndex;
-
-    void calculateSize()
+    Math::Vector2 computePreferredSize()
     {
         if (m_cellRenderer) {
             auto self = std::static_pointer_cast<List<T>>(shared_from_this());
@@ -109,9 +128,15 @@ private:
                 totalHeight += prefSize.y();
             }
             totalHeight += (m_items.size() + 1) * k_space;
-
-            setPreferredSize(Vector2({ maxWidth, totalHeight }));
+            return Vector2({ maxWidth, totalHeight });
         }
+        return Vector2({ 0, 0 });
     }
+
+private:
+    static inline constexpr float k_space = 5.0f;
+    std::vector<T> m_items;
+    std::shared_ptr<IListCellRenderer<T>> m_cellRenderer;
+    int32_t m_selectedIndex;
 };
 }
