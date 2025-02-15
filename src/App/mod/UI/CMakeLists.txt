@@ -30,6 +30,7 @@ set(SOURCES
     ./include/UI/StringListCellRenderer.hpp
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
+    ./include/UI/LayoutUtilities.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
     ./lib/UI/LayoutElement.cpp
@@ -47,6 +48,7 @@ set(SOURCES
     ./lib/UI/RootPane.cpp
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp
+    ./lib/UI/LayoutUtilities.cpp
 )
 source_group(
     TREE

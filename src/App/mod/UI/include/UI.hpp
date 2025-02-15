@@ -12,6 +12,7 @@
 #include <UI/Label.hpp>
 #include <UI/LayoutElement.hpp>
 #include <UI/LayoutHint.hpp>
+#include <UI/LayoutUtilities.hpp>
 #include <UI/List.hpp>
 #include <UI/Panel.hpp>
 #include <UI/RootPane.hpp>
