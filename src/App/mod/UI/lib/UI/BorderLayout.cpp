@@ -182,13 +182,7 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
     Math::Vector2 parentSize = parent->getSize();
     Math::Vector2 availableSize;
 
-    auto preferredSizeSize = container->getPreferredSize();
-    if (Math::Mathf::equals(availableSize.x(), 0.0f) || Math::Mathf::equals(availableSize.y(), 0.0f)) {
-        auto layout = container->getLayout();
-        if (layout) {
-            preferredSizeSize = layout->computePreferredSize(container);
-        }
-    }
+    auto preferredSizeSize = LayoutUtilities::measurePreferredSize(container);
 
     if (borderLayoutHint->location == "TOP") {
         availableSize.x() = parentSize.x();
@@ -202,11 +196,11 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
         float remainHeight = parentSize.y();
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSize().y();
+            remainHeight -= LayoutUtilities::measurePreferredSize(top).y();
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSize().y();
+            remainHeight -= LayoutUtilities::measurePreferredSize(bottom).y();
         }
         availableSize.y() = remainHeight;
     } else if (borderLayoutHint->location == "RIGHT") {
@@ -215,11 +209,11 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
         float remainHeight = parentSize.y();
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSize().y();
+            remainHeight -= LayoutUtilities::measurePreferredSize(top).y();
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSize().y();
+            remainHeight -= LayoutUtilities::measurePreferredSize(bottom).y();
         }
         availableSize.y() = remainHeight;
     } else if (borderLayoutHint->location == "CENTER") {
@@ -228,20 +222,20 @@ Math::Vector2 BorderLayout::availableSizeFor(const std::shared_ptr<Container>& p
 
         auto top = findByLocation(parent, "TOP");
         if (top) {
-            remainHeight -= top->getPreferredSize().y();
+            remainHeight -= LayoutUtilities::measurePreferredSize(top).y();
         }
         auto bottom = findByLocation(parent, "BOTTOM");
         if (bottom) {
-            remainHeight -= bottom->getPreferredSize().y();
+            remainHeight -= LayoutUtilities::measurePreferredSize(bottom).y();
         }
 
         auto left = findByLocation(parent, "LEFT");
         if (left) {
-            remainWidth -= left->getPreferredSize().x();
+            remainWidth -= LayoutUtilities::measurePreferredSize(left).x();
         }
         auto right = findByLocation(parent, "RIGHT");
         if (right) {
-            remainWidth -= right->getPreferredSize().x();
+            remainWidth -= LayoutUtilities::measurePreferredSize(right).x();
         }
 
         availableSize.x() = remainWidth;

@@ -186,13 +186,7 @@ Math::Vector2 BoxLayout::availableSizeFor(const std::shared_ptr<Container>& pare
         return parentSize;
     }
 
-    auto availableSize = container->getPreferredSize();
-    if (Math::Mathf::equals(availableSize.x(), 0.0f) || Math::Mathf::equals(availableSize.y(), 0.0f)) {
-        auto layout = container->getLayout();
-        if (layout) {
-            availableSize = layout->computePreferredSize(container);
-        }
-    }
+    auto availableSize = LayoutUtilities::measurePreferredSize(container);
 
     switch (m_orientation) {
     case BoxLayout::Orientation::Horizontal:

@@ -58,13 +58,7 @@ Math::Vector2 ScrollPane::Layout::computePreferredSize(const std::shared_ptr<Con
 }
 Math::Vector2 ScrollPane::Layout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint)
 {
-    auto availableSize = container->getPreferredSize();
-    if (Math::Mathf::equals(availableSize.x(), 0.0f) || Math::Mathf::equals(availableSize.y(), 0.0f)) {
-        auto layout = container->getLayout();
-        if (layout) {
-            availableSize = layout->computePreferredSize(container);
-        }
-    }
+    auto availableSize = LayoutUtilities::measurePreferredSize(container);
     return availableSize;
 }
 // public

@@ -12,7 +12,9 @@ Math::Vector2 LayoutUtilities::measurePreferredSize(const std::shared_ptr<Compon
         auto container = std::dynamic_pointer_cast<Container>(c);
         if (container) {
             auto layout = container->getLayout();
-            prefSize = layout->computePreferredSize(container);
+            if (layout) {
+                prefSize = layout->computePreferredSize(container);
+            }
         }
     }
     return prefSize;
@@ -26,7 +28,9 @@ Math::Vector2 LayoutUtilities::measurePreferredSize(const std::shared_ptr<Contai
     auto prefSize = c->getPreferredSize();
     if (Math::Mathf::equals(prefSize.x(), 0.0f) || Math::Mathf::equals(prefSize.y(), 0.0f)) {
         auto layout = c->getLayout();
-        prefSize = layout->computePreferredSize(c);
+        if (layout) {
+            prefSize = layout->computePreferredSize(c);
+        }
     }
     return prefSize;
 }
