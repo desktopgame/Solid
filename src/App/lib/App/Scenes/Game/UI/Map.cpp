@@ -50,8 +50,8 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
     auto size = getSize();
     auto center = getGlobalPosition();
-    auto left = center.x() - (size.x() / 2.0f);
-    auto top = center.y() + (size.y() / 2.0f);
+    float left = center.x() - (size.x() / 2.0f);
+    float top = center.y() + (size.y() / 2.0f);
     // ロード済みのチャンクを描画
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
