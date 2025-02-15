@@ -27,7 +27,7 @@ public:
         }
         Math::Vector2 availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint) override
         {
-            return Vector2({ 0, 0 });
+            return Math::Vector2({ 0, 0 });
         }
     };
 
@@ -59,9 +59,9 @@ public:
             auto comp = m_cellRenderer->getListCellRendererComponent(self, item, i, isSelected);
             auto prefSize = comp->getPreferredSize();
 
-            float spaceOffsetX = k_space;
+            // float spaceOffsetX = k_space;
             float spaceOffsetY = (i + 1) * k_space;
-            comp->setPosition(Vector2({ left + spaceOffsetX, top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) }));
+            comp->setPosition(Math::Vector2({ left + ((size.x() - prefSize.x()) / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) }));
             comp->setSize(prefSize);
             comp->draw2D(renderer);
 
@@ -102,7 +102,6 @@ public:
     void setCellRenderer(const std::shared_ptr<IListCellRenderer<T>>& cellRenderer)
     {
         m_cellRenderer = cellRenderer;
-        calculateSize();
     }
 
     std::shared_ptr<IListCellRenderer<T>> getCellRenderer() const
@@ -128,9 +127,9 @@ public:
                 totalHeight += prefSize.y();
             }
             totalHeight += (m_items.size() + 1) * k_space;
-            return Vector2({ maxWidth, totalHeight });
+            return Math::Vector2({ maxWidth, totalHeight });
         }
-        return Vector2({ 0, 0 });
+        return Math::Vector2({ 0, 0 });
     }
 
 private:

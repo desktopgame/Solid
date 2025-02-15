@@ -17,5 +17,6 @@
 #include <UI/RootPane.hpp>
 #include <UI/ScrollPane.hpp>
 #include <UI/Slider.hpp>
+#include <UI/StringListCellRenderer.hpp>
 #include <UI/TabbedPane.hpp>
 #include <UI/Toggle.hpp>

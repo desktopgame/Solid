@@ -27,6 +27,7 @@ set(SOURCES
     ./include/UI/Form.hpp
     ./include/UI/List.hpp
     ./include/UI/IListCellRenderer.hpp
+    ./include/UI/StringListCellRenderer.hpp
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
     ./lib/UI/Component.cpp
@@ -42,6 +43,7 @@ set(SOURCES
     ./lib/UI/Toggle.cpp
     ./lib/UI/ScrollPane.cpp
     ./lib/UI/Form.cpp
+    ./lib/UI/StringListCellRenderer.cpp
     ./lib/UI/RootPane.cpp
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp
