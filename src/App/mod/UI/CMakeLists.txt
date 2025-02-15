@@ -26,6 +26,7 @@ set(SOURCES
     ./include/UI/ScrollPane.hpp
     ./include/UI/Form.hpp
     ./include/UI/List.hpp
+    ./include/UI/IListCellRenderer.hpp
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
     ./lib/UI/Component.cpp

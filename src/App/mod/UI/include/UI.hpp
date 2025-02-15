@@ -8,6 +8,7 @@
 #include <UI/Container.hpp>
 #include <UI/Form.hpp>
 #include <UI/ILayoutManager.hpp>
+#include <UI/IListCellRenderer.hpp>
 #include <UI/Label.hpp>
 #include <UI/LayoutElement.hpp>
 #include <UI/LayoutHint.hpp>
