@@ -94,15 +94,30 @@ void GameScene::onEnter()
         m_map = std::make_shared<UI::Map>(m_field);
         auto mapScroll = std::make_shared<ScrollPane>();
         mapScroll->setView(m_map);
+        auto list = std::make_shared<List<std::u16string>>();
+        auto listCellRenderer = std::make_shared<StringListCellRenderer>();
+        listCellRenderer->setFont(m_fontMap);
+        listCellRenderer->setFontSize(8);
+        listCellRenderer->setPreferredSize(Vector2({ 30, 50 }));
+        list->setCellRenderer(listCellRenderer);
+        list->addItem(u"Hello1");
+        list->addItem(u"Hello2");
+        list->addItem(u"Hello3");
+        list->addItem(u"Hello4");
+        list->addItem(u"Hello5");
+        list->addItem(u"Hello6");
+        list->addItem(u"Hello7");
+        list->addItem(u"Hello8");
+        list->addItem(u"Hello9");
+        list->addItem(u"Hello10");
+        auto listScroll = std::make_shared<ScrollPane>();
+        listScroll->setView(list);
         auto sideBar = std::make_shared<Panel>();
         sideBar->setFlexible(true);
         sideBar->setLayout(std::make_shared<BorderLayout>());
         sideBar->setBackgroundColor(Color({ 1.0f, 1.0f, 0, 1.0f }));
-        sideBar->setMinimumSize(Vector2({ 120, 100 }));
-        auto piece = std::make_shared<UI::Piece>(std::vector<UI::Piece::Cell> {
-            UI::Piece::Cell(IntVector2({ 0, 0 })),
-            UI::Piece::Cell(IntVector2({ 1, 0 })) });
-        sideBar->addLayoutElement(std::make_shared<LayoutElement>(piece, std::make_shared<BorderLayout::Hint>("CENTER")));
+        sideBar->setMaximumSize(Vector2({ 150, 1000 }));
+        sideBar->addLayoutElement(std::make_shared<LayoutElement>(listScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(mapScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(sideBar, std::make_shared<BorderLayout::Hint>("RIGHT")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabMap, nullptr));
@@ -140,6 +155,7 @@ void GameScene::onEnter()
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(closeButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
 
+        m_pauseUI->doLayout();
         m_pauseUI->doLayout();
     }
     if (Cursor::isVisible()) {
