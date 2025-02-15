@@ -52,6 +52,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
     auto center = getGlobalPosition();
     auto left = center.x() - (size.x() / 2.0f);
     auto top = center.y() + (size.y() / 2.0f);
+    // ロード済みのチャンクを描画
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
             float routeOffsetX = static_cast<float>(x + 1) * k_routeSize;
@@ -89,6 +90,30 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                 k_chunkWidth,
                 k_chunkHeight });
             renderer->drawRect(rectPos, rectSize, 0.0f, chunkColor);
+
+            // チャンク内のエンティティも描画
+            for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
+                auto entity = chunk->getEntityAt(i);
+                auto entityPos = entity->getPosition();
+
+                if (entity->getCategory() == System::Entity::Category::PlayerTeam || entity->getCategory() == System::Entity::Category::EnemyTeam) {
+                    continue;
+                }
+
+                float entityOffsetX = (entityPos.x() - chunk->getPhysicalCenterX()) / System::Chunk::k_tileSize;
+                float entityOffsetZ = (entityPos.z() - chunk->getPhysicalCenterZ()) / System::Chunk::k_tileSize;
+                entityOffsetX *= (k_chunkWidth / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength));
+                entityOffsetZ *= (k_chunkHeight / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength));
+
+                renderer->drawRect(
+                    Vector2({ //
+                        (left + routeOffsetX + chunkOffsetX) + entityOffsetX,
+                        (top - (routeOffsetY + chunkOffsetY)) + entityOffsetZ }),
+                    Vector2({ //
+                        5.0f,
+                        5.0f }),
+                    0.0f, Vector4({ 1, 0, 0, 1 }));
+            }
         }
     }
 }
