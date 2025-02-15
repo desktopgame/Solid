@@ -1,4 +1,5 @@
 #pragma once
+#include <Graphics/Color.hpp>
 #include <UI/Container.hpp>
 #include <UI/ILayoutManager.hpp>
 #include <UI/IListCellRenderer.hpp>
@@ -36,6 +37,8 @@ public:
         , m_items()
         , m_cellRenderer()
         , m_selectedIndex(-1)
+        , m_unselectColor({ 0.6f, 0.6f, 0.6f, 1.0f })
+        , m_selectColor({ 0.6f, 0.8f, 0.6f, 1.0f })
     {
         setLayout(std::make_shared<Layout>());
     }
@@ -59,9 +62,15 @@ public:
             auto comp = m_cellRenderer->getListCellRendererComponent(self, item, i, isSelected);
             auto prefSize = comp->getPreferredSize();
 
-            // float spaceOffsetX = k_space;
             float spaceOffsetY = (i + 1) * k_space;
-            comp->setPosition(Math::Vector2({ left + ((size.x() - prefSize.x()) / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) }));
+            auto center = Math::Vector2({ left + ((size.x() - prefSize.x()) / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
+            if (i == m_selectedIndex) {
+                renderer->drawRect(center, Math::Vector2({ size.x(), prefSize.y() }), 0.0f, m_selectColor);
+            } else {
+                renderer->drawRect(center, Math::Vector2({ size.x(), prefSize.y() }), 0.0f, m_unselectColor);
+            }
+
+            comp->setPosition(center);
             comp->setSize(prefSize);
             comp->draw2D(renderer);
 
@@ -71,7 +80,7 @@ public:
 
     void modifyItems()
     {
-        calculateSize();
+        setPreferredSize(computePreferredSize());
     }
 
     void addItem(const T& item)
@@ -137,5 +146,7 @@ private:
     std::vector<T> m_items;
     std::shared_ptr<IListCellRenderer<T>> m_cellRenderer;
     int32_t m_selectedIndex;
+    Graphics::Color m_unselectColor;
+    Graphics::Color m_selectColor;
 };
 }
