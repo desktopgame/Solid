@@ -132,13 +132,34 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
 
             // フォーカスされたチャンクなら色変更
             if (m_pieceInfo && focusChunkX >= 0 && focusChunkY >= 0) {
+                bool coordMatchOk = false;
                 for (const auto& cell : m_pieceInfo->getCells()) {
                     int32_t cellX = cell.position.x() + focusChunkX;
                     int32_t cellY = cell.position.y() + focusChunkY;
                     if (x == cellX && y == cellY) {
-                        chunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
+                        coordMatchOk = true;
                         break;
                     }
+                }
+                bool existOk = true;
+                if (coordMatchOk) {
+                    for (const auto& cell : m_pieceInfo->getCells()) {
+                        int32_t cellX = cell.position.x() + focusChunkX;
+                        int32_t cellY = cell.position.y() + focusChunkY;
+
+                        int32_t cellChunkGridPosX = m_minChunkX + cellX;
+                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - cellY);
+
+                        std::optional<std::shared_ptr<System::Chunk>> atChunk;
+                        m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
+                        if (!atChunk) {
+                            existOk = false;
+                            break;
+                        }
+                    }
+                }
+                if (coordMatchOk && existOk) {
+                    chunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
                 }
             }
 
