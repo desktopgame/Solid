@@ -5,6 +5,7 @@
 #include <UI/Component.hpp>
 
 namespace App::Scenes::Game::System {
+class PieceInfo;
 class PieceInstanceCollection;
 }
 namespace App::Scenes::Game::UI {
@@ -16,6 +17,9 @@ public:
 
     void update() override;
     void draw2D(const std::shared_ptr<Renderer>& renderer) override;
+
+    void setPieceInfo(const std::shared_ptr<System::PieceInfo>& pieceInfo);
+    std::shared_ptr<System::PieceInfo> getPieceInfo() const;
 
     void setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection);
     std::shared_ptr<System::PieceInstanceCollection> getPieceInstanceCollection() const;
@@ -33,6 +37,7 @@ private:
     int32_t m_chunkCountX;
     int32_t m_chunkCountY;
 
+    std::shared_ptr<System::PieceInfo> m_pieceInfo;
     std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
 };
 }

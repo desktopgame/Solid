@@ -104,6 +104,7 @@ void GameScene::onEnter()
         auto mapScroll = std::make_shared<ScrollPane>();
         mapScroll->setView(m_map);
         m_pieceList = std::make_shared<List<std::shared_ptr<System::PieceInfo>>>();
+        m_pieceList->setOnSelected(std::bind(&GameScene::onSelectPieceInfo, this, std::placeholders::_1));
         auto pieceListCellRenderer = UI::PieceInfoListCellRenderer::create(m_fontMap, 16, Vector2({ 150, 50 }));
         pieceListCellRenderer->setPreferredSize(Vector2({ 300, 50 }));
         m_pieceList->setCellRenderer(pieceListCellRenderer);
@@ -256,5 +257,9 @@ void GameScene::onClickExitButton()
 #else
     m_nextScene = "Title";
 #endif
+}
+void GameScene::onSelectPieceInfo(int32_t index)
+{
+    m_map->setPieceInfo(m_pieceList->getItemAt(index));
 }
 }

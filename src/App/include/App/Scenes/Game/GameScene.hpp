@@ -32,6 +32,7 @@ public:
 private:
     void onClickPauseClose();
     void onClickExitButton();
+    void onSelectPieceInfo(int32_t index);
 
     Vector3 m_globalLightDir;
 
