@@ -97,13 +97,47 @@ void GameScene::onEnter()
         mapScroll->setView(m_map);
         auto list = std::make_shared<List<System::PieceInfo>>();
         auto listCellRenderer = UI::PieceInfoListCellRenderer::create(m_fontMap, 16, Vector2({ 150, 50 }));
-        listCellRenderer->setPreferredSize(Vector2({ 200, 50 }));
+        listCellRenderer->setPreferredSize(Vector2({ 300, 50 }));
         list->setCellRenderer(listCellRenderer);
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト1"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト2"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト3"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト4"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト5"));
+        list->addItem(System::PieceInfo(std::vector<System::Cell> {
+                                            System::Cell(IntVector2({ 0, 0 })),
+                                            System::Cell(IntVector2({ 1, 0 })),
+                                            System::Cell(IntVector2({ 2, 0 })),
+                                        },
+            u"サンプルテキスト1"));
+        list->addItem(System::PieceInfo(std::vector<System::Cell> {
+                                            System::Cell(IntVector2({ 0, 0 })),
+                                            System::Cell(IntVector2({ 0, 1 })),
+                                            System::Cell(IntVector2({ 0, 2 })),
+                                        },
+            u"サンプルテキスト2"));
+        list->addItem(System::PieceInfo(std::vector<System::Cell> {
+                                            System::Cell(IntVector2({ 0, 0 })),
+                                            System::Cell(IntVector2({ 1, 0 })),
+                                            System::Cell(IntVector2({ 2, 0 })),
+                                            System::Cell(IntVector2({ 3, 0 })),
+                                            System::Cell(IntVector2({ 3, 1 })),
+                                            System::Cell(IntVector2({ 3, 2 })),
+                                        },
+            u"サンプルテキスト3"));
+        list->addItem(System::PieceInfo(std::vector<System::Cell> {
+                                            System::Cell(IntVector2({ 0, 0 })),
+                                            System::Cell(IntVector2({ 1, 0 })),
+                                            System::Cell(IntVector2({ 2, 0 })),
+                                            System::Cell(IntVector2({ 3, 0 })),
+                                            System::Cell(IntVector2({ 4, 0 })),
+                                            System::Cell(IntVector2({ 5, 0 })),
+                                        },
+            u"サンプルテキスト4"));
+        list->addItem(System::PieceInfo(std::vector<System::Cell> {
+                                            System::Cell(IntVector2({ 0, 0 })),
+                                            System::Cell(IntVector2({ 0, 1 })),
+                                            System::Cell(IntVector2({ 0, 2 })),
+                                            System::Cell(IntVector2({ 0, 3 })),
+                                            System::Cell(IntVector2({ 0, 4 })),
+                                            System::Cell(IntVector2({ 0, 5 })),
+                                        },
+            u"サンプルテキスト5"));
         list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト6"));
         list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト7"));
         list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト8"));

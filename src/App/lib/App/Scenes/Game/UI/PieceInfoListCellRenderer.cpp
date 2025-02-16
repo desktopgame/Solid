@@ -19,6 +19,9 @@ std::shared_ptr<Component> PieceInfoListCellRenderer::getListCellRendererCompone
     } else {
         setBackgroundColor(list->getUnselectColor());
     }
+    auto size = getLayout()->computePreferredSize(std::static_pointer_cast<Container>(self));
+    setSize(size);
+    setPreferredSize(size);
     doLayout();
     return self;
 }
@@ -40,6 +43,5 @@ void PieceInfoListCellRenderer::init(const std::shared_ptr<FontMap>& fontMap, in
     m_label->setFontSize(fontSize);
     m_label->setPreferredSize(labelPreferredSize);
     addLayoutElement(std::make_shared<LayoutElement>(m_label, nullptr));
-    doLayout();
 }
 }
