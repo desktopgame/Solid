@@ -1,3 +1,4 @@
+#include <App/Scenes/Game/System/PieceInfo.hpp>
 #include <App/Scenes/Game/UI/Map.hpp>
 
 namespace App::Scenes::Game::UI {
@@ -50,10 +51,48 @@ void Map::setup()
 void Map::update() { }
 void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
 {
+    auto inputSystem = InputSystem::getInstance();
+    auto mousePos = inputSystem->getMouse()->getPosition();
+
+    auto screenPos = (((Vector2)mousePos / (Vector2)Screen::getSize()) - Vector2({ 0.5f, 0.5f })) * (Vector2)Screen::getSize();
+    screenPos.y() *= -1;
+
     auto size = getSize();
     auto center = getGlobalPosition();
     float left = center.x() - (size.x() / 2.0f);
     float top = center.y() + (size.y() / 2.0f);
+    // フォーカスされているチャンクを検索する
+    int32_t focusChunkX = -1;
+    int32_t focusChunkY = -1;
+    for (int32_t x = 0; x < m_chunkCountX; x++) {
+        for (int32_t y = 0; y < m_chunkCountY; y++) {
+            float routeOffsetX = static_cast<float>(x + 1) * k_routeSize;
+            float routeOffsetY = static_cast<float>(y + 1) * k_routeSize;
+            float chunkOffsetX = (x * k_chunkWidth) + (k_chunkWidth / 2.0f);
+            float chunkOffsetY = (y * k_chunkHeight) + (k_chunkHeight / 2.0f);
+
+            auto rectPos = Vector2({ //
+                left + routeOffsetX + chunkOffsetX,
+                top - (routeOffsetY + chunkOffsetY) });
+            auto rectSize = Vector2({ //
+                k_chunkWidth,
+                k_chunkHeight });
+
+            bool hasFocus = true;
+            if (screenPos.x() < rectPos.x() - (rectSize.x() / 2.0f) || screenPos.x() > rectPos.x() + (rectSize.x() / 2.0f)) {
+                hasFocus = false;
+            }
+            if (screenPos.y() < rectPos.y() - (rectSize.y() / 2.0f) || screenPos.y() > rectPos.y() + (rectSize.y() / 2.0f)) {
+                hasFocus = false;
+            }
+            if (hasFocus) {
+                focusChunkX = x;
+                focusChunkY = y;
+                break;
+            }
+        }
+    }
+
     // ロード済みのチャンクを描画
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
@@ -88,6 +127,18 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                     chunkColor = Vector4({ 0.5f, 0, 0, 1 });
                 } else {
                     chunkColor = Vector4({ 0, 0.5f, 0, 1 });
+                }
+            }
+
+            // フォーカスされたチャンクなら色変更
+            if (m_pieceInfo && focusChunkX >= 0 && focusChunkY >= 0) {
+                for (const auto& cell : m_pieceInfo->getCells()) {
+                    int32_t cellX = cell.position.x() + focusChunkX;
+                    int32_t cellY = cell.position.y() + focusChunkY;
+                    if (x == cellX && y == cellY) {
+                        chunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
+                        break;
+                    }
                 }
             }
 
