@@ -8,28 +8,11 @@ Math::Vector2 LayoutUtilities::measurePreferredSize(const std::shared_ptr<Compon
         return Math::Vector2({ 0, 0 });
     }
     auto prefSize = c->getPreferredSize();
-    if (Math::Mathf::equals(prefSize.x(), 0.0f) || Math::Mathf::equals(prefSize.y(), 0.0f)) {
-        auto container = std::dynamic_pointer_cast<Container>(c);
-        if (container) {
-            auto layout = container->getLayout();
-            if (layout) {
-                prefSize = layout->computePreferredSize(container);
-            }
-        }
-    }
-    return prefSize;
-}
-
-Math::Vector2 LayoutUtilities::measurePreferredSize(const std::shared_ptr<Container>& c)
-{
-    if (!c) {
-        return Math::Vector2({ 0, 0 });
-    }
-    auto prefSize = c->getPreferredSize();
-    if (Math::Mathf::equals(prefSize.x(), 0.0f) || Math::Mathf::equals(prefSize.y(), 0.0f)) {
-        auto layout = c->getLayout();
+    auto container = std::dynamic_pointer_cast<Container>(c);
+    if (container) {
+        auto layout = container->getLayout();
         if (layout) {
-            prefSize = layout->computePreferredSize(c);
+            prefSize = layout->computePreferredSize(container);
         }
     }
     return prefSize;
