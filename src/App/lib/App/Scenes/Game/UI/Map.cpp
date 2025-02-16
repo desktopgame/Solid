@@ -41,8 +41,8 @@ void Map::setup()
             m_maxChunkY = gridPos.y();
         }
     }
-    m_chunkCountX = (m_maxChunkX - m_minChunkX);
-    m_chunkCountY = (m_maxChunkY - m_minChunkY);
+    m_chunkCountX = (m_maxChunkX - m_minChunkX) + 1;
+    m_chunkCountY = (m_maxChunkY - m_minChunkY) + 1;
     setPreferredSize(Vector2({ //
         (m_chunkCountX * k_chunkWidth) + ((m_chunkCountX + 1) * k_routeSize),
         (m_chunkCountY * k_chunkHeight) + ((m_chunkCountX + 1) * k_routeSize) }));
@@ -102,7 +102,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             float chunkOffsetY = (y * k_chunkHeight) + (k_chunkHeight / 2.0f);
 
             int32_t chunkGridPosX = m_minChunkX + x;
-            int32_t chunkGridPosY = m_minChunkY + (m_chunkCountY - y);
+            int32_t chunkGridPosY = m_minChunkY + (m_chunkCountY - (y + 1));
 
             std::optional<std::shared_ptr<System::Chunk>> optChunk;
             m_field->tryFindChunk(optChunk, IntVector2({ chunkGridPosX, chunkGridPosY }));
