@@ -22,6 +22,8 @@ GameScene::GameScene()
     , m_debugEntity()
     , m_aimTexture()
     , m_minimap()
+    , m_map()
+    , m_pieceList()
     , m_pauseUI()
     , m_requestPauseClose()
     , m_nextScene()
@@ -101,21 +103,21 @@ void GameScene::onEnter()
         m_map->setPieceInstanceCollection(m_pieceInstanceCollection);
         auto mapScroll = std::make_shared<ScrollPane>();
         mapScroll->setView(m_map);
-        auto list = std::make_shared<List<std::shared_ptr<System::PieceInfo>>>();
-        auto listCellRenderer = UI::PieceInfoListCellRenderer::create(m_fontMap, 16, Vector2({ 150, 50 }));
-        listCellRenderer->setPreferredSize(Vector2({ 300, 50 }));
-        list->setCellRenderer(listCellRenderer);
+        m_pieceList = std::make_shared<List<std::shared_ptr<System::PieceInfo>>>();
+        auto pieceListCellRenderer = UI::PieceInfoListCellRenderer::create(m_fontMap, 16, Vector2({ 150, 50 }));
+        pieceListCellRenderer->setPreferredSize(Vector2({ 300, 50 }));
+        m_pieceList->setCellRenderer(pieceListCellRenderer);
         for (const auto& pieceInfo : System::PieceRegistry::s_pieces) {
-            list->addItem(pieceInfo);
+            m_pieceList->addItem(pieceInfo);
         }
-        list->setFlexible(true);
-        auto listScroll = std::make_shared<ScrollPane>();
-        listScroll->setView(list);
+        m_pieceList->setFlexible(true);
+        auto pieceListScroll = std::make_shared<ScrollPane>();
+        pieceListScroll->setView(m_pieceList);
         auto sideBar = std::make_shared<Panel>();
         sideBar->setFlexible(true);
         sideBar->setLayout(std::make_shared<BorderLayout>());
         sideBar->setBackgroundColor(Color({ 1.0f, 1.0f, 0, 1.0f }));
-        sideBar->addLayoutElement(std::make_shared<LayoutElement>(listScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
+        sideBar->addLayoutElement(std::make_shared<LayoutElement>(pieceListScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(mapScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(sideBar, std::make_shared<BorderLayout::Hint>("RIGHT")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabMap, nullptr));

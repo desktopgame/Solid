@@ -45,6 +45,7 @@ private:
 
     std::shared_ptr<RootPane> m_minimap;
     std::shared_ptr<UI::Map> m_map;
+    std::shared_ptr<List<std::shared_ptr<System::PieceInfo>>> m_pieceList;
     std::shared_ptr<RootPane> m_pauseUI;
     bool m_requestPauseClose;
 
