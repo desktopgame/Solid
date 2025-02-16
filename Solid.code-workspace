@@ -33,6 +33,10 @@
 			"name": "Scene"
 		},
 		{
+			"path": "src/App/mod/UI",
+			"name": "UI"
+		},
+		{
 			"path": "src/App/mod/Uuid",
 			"name": "Uuid"
 		},
