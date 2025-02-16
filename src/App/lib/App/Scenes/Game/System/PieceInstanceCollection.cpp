@@ -1,0 +1,1 @@
+#include <App/Scenes/Game/System/PieceInstanceCollection.hpp>
