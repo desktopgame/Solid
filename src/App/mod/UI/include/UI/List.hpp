@@ -63,7 +63,7 @@ public:
             auto prefSize = comp->getPreferredSize();
 
             float spaceOffsetY = (i + 1) * k_space;
-            auto center = Math::Vector2({ left + ((size.x() - prefSize.x()) / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
+            auto center = Math::Vector2({ left + (prefSize.x() / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
             if (i == m_selectedIndex) {
                 renderer->drawRect(center, Math::Vector2({ size.x(), prefSize.y() }), 0.0f, m_selectColor);
             } else {

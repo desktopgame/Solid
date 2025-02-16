@@ -97,8 +97,7 @@ void GameScene::onEnter()
         auto list = std::make_shared<List<std::u16string>>();
         auto listCellRenderer = std::make_shared<StringListCellRenderer>();
         listCellRenderer->setFont(m_fontMap);
-        listCellRenderer->setFontSize(8);
-        listCellRenderer->setPreferredSize(Vector2({ 30, 50 }));
+        listCellRenderer->setPreferredSize(Vector2({ 100, 50 }));
         list->setCellRenderer(listCellRenderer);
         list->addItem(u"Hello1");
         list->addItem(u"Hello2");
@@ -117,7 +116,6 @@ void GameScene::onEnter()
         sideBar->setFlexible(true);
         sideBar->setLayout(std::make_shared<BorderLayout>());
         sideBar->setBackgroundColor(Color({ 1.0f, 1.0f, 0, 1.0f }));
-        sideBar->setMaximumSize(Vector2({ 150, 1000 }));
         sideBar->addLayoutElement(std::make_shared<LayoutElement>(listScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(mapScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabMap->addLayoutElement(std::make_shared<LayoutElement>(sideBar, std::make_shared<BorderLayout::Hint>("RIGHT")));
