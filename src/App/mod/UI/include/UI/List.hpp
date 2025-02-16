@@ -165,6 +165,12 @@ public:
         return m_selectedIndex;
     }
 
+    void setUnselectColor(const Graphics::Color& unselectColor) { m_unselectColor = unselectColor; }
+    Graphics::Color getUnselectColor() const { return m_unselectColor; }
+
+    void setSelectColor(const Graphics::Color& selectColor) { m_selectColor = selectColor; }
+    Graphics::Color getSelectColor() const { return m_selectColor; }
+
     Math::Vector2 computePreferredSize()
     {
         if (m_cellRenderer) {

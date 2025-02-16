@@ -1,22 +1,18 @@
 #pragma once
+#include <App/Scenes/Game/System/Cell.hpp>
 #include <App/library.hpp>
 #include <vector>
 
 namespace App::Scenes::Game::UI {
 class Piece : public Component {
 public:
-    class Cell {
-    public:
-        explicit Cell(const IntVector2& position);
-        IntVector2 position;
-    };
-
-    explicit Piece(const std::vector<Cell>& cells);
+    explicit Piece();
 
     void update() override;
     void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
-    const std::vector<Cell> cells;
+    void setCells(const std::vector<System::Cell>& cells);
+    const std::vector<System::Cell>& getCells() const;
 
 private:
     static inline constexpr float k_cellSize = 10.0f;
@@ -28,5 +24,6 @@ private:
     int32_t m_maxCellY = -999;
     int32_t m_cellCountX;
     int32_t m_cellCountY;
+    std::vector<System::Cell> m_cells;
 };
 }
