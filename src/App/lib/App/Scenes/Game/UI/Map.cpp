@@ -11,6 +11,7 @@ Map::Map(const std::shared_ptr<System::Field>& field)
     , m_maxChunkY()
     , m_chunkCountX()
     , m_chunkCountY()
+    , m_pieceInstanceCollection()
 {
 }
 
@@ -144,4 +145,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             5.0f }),
         0.0f, Vector4({ 0, 1, 0, 1 }));
 }
+
+void Map::setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection) { m_pieceInstanceCollection = pieceInstanceCollection; }
+std::shared_ptr<System::PieceInstanceCollection> Map::getPieceInstanceCollection() const { return m_pieceInstanceCollection; }
 }

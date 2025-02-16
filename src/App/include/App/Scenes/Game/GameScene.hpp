@@ -2,6 +2,7 @@
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <App/Scenes/Game/System/Field.hpp>
+#include <App/Scenes/Game/System/PieceInstanceCollection.hpp>
 #include <App/Scenes/Game/UI/Map.hpp>
 #include <App/Scenes/Game/UI/Minimap.hpp>
 #include <App/library.hpp>
@@ -37,6 +38,7 @@ private:
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<FontMap> m_fontMap;
     std::shared_ptr<System::Field> m_field;
+    std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
     std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
     std::shared_ptr<Texture> m_aimTexture;

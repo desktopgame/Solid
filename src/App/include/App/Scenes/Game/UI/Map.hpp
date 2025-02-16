@@ -4,6 +4,9 @@
 #include <App/Scenes/Game/System/Field.hpp>
 #include <UI/Component.hpp>
 
+namespace App::Scenes::Game::System {
+class PieceInstanceCollection;
+}
 namespace App::Scenes::Game::UI {
 class Map : public Component {
 public:
@@ -13,6 +16,9 @@ public:
 
     void update() override;
     void draw2D(const std::shared_ptr<Renderer>& renderer) override;
+
+    void setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection);
+    std::shared_ptr<System::PieceInstanceCollection> getPieceInstanceCollection() const;
 
 private:
     static inline constexpr float k_chunkWidth = 50;
@@ -26,5 +32,7 @@ private:
     int32_t m_maxChunkY;
     int32_t m_chunkCountX;
     int32_t m_chunkCountY;
+
+    std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
 };
 }
