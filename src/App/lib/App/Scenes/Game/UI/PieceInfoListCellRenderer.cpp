@@ -12,8 +12,8 @@ std::shared_ptr<PieceInfoListCellRenderer> PieceInfoListCellRenderer::create(con
 std::shared_ptr<Component> PieceInfoListCellRenderer::getListCellRendererComponent(const std::shared_ptr<List<std::shared_ptr<System::PieceInfo>>>& list, const std::shared_ptr<System::PieceInfo>& item, int32_t index, bool isSelected)
 {
     auto self = shared_from_this();
-    m_piece->setCells(item->cells);
-    m_label->setText(item->text);
+    m_piece->setCells(item->getCells());
+    m_label->setText(item->getText());
     if (isSelected) {
         setBackgroundColor(list->getSelectColor());
     } else {
