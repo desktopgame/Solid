@@ -155,8 +155,6 @@ void GameScene::onEnter()
 
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(closeButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
-
-        m_pauseUI->doLayout();
     }
     if (Cursor::isVisible()) {
         Cursor::hide();
