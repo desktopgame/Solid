@@ -55,10 +55,9 @@ public:
         auto screenPos = (((Math::Vector2)mousePos / (Math::Vector2)Graphics::Screen::getSize()) - Math::Vector2({ 0.5f, 0.5f })) * (Math::Vector2)Graphics::Screen::getSize();
         screenPos.y() *= -1;
 
-        auto center = getGlobalPosition();
+        auto listCenter = getGlobalPosition();
         auto size = getSize();
-        float left = center.x() - (size.x() / 2.0f);
-        float top = center.y() + (size.y() / 2.0f);
+        float top = listCenter.y() + (size.y() / 2.0f);
         float elementOffsetY = 0.0f;
         auto self = std::static_pointer_cast<List<T>>(shared_from_this());
         for (int32_t i = 0; i < static_cast<int32_t>(m_items.size()); i++) {
@@ -68,7 +67,7 @@ public:
             auto prefSize = comp->getPreferredSize();
 
             float spaceOffsetY = (i + 1) * k_space;
-            auto center = Math::Vector2({ left + (prefSize.x() / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
+            auto center = Math::Vector2({ listCenter.x(), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
             comp->setPosition(center);
             comp->setSize(prefSize);
             if (comp->isContains(screenPos)) {
@@ -94,10 +93,9 @@ public:
         if (!m_cellRenderer) {
             return;
         }
-        auto center = getGlobalPosition();
+        auto listCenter = getGlobalPosition();
         auto size = getSize();
-        float left = center.x() - (size.x() / 2.0f);
-        float top = center.y() + (size.y() / 2.0f);
+        float top = listCenter.y() + (size.y() / 2.0f);
         float elementOffsetY = 0.0f;
         auto self = std::static_pointer_cast<List<T>>(shared_from_this());
         for (int32_t i = 0; i < static_cast<int32_t>(m_items.size()); i++) {
@@ -107,11 +105,11 @@ public:
             auto prefSize = comp->getPreferredSize();
 
             float spaceOffsetY = (i + 1) * k_space;
-            auto center = Math::Vector2({ left + (prefSize.x() / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
+            auto center = Math::Vector2({ listCenter.x(), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
             if (i == m_selectedIndex) {
-                renderer->drawRect(center, Math::Vector2({ size.x(), prefSize.y() }), 0.0f, m_selectColor);
+                renderer->drawRect(center, Math::Vector2({ size.x() - (k_space * 2), prefSize.y() }), 0.0f, m_selectColor);
             } else {
-                renderer->drawRect(center, Math::Vector2({ size.x(), prefSize.y() }), 0.0f, m_unselectColor);
+                renderer->drawRect(center, Math::Vector2({ size.x() - (k_space * 2), prefSize.y() }), 0.0f, m_unselectColor);
             }
 
             comp->setPosition(center);
@@ -185,7 +183,7 @@ public:
                 totalHeight += prefSize.y();
             }
             totalHeight += (m_items.size() + 1) * k_space;
-            return Math::Vector2({ maxWidth, totalHeight });
+            return Math::Vector2({ maxWidth + (k_space * 2), totalHeight });
         }
         return Math::Vector2({ 0, 0 });
     }

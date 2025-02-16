@@ -47,14 +47,8 @@ Math::Vector2 ScrollPane::Layout::computePreferredSize(const std::shared_ptr<Con
 {
     auto scrollPane = std::static_pointer_cast<ScrollPane>(parent);
     auto view = scrollPane->getView();
-    auto viewContainer = std::dynamic_pointer_cast<Container>(view);
-    if (viewContainer) {
-        auto layout = viewContainer->getLayout();
-        if (layout) {
-            return layout->computePreferredSize(viewContainer);
-        }
-    }
-    return view->getPreferredSize();
+    auto viewSize = LayoutUtilities::measurePreferredSize(view);
+    return viewSize + Math::Vector2({ k_scrollBarSize, k_scrollBarSize });
 }
 Math::Vector2 ScrollPane::Layout::availableSizeFor(const std::shared_ptr<Container>& parent, const std::shared_ptr<Container>& container, const std::shared_ptr<LayoutHint>& hint)
 {
