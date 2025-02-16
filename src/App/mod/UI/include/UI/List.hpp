@@ -3,6 +3,7 @@
 #include <UI/Container.hpp>
 #include <UI/ILayoutManager.hpp>
 #include <UI/IListCellRenderer.hpp>
+#include <functional>
 #include <vector>
 
 namespace Lib::UI {
@@ -158,6 +159,9 @@ public:
     void setSelectedIndex(int32_t selectedIndex)
     {
         m_selectedIndex = selectedIndex;
+        if (m_onSelected) {
+            m_onSelected(selectedIndex);
+        }
     }
 
     int32_t getSelectedIndex() const
@@ -170,6 +174,9 @@ public:
 
     void setSelectColor(const Graphics::Color& selectColor) { m_selectColor = selectColor; }
     Graphics::Color getSelectColor() const { return m_selectColor; }
+
+    void setOnSelected(const std::function<void(int32_t)>& onSelected) { m_onSelected = onSelected; }
+    std::function<void(int32_t)> getOnSelected() const { return m_onSelected; }
 
     Math::Vector2 computePreferredSize()
     {
@@ -201,5 +208,6 @@ private:
     int32_t m_selectedIndex;
     Graphics::Color m_unselectColor;
     Graphics::Color m_selectColor;
+    std::function<void(int32_t)> m_onSelected;
 };
 }
