@@ -71,7 +71,7 @@ void GameScene::onEnter()
     if (!m_pauseUI) {
         m_pauseUI = RootPane::create();
         m_pauseUI->setPosition(Vector2({ 0, 0 }));
-        m_pauseUI->setSize(Vector2({ 500, 400 }));
+        m_pauseUI->setSize(Vector2({ 600, 400 }));
 
         auto tabbedPane = std::make_shared<TabbedPane>();
         tabbedPane->setFont(m_fontMap);
