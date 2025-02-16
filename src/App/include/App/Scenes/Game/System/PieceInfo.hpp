@@ -8,6 +8,6 @@ public:
     explicit PieceInfo(const std::vector<Cell>& cells, const std::u16string& text);
 
     const std::vector<Cell> cells;
-    std::u16string text;
+    const std::u16string text;
 };
 }
