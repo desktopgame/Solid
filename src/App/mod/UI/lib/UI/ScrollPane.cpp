@@ -20,6 +20,7 @@ void ScrollPane::Layout::resizeContainer(const std::shared_ptr<Container>& paren
 void ScrollPane::Layout::layoutContainer(const std::shared_ptr<Container>& parent)
 {
     auto scrollPane = std::static_pointer_cast<ScrollPane>(parent);
+    auto scrollPaneSize = scrollPane->getSize();
     auto view = scrollPane->getView();
     auto viewSize = view->getPreferredSize();
     float hPos = scrollPane->getHorizontalScrollPosition();
@@ -39,9 +40,18 @@ void ScrollPane::Layout::layoutContainer(const std::shared_ptr<Container>& paren
     if (viewSize.y() < scrollPane->getSize().y()) {
         baseOffsetY = 0;
     }
+
+    float viewPosX = baseOffsetX - scrollOffsetX;
+    if (viewSize.x() <= scrollPaneSize.x() - k_scrollBarSize) {
+        viewPosX = -k_scrollBarSize / 2.0f;
+    }
+    float viewPosY = baseOffsetY + scrollOffsetY;
+    if (viewSize.y() <= scrollPaneSize.y() - k_scrollBarSize) {
+        viewPosY = k_scrollBarSize / 2.0f;
+    }
     view->setPosition(Math::Vector2({ //
-        baseOffsetX - scrollOffsetX,
-        baseOffsetY + scrollOffsetY }));
+        viewPosX,
+        viewPosY }));
 }
 Math::Vector2 ScrollPane::Layout::computePreferredSize(const std::shared_ptr<Container>& parent)
 {
