@@ -38,8 +38,8 @@ void Map::setup()
             m_maxChunkY = gridPos.y();
         }
     }
-    m_chunkCountX = m_maxChunkX - m_minChunkX;
-    m_chunkCountY = m_maxChunkY - m_minChunkY;
+    m_chunkCountX = (m_maxChunkX - m_minChunkX) + 1;
+    m_chunkCountY = (m_maxChunkY - m_minChunkY) + 1;
     setPreferredSize(Vector2({ //
         (m_chunkCountX * k_chunkWidth) + ((m_chunkCountX + 1) * k_routeSize),
         (m_chunkCountY * k_chunkHeight) + ((m_chunkCountX + 1) * k_routeSize) }));
@@ -62,8 +62,14 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
 
             int32_t chunkGridPosX = m_minChunkX + x;
             int32_t chunkGridPosY = m_minChunkY + (m_chunkCountY - y);
-            auto chunk = m_field->loadChunk(IntVector2({ chunkGridPosX, chunkGridPosY }));
 
+            std::optional<std::shared_ptr<System::Chunk>> optChunk;
+            m_field->tryFindChunk(optChunk, IntVector2({ chunkGridPosX, chunkGridPosY }));
+            if (!optChunk) {
+                continue;
+            }
+
+            auto chunk = *optChunk;
             Color chunkColor = Color({ 1, 1, 1, 1 });
             if (!chunk) {
                 chunkColor = Color({ 0.1f, 0.1f, 0.1f, 1 });
