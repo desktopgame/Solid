@@ -4,11 +4,11 @@
 #include <App/library.hpp>
 
 namespace App::Scenes::Game::UI {
-class PieceInfoListCellRenderer : public Panel, public IListCellRenderer<System::PieceInfo> {
+class PieceInfoListCellRenderer : public Panel, public IListCellRenderer<std::shared_ptr<System::PieceInfo>> {
 public:
     static std::shared_ptr<PieceInfoListCellRenderer> create(const std::shared_ptr<FontMap>& fontMap, int32_t fontSize, const Vector2& labelPreferredSize);
 
-    std::shared_ptr<Component> getListCellRendererComponent(const std::shared_ptr<List<System::PieceInfo>>& list, const System::PieceInfo& item, int32_t index, bool isSelected) override;
+    std::shared_ptr<Component> getListCellRendererComponent(const std::shared_ptr<List<std::shared_ptr<System::PieceInfo>>>& list, const std::shared_ptr<System::PieceInfo>& item, int32_t index, bool isSelected) override;
 
 private:
     PieceInfoListCellRenderer();

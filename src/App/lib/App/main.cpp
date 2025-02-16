@@ -11,6 +11,7 @@
 #include <App/Scenes/Debug/DebugScene.hpp>
 #include <App/Scenes/Demo/DemoScene.hpp>
 #include <App/Scenes/Game/GameScene.hpp>
+#include <App/Scenes/Game/System/PieceRegistry.hpp>
 #include <App/Scenes/Title/TitleScene.hpp>
 #include <App/test.hpp>
 using namespace App::Common;
@@ -39,6 +40,7 @@ static int appMain(int argc, char* argv[])
     Graphics::NodeRegistry::initialize();
     Graphics::ParticleSystem::initialize();
     Graphics::TelopSystem::initialize();
+    Game::System::PieceRegistry::initialize();
 
     window->show();
     bool running = true;
@@ -66,6 +68,7 @@ static int appMain(int argc, char* argv[])
         Time::sync();
     }
 
+    Game::System::PieceRegistry::destroy();
     Graphics::TelopSystem::destroy();
     Graphics::ParticleSystem::destroy();
     Graphics::NodeRegistry::destroy();

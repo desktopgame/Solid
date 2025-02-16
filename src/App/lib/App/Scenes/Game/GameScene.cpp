@@ -4,6 +4,7 @@
 #include <App/Scenes/Game/GameScene.hpp>
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/SlimeEntity.hpp>
+#include <App/Scenes/Game/System/PieceRegistry.hpp>
 #include <App/Scenes/Game/UI/Piece.hpp>
 #include <App/Scenes/Game/UI/PieceInfoListCellRenderer.hpp>
 #include <cmath>
@@ -95,54 +96,13 @@ void GameScene::onEnter()
         m_map = std::make_shared<UI::Map>(m_field);
         auto mapScroll = std::make_shared<ScrollPane>();
         mapScroll->setView(m_map);
-        auto list = std::make_shared<List<System::PieceInfo>>();
+        auto list = std::make_shared<List<std::shared_ptr<System::PieceInfo>>>();
         auto listCellRenderer = UI::PieceInfoListCellRenderer::create(m_fontMap, 16, Vector2({ 150, 50 }));
         listCellRenderer->setPreferredSize(Vector2({ 300, 50 }));
         list->setCellRenderer(listCellRenderer);
-        list->addItem(System::PieceInfo(std::vector<System::Cell> {
-                                            System::Cell(IntVector2({ 0, 0 })),
-                                            System::Cell(IntVector2({ 1, 0 })),
-                                            System::Cell(IntVector2({ 2, 0 })),
-                                        },
-            u"サンプルテキスト1"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> {
-                                            System::Cell(IntVector2({ 0, 0 })),
-                                            System::Cell(IntVector2({ 0, 1 })),
-                                            System::Cell(IntVector2({ 0, 2 })),
-                                        },
-            u"サンプルテキスト2"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> {
-                                            System::Cell(IntVector2({ 0, 0 })),
-                                            System::Cell(IntVector2({ 1, 0 })),
-                                            System::Cell(IntVector2({ 2, 0 })),
-                                            System::Cell(IntVector2({ 3, 0 })),
-                                            System::Cell(IntVector2({ 3, 1 })),
-                                            System::Cell(IntVector2({ 3, 2 })),
-                                        },
-            u"サンプルテキスト3"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> {
-                                            System::Cell(IntVector2({ 0, 0 })),
-                                            System::Cell(IntVector2({ 1, 0 })),
-                                            System::Cell(IntVector2({ 2, 0 })),
-                                            System::Cell(IntVector2({ 3, 0 })),
-                                            System::Cell(IntVector2({ 4, 0 })),
-                                            System::Cell(IntVector2({ 5, 0 })),
-                                        },
-            u"サンプルテキスト4"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> {
-                                            System::Cell(IntVector2({ 0, 0 })),
-                                            System::Cell(IntVector2({ 0, 1 })),
-                                            System::Cell(IntVector2({ 0, 2 })),
-                                            System::Cell(IntVector2({ 0, 3 })),
-                                            System::Cell(IntVector2({ 0, 4 })),
-                                            System::Cell(IntVector2({ 0, 5 })),
-                                        },
-            u"サンプルテキスト5"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト6"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト7"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト8"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト9"));
-        list->addItem(System::PieceInfo(std::vector<System::Cell> { System::Cell(IntVector2({ 0, 0 })) }, u"サンプルテキスト10"));
+        for (const auto& pieceInfo : System::PieceRegistry::s_pieces) {
+            list->addItem(pieceInfo);
+        }
         list->setFlexible(true);
         auto listScroll = std::make_shared<ScrollPane>();
         listScroll->setView(list);
