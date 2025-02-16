@@ -43,7 +43,51 @@ public:
         setLayout(std::make_shared<Layout>());
     }
 
-    void update() { }
+    void update()
+    {
+        if (!m_cellRenderer) {
+            return;
+        }
+        auto inputSystem = Input::InputSystem::getInstance();
+        auto mousePos = inputSystem->getMouse()->getPosition();
+        auto mouseStatus = inputSystem->getMouse()->getState(Input::Mouse::Button::Left);
+
+        auto screenPos = (((Math::Vector2)mousePos / (Math::Vector2)Graphics::Screen::getSize()) - Math::Vector2({ 0.5f, 0.5f })) * (Math::Vector2)Graphics::Screen::getSize();
+        screenPos.y() *= -1;
+
+        auto center = getGlobalPosition();
+        auto size = getSize();
+        float left = center.x() - (size.x() / 2.0f);
+        float top = center.y() + (size.y() / 2.0f);
+        float elementOffsetY = 0.0f;
+        auto self = std::static_pointer_cast<List<T>>(shared_from_this());
+        for (int32_t i = 0; i < static_cast<int32_t>(m_items.size()); i++) {
+            const auto& item = m_items.at(i);
+            bool isSelected = m_selectedIndex == i;
+            auto comp = m_cellRenderer->getListCellRendererComponent(self, item, i, isSelected);
+            auto prefSize = comp->getPreferredSize();
+
+            float spaceOffsetY = (i + 1) * k_space;
+            auto center = Math::Vector2({ left + (prefSize.x() / 2.0f), top - (spaceOffsetY + elementOffsetY + (prefSize.y() / 2.0f)) });
+            comp->setPosition(center);
+            comp->setSize(prefSize);
+            if (comp->isContains(screenPos)) {
+                switch (mouseStatus) {
+                case Input::ButtonState::None:
+                    break;
+                case Input::ButtonState::Pressed:
+                    break;
+                case Input::ButtonState::Released:
+                    break;
+                case Input::ButtonState::Trigger:
+                    setSelectedIndex(i);
+                    break;
+                }
+            }
+
+            elementOffsetY += prefSize.y();
+        }
+    }
 
     void draw2D(const std::shared_ptr<Graphics::Renderer>& renderer)
     {
@@ -111,6 +155,16 @@ public:
     std::shared_ptr<IListCellRenderer<T>> getCellRenderer() const
     {
         return m_cellRenderer;
+    }
+
+    void setSelectedIndex(int32_t selectedIndex)
+    {
+        m_selectedIndex = selectedIndex;
+    }
+
+    int32_t getSelectedIndex() const
+    {
+        return m_selectedIndex;
     }
 
     Math::Vector2 computePreferredSize()
