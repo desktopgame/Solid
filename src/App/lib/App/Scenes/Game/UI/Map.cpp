@@ -92,9 +92,6 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             }
         }
     }
-    if (focusChunkX && focusChunkY) {
-        std::cout << "focusX=" << (*focusChunkX) << " focusY=" << (*focusChunkY) << std::endl;
-    }
 
     // ロード済みのチャンクを描画
     for (int32_t x = 0; x < m_chunkCountX; x++) {
