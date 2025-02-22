@@ -136,6 +136,10 @@ void Map::update()
                         existOk = false;
                         break;
                     }
+                    if ((*atChunk)->countEntity(System::Entity::Category::Enemy) > 0) {
+                        existOk = false;
+                        break;
+                    }
                 }
             }
             if (coordMatchOk && existOk) {
