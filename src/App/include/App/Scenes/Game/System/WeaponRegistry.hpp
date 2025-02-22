@@ -9,6 +9,7 @@ public:
     static void initialize();
     static void destroy();
 
-    static std::shared_ptr<Weapon> s_singleOneShotWeaponLv1;
+    static std::shared_ptr<Weapon> s_handGunLv1;
+    static std::shared_ptr<Weapon> s_machineGunLv1;
 };
 }

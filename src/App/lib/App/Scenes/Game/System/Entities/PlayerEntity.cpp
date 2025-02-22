@@ -141,8 +141,8 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_subWeaponCoolRemain()
 {
     m_category = Entity::Category::Player;
-    setMainWeapon(WeaponRegistry::s_singleOneShotWeaponLv1);
-    setSubWeapon(WeaponRegistry::s_singleOneShotWeaponLv1);
+    setMainWeapon(WeaponRegistry::s_handGunLv1);
+    setSubWeapon(WeaponRegistry::s_machineGunLv1);
 }
 
 void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
