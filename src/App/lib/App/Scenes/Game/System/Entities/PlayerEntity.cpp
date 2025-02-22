@@ -3,6 +3,7 @@
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <App/Scenes/Game/System/Entities/ProjectileEntity.hpp>
 #include <App/Scenes/Game/System/Field.hpp>
+#include <App/Scenes/Game/System/Weapons/SingleOneShotWeapon.hpp>
 
 namespace App::Scenes::Game::System::Entities {
 // public
