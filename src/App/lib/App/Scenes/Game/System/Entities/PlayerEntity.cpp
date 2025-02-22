@@ -138,17 +138,11 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
     switch (inputMethod) {
     case Weapon::InputMethod::None:
         break;
-    case Weapon::InputMethod::LeftOneShot:
+    case Weapon::InputMethod::OneShot:
         inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
         break;
-    case Weapon::InputMethod::LeftContinuous:
+    case Weapon::InputMethod::Continuous:
         inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Pressed;
-        break;
-    case Weapon::InputMethod::RightOneShot:
-        inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Trigger;
-        break;
-    case Weapon::InputMethod::RightContinuous:
-        inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Pressed;
         break;
     }
     if (inputOk) {
@@ -185,16 +179,10 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
     switch (inputMethod) {
     case Weapon::InputMethod::None:
         break;
-    case Weapon::InputMethod::LeftOneShot:
-        inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
-        break;
-    case Weapon::InputMethod::LeftContinuous:
-        inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Pressed;
-        break;
-    case Weapon::InputMethod::RightOneShot:
+    case Weapon::InputMethod::OneShot:
         inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Trigger;
         break;
-    case Weapon::InputMethod::RightContinuous:
+    case Weapon::InputMethod::Continuous:
         inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Pressed;
         break;
     }

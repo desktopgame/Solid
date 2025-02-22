@@ -21,10 +21,8 @@ public:
 
     enum class InputMethod {
         None,
-        LeftOneShot,
-        LeftContinuous,
-        RightOneShot,
-        RightContinuous
+        OneShot,
+        Continuous,
     };
 
     explicit Weapon(const Parameter& parameter);
