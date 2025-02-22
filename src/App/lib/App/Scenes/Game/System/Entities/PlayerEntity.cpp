@@ -87,7 +87,7 @@ void PlayerEntity::onGui()
         ImGui::LabelText("M_FireRemain", "%f", m_mainWeaponFireRemain);
         ImGui::LabelText("M_CoolRemain", "%f", m_mainWeaponCoolRemain);
     }
-    if (m_subWeaponEnergy) {
+    if (m_subWeapon) {
         ImGui::LabelText("S_Energy", "%f/%f", m_subWeaponEnergy, m_subWeapon->getEnergyMax());
         ImGui::LabelText("S_FireRemain", "%f", m_subWeaponFireRemain);
         ImGui::LabelText("S_CoolRemain", "%f", m_subWeaponCoolRemain);

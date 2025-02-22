@@ -17,9 +17,24 @@ void ProjectileEntity::idle(const std::shared_ptr<Chunk>& chunk)
 }
 void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
 {
-    auto owner = m_owner.lock();
-    if (owner != nullptr && owner == entity) {
+    if (m_ownerCategory == entity->getCategory()) {
         return;
+    }
+    switch (m_ownerCategory) {
+    case Entity::Category::None:
+        break;
+    case Entity::Category::Player:
+    case Entity::Category::PlayerTeam:
+        if (entity->getCategory() == Entity::Category::Player || entity->getCategory() == Entity::Category::PlayerTeam) {
+            return;
+        }
+        break;
+    case Entity::Category::Enemy:
+    case Entity::Category::EnemyTeam:
+        if (entity->getCategory() == Entity::Category::Enemy || entity->getCategory() == Entity::Category::EnemyTeam) {
+            return;
+        }
+        break;
     }
 
     entity->damage(DamageSource::create(shared_from_this(), 1));
@@ -38,8 +53,8 @@ void ProjectileEntity::onHitEnterEntity(const std::shared_ptr<Entity>& entity)
     }
 }
 
-void ProjectileEntity::setOwner(const std::weak_ptr<Entity>& owner) { m_owner = owner; }
-std::shared_ptr<Entity> ProjectileEntity::getOwner() const { return m_owner.lock(); }
+void ProjectileEntity::setOwnerCategory(Entity::Category ownerCategory) { m_ownerCategory = ownerCategory; }
+Entity::Category ProjectileEntity::getOwnerCategory() const { return m_ownerCategory; }
 
 void ProjectileEntity::setDirection(const Vector3& direction) { m_direction = direction; }
 Vector3 ProjectileEntity::getDirection() const { return m_direction; }

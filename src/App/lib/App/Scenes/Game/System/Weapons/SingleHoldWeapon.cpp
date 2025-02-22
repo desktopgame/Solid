@@ -16,7 +16,7 @@ SingleHoldWeapon::~SingleHoldWeapon() { }
 void SingleHoldWeapon::execute(const std::shared_ptr<Chunk>& chunk, const std::shared_ptr<Entities::PlayerEntity>& player)
 {
     auto proj = Entities::ProjectileEntity::create(Common::Graphics::NodeRegistry::s_bulletNode->clone(), Entity::Category::PlayerTeam);
-    proj->setOwner(player);
+    proj->setOwnerCategory(Entity::Category::PlayerTeam);
     proj->setPosition(player->getPosition() + Vector3({ 0, 5, 0 }));
     proj->setRotation(Vector3({ player->getCameraAngleX(), Mathf::normalizeDegree(-player->getCameraAngleY()), 0.0f }));
     proj->setDirection(player->getForward());
