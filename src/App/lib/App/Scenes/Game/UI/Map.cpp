@@ -173,14 +173,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             if (!chunk) {
                 chunkColor = Color({ 0.1f, 0.1f, 0.1f, 1 });
             } else {
-                int32_t enemyCount = 0;
-                for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
-                    auto entity = chunk->getEntityAt(i);
-                    if (entity->getCategory() == System::Entity::Category::Enemy) {
-                        enemyCount++;
-                    }
-                }
-
+                int32_t enemyCount = chunk->countEntity(System::Entity::Category::Enemy);
                 if (enemyCount > 0) {
                     chunkColor = Vector4({ 0.5f, 0, 0, 1 });
                 } else {

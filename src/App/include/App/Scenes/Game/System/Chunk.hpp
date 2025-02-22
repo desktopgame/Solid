@@ -1,14 +1,12 @@
 #pragma once
 #include <App/Scenes/Game/System/ChunkGenerator.hpp>
+#include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
+#include <App/Scenes/Game/System/Entity.hpp>
 #include <App/library.hpp>
 #include <memory>
 #include <vector>
 
 namespace App::Scenes::Game::System {
-class Entity;
-namespace Entities {
-    class PlayerEntity;
-}
 class Field;
 class Chunk : public std::enable_shared_from_this<Chunk> {
 public:
@@ -243,6 +241,8 @@ public:
     void spwan(const std::shared_ptr<Entity>& entity);
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
     int32_t getEntityCount() const;
+
+    int32_t countEntity(Entity::Category category) const;
 
     static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
     {

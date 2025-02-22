@@ -211,4 +211,15 @@ std::shared_ptr<Field> Chunk::getField() const { return m_field.lock(); }
 void Chunk::spwan(const std::shared_ptr<Entity>& entity) { m_entities.emplace_back(entity); }
 std::shared_ptr<Entity> Chunk::getEntityAt(int32_t index) const { return m_entities.at(index); }
 int32_t Chunk::getEntityCount() const { return static_cast<int32_t>(m_entities.size()); }
+
+int32_t Chunk::countEntity(Entity::Category category) const
+{
+    int32_t count = 0;
+    for (const auto& e : m_entities) {
+        if (e->getCategory() == category) {
+            count++;
+        }
+    }
+    return count;
+}
 }
