@@ -107,6 +107,9 @@ void Map::update()
     bool missingAnyChunk = false;
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
+            int32_t chunkGridPosX = m_minChunkX + x;
+            int32_t chunkGridPosY = m_minChunkY + (m_chunkCountY - (y + 1));
+
             if (!m_pieceInfo || !m_focusChunkX || !m_focusChunkY) {
                 continue;
             }
@@ -125,7 +128,7 @@ void Map::update()
                 bool existOk = true;
                 m_focusCells.emplace_back(IntVector2({ x, y }));
 
-                if (wasGotCell(x, y)) {
+                if (wasGotCell(chunkGridPosX, chunkGridPosY)) {
                     existOk = false;
                 } else {
                     for (const auto& cell : m_pieceInfo->getCells()) {
@@ -155,8 +158,12 @@ void Map::update()
     }
 
     // クリック時に現在のピースを配置
-    if (mouseState == ButtonState::Trigger && m_focusPlaceable && m_chunkCountX && m_chunkCountY) {
-        auto pieceInstance = std::make_shared<System::PieceInstance>(m_pieceInfo, IntVector2({ *m_focusChunkX, *m_focusChunkY }));
+    if (mouseState == ButtonState::Trigger && m_focusPlaceable && m_focusChunkX && m_focusChunkY) {
+
+        int32_t focusChunkGridPosX = m_minChunkX + (*m_focusChunkX);
+        int32_t focusChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1));
+
+        auto pieceInstance = std::make_shared<System::PieceInstance>(m_pieceInfo, IntVector2({ focusChunkGridPosX, focusChunkGridPosY }));
         m_pieceInstanceCollection->addInstance(pieceInstance);
 
         if (m_onSetPieceInstance) {
@@ -199,7 +206,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                 } else {
                     chunkColor = k_playerTeamChunkColor;
 
-                    if (wasGotCell(x, y)) {
+                    if (wasGotCell(chunkGridPosX, chunkGridPosY)) {
                         chunkColor = k_focusPlaceableChunkColor;
                     }
                 }
@@ -284,7 +291,8 @@ bool Map::wasGotCell(int32_t x, int32_t y) const
     for (int32_t i = 0; i < m_pieceInstanceCollection->getInstanceCount(); i++) {
         auto pieceInstance = m_pieceInstanceCollection->getInstanceAt(i);
         for (int32_t j = 0; j < pieceInstance->getInfo()->getCells().size(); j++) {
-            auto cell = pieceInstance->getInfo()->getCells().at(j).position + pieceInstance->getPosition();
+            auto localPos = pieceInstance->getInfo()->getCells().at(j).position;
+            auto cell = IntVector2({ localPos.x(), -localPos.y() }) + pieceInstance->getPosition();
             if (cell.x() == x && cell.y() == y) {
                 ret = true;
             }
