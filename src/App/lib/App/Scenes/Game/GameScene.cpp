@@ -64,12 +64,15 @@ void GameScene::onEnter()
 
         m_minimap = RootPane::create();
 
+        auto minimapChild = std::make_shared<UI::Minimap>(m_field);
+        minimapChild->setPieceInstanceCollection(m_pieceInstanceCollection);
+
         auto title = std::make_shared<Label>();
         title->setFont(font);
         title->setText(u"Minimap");
         title->setPreferredSize(font->measure(title->getFontSize(), title->getText()) + Vector2({ 0, 10 }));
         m_minimap->addLayoutElement(std::make_shared<LayoutElement>(title, std::make_shared<BorderLayout::Hint>("TOP")));
-        m_minimap->addLayoutElement(std::make_shared<LayoutElement>(std::make_shared<UI::Minimap>(m_field), std::make_shared<BorderLayout::Hint>("CENTER")));
+        m_minimap->addLayoutElement(std::make_shared<LayoutElement>(minimapChild, std::make_shared<BorderLayout::Hint>("CENTER")));
 
         m_minimap->setSize(Vector2({ 160, 190 }));
         m_minimap->setPosition(((Vector2)Screen::getSize() / 2.0f) - (m_minimap->getSize() / 2.0f));

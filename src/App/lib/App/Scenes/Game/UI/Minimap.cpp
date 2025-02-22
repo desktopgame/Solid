@@ -1,3 +1,5 @@
+#include <App/Scenes/Game/System/PieceInfo.hpp>
+#include <App/Scenes/Game/System/PieceInstanceCollection.hpp>
 #include <App/Scenes/Game/UI/Minimap.hpp>
 
 namespace App::Scenes::Game::UI {
@@ -104,4 +106,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
 
     renderer->stencilNone();
 }
+
+void Minimap::setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection) { m_pieceInstanceCollection = pieceInstanceCollection; }
+std::shared_ptr<System::PieceInstanceCollection> Minimap::getPieceInstanceCollection() const { return m_pieceInstanceCollection; }
 }
