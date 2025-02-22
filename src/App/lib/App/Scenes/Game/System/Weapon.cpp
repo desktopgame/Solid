@@ -3,7 +3,7 @@
 namespace App::Scenes::Game::System {
 
 Weapon::Weapon(const Parameter& parameter)
-    : m_parameter(parameter)
+    : parameter(parameter)
 {
 }
 Weapon::~Weapon() { }

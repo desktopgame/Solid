@@ -34,7 +34,6 @@ public:
     virtual InputMethod getInputMethod() const = 0;
     virtual float getEnergyMax() const = 0;
 
-protected:
-    const Parameter m_parameter;
+    const Parameter parameter;
 };
 }
