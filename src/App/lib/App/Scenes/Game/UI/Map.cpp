@@ -15,6 +15,8 @@ Map::Map(const std::shared_ptr<System::Field>& field)
     , m_pieceInfo()
     , m_pieceInstanceCollection()
     , m_focusCells()
+    , m_focusChunkX()
+    , m_focusChunkY()
 {
 }
 
@@ -65,8 +67,8 @@ void Map::update()
     m_focusCells.clear();
 
     // フォーカスされているチャンクを検索する
-    std::optional<int32_t> focusChunkX = std::nullopt;
-    std::optional<int32_t> focusChunkY = std::nullopt;
+    m_focusChunkX = std::nullopt;
+    m_focusChunkY = std::nullopt;
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
             float routeOffsetX = static_cast<float>(x + 1) * k_routeSize;
@@ -89,8 +91,8 @@ void Map::update()
                 hasFocus = false;
             }
             if (hasFocus) {
-                focusChunkX = x;
-                focusChunkY = y;
+                m_focusChunkX = x;
+                m_focusChunkY = y;
                 break;
             }
         }
@@ -109,11 +111,11 @@ void Map::update()
             }
 
             // フォーカスされたチャンクを記憶
-            if (m_pieceInfo && focusChunkX && focusChunkY) {
+            if (m_pieceInfo && m_focusChunkX && m_focusChunkY) {
                 bool coordMatchOk = false;
                 for (const auto& cell : m_pieceInfo->getCells()) {
-                    int32_t cellX = cell.position.x() + (*focusChunkX);
-                    int32_t cellY = cell.position.y() + (*focusChunkY);
+                    int32_t cellX = cell.position.x() + (*m_focusChunkX);
+                    int32_t cellY = cell.position.y() + (*m_focusChunkY);
                     if (x == cellX && y == cellY) {
                         coordMatchOk = true;
                         break;
@@ -122,8 +124,8 @@ void Map::update()
                 bool existOk = true;
                 if (coordMatchOk) {
                     for (const auto& cell : m_pieceInfo->getCells()) {
-                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *focusChunkX);
-                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*focusChunkY + 1)) - cell.position.y();
+                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *m_focusChunkX);
+                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1)) - cell.position.y();
 
                         std::optional<std::shared_ptr<System::Chunk>> atChunk;
                         m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));

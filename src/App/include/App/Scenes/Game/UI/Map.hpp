@@ -40,5 +40,7 @@ private:
     std::shared_ptr<System::PieceInfo> m_pieceInfo;
     std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
     std::vector<IntVector2> m_focusCells;
+    std::optional<int32_t> m_focusChunkX;
+    std::optional<int32_t> m_focusChunkY;
 };
 }
