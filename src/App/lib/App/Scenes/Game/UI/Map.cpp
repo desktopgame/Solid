@@ -62,8 +62,8 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
     float left = center.x() - (size.x() / 2.0f);
     float top = center.y() + (size.y() / 2.0f);
     // フォーカスされているチャンクを検索する
-    int32_t focusChunkX = -1;
-    int32_t focusChunkY = -1;
+    std::optional<int32_t> focusChunkX = std::nullopt;
+    std::optional<int32_t> focusChunkY = std::nullopt;
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
             float routeOffsetX = static_cast<float>(x + 1) * k_routeSize;
@@ -131,11 +131,11 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             }
 
             // フォーカスされたチャンクなら色変更
-            if (m_pieceInfo && focusChunkX >= 0 && focusChunkY >= 0) {
+            if (m_pieceInfo && focusChunkX && focusChunkY) {
                 bool coordMatchOk = false;
                 for (const auto& cell : m_pieceInfo->getCells()) {
-                    int32_t cellX = cell.position.x() + focusChunkX;
-                    int32_t cellY = cell.position.y() + focusChunkY;
+                    int32_t cellX = cell.position.x() + (*focusChunkX);
+                    int32_t cellY = cell.position.y() + (*focusChunkY);
                     if (x == cellX && y == cellY) {
                         coordMatchOk = true;
                         break;
@@ -144,8 +144,8 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                 bool existOk = true;
                 if (coordMatchOk) {
                     for (const auto& cell : m_pieceInfo->getCells()) {
-                        int32_t cellX = cell.position.x() + focusChunkX;
-                        int32_t cellY = cell.position.y() + focusChunkY;
+                        int32_t cellX = cell.position.x() + *focusChunkX;
+                        int32_t cellY = cell.position.y() + *focusChunkY;
 
                         int32_t cellChunkGridPosX = m_minChunkX + cellX;
                         int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - cellY);
