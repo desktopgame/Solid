@@ -158,7 +158,7 @@ void Map::update()
     }
 
     // クリック時に現在のピースを配置
-    if (mouseState == ButtonState::Trigger && m_focusPlaceable && m_focusChunkX && m_focusChunkY) {
+    if (mouseState == ButtonState::Trigger && m_focusPlaceable && m_focusChunkX && m_focusChunkY && m_pieceInfo) {
 
         int32_t focusChunkGridPosX = m_minChunkX + (*m_focusChunkX);
         int32_t focusChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1));
