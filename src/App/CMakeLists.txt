@@ -47,6 +47,7 @@ set(SOURCES
     ./include/App/Scenes/Demo/DemoScene.hpp
     ./include/App/Scenes/Title/TitleScene.hpp
     ./include/App/Scenes/Game/GameScene.hpp
+    ./include/App/Scenes/Game/System/Weapon.hpp
     ./include/App/Scenes/Game/System/Cell.hpp
     ./include/App/Scenes/Game/System/PieceInfo.hpp
     ./include/App/Scenes/Game/System/PieceInstance.hpp
@@ -78,6 +79,7 @@ set(SOURCES
     ./lib/App/Scenes/Demo/DemoScene.cpp
     ./lib/App/Scenes/Title/TitleScene.cpp
     ./lib/App/Scenes/Game/GameScene.cpp
+    ./lib/App/Scenes/Game/System/Weapon.cpp
     ./lib/App/Scenes/Game/System/Cell.cpp
     ./lib/App/Scenes/Game/System/PieceInfo.cpp
     ./lib/App/Scenes/Game/System/PieceInstance.cpp
