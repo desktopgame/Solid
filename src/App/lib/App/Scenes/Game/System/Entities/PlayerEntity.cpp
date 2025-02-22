@@ -109,10 +109,10 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_cameraRotateSpeed(0.8f)
     , m_mainWeapon()
     , m_mainWeaponEnergy()
-    , m_mainWeaponRemain()
+    , m_mainWeaponFireRemain()
     , m_subWeapon()
     , m_subWeaponEnergy()
-    , m_subWeaponRemain()
+    , m_subWeaponFireRemain()
 {
     m_category = Entity::Category::Player;
 }
@@ -122,8 +122,8 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
     if (!m_mainWeapon) {
         return;
     }
-    if (m_mainWeaponRemain > 0.0f) {
-        m_mainWeaponRemain = Mathf::max(0.0f, m_mainWeaponRemain - Time::deltaTime());
+    if (m_mainWeaponFireRemain > 0.0f) {
+        m_mainWeaponFireRemain = Mathf::max(0.0f, m_mainWeaponFireRemain - Time::deltaTime());
         return;
     }
     auto mouse = InputSystem::getInstance()->getMouse();
@@ -144,7 +144,7 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
         break;
     }
     if (inputOk) {
-        m_mainWeaponRemain = m_mainWeapon->parameter.fireRate;
+        m_mainWeaponFireRemain = m_mainWeapon->parameter.fireRate;
         m_mainWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
     }
 }
@@ -154,8 +154,8 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
     if (!m_subWeapon) {
         return;
     }
-    if (m_subWeaponRemain > 0.0f) {
-        m_subWeaponRemain = Mathf::max(0.0f, m_subWeaponRemain - Time::deltaTime());
+    if (m_subWeaponFireRemain > 0.0f) {
+        m_subWeaponFireRemain = Mathf::max(0.0f, m_subWeaponFireRemain - Time::deltaTime());
         return;
     }
     auto mouse = InputSystem::getInstance()->getMouse();
@@ -176,7 +176,7 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
         break;
     }
     if (inputOk) {
-        m_subWeaponRemain = m_subWeapon->parameter.fireRate;
+        m_subWeaponFireRemain = m_subWeapon->parameter.fireRate;
         m_subWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
     }
 }

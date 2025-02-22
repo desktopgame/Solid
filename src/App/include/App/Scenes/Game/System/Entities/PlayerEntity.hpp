@@ -32,10 +32,10 @@ private:
 
     std::shared_ptr<System::Weapon> m_mainWeapon;
     float m_mainWeaponEnergy;
-    float m_mainWeaponRemain;
+    float m_mainWeaponFireRemain;
 
     std::shared_ptr<System::Weapon> m_subWeapon;
     float m_subWeaponEnergy;
-    float m_subWeaponRemain;
+    float m_subWeaponFireRemain;
 };
 }
