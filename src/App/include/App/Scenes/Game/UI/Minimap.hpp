@@ -23,6 +23,8 @@ public:
     std::shared_ptr<System::PieceInstanceCollection> getPieceInstanceCollection() const;
 
 private:
+    bool wasGotCell(int32_t x, int32_t y) const;
+
     std::shared_ptr<System::Field> m_field;
     std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
 };

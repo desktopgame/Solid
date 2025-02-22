@@ -65,13 +65,18 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
             continue;
         }
 
-        auto chunk = m_field->loadChunk(currentChunk->getGridPosition() + localGridPos);
+        auto chunkGridPos = currentChunk->getGridPosition() + localGridPos;
+        auto chunk = m_field->loadChunk(chunkGridPos);
         Vector4 chunkColor = Vector4({ 0, 0.5f, 0, 1 });
-        for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
-            auto entity = chunk->getEntityAt(i);
-            if (entity->getCategory() == System::Entity::Category::Enemy) {
-                chunkColor = Vector4({ 0.5f, 0, 0, 1 });
-                break;
+        if (wasGotCell(chunkGridPos.x(), chunkGridPos.y())) {
+            chunkColor = Vector4({ 0.5f, 0.9f, 0.5f, 1 });
+        } else {
+            for (int32_t i = 0; i < chunk->getEntityCount(); i++) {
+                auto entity = chunk->getEntityAt(i);
+                if (entity->getCategory() == System::Entity::Category::Enemy) {
+                    chunkColor = Vector4({ 0.5f, 0, 0, 1 });
+                    break;
+                }
             }
         }
 
@@ -109,4 +114,20 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
 
 void Minimap::setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection) { m_pieceInstanceCollection = pieceInstanceCollection; }
 std::shared_ptr<System::PieceInstanceCollection> Minimap::getPieceInstanceCollection() const { return m_pieceInstanceCollection; }
+// private
+bool Minimap::wasGotCell(int32_t x, int32_t y) const
+{
+    bool ret = false;
+    for (int32_t i = 0; i < m_pieceInstanceCollection->getInstanceCount(); i++) {
+        auto pieceInstance = m_pieceInstanceCollection->getInstanceAt(i);
+        for (int32_t j = 0; j < pieceInstance->getInfo()->getCells().size(); j++) {
+            auto localPos = pieceInstance->getInfo()->getCells().at(j).position;
+            auto cell = IntVector2({ localPos.x(), -localPos.y() }) + pieceInstance->getPosition();
+            if (cell.x() == x && cell.y() == y) {
+                ret = true;
+            }
+        }
+    }
+    return ret;
+}
 }
