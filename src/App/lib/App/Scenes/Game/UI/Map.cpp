@@ -19,6 +19,7 @@ Map::Map(const std::shared_ptr<System::Field>& field)
     , m_focusChunkX()
     , m_focusChunkY()
     , m_focusPlaceable()
+    , m_onSetPieceInstance()
 {
 }
 
@@ -155,7 +156,12 @@ void Map::update()
 
     // クリック時に現在のピースを配置
     if (mouseState == ButtonState::Trigger && m_focusPlaceable && m_chunkCountX && m_chunkCountY) {
-        m_pieceInstanceCollection->addInstance(std::make_shared<System::PieceInstance>(m_pieceInfo, IntVector2({ *m_focusChunkX, *m_focusChunkY })));
+        auto pieceInstance = std::make_shared<System::PieceInstance>(m_pieceInfo, IntVector2({ *m_focusChunkX, *m_focusChunkY }));
+        m_pieceInstanceCollection->addInstance(pieceInstance);
+
+        if (m_onSetPieceInstance) {
+            m_onSetPieceInstance(pieceInstance);
+        }
     }
 }
 
@@ -268,6 +274,9 @@ std::shared_ptr<System::PieceInfo> Map::getPieceInfo() const { return m_pieceInf
 
 void Map::setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection) { m_pieceInstanceCollection = pieceInstanceCollection; }
 std::shared_ptr<System::PieceInstanceCollection> Map::getPieceInstanceCollection() const { return m_pieceInstanceCollection; }
+
+void Map::setOnSetPieceInstance(const std::function<void(const std::shared_ptr<System::PieceInstance>&)>& onSetPieceInstance) { m_onSetPieceInstance = onSetPieceInstance; }
+std::function<void(const std::shared_ptr<System::PieceInstance>&)> Map::getOnSetPieceInstance() const { return m_onSetPieceInstance; }
 // private
 bool Map::wasGotCell(int32_t x, int32_t y) const
 {

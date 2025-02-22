@@ -24,6 +24,9 @@ public:
     void setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection);
     std::shared_ptr<System::PieceInstanceCollection> getPieceInstanceCollection() const;
 
+    void setOnSetPieceInstance(const std::function<void(const std::shared_ptr<System::PieceInstance>&)>& onSetPieceInstance);
+    std::function<void(const std::shared_ptr<System::PieceInstance>&)> getOnSetPieceInstance() const;
+
 private:
     static inline constexpr float k_chunkWidth = 50;
     static inline constexpr float k_chunkHeight = 50;
@@ -51,5 +54,6 @@ private:
     std::optional<int32_t> m_focusChunkX;
     std::optional<int32_t> m_focusChunkY;
     bool m_focusPlaceable;
+    std::function<void(const std::shared_ptr<System::PieceInstance>&)> m_onSetPieceInstance;
 };
 }
