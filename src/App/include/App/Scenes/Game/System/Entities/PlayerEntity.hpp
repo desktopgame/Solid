@@ -10,6 +10,7 @@ public:
 
     virtual void idle(const std::shared_ptr<Chunk>& chunk) override;
     virtual void update(const std::shared_ptr<Chunk>& chunk) override;
+    virtual void onGui() override;
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 

@@ -8,7 +8,7 @@ void WeaponRegistry::initialize()
     {
         Weapon::Parameter parameter;
         parameter.power = 1;
-        parameter.fireRate = 1.0f;
+        parameter.fireRate = 0.25f;
         parameter.coolRate = 0.5f;
         parameter.increaseEnergy = 1.0f;
         parameter.decreaseEnergy = 2.0f;
