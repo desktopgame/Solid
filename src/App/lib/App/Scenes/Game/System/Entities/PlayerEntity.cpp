@@ -82,6 +82,21 @@ void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
 }
 void PlayerEntity::draw3D(const std::shared_ptr<Renderer>& renderer) { }
 void PlayerEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
+
+void PlayerEntity::setMainWeapon(const std::shared_ptr<Weapon>& mainWeapon)
+{
+    m_mainWeapon = mainWeapon;
+    m_mainWeaponEnergy = mainWeapon->getEnergyMax();
+}
+std::shared_ptr<Weapon> PlayerEntity::getMainWeapon() const { return m_mainWeapon; }
+
+void PlayerEntity::setSubWeapon(const std::shared_ptr<Weapon>& subWeapon)
+{
+    m_subWeapon = subWeapon;
+    m_subWeaponEnergy = subWeapon->getEnergyMax();
+}
+std::shared_ptr<Weapon> PlayerEntity::getSubWeapon() const { return m_subWeapon; }
+
 // protected
 PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : BasicEntity(node)
@@ -89,6 +104,12 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_cameraAngleY()
     , m_cameraMoveSpeed(40.0f)
     , m_cameraRotateSpeed(0.8f)
+    , m_mainWeapon()
+    , m_mainWeaponEnergy()
+    , m_mainWeaponRemain()
+    , m_subWeapon()
+    , m_subWeaponEnergy()
+    , m_subWeaponRemain()
 {
     m_category = Entity::Category::Player;
 }
