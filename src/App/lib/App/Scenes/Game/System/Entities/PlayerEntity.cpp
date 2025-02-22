@@ -79,6 +79,9 @@ void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
     Camera::position(getPosition());
     Camera::lookAt(getPosition() + forward);
     Camera::depthRange(0.1f, 1000.0f);
+
+    fireMainWeapon(chunk);
+    fireSubWeapon(chunk);
 }
 void PlayerEntity::draw3D(const std::shared_ptr<Renderer>& renderer) { }
 void PlayerEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
@@ -112,5 +115,69 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_subWeaponRemain()
 {
     m_category = Entity::Category::Player;
+}
+
+void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
+{
+    if (!m_mainWeapon) {
+        return;
+    }
+    if (m_mainWeaponRemain > 0.0f) {
+        m_mainWeaponRemain = Mathf::max(0.0f, m_mainWeaponRemain - Time::deltaTime());
+        return;
+    }
+    auto mouse = InputSystem::getInstance()->getMouse();
+    auto inputMethod = m_mainWeapon->getInputMethod();
+    bool inputOk = false;
+    switch (inputMethod) {
+    case Weapon::InputMethod::LeftOneShot:
+        inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
+        break;
+    case Weapon::InputMethod::LeftContinuous:
+        inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Pressed;
+        break;
+    case Weapon::InputMethod::RightOneShot:
+        inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Trigger;
+        break;
+    case Weapon::InputMethod::RightContinuous:
+        inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Pressed;
+        break;
+    }
+    if (inputOk) {
+        m_mainWeaponRemain = m_mainWeapon->parameter.fireRate;
+        m_mainWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
+    }
+}
+
+void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
+{
+    if (!m_subWeapon) {
+        return;
+    }
+    if (m_subWeaponRemain > 0.0f) {
+        m_subWeaponRemain = Mathf::max(0.0f, m_subWeaponRemain - Time::deltaTime());
+        return;
+    }
+    auto mouse = InputSystem::getInstance()->getMouse();
+    auto inputMethod = m_subWeapon->getInputMethod();
+    bool inputOk = false;
+    switch (inputMethod) {
+    case Weapon::InputMethod::LeftOneShot:
+        inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
+        break;
+    case Weapon::InputMethod::LeftContinuous:
+        inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Pressed;
+        break;
+    case Weapon::InputMethod::RightOneShot:
+        inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Trigger;
+        break;
+    case Weapon::InputMethod::RightContinuous:
+        inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Pressed;
+        break;
+    }
+    if (inputOk) {
+        m_subWeaponRemain = m_subWeapon->parameter.fireRate;
+        m_subWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
+    }
 }
 }
