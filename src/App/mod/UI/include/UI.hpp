@@ -9,6 +9,7 @@
 #include <UI/Form.hpp>
 #include <UI/ILayoutManager.hpp>
 #include <UI/IListCellRenderer.hpp>
+#include <UI/ImageIcon.hpp>
 #include <UI/Label.hpp>
 #include <UI/LayoutElement.hpp>
 #include <UI/LayoutHint.hpp>

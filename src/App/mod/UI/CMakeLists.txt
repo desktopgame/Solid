@@ -15,6 +15,7 @@ set(SOURCES
     ./include/UI/LayoutElement.hpp
     ./include/UI/LayoutHint.hpp
     ./include/UI/ColorIcon.hpp
+    ./include/UI/ImageIcon.hpp
     ./include/UI/Panel.hpp
     ./include/UI/Label.hpp
     ./include/UI/Button.hpp
@@ -35,6 +36,7 @@ set(SOURCES
     ./lib/UI/Container.cpp
     ./lib/UI/LayoutElement.cpp
     ./lib/UI/ColorIcon.cpp
+    ./lib/UI/ImageIcon.cpp
     ./lib/UI/Panel.cpp
     ./lib/UI/Label.cpp
     ./lib/UI/Button.cpp
