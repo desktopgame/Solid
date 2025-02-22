@@ -14,6 +14,7 @@ Map::Map(const std::shared_ptr<System::Field>& field)
     , m_chunkCountY()
     , m_pieceInfo()
     , m_pieceInstanceCollection()
+    , m_focusCells()
 {
 }
 
@@ -48,8 +49,7 @@ void Map::setup()
         (m_chunkCountY * k_chunkHeight) + ((m_chunkCountX + 1) * k_routeSize) }));
 }
 
-void Map::update() { }
-void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
+void Map::update()
 {
     auto inputSystem = InputSystem::getInstance();
     auto mousePos = inputSystem->getMouse()->getPosition();
@@ -61,6 +61,9 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
     auto center = getGlobalPosition();
     float left = center.x() - (size.x() / 2.0f);
     float top = center.y() + (size.y() / 2.0f);
+
+    m_focusCells.clear();
+
     // フォーカスされているチャンクを検索する
     std::optional<int32_t> focusChunkX = std::nullopt;
     std::optional<int32_t> focusChunkY = std::nullopt;
@@ -93,6 +96,57 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
         }
     }
 
+    // フォーカス状態を検出
+    for (int32_t x = 0; x < m_chunkCountX; x++) {
+        for (int32_t y = 0; y < m_chunkCountY; y++) {
+            int32_t chunkGridPosX = m_minChunkX + x;
+            int32_t chunkGridPosY = m_minChunkY + (m_chunkCountY - (y + 1));
+
+            std::optional<std::shared_ptr<System::Chunk>> optChunk;
+            m_field->tryFindChunk(optChunk, IntVector2({ chunkGridPosX, chunkGridPosY }));
+            if (!optChunk) {
+                continue;
+            }
+
+            // フォーカスされたチャンクを記憶
+            if (m_pieceInfo && focusChunkX && focusChunkY) {
+                bool coordMatchOk = false;
+                for (const auto& cell : m_pieceInfo->getCells()) {
+                    int32_t cellX = cell.position.x() + (*focusChunkX);
+                    int32_t cellY = cell.position.y() + (*focusChunkY);
+                    if (x == cellX && y == cellY) {
+                        coordMatchOk = true;
+                        break;
+                    }
+                }
+                bool existOk = true;
+                if (coordMatchOk) {
+                    for (const auto& cell : m_pieceInfo->getCells()) {
+                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *focusChunkX);
+                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*focusChunkY + 1)) - cell.position.y();
+
+                        std::optional<std::shared_ptr<System::Chunk>> atChunk;
+                        m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
+                        if (!atChunk) {
+                            existOk = false;
+                            break;
+                        }
+                    }
+                }
+                if (coordMatchOk && existOk) {
+                    m_focusCells.emplace_back(IntVector2({ x, y }));
+                }
+            }
+        }
+    }
+}
+
+void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
+{
+    auto size = getSize();
+    auto center = getGlobalPosition();
+    float left = center.x() - (size.x() / 2.0f);
+    float top = center.y() + (size.y() / 2.0f);
     // ロード済みのチャンクを描画
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
@@ -131,31 +185,9 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             }
 
             // フォーカスされたチャンクなら色変更
-            if (m_pieceInfo && focusChunkX && focusChunkY) {
-                bool coordMatchOk = false;
-                for (const auto& cell : m_pieceInfo->getCells()) {
-                    int32_t cellX = cell.position.x() + (*focusChunkX);
-                    int32_t cellY = cell.position.y() + (*focusChunkY);
-                    if (x == cellX && y == cellY) {
-                        coordMatchOk = true;
-                        break;
-                    }
-                }
-                bool existOk = true;
-                if (coordMatchOk) {
-                    for (const auto& cell : m_pieceInfo->getCells()) {
-                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *focusChunkX);
-                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*focusChunkY + 1)) - cell.position.y();
-
-                        std::optional<std::shared_ptr<System::Chunk>> atChunk;
-                        m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
-                        if (!atChunk) {
-                            existOk = false;
-                            break;
-                        }
-                    }
-                }
-                if (coordMatchOk && existOk) {
+            if (m_pieceInfo) {
+                auto iter = std::find(m_focusCells.begin(), m_focusCells.end(), IntVector2({ x, y }));
+                if (iter != m_focusCells.end()) {
                     chunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
                 }
             }

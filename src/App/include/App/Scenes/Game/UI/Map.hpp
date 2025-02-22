@@ -39,5 +39,6 @@ private:
 
     std::shared_ptr<System::PieceInfo> m_pieceInfo;
     std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
+    std::vector<IntVector2> m_focusCells;
 };
 }
