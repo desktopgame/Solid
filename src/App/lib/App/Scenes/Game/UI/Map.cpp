@@ -179,9 +179,9 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             } else {
                 int32_t enemyCount = chunk->countEntity(System::Entity::Category::Enemy);
                 if (enemyCount > 0) {
-                    chunkColor = Vector4({ 0.5f, 0, 0, 1 });
+                    chunkColor = k_enemyTeamChunkColor;
                 } else {
-                    chunkColor = Vector4({ 0, 0.5f, 0, 1 });
+                    chunkColor = k_playerTeamChunkColor;
                 }
             }
 
@@ -189,7 +189,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             if (m_pieceInfo) {
                 auto iter = std::find(m_focusCells.begin(), m_focusCells.end(), IntVector2({ x, y }));
                 if (iter != m_focusCells.end()) {
-                    chunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
+                    chunkColor = k_focusChunkColor;
                 }
             }
 
