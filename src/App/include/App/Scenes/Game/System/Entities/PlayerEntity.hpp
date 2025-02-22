@@ -13,6 +13,10 @@ public:
     virtual void draw3D(const std::shared_ptr<Renderer>& renderer) override;
     virtual void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
+    float getCameraAngleX() const;
+    float getCameraAngleY() const;
+    Vector3 getForward() const;
+
     void setMainWeapon(const std::shared_ptr<Weapon>& mainWeapon);
     std::shared_ptr<Weapon> getMainWeapon() const;
 

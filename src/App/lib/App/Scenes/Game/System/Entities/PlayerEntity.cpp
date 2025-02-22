@@ -60,16 +60,6 @@ void PlayerEntity::idle(const std::shared_ptr<Chunk>& chunk)
             m_cameraAngleX = 89.0f;
         }
     }
-
-    if (mouse->isTrigger(Mouse::Button::Left)) {
-        auto proj = ProjectileEntity::create(Common::Graphics::NodeRegistry::s_bulletNode->clone(), Entity::Category::PlayerTeam);
-        proj->setOwner(shared_from_this());
-        proj->setPosition(getPosition() + Vector3({ 0, 5, 0 }));
-        proj->setRotation(Vector3({ m_cameraAngleX, Mathf::normalizeDegree(-m_cameraAngleY), 0.0f }));
-        proj->setDirection(forward);
-        proj->setSpeed(200);
-        chunk->spwan(proj);
-    }
 }
 void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
 {
@@ -90,10 +80,21 @@ void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
 void PlayerEntity::draw3D(const std::shared_ptr<Renderer>& renderer) { }
 void PlayerEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
 
+float PlayerEntity::getCameraAngleX() const { return m_cameraAngleX; }
+float PlayerEntity::getCameraAngleY() const { return m_cameraAngleY; }
+Vector3 PlayerEntity::getForward() const
+{
+    auto rotation = Quaternion::angleAxis(m_cameraAngleY, Vector3({ 0, 1, 0 })) * Quaternion::angleAxis(-m_cameraAngleX, Vector3({ 1, 0, 0 }));
+    auto forward = Quaternion::transform(rotation, Vector3({ 0, 0, 1 }));
+    return forward;
+}
+
 void PlayerEntity::setMainWeapon(const std::shared_ptr<Weapon>& mainWeapon)
 {
     m_mainWeapon = mainWeapon;
     m_mainWeaponEnergy = mainWeapon->getEnergyMax();
+    m_mainWeaponFireRemain = 0.0f;
+    m_mainWeaponCoolRemain = 0.0f;
 }
 std::shared_ptr<Weapon> PlayerEntity::getMainWeapon() const { return m_mainWeapon; }
 
@@ -101,6 +102,8 @@ void PlayerEntity::setSubWeapon(const std::shared_ptr<Weapon>& subWeapon)
 {
     m_subWeapon = subWeapon;
     m_subWeaponEnergy = subWeapon->getEnergyMax();
+    m_subWeaponFireRemain = 0.0f;
+    m_subWeaponCoolRemain = 0.0f;
 }
 std::shared_ptr<Weapon> PlayerEntity::getSubWeapon() const { return m_subWeapon; }
 
