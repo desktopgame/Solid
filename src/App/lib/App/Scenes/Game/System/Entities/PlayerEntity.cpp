@@ -3,6 +3,7 @@
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <App/Scenes/Game/System/Entities/ProjectileEntity.hpp>
 #include <App/Scenes/Game/System/Field.hpp>
+#include <App/Scenes/Game/System/WeaponRegistry.hpp>
 #include <App/Scenes/Game/System/Weapons/SingleOneShotWeapon.hpp>
 
 namespace App::Scenes::Game::System::Entities {
@@ -124,6 +125,8 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_subWeaponCoolRemain()
 {
     m_category = Entity::Category::Player;
+    setMainWeapon(WeaponRegistry::s_singleOneShotWeaponLv1);
+    setSubWeapon(WeaponRegistry::s_singleOneShotWeaponLv1);
 }
 
 void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
