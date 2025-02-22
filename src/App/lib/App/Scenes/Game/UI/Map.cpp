@@ -234,8 +234,8 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                         (left + routeOffsetX + chunkOffsetX) + entityOffsetX,
                         (top - (routeOffsetY + chunkOffsetY)) + entityOffsetZ }),
                     Vector2({ //
-                        5.0f,
-                        5.0f }),
+                        k_entityIconSize,
+                        k_entityIconSize }),
                     0.0f, Vector4({ 1, 0, 0, 1 }));
             }
         }
@@ -258,8 +258,8 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             top + offsetY,
         }),
         Vector2({ //
-            5.0f,
-            5.0f }),
+            k_entityIconSize,
+            k_entityIconSize }),
         0.0f, Vector4({ 0, 1, 0, 1 }));
 }
 

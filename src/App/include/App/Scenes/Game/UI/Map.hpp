@@ -28,6 +28,7 @@ private:
     static inline constexpr float k_chunkWidth = 50;
     static inline constexpr float k_chunkHeight = 50;
     static inline constexpr float k_routeSize = 5;
+    static inline constexpr float k_entityIconSize = 5;
 
     static inline const Vector4 k_enemyTeamChunkColor = Vector4({ 0.5f, 0, 0, 1 });
     static inline const Vector4 k_playerTeamChunkColor = Vector4({ 0, 0.5f, 0, 1 });
