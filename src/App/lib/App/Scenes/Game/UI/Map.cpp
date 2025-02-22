@@ -1,4 +1,5 @@
 #include <App/Scenes/Game/System/PieceInfo.hpp>
+#include <App/Scenes/Game/System/PieceInstanceCollection.hpp>
 #include <App/Scenes/Game/UI/Map.hpp>
 
 namespace App::Scenes::Game::UI {
@@ -56,6 +57,7 @@ void Map::update()
 {
     auto inputSystem = InputSystem::getInstance();
     auto mousePos = inputSystem->getMouse()->getPosition();
+    auto mouseState = inputSystem->getMouse()->getState(Mouse::Button::Left);
 
     auto screenPos = (((Vector2)mousePos / (Vector2)Screen::getSize()) - Vector2({ 0.5f, 0.5f })) * (Vector2)Screen::getSize();
     screenPos.y() *= -1;
@@ -145,6 +147,11 @@ void Map::update()
         m_focusCells.clear();
         m_focusPlaceable = false;
     }
+
+    // クリック時に現在のピースを配置
+    if (mouseState == ButtonState::Trigger && m_focusPlaceable && m_chunkCountX && m_chunkCountY) {
+        m_pieceInstanceCollection->addInstance(std::make_shared<System::PieceInstance>(m_pieceInfo, IntVector2({ *m_focusChunkX, *m_focusChunkY })));
+    }
 }
 
 void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
@@ -180,6 +187,10 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                     chunkColor = k_enemyTeamChunkColor;
                 } else {
                     chunkColor = k_playerTeamChunkColor;
+
+                    if (wasGotCell(x, y)) {
+                        chunkColor = k_focusPlaceableChunkColor;
+                    }
                 }
             }
 
@@ -252,4 +263,19 @@ std::shared_ptr<System::PieceInfo> Map::getPieceInfo() const { return m_pieceInf
 
 void Map::setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection) { m_pieceInstanceCollection = pieceInstanceCollection; }
 std::shared_ptr<System::PieceInstanceCollection> Map::getPieceInstanceCollection() const { return m_pieceInstanceCollection; }
+// private
+bool Map::wasGotCell(int32_t x, int32_t y) const
+{
+    bool ret = false;
+    for (int32_t i = 0; i < m_pieceInstanceCollection->getInstanceCount(); i++) {
+        auto pieceInstance = m_pieceInstanceCollection->getInstanceAt(i);
+        for (int32_t j = 0; j < pieceInstance->getInfo()->getCells().size(); j++) {
+            auto cell = pieceInstance->getInfo()->getCells().at(j).position + pieceInstance->getPosition();
+            if (cell.x() == x && cell.y() == y) {
+                ret = true;
+            }
+        }
+    }
+    return ret;
+}
 }

@@ -34,6 +34,8 @@ private:
     static inline const Vector4 k_focusChunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
     static inline const Vector4 k_focusPlaceableChunkColor = Vector4({ 0.5f, 0.9f, 0.5f, 1 });
 
+    bool wasGotCell(int32_t x, int32_t y) const;
+
     std::shared_ptr<System::Field> m_field;
     int32_t m_minChunkX;
     int32_t m_maxChunkX;
