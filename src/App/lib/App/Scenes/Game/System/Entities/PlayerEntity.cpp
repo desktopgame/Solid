@@ -81,7 +81,10 @@ void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
     Camera::depthRange(0.1f, 1000.0f);
 
     fireMainWeapon(chunk);
+    coolMainWeapon();
+
     fireSubWeapon(chunk);
+    coolSubWeapon();
 }
 void PlayerEntity::draw3D(const std::shared_ptr<Renderer>& renderer) { }
 void PlayerEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
@@ -110,9 +113,11 @@ PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     , m_mainWeapon()
     , m_mainWeaponEnergy()
     , m_mainWeaponFireRemain()
+    , m_mainWeaponCoolRemain()
     , m_subWeapon()
     , m_subWeaponEnergy()
     , m_subWeaponFireRemain()
+    , m_subWeaponCoolRemain()
 {
     m_category = Entity::Category::Player;
 }
@@ -149,6 +154,19 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
     }
 }
 
+void PlayerEntity::coolMainWeapon()
+{
+    if (!m_mainWeapon) {
+        return;
+    }
+    if (m_mainWeaponCoolRemain > 0.0f) {
+        m_mainWeaponCoolRemain = Mathf::max(0.0f, m_mainWeaponCoolRemain - Time::deltaTime());
+        return;
+    }
+    m_mainWeaponCoolRemain = m_mainWeapon->parameter.coolRate;
+    m_mainWeaponEnergy = Mathf::min(m_mainWeapon->getEnergyMax(), m_mainWeaponEnergy + m_mainWeapon->parameter.increaseEnergy);
+}
+
 void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
 {
     if (!m_subWeapon) {
@@ -179,5 +197,18 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
         m_subWeaponFireRemain = m_subWeapon->parameter.fireRate;
         m_subWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
     }
+}
+
+void PlayerEntity::coolSubWeapon()
+{
+    if (!m_subWeapon) {
+        return;
+    }
+    if (m_subWeaponCoolRemain > 0.0f) {
+        m_subWeaponCoolRemain = Mathf::max(0.0f, m_subWeaponCoolRemain - Time::deltaTime());
+        return;
+    }
+    m_subWeaponCoolRemain = m_subWeapon->parameter.coolRate;
+    m_subWeaponEnergy = Mathf::min(m_subWeapon->getEnergyMax(), m_subWeaponEnergy + m_subWeapon->parameter.increaseEnergy);
 }
 }

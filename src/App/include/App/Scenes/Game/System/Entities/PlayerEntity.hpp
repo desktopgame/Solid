@@ -22,7 +22,10 @@ public:
 protected:
     PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node);
     void fireMainWeapon(const std::shared_ptr<Chunk>& chunk);
+    void coolMainWeapon();
+
     void fireSubWeapon(const std::shared_ptr<Chunk>& chunk);
+    void coolSubWeapon();
 
 private:
     float m_cameraAngleX;
@@ -33,9 +36,11 @@ private:
     std::shared_ptr<System::Weapon> m_mainWeapon;
     float m_mainWeaponEnergy;
     float m_mainWeaponFireRemain;
+    float m_mainWeaponCoolRemain;
 
     std::shared_ptr<System::Weapon> m_subWeapon;
     float m_subWeaponEnergy;
     float m_subWeaponFireRemain;
+    float m_subWeaponCoolRemain;
 };
 }
