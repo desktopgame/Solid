@@ -124,19 +124,24 @@ void Map::update()
                 bool existOk = true;
                 m_focusCells.emplace_back(IntVector2({ x, y }));
 
-                for (const auto& cell : m_pieceInfo->getCells()) {
-                    int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *m_focusChunkX);
-                    int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1)) - cell.position.y();
+                if (wasGotCell(x, y)) {
+                    existOk = false;
+                } else {
+                    for (const auto& cell : m_pieceInfo->getCells()) {
+                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *m_focusChunkX);
+                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1)) - cell.position.y();
 
-                    std::optional<std::shared_ptr<System::Chunk>> atChunk;
-                    m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
-                    if (!atChunk) {
-                        existOk = false;
-                        missingAnyChunk = true;
-                    } else if ((*atChunk)->countEntity(System::Entity::Category::Enemy) > 0) {
-                        existOk = false;
+                        std::optional<std::shared_ptr<System::Chunk>> atChunk;
+                        m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
+                        if (!atChunk) {
+                            existOk = false;
+                            missingAnyChunk = true;
+                        } else if ((*atChunk)->countEntity(System::Entity::Category::Enemy) > 0) {
+                            existOk = false;
+                        }
                     }
                 }
+
                 if (!coordMatchOk || !existOk) {
                     m_focusPlaceable = false;
                 }
