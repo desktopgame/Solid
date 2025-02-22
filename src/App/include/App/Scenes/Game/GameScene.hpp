@@ -33,6 +33,7 @@ private:
     void onClickPauseClose();
     void onClickExitButton();
     void onSelectPieceInfo(int32_t index);
+    void onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance);
 
     Vector3 m_globalLightDir;
 

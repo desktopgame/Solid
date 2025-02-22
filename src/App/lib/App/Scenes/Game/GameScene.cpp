@@ -101,6 +101,7 @@ void GameScene::onEnter()
         tabMap->setFlexible(true);
         m_map = std::make_shared<UI::Map>(m_field);
         m_map->setPieceInstanceCollection(m_pieceInstanceCollection);
+        m_map->setOnSetPieceInstance(std::bind(&GameScene::onSetPieceInstance, this, std::placeholders::_1));
         auto mapScroll = std::make_shared<ScrollPane>();
         mapScroll->setView(m_map);
         m_pieceList = std::make_shared<List<std::shared_ptr<System::PieceInfo>>>();
@@ -260,6 +261,14 @@ void GameScene::onClickExitButton()
 }
 void GameScene::onSelectPieceInfo(int32_t index)
 {
-    m_map->setPieceInfo(m_pieceList->getItemAt(index));
+    if (index >= 0) {
+        m_map->setPieceInfo(m_pieceList->getItemAt(index));
+    } else {
+        m_map->setPieceInfo(nullptr);
+    }
+}
+void GameScene::onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance)
+{
+    m_pieceList->setSelectedIndex(-1);
 }
 }
