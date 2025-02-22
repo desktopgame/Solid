@@ -110,34 +110,36 @@ void Map::update()
                 continue;
             }
 
+            if (!m_pieceInfo || !m_focusChunkX || !m_focusChunkY) {
+                continue;
+            }
+
             // フォーカスされたチャンクを記憶
-            if (m_pieceInfo && m_focusChunkX && m_focusChunkY) {
-                bool coordMatchOk = false;
+            bool coordMatchOk = false;
+            for (const auto& cell : m_pieceInfo->getCells()) {
+                int32_t cellX = cell.position.x() + (*m_focusChunkX);
+                int32_t cellY = cell.position.y() + (*m_focusChunkY);
+                if (x == cellX && y == cellY) {
+                    coordMatchOk = true;
+                    break;
+                }
+            }
+            bool existOk = true;
+            if (coordMatchOk) {
                 for (const auto& cell : m_pieceInfo->getCells()) {
-                    int32_t cellX = cell.position.x() + (*m_focusChunkX);
-                    int32_t cellY = cell.position.y() + (*m_focusChunkY);
-                    if (x == cellX && y == cellY) {
-                        coordMatchOk = true;
+                    int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *m_focusChunkX);
+                    int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1)) - cell.position.y();
+
+                    std::optional<std::shared_ptr<System::Chunk>> atChunk;
+                    m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
+                    if (!atChunk) {
+                        existOk = false;
                         break;
                     }
                 }
-                bool existOk = true;
-                if (coordMatchOk) {
-                    for (const auto& cell : m_pieceInfo->getCells()) {
-                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *m_focusChunkX);
-                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1)) - cell.position.y();
-
-                        std::optional<std::shared_ptr<System::Chunk>> atChunk;
-                        m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
-                        if (!atChunk) {
-                            existOk = false;
-                            break;
-                        }
-                    }
-                }
-                if (coordMatchOk && existOk) {
-                    m_focusCells.emplace_back(IntVector2({ x, y }));
-                }
+            }
+            if (coordMatchOk && existOk) {
+                m_focusCells.emplace_back(IntVector2({ x, y }));
             }
         }
     }
