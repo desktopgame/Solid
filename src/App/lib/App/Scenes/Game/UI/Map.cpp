@@ -92,6 +92,9 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             }
         }
     }
+    if (focusChunkX && focusChunkY) {
+        std::cout << "focusX=" << (*focusChunkX) << " focusY=" << (*focusChunkY) << std::endl;
+    }
 
     // ロード済みのチャンクを描画
     for (int32_t x = 0; x < m_chunkCountX; x++) {
@@ -144,11 +147,8 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
                 bool existOk = true;
                 if (coordMatchOk) {
                     for (const auto& cell : m_pieceInfo->getCells()) {
-                        int32_t cellX = cell.position.x() + *focusChunkX;
-                        int32_t cellY = cell.position.y() + *focusChunkY;
-
-                        int32_t cellChunkGridPosX = m_minChunkX + cellX;
-                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - cellY);
+                        int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *focusChunkX);
+                        int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*focusChunkY + 1)) - cell.position.y();
 
                         std::optional<std::shared_ptr<System::Chunk>> atChunk;
                         m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
