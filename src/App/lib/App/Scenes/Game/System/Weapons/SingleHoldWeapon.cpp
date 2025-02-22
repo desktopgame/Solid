@@ -26,5 +26,5 @@ void SingleHoldWeapon::execute(const std::shared_ptr<Chunk>& chunk, const std::s
 
 Weapon::InputMethod SingleHoldWeapon::getInputMethod() const { return Weapon::InputMethod::Hold; }
 float SingleHoldWeapon::getEnergyMax() const { return m_energyMax; }
-
+std::string SingleHoldWeapon::getIconPath() const { return "./assets/Textures/Machinegun.png"; }
 }

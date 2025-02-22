@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 
 namespace App::Scenes::Game::System::Entities {
 class PlayerEntity;
@@ -32,6 +33,7 @@ public:
 
     virtual InputMethod getInputMethod() const = 0;
     virtual float getEnergyMax() const = 0;
+    virtual std::string getIconPath() const = 0;
 
     const Parameter parameter;
 };

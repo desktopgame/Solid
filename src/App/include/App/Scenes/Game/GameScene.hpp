@@ -35,6 +35,8 @@ private:
     void onSelectPieceInfo(int32_t index);
     void onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance);
 
+    void loadWeaponIcon();
+
     Vector3 m_globalLightDir;
 
     std::shared_ptr<Renderer> m_renderer;
@@ -49,6 +51,11 @@ private:
     std::shared_ptr<UI::Map> m_map;
     std::shared_ptr<List<std::shared_ptr<System::PieceInfo>>> m_pieceList;
     std::shared_ptr<RootPane> m_pauseUI;
+    std::shared_ptr<RootPane> m_weaponUI;
+    std::shared_ptr<ImageIcon> m_mainWeaponIcon;
+    std::string m_mainWeaponIconPath;
+    std::shared_ptr<ImageIcon> m_subWeaponIcon;
+    std::string m_subWeaponIconPath;
     bool m_requestPauseClose;
 
     std::string m_nextScene;

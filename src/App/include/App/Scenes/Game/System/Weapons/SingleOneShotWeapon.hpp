@@ -11,6 +11,7 @@ public:
 
     Weapon::InputMethod getInputMethod() const override;
     float getEnergyMax() const override;
+    std::string getIconPath() const override;
 
 private:
     float m_energyMax;
