@@ -135,6 +135,8 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
     auto inputMethod = m_mainWeapon->getInputMethod();
     bool inputOk = false;
     switch (inputMethod) {
+    case Weapon::InputMethod::None:
+        break;
     case Weapon::InputMethod::LeftOneShot:
         inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
         break;
@@ -180,6 +182,8 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
     auto inputMethod = m_subWeapon->getInputMethod();
     bool inputOk = false;
     switch (inputMethod) {
+    case Weapon::InputMethod::None:
+        break;
     case Weapon::InputMethod::LeftOneShot:
         inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
         break;
