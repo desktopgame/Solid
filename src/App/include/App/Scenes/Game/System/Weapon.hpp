@@ -22,7 +22,7 @@ public:
     enum class InputMethod {
         None,
         OneShot,
-        Continuous,
+        Hold,
     };
 
     explicit Weapon(const Parameter& parameter);

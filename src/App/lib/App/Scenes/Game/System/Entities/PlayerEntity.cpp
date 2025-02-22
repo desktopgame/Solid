@@ -163,7 +163,7 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
     case Weapon::InputMethod::OneShot:
         inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Trigger;
         break;
-    case Weapon::InputMethod::Continuous:
+    case Weapon::InputMethod::Hold:
         inputOk = mouse->getState(Mouse::Button::Left) == ButtonState::Pressed;
         break;
     }
@@ -207,7 +207,7 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
     case Weapon::InputMethod::OneShot:
         inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Trigger;
         break;
-    case Weapon::InputMethod::Continuous:
+    case Weapon::InputMethod::Hold:
         inputOk = mouse->getState(Mouse::Button::Right) == ButtonState::Pressed;
         break;
     }
