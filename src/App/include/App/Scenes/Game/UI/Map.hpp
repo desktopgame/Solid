@@ -32,6 +32,7 @@ private:
     static inline const Vector4 k_enemyTeamChunkColor = Vector4({ 0.5f, 0, 0, 1 });
     static inline const Vector4 k_playerTeamChunkColor = Vector4({ 0, 0.5f, 0, 1 });
     static inline const Vector4 k_focusChunkColor = Vector4({ 0.5f, 0.5f, 0.5f, 1 });
+    static inline const Vector4 k_focusPlaceableChunkColor = Vector4({ 0.5f, 0.9f, 0.5f, 1 });
 
     std::shared_ptr<System::Field> m_field;
     int32_t m_minChunkX;
@@ -46,5 +47,6 @@ private:
     std::vector<IntVector2> m_focusCells;
     std::optional<int32_t> m_focusChunkX;
     std::optional<int32_t> m_focusChunkY;
+    bool m_focusPlaceable;
 };
 }

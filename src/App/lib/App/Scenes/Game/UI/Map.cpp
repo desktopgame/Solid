@@ -17,6 +17,7 @@ Map::Map(const std::shared_ptr<System::Field>& field)
     , m_focusCells()
     , m_focusChunkX()
     , m_focusChunkY()
+    , m_focusPlaceable()
 {
 }
 
@@ -99,17 +100,10 @@ void Map::update()
     }
 
     // フォーカス状態を検出
+    m_focusPlaceable = true;
+    bool missingAnyChunk = false;
     for (int32_t x = 0; x < m_chunkCountX; x++) {
         for (int32_t y = 0; y < m_chunkCountY; y++) {
-            int32_t chunkGridPosX = m_minChunkX + x;
-            int32_t chunkGridPosY = m_minChunkY + (m_chunkCountY - (y + 1));
-
-            std::optional<std::shared_ptr<System::Chunk>> optChunk;
-            m_field->tryFindChunk(optChunk, IntVector2({ chunkGridPosX, chunkGridPosY }));
-            if (!optChunk) {
-                continue;
-            }
-
             if (!m_pieceInfo || !m_focusChunkX || !m_focusChunkY) {
                 continue;
             }
@@ -124,8 +118,10 @@ void Map::update()
                     break;
                 }
             }
-            bool existOk = true;
             if (coordMatchOk) {
+                bool existOk = true;
+                m_focusCells.emplace_back(IntVector2({ x, y }));
+
                 for (const auto& cell : m_pieceInfo->getCells()) {
                     int32_t cellChunkGridPosX = m_minChunkX + (cell.position.x() + *m_focusChunkX);
                     int32_t cellChunkGridPosY = m_minChunkY + (m_chunkCountY - (*m_focusChunkY + 1)) - cell.position.y();
@@ -134,18 +130,20 @@ void Map::update()
                     m_field->tryFindChunk(atChunk, IntVector2({ cellChunkGridPosX, cellChunkGridPosY }));
                     if (!atChunk) {
                         existOk = false;
-                        break;
-                    }
-                    if ((*atChunk)->countEntity(System::Entity::Category::Enemy) > 0) {
+                        missingAnyChunk = true;
+                    } else if ((*atChunk)->countEntity(System::Entity::Category::Enemy) > 0) {
                         existOk = false;
-                        break;
                     }
                 }
-            }
-            if (coordMatchOk && existOk) {
-                m_focusCells.emplace_back(IntVector2({ x, y }));
+                if (!coordMatchOk || !existOk) {
+                    m_focusPlaceable = false;
+                }
             }
         }
+    }
+    if (missingAnyChunk) {
+        m_focusCells.clear();
+        m_focusPlaceable = false;
     }
 }
 
@@ -189,7 +187,7 @@ void Map::draw2D(const std::shared_ptr<Renderer>& renderer)
             if (m_pieceInfo) {
                 auto iter = std::find(m_focusCells.begin(), m_focusCells.end(), IntVector2({ x, y }));
                 if (iter != m_focusCells.end()) {
-                    chunkColor = k_focusChunkColor;
+                    chunkColor = m_focusPlaceable ? k_focusPlaceableChunkColor : k_focusChunkColor;
                 }
             }
 
