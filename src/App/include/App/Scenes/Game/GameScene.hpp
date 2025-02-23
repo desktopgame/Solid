@@ -36,6 +36,7 @@ private:
     void onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance);
 
     void loadWeaponIcon();
+    void updateWeaponGauge();
 
     Vector3 m_globalLightDir;
 
@@ -54,8 +55,12 @@ private:
     std::shared_ptr<RootPane> m_weaponUI;
     std::shared_ptr<ImageIcon> m_mainWeaponIcon;
     std::string m_mainWeaponIconPath;
+    std::shared_ptr<Gauge> m_mainWeaponEnergyGauge;
+    std::shared_ptr<Gauge> m_mainWeaponCoolGauge;
     std::shared_ptr<ImageIcon> m_subWeaponIcon;
     std::string m_subWeaponIconPath;
+    std::shared_ptr<Gauge> m_subWeaponEnergyGauge;
+    std::shared_ptr<Gauge> m_subWeaponCoolGauge;
     bool m_requestPauseClose;
 
     std::string m_nextScene;

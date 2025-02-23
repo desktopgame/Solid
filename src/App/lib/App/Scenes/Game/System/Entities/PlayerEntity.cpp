@@ -115,6 +115,9 @@ void PlayerEntity::setMainWeapon(const std::shared_ptr<Weapon>& mainWeapon)
 }
 std::shared_ptr<Weapon> PlayerEntity::getMainWeapon() const { return m_mainWeapon; }
 
+float PlayerEntity::getMainWeaponEnergy() const { return m_mainWeaponEnergy; }
+float PlayerEntity::getMainWeaponCoolRemain() const { return m_mainWeaponCoolRemain; }
+
 void PlayerEntity::setSubWeapon(const std::shared_ptr<Weapon>& subWeapon)
 {
     m_subWeapon = subWeapon;
@@ -124,6 +127,8 @@ void PlayerEntity::setSubWeapon(const std::shared_ptr<Weapon>& subWeapon)
 }
 std::shared_ptr<Weapon> PlayerEntity::getSubWeapon() const { return m_subWeapon; }
 
+float PlayerEntity::getSubWeaponEnergy() const { return m_subWeaponEnergy; }
+float PlayerEntity::getSubWeaponCoolRemain() const { return m_subWeaponCoolRemain; }
 // protected
 PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : BasicEntity(node)
@@ -181,6 +186,9 @@ void PlayerEntity::coolMainWeapon()
     if (!m_mainWeapon) {
         return;
     }
+    if (m_mainWeaponEnergy >= m_mainWeapon->getEnergyMax()) {
+        m_mainWeaponCoolRemain = 0.0f;
+    }
     if (m_mainWeaponCoolRemain > 0.0f) {
         m_mainWeaponCoolRemain = Mathf::max(0.0f, m_mainWeaponCoolRemain - Time::deltaTime());
         return;
@@ -224,6 +232,9 @@ void PlayerEntity::coolSubWeapon()
 {
     if (!m_subWeapon) {
         return;
+    }
+    if (m_subWeaponEnergy >= m_subWeapon->getEnergyMax()) {
+        m_subWeaponCoolRemain = 0.0f;
     }
     if (m_subWeaponCoolRemain > 0.0f) {
         m_subWeaponCoolRemain = Mathf::max(0.0f, m_subWeaponCoolRemain - Time::deltaTime());
