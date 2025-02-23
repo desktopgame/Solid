@@ -1262,6 +1262,7 @@ namespace Lib::Graphics::Metadata {
             "    float4 axis : NORMAL;\n"
             "    float4 color : COLOR;\n"
             "    float3 cameraPosition : POSITION1;\n"
+            "    float4 borderColor : COLOR2;\n"
             "};\n"
             "cbuffer cbuff0 : register(b0) {\n"
             "    matrix modelMatrix;\n"
@@ -1281,6 +1282,10 @@ namespace Lib::Graphics::Metadata {
             "cbuffer cbuff3 : register(b3)\n"
             "{\n"
             "    float3 cameraPosition;\n"
+            "};\n"
+            "cbuffer cbuff4 : register(b4)\n"
+            "{\n"
+            "    float4 borderColor;\n"
             "};\n"
             "\n"
             "static const float4 axisTable[6] = {\n"
@@ -1329,6 +1334,8 @@ namespace Lib::Graphics::Metadata {
             "\n"
             "    float3 normal = normalVectorTable[tileRotationID];\n"
             "    output.axis = axisTable[tileRotationID];\n"
+            "\n"
+            "    output.borderColor = borderColor;\n"
             "    return output;\n"
             "}\n"
             ,
@@ -1338,6 +1345,7 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UTileTransform), Uniform::Type::CBV },
                 Uniform { sizeof(Reflect::UTilePallet), Uniform::Type::CBV },
                 Uniform { sizeof(Reflect::UVector3), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
             nullptr,
@@ -1352,6 +1360,7 @@ namespace Lib::Graphics::Metadata {
             "    float4 axis : NORMAL;\n"
             "    float4 color : COLOR;\n"
             "    float3 cameraPosition : POSITION1;\n"
+            "    float4 borderColor : COLOR2;\n"
             "};\n"
             "struct PSOutput\n"
             "{\n"
@@ -1443,7 +1452,7 @@ namespace Lib::Graphics::Metadata {
             "    float borderSize = lerp(0.009, 0.1, fogFactor);\n"
             "    if (input.texCoord.x > (1 - borderSize) || input.texCoord.y > (1 - borderSize) ||\n"
             "        input.texCoord.x < borderSize || input.texCoord.y < borderSize) {\n"
-            "        col = float4(0, 1, 0, 1);\n"
+            "        col = input.borderColor;\n"
             "    }\n"
             "    col = lerp(col, fogColor, fogFactor);\n"
             "\n"

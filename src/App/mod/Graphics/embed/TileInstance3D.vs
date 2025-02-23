@@ -5,6 +5,7 @@ struct Output {
     float4 axis : NORMAL;
     float4 color : COLOR;
     float3 cameraPosition : POSITION1;
+    float4 borderColor : COLOR2;
 };
 cbuffer cbuff0 : register(b0) {
     matrix modelMatrix;
@@ -24,6 +25,10 @@ cbuffer cbuff2 : register(b2)
 cbuffer cbuff3 : register(b3)
 {
     float3 cameraPosition;
+};
+cbuffer cbuff4 : register(b4)
+{
+    float4 borderColor;
 };
 
 static const float4 axisTable[6] = {
@@ -72,5 +77,7 @@ Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, float4 tileData
 
     float3 normal = normalVectorTable[tileRotationID];
     output.axis = axisTable[tileRotationID];
+
+    output.borderColor = borderColor;
     return output;
 }

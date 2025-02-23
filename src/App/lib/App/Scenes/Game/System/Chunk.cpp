@@ -177,6 +177,14 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
     uCameraPos.value = Camera::getPosition();
     surface->uniformVS(ub, 3, &uCameraPos);
 
+    Reflect::UVector4 uBorderColor;
+    uBorderColor.value = Vector4({ //
+        Mathf::clamp(0.0f, 1.0f, Mathf::abs(static_cast<float>(m_gridPosition.x())) / 20.0f),
+        1.0f,
+        Mathf::clamp(0.0f, 1.0f, Mathf::abs(static_cast<float>(m_gridPosition.y())) / 20.0f),
+        1.0f });
+    surface->uniformVS(ub, 4, &uBorderColor);
+
     surface->uniformPS(ub, 0, m_normalTexture);
     surface->uniformPS(ub, 1, m_borderTexture);
 #if _DEBUG
