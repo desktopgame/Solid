@@ -6,6 +6,7 @@ struct Output {
     float4 color : COLOR;
     float3 cameraPosition : POSITION1;
     float4 borderColor : COLOR2;
+    float4 fogColor : COLOR3;
 };
 struct PSOutput
 {
@@ -86,7 +87,7 @@ PSOutput psMain(Output input) {
 
     float fogStart = 10;
     float fogEnd = 200;
-    float4 fogColor = float4(0, 0, 1, 1);
+    float4 fogColor = input.fogColor;
     float distance = length(input.mmpos - input.cameraPosition);
     float fogFactor = saturate((distance - fogStart) / (fogEnd - fogStart));
 

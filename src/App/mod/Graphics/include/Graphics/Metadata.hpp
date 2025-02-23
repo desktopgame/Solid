@@ -1263,6 +1263,7 @@ namespace Lib::Graphics::Metadata {
             "    float4 color : COLOR;\n"
             "    float3 cameraPosition : POSITION1;\n"
             "    float4 borderColor : COLOR2;\n"
+            "    float4 fogColor : COLOR3;\n"
             "};\n"
             "cbuffer cbuff0 : register(b0) {\n"
             "    matrix modelMatrix;\n"
@@ -1286,6 +1287,10 @@ namespace Lib::Graphics::Metadata {
             "cbuffer cbuff4 : register(b4)\n"
             "{\n"
             "    float4 borderColor;\n"
+            "};\n"
+            "cbuffer cbuff5 : register(b5)\n"
+            "{\n"
+            "    float4 fogColor;\n"
             "};\n"
             "\n"
             "static const float4 axisTable[6] = {\n"
@@ -1336,6 +1341,7 @@ namespace Lib::Graphics::Metadata {
             "    output.axis = axisTable[tileRotationID];\n"
             "\n"
             "    output.borderColor = borderColor;\n"
+            "    output.fogColor = fogColor;\n"
             "    return output;\n"
             "}\n"
             ,
@@ -1345,6 +1351,7 @@ namespace Lib::Graphics::Metadata {
                 Uniform { sizeof(Reflect::UTileTransform), Uniform::Type::CBV },
                 Uniform { sizeof(Reflect::UTilePallet), Uniform::Type::CBV },
                 Uniform { sizeof(Reflect::UVector3), Uniform::Type::CBV },
+                Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
                 Uniform { sizeof(Reflect::UVector4), Uniform::Type::CBV },
             },
             // gs
@@ -1361,6 +1368,7 @@ namespace Lib::Graphics::Metadata {
             "    float4 color : COLOR;\n"
             "    float3 cameraPosition : POSITION1;\n"
             "    float4 borderColor : COLOR2;\n"
+            "    float4 fogColor : COLOR3;\n"
             "};\n"
             "struct PSOutput\n"
             "{\n"
@@ -1441,7 +1449,7 @@ namespace Lib::Graphics::Metadata {
             "\n"
             "    float fogStart = 10;\n"
             "    float fogEnd = 200;\n"
-            "    float4 fogColor = float4(0, 0, 1, 1);\n"
+            "    float4 fogColor = input.fogColor;\n"
             "    float distance = length(input.mmpos - input.cameraPosition);\n"
             "    float fogFactor = saturate((distance - fogStart) / (fogEnd - fogStart));\n"
             "\n"

@@ -185,6 +185,14 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
         1.0f });
     surface->uniformVS(ub, 4, &uBorderColor);
 
+    Reflect::UVector4 uFogColor;
+    uFogColor.value = Vector4({ //
+        Mathf::clamp(0.0f, 1.0f, Mathf::abs(static_cast<float>(m_gridPosition.x())) / 20.0f) * 0.5f,
+        Mathf::clamp(0.0f, 1.0f, Mathf::abs(static_cast<float>(m_gridPosition.y())) / 20.0f) * 0.5f,
+        1.0f,
+        1.0f });
+    surface->uniformVS(ub, 5, &uFogColor);
+
     surface->uniformPS(ub, 0, m_normalTexture);
     surface->uniformPS(ub, 1, m_borderTexture);
 #if _DEBUG
