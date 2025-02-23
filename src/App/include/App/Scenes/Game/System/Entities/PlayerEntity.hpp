@@ -22,13 +22,11 @@ public:
     std::shared_ptr<Weapon> getMainWeapon() const;
 
     float getMainWeaponEnergy() const;
-    float getMainWeaponCoolRemain() const;
 
     void setSubWeapon(const std::shared_ptr<Weapon>& subWeapon);
     std::shared_ptr<Weapon> getSubWeapon() const;
 
     float getSubWeaponEnergy() const;
-    float getSubWeaponCoolRemain() const;
 
 protected:
     PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node);

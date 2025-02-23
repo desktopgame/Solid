@@ -116,7 +116,6 @@ void PlayerEntity::setMainWeapon(const std::shared_ptr<Weapon>& mainWeapon)
 std::shared_ptr<Weapon> PlayerEntity::getMainWeapon() const { return m_mainWeapon; }
 
 float PlayerEntity::getMainWeaponEnergy() const { return m_mainWeaponEnergy; }
-float PlayerEntity::getMainWeaponCoolRemain() const { return m_mainWeaponCoolRemain; }
 
 void PlayerEntity::setSubWeapon(const std::shared_ptr<Weapon>& subWeapon)
 {
@@ -128,7 +127,6 @@ void PlayerEntity::setSubWeapon(const std::shared_ptr<Weapon>& subWeapon)
 std::shared_ptr<Weapon> PlayerEntity::getSubWeapon() const { return m_subWeapon; }
 
 float PlayerEntity::getSubWeaponEnergy() const { return m_subWeaponEnergy; }
-float PlayerEntity::getSubWeaponCoolRemain() const { return m_subWeaponCoolRemain; }
 // protected
 PlayerEntity::PlayerEntity(const std::shared_ptr<Common::Graphics::Node>& node)
     : BasicEntity(node)

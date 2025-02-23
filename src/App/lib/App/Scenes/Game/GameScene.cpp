@@ -29,11 +29,9 @@ GameScene::GameScene()
     , m_mainWeaponIcon()
     , m_mainWeaponIconPath()
     , m_mainWeaponEnergyGauge()
-    , m_mainWeaponCoolGauge()
     , m_subWeaponIcon()
     , m_subWeaponIconPath()
     , m_subWeaponEnergyGauge()
-    , m_subWeaponCoolGauge()
     , m_requestPauseClose()
     , m_nextScene()
 #if GAMESCENE_PROFILE
@@ -179,8 +177,6 @@ void GameScene::onEnter()
         m_weaponUI->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical));
 
         auto mainWeaponHBox = Box::createHorizontalBox();
-        auto mainWeaponGaugeVBox = Box::createVerticalBox();
-        mainWeaponGaugeVBox->setFlexible(true);
         m_mainWeaponIcon = std::make_shared<ImageIcon>();
         m_mainWeaponIcon->setPreferredSize(Vector2({ 80, 80 }));
         m_mainWeaponEnergyGauge = std::make_shared<Gauge>();
@@ -188,19 +184,10 @@ void GameScene::onEnter()
         m_mainWeaponEnergyGauge->setBackgroundColor(Vector4({ 0.5f, 0.1f, 0.1f, 1.0f }));
         m_mainWeaponEnergyGauge->setForegroundColor(Vector4({ 0.1f, 0.5f, 0.1f, 1.0f }));
         m_mainWeaponEnergyGauge->setFlexible(true);
-        m_mainWeaponCoolGauge = std::make_shared<Gauge>();
-        m_mainWeaponCoolGauge->setPreferredSize(Vector2({ 100, 30 }));
-        m_mainWeaponCoolGauge->setBackgroundColor(Vector4({ 0.5f, 0.1f, 0.1f, 1.0f }));
-        m_mainWeaponCoolGauge->setForegroundColor(Vector4({ 0.5f, 0.5f, 0.1f, 1.0f }));
-        m_mainWeaponCoolGauge->setFlexible(true);
-        mainWeaponGaugeVBox->addLayoutElement(std::make_shared<LayoutElement>(m_mainWeaponEnergyGauge, nullptr));
-        mainWeaponGaugeVBox->addLayoutElement(std::make_shared<LayoutElement>(m_mainWeaponCoolGauge, nullptr));
         mainWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_mainWeaponIcon, nullptr));
-        mainWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(mainWeaponGaugeVBox, nullptr));
+        mainWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_mainWeaponEnergyGauge, nullptr));
 
         auto subWeaponHBox = Box::createHorizontalBox();
-        auto subWeaponGaugeVBox = Box::createVerticalBox();
-        subWeaponGaugeVBox->setFlexible(true);
         m_subWeaponIcon = std::make_shared<ImageIcon>();
         m_subWeaponIcon->setPreferredSize(Vector2({ 80, 80 }));
         m_subWeaponEnergyGauge = std::make_shared<Gauge>();
@@ -208,15 +195,8 @@ void GameScene::onEnter()
         m_subWeaponEnergyGauge->setBackgroundColor(Vector4({ 0.5f, 0.1f, 0.1f, 1.0f }));
         m_subWeaponEnergyGauge->setForegroundColor(Vector4({ 0.1f, 0.5f, 0.1f, 1.0f }));
         m_subWeaponEnergyGauge->setFlexible(true);
-        m_subWeaponCoolGauge = std::make_shared<Gauge>();
-        m_subWeaponCoolGauge->setPreferredSize(Vector2({ 100, 30 }));
-        m_subWeaponCoolGauge->setBackgroundColor(Vector4({ 0.5f, 0.1f, 0.1f, 1.0f }));
-        m_subWeaponCoolGauge->setForegroundColor(Vector4({ 0.5f, 0.5f, 0.1f, 1.0f }));
-        m_subWeaponCoolGauge->setFlexible(true);
-        subWeaponGaugeVBox->addLayoutElement(std::make_shared<LayoutElement>(m_subWeaponEnergyGauge, nullptr));
-        subWeaponGaugeVBox->addLayoutElement(std::make_shared<LayoutElement>(m_subWeaponCoolGauge, nullptr));
         subWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_subWeaponIcon, nullptr));
-        subWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(subWeaponGaugeVBox, nullptr));
+        subWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_subWeaponEnergyGauge, nullptr));
 
         m_weaponUI->addLayoutElement(std::make_shared<LayoutElement>(mainWeaponHBox, nullptr));
         m_weaponUI->addLayoutElement(std::make_shared<LayoutElement>(subWeaponHBox, nullptr));
@@ -369,16 +349,10 @@ void GameScene::updateWeaponGauge()
     if (m_debugPlayer->getMainWeapon()) {
         m_mainWeaponEnergyGauge->setMaximumValue(m_debugPlayer->getMainWeapon()->getEnergyMax());
         m_mainWeaponEnergyGauge->setValue(m_debugPlayer->getMainWeaponEnergy());
-
-        m_mainWeaponCoolGauge->setMaximumValue(m_debugPlayer->getMainWeapon()->parameter.coolRate);
-        m_mainWeaponCoolGauge->setValue(m_debugPlayer->getMainWeaponCoolRemain());
     }
     if (m_debugPlayer->getSubWeapon()) {
         m_subWeaponEnergyGauge->setMaximumValue(m_debugPlayer->getSubWeapon()->getEnergyMax());
         m_subWeaponEnergyGauge->setValue(m_debugPlayer->getSubWeaponEnergy());
-
-        m_subWeaponCoolGauge->setMaximumValue(m_debugPlayer->getSubWeapon()->parameter.coolRate);
-        m_subWeaponCoolGauge->setValue(m_debugPlayer->getSubWeaponCoolRemain());
     }
 }
 }
