@@ -32,6 +32,7 @@ set(SOURCES
     ./include/UI/BoxLayout.hpp
     ./include/UI/BorderLayout.hpp
     ./include/UI/LayoutUtilities.hpp
+    ./include/UI/Gauge.hpp
     ./lib/UI/Component.cpp
     ./lib/UI/Container.cpp
     ./lib/UI/LayoutElement.cpp
@@ -51,6 +52,7 @@ set(SOURCES
     ./lib/UI/BoxLayout.cpp
     ./lib/UI/BorderLayout.cpp
     ./lib/UI/LayoutUtilities.cpp
+    ./lib/UI/Gauge.cpp
 )
 source_group(
     TREE

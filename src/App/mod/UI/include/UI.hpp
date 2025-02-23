@@ -7,6 +7,7 @@
 #include <UI/Component.hpp>
 #include <UI/Container.hpp>
 #include <UI/Form.hpp>
+#include <UI/Gauge.hpp>
 #include <UI/ILayoutManager.hpp>
 #include <UI/IListCellRenderer.hpp>
 #include <UI/ImageIcon.hpp>
