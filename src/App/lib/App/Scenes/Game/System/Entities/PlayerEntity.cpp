@@ -81,18 +81,6 @@ void PlayerEntity::update(const std::shared_ptr<Chunk>& chunk)
 }
 void PlayerEntity::onGui()
 {
-    ImGui::Begin("Player");
-    if (m_mainWeapon) {
-        ImGui::LabelText("M_Energy", "%f/%f", m_mainWeaponEnergy, m_mainWeapon->getEnergyMax());
-        ImGui::LabelText("M_FireRemain", "%f", m_mainWeaponFireRemain);
-        ImGui::LabelText("M_CoolRemain", "%f", m_mainWeaponCoolRemain);
-    }
-    if (m_subWeapon) {
-        ImGui::LabelText("S_Energy", "%f/%f", m_subWeaponEnergy, m_subWeapon->getEnergyMax());
-        ImGui::LabelText("S_FireRemain", "%f", m_subWeaponFireRemain);
-        ImGui::LabelText("S_CoolRemain", "%f", m_subWeaponCoolRemain);
-    }
-    ImGui::End();
 }
 void PlayerEntity::draw3D(const std::shared_ptr<Renderer>& renderer) { }
 void PlayerEntity::draw2D(const std::shared_ptr<Renderer>& renderer) { }
