@@ -25,6 +25,13 @@ GameScene::GameScene()
     , m_map()
     , m_pieceList()
     , m_pauseUI()
+    , m_weaponUI()
+    , m_mainWeaponIcon()
+    , m_mainWeaponIconPath()
+    , m_mainWeaponEnergyGauge()
+    , m_subWeaponIcon()
+    , m_subWeaponIconPath()
+    , m_subWeaponEnergyGauge()
     , m_requestPauseClose()
     , m_nextScene()
 #if GAMESCENE_PROFILE
@@ -160,6 +167,45 @@ void GameScene::onEnter()
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
         m_pauseUI->addLayoutElement(std::make_shared<LayoutElement>(closeButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
     }
+    if (!m_weaponUI) {
+        m_weaponUI = RootPane::create();
+        m_weaponUI->setSize(Vector2({ 300, 200 }));
+        m_weaponUI->setPosition(Vector2({ //
+            static_cast<float>(Screen::getWidth()) / 2.0f - (m_weaponUI->getSize().x() / 2.0f),
+            -static_cast<float>(Screen::getHeight()) / 2.0f + (m_weaponUI->getSize().y() / 2.0f) }));
+
+        m_weaponUI->setLayout(std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical));
+
+        auto mainWeaponHBox = Box::createHorizontalBox();
+        m_mainWeaponIcon = std::make_shared<ImageIcon>();
+        m_mainWeaponIcon->setPreferredSize(Vector2({ 80, 80 }));
+        m_mainWeaponEnergyGauge = std::make_shared<Gauge>();
+        m_mainWeaponEnergyGauge->setPreferredSize(Vector2({ 100, 30 }));
+        m_mainWeaponEnergyGauge->setBackgroundColor(Vector4({ 0.5f, 0.1f, 0.1f, 1.0f }));
+        m_mainWeaponEnergyGauge->setForegroundColor(Vector4({ 0.1f, 0.5f, 0.1f, 1.0f }));
+        m_mainWeaponEnergyGauge->setFlexible(true);
+        mainWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_mainWeaponIcon, nullptr));
+        mainWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_mainWeaponEnergyGauge, nullptr));
+
+        auto subWeaponHBox = Box::createHorizontalBox();
+        m_subWeaponIcon = std::make_shared<ImageIcon>();
+        m_subWeaponIcon->setPreferredSize(Vector2({ 80, 80 }));
+        m_subWeaponEnergyGauge = std::make_shared<Gauge>();
+        m_subWeaponEnergyGauge->setPreferredSize(Vector2({ 100, 30 }));
+        m_subWeaponEnergyGauge->setBackgroundColor(Vector4({ 0.5f, 0.1f, 0.1f, 1.0f }));
+        m_subWeaponEnergyGauge->setForegroundColor(Vector4({ 0.1f, 0.5f, 0.1f, 1.0f }));
+        m_subWeaponEnergyGauge->setFlexible(true);
+        subWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_subWeaponIcon, nullptr));
+        subWeaponHBox->addLayoutElement(std::make_shared<LayoutElement>(m_subWeaponEnergyGauge, nullptr));
+
+        m_weaponUI->addLayoutElement(std::make_shared<LayoutElement>(mainWeaponHBox, nullptr));
+        m_weaponUI->addLayoutElement(std::make_shared<LayoutElement>(subWeaponHBox, nullptr));
+
+        m_weaponUI->doLayout();
+        // ウェポン変わってたら更新
+        loadWeaponIcon();
+        updateWeaponGauge();
+    }
     if (Cursor::isVisible()) {
         Cursor::hide();
         Cursor::lock(Engine::getInstance()->getWindow());
@@ -195,6 +241,10 @@ void GameScene::onUpdate()
         m_field->update();
         m_minimap->update();
     }
+
+    // ウェポン変わってたら更新
+    loadWeaponIcon();
+    updateWeaponGauge();
 }
 
 void GameScene::onGui()
@@ -221,6 +271,7 @@ void GameScene::onDraw2D()
 {
     m_field->draw2D(m_renderer);
     m_minimap->draw2D(m_renderer);
+    m_weaponUI->draw2D(m_renderer);
     Common::Graphics::TelopSystem::draw();
     m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
 
@@ -273,5 +324,35 @@ void GameScene::onSelectPieceInfo(int32_t index)
 void GameScene::onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance)
 {
     m_pieceList->setSelectedIndex(-1);
+}
+
+void GameScene::loadWeaponIcon()
+{
+    if (m_debugPlayer->getMainWeapon()) {
+        auto path = m_debugPlayer->getMainWeapon()->getIconPath();
+        if (m_mainWeaponIconPath != path) {
+            m_mainWeaponIcon->setTexture(Texture::create(path));
+            m_mainWeaponIconPath = path;
+        }
+    }
+    if (m_debugPlayer->getSubWeapon()) {
+        auto path = m_debugPlayer->getSubWeapon()->getIconPath();
+        if (m_subWeaponIconPath != path) {
+            m_subWeaponIcon->setTexture(Texture::create(path));
+            m_subWeaponIconPath = path;
+        }
+    }
+}
+
+void GameScene::updateWeaponGauge()
+{
+    if (m_debugPlayer->getMainWeapon()) {
+        m_mainWeaponEnergyGauge->setMaximumValue(m_debugPlayer->getMainWeapon()->getEnergyMax());
+        m_mainWeaponEnergyGauge->setValue(m_debugPlayer->getMainWeaponEnergy());
+    }
+    if (m_debugPlayer->getSubWeapon()) {
+        m_subWeaponEnergyGauge->setMaximumValue(m_debugPlayer->getSubWeapon()->getEnergyMax());
+        m_subWeaponEnergyGauge->setValue(m_debugPlayer->getSubWeaponEnergy());
+    }
 }
 }

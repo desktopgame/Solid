@@ -47,6 +47,8 @@ set(SOURCES
     ./include/App/Scenes/Demo/DemoScene.hpp
     ./include/App/Scenes/Title/TitleScene.hpp
     ./include/App/Scenes/Game/GameScene.hpp
+    ./include/App/Scenes/Game/System/Weapon.hpp
+    ./include/App/Scenes/Game/System/WeaponRegistry.hpp
     ./include/App/Scenes/Game/System/Cell.hpp
     ./include/App/Scenes/Game/System/PieceInfo.hpp
     ./include/App/Scenes/Game/System/PieceInstance.hpp
@@ -62,6 +64,8 @@ set(SOURCES
     ./include/App/Scenes/Game/System/Entities/EnemyEntity.hpp
     ./include/App/Scenes/Game/System/Entities/SlimeEntity.hpp
     ./include/App/Scenes/Game/System/Entities/ProjectileEntity.hpp
+    ./include/App/Scenes/Game/System/Weapons/SingleOneShotWeapon.hpp
+    ./include/App/Scenes/Game/System/Weapons/SingleHoldWeapon.hpp
     ./include/App/Scenes/Game/UI/Minimap.hpp
     ./include/App/Scenes/Game/UI/Map.hpp
     ./include/App/Scenes/Game/UI/Piece.hpp
@@ -78,6 +82,8 @@ set(SOURCES
     ./lib/App/Scenes/Demo/DemoScene.cpp
     ./lib/App/Scenes/Title/TitleScene.cpp
     ./lib/App/Scenes/Game/GameScene.cpp
+    ./lib/App/Scenes/Game/System/Weapon.cpp
+    ./lib/App/Scenes/Game/System/WeaponRegistry.cpp
     ./lib/App/Scenes/Game/System/Cell.cpp
     ./lib/App/Scenes/Game/System/PieceInfo.cpp
     ./lib/App/Scenes/Game/System/PieceInstance.cpp
@@ -93,6 +99,8 @@ set(SOURCES
     ./lib/App/Scenes/Game/System/Entities/EnemyEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/SlimeEntity.cpp
     ./lib/App/Scenes/Game/System/Entities/ProjectileEntity.cpp
+    ./lib/App/Scenes/Game/System/Weapons/SingleOneShotWeapon.cpp
+    ./lib/App/Scenes/Game/System/Weapons/SingleHoldWeapon.cpp
     ./lib/App/Scenes/Game/UI/Minimap.cpp
     ./lib/App/Scenes/Game/UI/Map.cpp
     ./lib/App/Scenes/Game/UI/Piece.cpp

@@ -10,8 +10,8 @@ public:
     virtual void idle(const std::shared_ptr<Chunk>& chunk) override;
     virtual void onHitEnterEntity(const std::shared_ptr<Entity>& entity) override;
 
-    void setOwner(const std::weak_ptr<Entity>& owner);
-    std::shared_ptr<Entity> getOwner() const;
+    void setOwnerCategory(Entity::Category ownerCategory);
+    Entity::Category getOwnerCategory() const;
 
     void setDirection(const Vector3& direction);
     Vector3 getDirection() const;
@@ -26,7 +26,7 @@ protected:
     virtual void onCollisionRoof(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
     virtual void onCollisionFloor(const std::shared_ptr<Chunk>& chunk, int32_t x, int32_t y, int32_t z) override;
 
-    std::weak_ptr<Entity> m_owner;
+    Entity::Category m_ownerCategory;
     Vector3 m_direction;
     float m_speed;
 
