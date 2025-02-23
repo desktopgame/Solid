@@ -413,13 +413,15 @@ void BasicEntity::onHitExitEntity(const std::shared_ptr<Entity>& entity) { }
 
 bool BasicEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
 {
-    if (!m_damagePlaying) {
+    // NOTE: 無敵時間を仮でナシにする
+    // if (!m_damagePlaying)
+    {
         m_damageElapsed = 0.0f;
         m_damageDuration = 0.25f;
         m_damagePlaying = true;
         return Entity::damage(damageSource);
     }
-    return false;
+    // return false;
 }
 
 void BasicEntity::knockback(const Vector3& direction, float speed, float duration)
