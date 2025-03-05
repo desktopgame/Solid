@@ -277,6 +277,16 @@ public:
         return DistanceHelper<N>::compute(a, b);
     }
 
+    static VectorT<T, N> lerp(const VectorT<T, N>& a, const VectorT<T, N>& b, float t)
+    {
+        VectorT<T, N> v;
+        for (int32_t i = 0; i < N; i++) {
+            float co = static_cast<float>(a.at(i)) + static_cast<float>(b.at(i) - a.at(i)) * t;
+            v.components[i] = static_cast<T>(co);
+        }
+        return v;
+    }
+
     explicit operator VectorT<int32_t, N>() const
     {
         VectorT<int32_t, N> v;

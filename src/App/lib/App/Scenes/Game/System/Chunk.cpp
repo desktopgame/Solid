@@ -25,6 +25,10 @@ Chunk::Chunk(
     , m_indexBuffer()
     , m_tileTransform()
     , m_tilePallet()
+    , m_dangerColor({ 1.0f, 0.0f, 0.0f, 1.0f })
+    , m_safeColor({ 0.0f, 1.0f, 0.0f, 1.0f })
+    , m_colorProgress()
+    , m_colorLerpTime()
     , m_instanceBuffers()
     , m_indexLength()
     , m_instanceCount()
@@ -153,6 +157,16 @@ void Chunk::update()
         return e->isDead() || e->getPosition().y() < -100.0f || e->getPosition().y() > 50.0f;
     });
     m_entities.erase(iter, m_entities.end());
+
+    if (!m_colorProgress) {
+        int32_t enemyCount = countEntity(Entity::Category::Enemy);
+        if (enemyCount == 0) {
+            m_colorProgress = true;
+        }
+    }
+    if (m_colorProgress) {
+        m_colorLerpTime = Mathf::min(0.5f, m_colorLerpTime + Time::deltaTime());
+    }
 }
 void Chunk::onGui()
 {
@@ -178,11 +192,7 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
     surface->uniformVS(ub, 3, &uCameraPos);
 
     Reflect::UVector4 uBorderColor;
-    uBorderColor.value = Vector4({ //
-        Mathf::clamp(0.0f, 1.0f, Mathf::abs(static_cast<float>(m_gridPosition.x())) / 20.0f),
-        1.0f,
-        Mathf::clamp(0.0f, 1.0f, Mathf::abs(static_cast<float>(m_gridPosition.y())) / 20.0f),
-        1.0f });
+    uBorderColor.value = Vector4::lerp(m_dangerColor, m_safeColor, m_colorLerpTime / 0.5f);
     surface->uniformVS(ub, 4, &uBorderColor);
 
     Reflect::UVector4 uFogColor;

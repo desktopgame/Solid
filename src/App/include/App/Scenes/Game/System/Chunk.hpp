@@ -271,6 +271,10 @@ private:
     std::shared_ptr<CpuBuffer> m_indexBuffer;
     Reflect::UTileTransform m_tileTransform;
     Reflect::UTilePallet m_tilePallet;
+    Color m_dangerColor;
+    Color m_safeColor;
+    bool m_colorProgress;
+    float m_colorLerpTime;
     std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
     int32_t m_indexLength;
     int32_t m_instanceCount;
