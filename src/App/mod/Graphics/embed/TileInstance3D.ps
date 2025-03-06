@@ -107,7 +107,15 @@ PSOutput psMain(Output input) {
     }
     col = lerp(col, fogColor, fogFactor);
 
-    float scanEffect = smoothstep(0.0, 1.0, 1.0 - abs(input.mmpos.y - scanLineY) * 10.0);
+    float lineWidth = 1;
+    float halfWidth = lineWidth * 0.5;
+    float upperY = scanLineY + halfWidth;
+    float lowerY = scanLineY - halfWidth;
+
+    // 走査線の範囲を計算
+    float scanEffect = smoothstep(lowerY, lowerY + 0.1, input.mmpos.y) *
+                        smoothstep(upperY, upperY - 0.1, input.mmpos.y);
+    // float scanEffect = smoothstep(lineWidth, 0.0, abs(input.mmpos.y - scanLineY));
     float3 finalColor = col.xyz + scanEffect * float3(0.2, 1.0, 0.5);
 
     // return float4(vecColor, input.color.w);
