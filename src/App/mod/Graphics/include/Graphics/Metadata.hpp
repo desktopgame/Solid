@@ -1474,7 +1474,7 @@ namespace Lib::Graphics::Metadata {
             "    float upperY = scanLineY + halfWidth;\n"
             "    float lowerY = scanLineY - halfWidth;\n"
             "\n"
-            "    // worldPos.yがlowerYからupperYに近づくにつれて0→1→0になる効果\n"
+            "    // 走査線の範囲を計算\n"
             "    float scanEffect = smoothstep(lowerY, lowerY + 0.1, input.mmpos.y) *\n"
             "                        smoothstep(upperY, upperY - 0.1, input.mmpos.y);\n"
             "    // float scanEffect = smoothstep(lineWidth, 0.0, abs(input.mmpos.y - scanLineY));\n"
