@@ -14,6 +14,11 @@ struct PSOutput
     float4 outNormal : SV_Target1;
     float4 outColor : SV_Target2;
 };
+cbuffer cbuff0 : register(b0)
+{
+    float scanLineY;
+};
+
 Texture2D<float4> tex : register(t0);
 SamplerState smp : register(s0);
 
@@ -102,9 +107,12 @@ PSOutput psMain(Output input) {
     }
     col = lerp(col, fogColor, fogFactor);
 
+    float scanEffect = smoothstep(0.0, 1.0, 1.0 - abs(input.mmpos.y - scanLineY) * 10.0);
+    float3 finalColor = col.xyz + scanEffect * float3(0.2, 1.0, 0.5);
+
     // return float4(vecColor, input.color.w);
     output.outPosition = input.mmpos;
     output.outNormal = float4(normalVec, 1);
-    output.outColor = col;
+    output.outColor = float4(finalColor, 1);
     return output;
 }

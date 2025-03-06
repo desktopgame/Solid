@@ -205,6 +205,11 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
 
     surface->uniformPS(ub, 0, m_normalTexture);
     surface->uniformPS(ub, 1, m_borderTexture);
+
+    Reflect::UFloat uScanLineY;
+    uScanLineY.value = (m_colorLerpTime / 0.5f) * (Chunk::k_chunkSizeY * 5.0f);
+    surface->uniformPS(ub, 2, &uScanLineY);
+
 #if _DEBUG
     if (m_debugDrawChunk)
 #endif

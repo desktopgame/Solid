@@ -1376,6 +1376,11 @@ namespace Lib::Graphics::Metadata {
             "    float4 outNormal : SV_Target1;\n"
             "    float4 outColor : SV_Target2;\n"
             "};\n"
+            "cbuffer cbuff0 : register(b0)\n"
+            "{\n"
+            "    float scanLineY;\n"
+            "};\n"
+            "\n"
             "Texture2D<float4> tex : register(t0);\n"
             "SamplerState smp : register(s0);\n"
             "\n"
@@ -1464,10 +1469,13 @@ namespace Lib::Graphics::Metadata {
             "    }\n"
             "    col = lerp(col, fogColor, fogFactor);\n"
             "\n"
+            "    float scanEffect = smoothstep(0.0, 1.0, 1.0 - abs(input.mmpos.y - scanLineY) * 10.0);\n"
+            "    float3 finalColor = col.xyz + scanEffect * float3(0.2, 1.0, 0.5);\n"
+            "\n"
             "    // return float4(vecColor, input.color.w);\n"
             "    output.outPosition = input.mmpos;\n"
             "    output.outNormal = float4(normalVec, 1);\n"
-            "    output.outColor = col;\n"
+            "    output.outColor = float4(finalColor, 1);\n"
             "    return output;\n"
             "}\n"
             ,
@@ -1475,6 +1483,7 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { 0, Uniform::Type::SRV },
                 Uniform { 0, Uniform::Type::SRV },
+                Uniform { sizeof(Reflect::UFloat), Uniform::Type::CBV },
             },
             // cs
             nullptr,
