@@ -28,6 +28,7 @@ Chunk::Chunk(
     , m_dangerColor({ 1.0f, 0.0f, 0.0f, 1.0f })
     , m_safeColor({ 0.0f, 1.0f, 0.0f, 1.0f })
     , m_colorProgress()
+    , m_scanLineTime()
     , m_colorLerpTime()
     , m_instanceBuffers()
     , m_indexLength()
@@ -165,7 +166,11 @@ void Chunk::update()
         }
     }
     if (m_colorProgress) {
-        m_colorLerpTime = Mathf::min(0.5f, m_colorLerpTime + Time::deltaTime());
+        if (m_scanLineTime < 0.5f) {
+            m_scanLineTime = Mathf::min(0.5f, m_scanLineTime + Time::deltaTime());
+        } else {
+            m_colorLerpTime = Mathf::min(1.0f, m_colorLerpTime + Time::deltaTime());
+        }
     }
 }
 void Chunk::onGui()
@@ -192,7 +197,7 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
     surface->uniformVS(ub, 3, &uCameraPos);
 
     Reflect::UVector4 uBorderColor;
-    uBorderColor.value = Vector4::lerp(m_dangerColor, m_safeColor, m_colorLerpTime / 0.5f);
+    uBorderColor.value = Vector4::lerp(m_dangerColor, m_safeColor, m_colorLerpTime / 1.0f);
     surface->uniformVS(ub, 4, &uBorderColor);
 
     Reflect::UVector4 uFogColor;
@@ -207,7 +212,7 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
     surface->uniformPS(ub, 1, m_borderTexture);
 
     Reflect::UFloat uScanLineY;
-    uScanLineY.value = (m_colorLerpTime / 0.5f) * (Chunk::k_chunkSizeY * 5.0f);
+    uScanLineY.value = (m_scanLineTime / 0.5f) * (Chunk::k_chunkSizeY * 5.0f);
     surface->uniformPS(ub, 2, &uScanLineY);
 
 #if _DEBUG
