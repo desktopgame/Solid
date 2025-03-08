@@ -23,7 +23,7 @@ public:
     static inline constexpr float k_gravity = 9.8f * 5.0f;
     static inline constexpr float k_scanLineTimeMax = 1.0f;
     static inline constexpr float k_colorLerpTimeMax = 0.25f;
-    static inline constexpr float k_floorParticleTimeMax = 0.25f;
+    static inline constexpr float k_floorParticleTimeMax = 0.10f;
     static_assert(k_chunkSizeX % 2 == 0);
     static_assert(k_chunkSizeZ % 2 == 0);
     static_assert(k_routeLength % 2 == 0);

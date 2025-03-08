@@ -192,7 +192,7 @@ void Chunk::update()
                 Vector3({ 1.0f, 1.0f, 1.0f }),
                 Vector3({ 0.25f, 0.25f, 0.25f }),
                 5.5f,
-                10.0f,
+                6.0f,
                 Common::Graphics::PlaneParticleOption(pos, Vector3({ sizeX, sizeY, sizeZ }))));
             m_floorParticleTime = 0.0f;
         }
