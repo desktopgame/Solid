@@ -23,6 +23,7 @@ public:
     static inline constexpr float k_gravity = 9.8f * 5.0f;
     static inline constexpr float k_scanLineTimeMax = 1.0f;
     static inline constexpr float k_colorLerpTimeMax = 0.25f;
+    static inline constexpr float k_emissiveLerpTimeMax = 0.5f;
     static inline constexpr float k_floorParticleTimeMax = 0.10f;
     static_assert(k_chunkSizeX % 2 == 0);
     static_assert(k_chunkSizeZ % 2 == 0);
@@ -279,6 +280,7 @@ private:
     bool m_colorProgress;
     float m_scanLineTime;
     float m_colorLerpTime;
+    float m_emissiveLerpTime;
     std::vector<std::shared_ptr<IBuffer>> m_instanceBuffers;
     int32_t m_indexLength;
     int32_t m_instanceCount;

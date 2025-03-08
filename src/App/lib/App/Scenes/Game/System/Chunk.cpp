@@ -32,6 +32,7 @@ Chunk::Chunk(
     , m_colorProgress()
     , m_scanLineTime()
     , m_colorLerpTime()
+    , m_emissiveLerpTime()
     , m_instanceBuffers()
     , m_indexLength()
     , m_instanceCount()
@@ -177,7 +178,11 @@ void Chunk::update()
                 Time::s_timeScale = 1.0f;
             }
         } else {
-            m_colorLerpTime = Mathf::min(k_colorLerpTimeMax, m_colorLerpTime + Time::deltaTime());
+            m_emissiveLerpTime = Mathf::min(k_emissiveLerpTimeMax, m_emissiveLerpTime + Time::deltaTime());
+
+            if (m_emissiveLerpTime >= k_emissiveLerpTimeMax) {
+                m_colorLerpTime = Mathf::min(k_colorLerpTimeMax, m_colorLerpTime + Time::deltaTime());
+            }
         }
     }
 
@@ -222,7 +227,16 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
     surface->uniformVS(ub, 3, &uCameraPos);
 
     Reflect::UVector4 uBorderColor;
-    uBorderColor.value = Vector4::lerp(m_dangerColor, m_safeColor, m_colorLerpTime / k_colorLerpTimeMax);
+    if (m_scanLineTime >= k_scanLineTimeMax && m_emissiveLerpTime < k_emissiveLerpTimeMax) {
+        uBorderColor.value = Vector4({ 1, 1, 1, 1 });
+    } else {
+        if (m_emissiveLerpTime < k_emissiveLerpTimeMax) {
+            uBorderColor.value = Vector4::lerp(m_dangerColor, m_safeColor, m_colorLerpTime / k_colorLerpTimeMax);
+        } else {
+            uBorderColor.value = Vector4::lerp(Vector4({ 1, 1, 1, 1 }), m_safeColor, m_colorLerpTime / k_colorLerpTimeMax);
+        }
+        // uBorderColor.value = Vector4::lerp(m_dangerColor, m_safeColor, m_colorLerpTime / k_colorLerpTimeMax);
+    }
     surface->uniformVS(ub, 4, &uBorderColor);
 
     Reflect::UVector4 uFogColor;
@@ -240,6 +254,14 @@ void Chunk::draw3D(const std::shared_ptr<Renderer>& renderer)
     uScanLineY.value = (m_scanLineTime / k_scanLineTimeMax) * (Chunk::k_chunkSizeY * 5.0f);
     surface->uniformPS(ub, 2, &uScanLineY);
 
+    Reflect::UFloat uEmissive;
+    if (m_emissiveLerpTime < (k_emissiveLerpTimeMax * 0.5f)) {
+        uEmissive.value = 1.0f + 2.0f * (m_emissiveLerpTime / (k_emissiveLerpTimeMax * 0.5f));
+    } else {
+        float diff = m_emissiveLerpTime - (k_emissiveLerpTimeMax * 0.5f);
+        uEmissive.value = 3.0f - (2.0f * (diff / (k_emissiveLerpTimeMax * 0.5f)));
+    }
+    surface->uniformPS(ub, 3, &uEmissive);
 #if _DEBUG
     if (m_debugDrawChunk)
 #endif

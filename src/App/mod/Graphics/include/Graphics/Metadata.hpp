@@ -1380,6 +1380,10 @@ namespace Lib::Graphics::Metadata {
             "{\n"
             "    float scanLineY;\n"
             "};\n"
+            "cbuffer cbuff1 : register(b1)\n"
+            "{\n"
+            "    float emissive;\n"
+            "};\n"
             "\n"
             "Texture2D<float4> tex : register(t0);\n"
             "SamplerState smp : register(s0);\n"
@@ -1465,7 +1469,7 @@ namespace Lib::Graphics::Metadata {
             "    float borderSize = lerp(0.009, 0.1, fogFactor);\n"
             "    if (input.texCoord.x > (1 - borderSize) || input.texCoord.y > (1 - borderSize) ||\n"
             "        input.texCoord.x < borderSize || input.texCoord.y < borderSize) {\n"
-            "        col = input.borderColor;\n"
+            "        col = input.borderColor * emissive;\n"
             "    }\n"
             "    col = lerp(col, fogColor, fogFactor);\n"
             "\n"
@@ -1491,6 +1495,7 @@ namespace Lib::Graphics::Metadata {
             std::vector<Uniform> {
                 Uniform { 0, Uniform::Type::SRV },
                 Uniform { 0, Uniform::Type::SRV },
+                Uniform { sizeof(Reflect::UFloat), Uniform::Type::CBV },
                 Uniform { sizeof(Reflect::UFloat), Uniform::Type::CBV },
             },
             // cs

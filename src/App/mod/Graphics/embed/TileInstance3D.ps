@@ -18,6 +18,10 @@ cbuffer cbuff0 : register(b0)
 {
     float scanLineY;
 };
+cbuffer cbuff1 : register(b1)
+{
+    float emissive;
+};
 
 Texture2D<float4> tex : register(t0);
 SamplerState smp : register(s0);
@@ -103,7 +107,7 @@ PSOutput psMain(Output input) {
     float borderSize = lerp(0.009, 0.1, fogFactor);
     if (input.texCoord.x > (1 - borderSize) || input.texCoord.y > (1 - borderSize) ||
         input.texCoord.x < borderSize || input.texCoord.y < borderSize) {
-        col = input.borderColor;
+        col = input.borderColor * emissive;
     }
     col = lerp(col, fogColor, fogFactor);
 
