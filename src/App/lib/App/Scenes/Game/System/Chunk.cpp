@@ -163,11 +163,16 @@ void Chunk::update()
         int32_t enemyCount = countEntity(Entity::Category::Enemy);
         if (enemyCount == 0) {
             m_colorProgress = true;
+            Time::s_timeScale = 0.5f;
         }
     }
     if (m_colorProgress) {
         if (m_scanLineTime < k_scanLineTimeMax) {
             m_scanLineTime = Mathf::min(k_scanLineTimeMax, m_scanLineTime + Time::deltaTime());
+
+            if (m_scanLineTime >= k_scanLineTimeMax) {
+                Time::s_timeScale = 1.0f;
+            }
         } else {
             m_colorLerpTime = Mathf::min(k_colorLerpTimeMax, m_colorLerpTime + Time::deltaTime());
         }
