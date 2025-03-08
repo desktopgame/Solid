@@ -1,3 +1,5 @@
+#include <App/Common/Graphics/ParticleSystem.hpp>
+#include <App/Common/Graphics/PlaneParticle.hpp>
 #include <App/Scenes/Game/System/Chunk.hpp>
 #include <App/Scenes/Game/System/ChunkGenerator.hpp>
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
@@ -33,6 +35,7 @@ Chunk::Chunk(
     , m_instanceBuffers()
     , m_indexLength()
     , m_instanceCount()
+    , m_floorParticleTime()
 #if _DEBUG
     , m_debugDrawChunk(true)
 #endif
@@ -175,6 +178,23 @@ void Chunk::update()
             }
         } else {
             m_colorLerpTime = Mathf::min(k_colorLerpTimeMax, m_colorLerpTime + Time::deltaTime());
+        }
+    }
+
+    m_floorParticleTime += Time::deltaTime();
+    if (m_floorParticleTime >= k_floorParticleTimeMax) {
+        if (countEntity(Entity::Category::Enemy) > 0) {
+            auto pos = Vector3({ getPhysicalCenterX(), 2.5f, getPhysicalCenterZ() });
+            float sizeX = k_chunkSizeX * k_tileSize;
+            float sizeY = k_chunkSizeY * k_tileSize;
+            float sizeZ = k_chunkSizeZ * k_tileSize;
+            Common::Graphics::ParticleSystem::emit<Common::Graphics::PlaneParticle>(Common::Graphics::ParticleParameter<Common::Graphics::PlaneParticleOption>(
+                Vector3({ 1.0f, 1.0f, 1.0f }),
+                Vector3({ 0.25f, 0.25f, 0.25f }),
+                5.5f,
+                10.0f,
+                Common::Graphics::PlaneParticleOption(pos, Vector3({ sizeX, sizeY, sizeZ }))));
+            m_floorParticleTime = 0.0f;
         }
     }
 }

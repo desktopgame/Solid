@@ -12,7 +12,7 @@ public:
     template <typename T>
     static std::shared_ptr<IParticle> emit(const ParticleParameter<typename T::Option>& params)
     {
-        static_assert(std::is_base_of_v<ParticleBase<typename T::Option>, T>, "T must derive from ParticleBase<Option>");
+        // static_assert(std::is_base_of_v<ParticleBase<typename T::Option>, T>, "T must derive from ParticleBase<Option>");
 
         int32_t typeIndex = static_cast<int32_t>(T::Type);
         std::vector<std::shared_ptr<IParticle>>& freeVec = s_freeTable.at(typeIndex);

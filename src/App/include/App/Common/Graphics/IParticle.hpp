@@ -2,13 +2,13 @@
 #include <App/library.hpp>
 #include <cstdint>
 
-
 namespace App::Common::Graphics {
 class IParticle {
 public:
     enum class Type : int32_t {
         None = 0,
         Spherical,
+        Plane,
         Count
     };
 

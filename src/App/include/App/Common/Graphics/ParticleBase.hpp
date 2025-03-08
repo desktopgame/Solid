@@ -29,10 +29,9 @@ public:
     }
 };
 
-template <typename T>
+template <typename T, int32_t NumParticles>
 class ParticleBase : public IParticle {
 public:
-    static inline constexpr int32_t NumParticles = 4096;
     using Option = T;
     static inline constexpr IParticle::Type Type = IParticle::Type::None;
 

@@ -18,7 +18,7 @@ struct SphericalParticleOption {
     }
 };
 
-class SphericalParticle : public ParticleBase<SphericalParticleOption> {
+class SphericalParticle : public ParticleBase<SphericalParticleOption, 4096> {
 public:
     using Option = SphericalParticleOption;
     static inline constexpr IParticle::Type Type = IParticle::Type::Spherical;
@@ -29,7 +29,7 @@ public:
     }
 
 protected:
-    void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<SphericalParticleOption>& params) override
+    void batch(std::array<VertexParticle3D, 4096>& particles, const ParticleParameter<SphericalParticleOption>& params) override
     {
         Random random;
         for (auto& particle : particles) {
