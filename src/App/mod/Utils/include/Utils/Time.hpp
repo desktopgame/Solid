@@ -10,6 +10,7 @@ public:
     static float deltaTime();
 
     static float s_deltaTime;
+    static float s_timeScale;
 
 private:
     Time() = delete;

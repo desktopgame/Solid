@@ -8,6 +8,7 @@ float Time::s_start;
 float Time::s_end;
 float Time::s_overSleep;
 float Time::s_deltaTime;
+float Time::s_timeScale = 1.0f;
 // public
 
 void Time::begin() { s_start = Clock::counter(); }
@@ -35,5 +36,5 @@ void Time::sync()
     }
 }
 
-float Time::deltaTime() { return s_deltaTime; }
+float Time::deltaTime() { return s_deltaTime * s_timeScale; }
 }
