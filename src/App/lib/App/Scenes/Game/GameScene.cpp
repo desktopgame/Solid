@@ -225,9 +225,11 @@ void GameScene::onUpdate()
         if (Cursor::isVisible()) {
             Cursor::hide();
             Cursor::lock(Engine::getInstance()->getWindow());
+            Time::s_timeScale = 1.0f;
         } else {
             Cursor::show();
             Cursor::unlock();
+            Time::s_timeScale = 0.0f;
 
             m_map->setup();
             m_pauseUI->doLayout();
