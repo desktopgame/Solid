@@ -1,3 +1,4 @@
+#include <App/Common/Audio/AudioManager.hpp>
 #include <App/Common/Graphics/Node.hpp>
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Field.hpp>
@@ -419,6 +420,7 @@ bool BasicEntity::damage(const std::shared_ptr<DamageSource>& damageSource)
         m_damageElapsed = 0.0f;
         m_damageDuration = 0.25f;
         m_damagePlaying = true;
+        // Common::Audio::AudioManager::getInstance()->playSE("./assets/Audios/se_damage.wav");
         return Entity::damage(damageSource);
     }
     // return false;

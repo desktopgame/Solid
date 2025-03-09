@@ -1,3 +1,4 @@
+#include <App/Common/Audio/AudioManager.hpp>
 #include <App/Common/Graphics/Node.hpp>
 #include <App/Common/Graphics/NodeRegistry.hpp>
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
@@ -163,6 +164,9 @@ void PlayerEntity::fireMainWeapon(const std::shared_ptr<Chunk>& chunk)
             m_mainWeaponEnergy = Mathf::max(0.0f, m_mainWeaponEnergy - m_mainWeapon->parameter.decreaseEnergy);
             m_mainWeaponFireRemain = m_mainWeapon->parameter.fireRate;
             m_mainWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
+
+            // TODO: ウェポンごとに音を変える
+            Common::Audio::AudioManager::getInstance()->playSE("./assets/Audios/se_shot.wav");
         }
     }
 }
@@ -210,6 +214,9 @@ void PlayerEntity::fireSubWeapon(const std::shared_ptr<Chunk>& chunk)
             m_subWeaponEnergy = Mathf::max(0.0f, m_subWeaponEnergy - m_subWeapon->parameter.decreaseEnergy);
             m_subWeaponFireRemain = m_subWeapon->parameter.fireRate;
             m_subWeapon->execute(chunk, std::static_pointer_cast<PlayerEntity>(shared_from_this()));
+
+            // TODO: ウェポンごとに音を変える
+            Common::Audio::AudioManager::getInstance()->playSE("./assets/Audios/se_shot.wav");
         }
     }
 }
