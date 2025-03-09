@@ -12,8 +12,10 @@ set(SOURCES
     ./include/Audio.hpp
     ./include/Audio/AudioSource.hpp
     ./include/Audio/AudioClip.hpp
+    ./include/Audio/AudioSystem.hpp
     ./lib/Audio/AudioSource.cpp
     ./lib/Audio/AudioClip.cpp
+    ./lib/Audio/AudioSystem.cpp
 )
 source_group(
     TREE

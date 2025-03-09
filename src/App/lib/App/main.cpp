@@ -31,6 +31,8 @@ static int appMain(int argc, char* argv[])
 
     auto inputSystem = InputSystem::getInstance()->startup(window);
 
+    AudioSystem::initialize();
+
     std::unordered_map<std::string, std::shared_ptr<IScene>> sceneMap;
     sceneMap.insert_or_assign("Title", std::make_shared<Title::TitleScene>());
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
@@ -78,6 +80,8 @@ static int appMain(int argc, char* argv[])
 
     sceneManager = nullptr;
     sceneMap.clear();
+
+    AudioSystem::destroy();
 
     inputSystem->shutdown();
     engine->shutdown();
