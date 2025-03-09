@@ -45,6 +45,20 @@ bool AudioSource::isLoop() const
     alGetSourcei(m_id, AL_LOOPING, &isLoop);
     return isLoop == 1;
 }
+
+bool AudioSource::isPlaying() const
+{
+    ALint state;
+    alGetSourcei(m_id, AL_SOURCE_STATE, &state);
+    return state == AL_PLAYING;
+}
+
+bool AudioSource::isPausing() const
+{
+    ALint state;
+    alGetSourcei(m_id, AL_SOURCE_STATE, &state);
+    return state == AL_PAUSED;
+}
 // private
 AudioSource::AudioSource()
     : m_id()

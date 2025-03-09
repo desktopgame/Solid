@@ -19,6 +19,9 @@ public:
     void setLoop(bool isLoop);
     bool isLoop() const;
 
+    bool isPlaying() const;
+    bool isPausing() const;
+
 private:
     AudioSource();
     void init();
