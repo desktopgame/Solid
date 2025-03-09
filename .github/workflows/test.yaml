@@ -26,6 +26,7 @@ jobs:
         .\vcpkg install freetype
         .\vcpkg install imgui[core,dx12-binding,win32-binding]:x64-windows
         .\vcpkg install stduuid
+        .\vcpkg install openal-soft
     - name: build
       run: |
         cmake -S src -B build -G "Visual Studio 17 2022"

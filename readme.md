@@ -13,6 +13,7 @@ vcpkg install picojson
 vcpkg install freetype
 vcpkg install imgui[core,dx12-binding,win32-binding]:x64-windows
 vcpkg install stduuid
+vcpkg install openal-soft
 ````
 
 ここから先のセットアップ手順は開発環境により異なります。
