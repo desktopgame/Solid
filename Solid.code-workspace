@@ -144,7 +144,9 @@
 			"semaphore": "cpp",
 			"coroutine": "cpp",
 			"resumable": "cpp",
-			"future": "cpp"
+			"future": "cpp",
+			"complex": "cpp",
+			"csignal": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,
