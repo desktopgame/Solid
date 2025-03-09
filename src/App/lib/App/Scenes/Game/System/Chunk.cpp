@@ -169,6 +169,7 @@ void Chunk::update()
         if (enemyCount == 0) {
             m_colorProgress = true;
             Time::s_timeScale = 0.5f;
+            Common::Audio::AudioManager::getInstance()->playSE("./assets/Audios/se_line_up.wav");
         }
     }
     if (m_colorProgress) {
