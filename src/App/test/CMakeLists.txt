@@ -24,6 +24,7 @@ target_include_directories(
     "${MODS}/Input/include"
     "${MODS}/Graphics/include"
     "${MODS}/Math/include"
+    "${MODS}/Audio/include"
     "${MODS}/OS/include"
     "${MODS}/Scene/include"
     "${MODS}/Utils/include"
@@ -35,6 +36,7 @@ target_link_libraries(
     Lib-Json
     Lib-Input
     Lib-Math
+    Lib-Audio
     Lib-Graphics
     Lib-OS
     Lib-Scene

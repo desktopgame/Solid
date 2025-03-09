@@ -9,6 +9,10 @@
 			"name": "App"
 		},
 		{
+			"path": "src/App/mod/Audio",
+			"name": "Audio"
+		},
+		{
 			"path": "src/App/mod/Graphics",
 			"name": "Graphics"
 		},
