@@ -35,6 +35,7 @@ add_subdirectory(./mod/UI)
 set(SOURCES
     ./include/App/main.hpp
     ./include/App/test.hpp
+    ./include/App/Common/Audio/AudioManager.hpp
     ./include/App/Common/Graphics/Node.hpp
     ./include/App/Common/Graphics/NodeRegistry.hpp
     ./include/App/Common/Graphics/IParticle.hpp
@@ -73,6 +74,7 @@ set(SOURCES
     ./include/App/Scenes/Game/UI/PieceInfoListCellRenderer.hpp
     ./lib/App/main.cpp
     ./lib/App/test.cpp
+    ./lib/App/Common/Audio/AudioManager.cpp
     ./lib/App/Common/Graphics/Node.cpp
     ./lib/App/Common/Graphics/NodeRegistry.cpp
     ./lib/App/Common/Graphics/ParticleSystem.cpp
