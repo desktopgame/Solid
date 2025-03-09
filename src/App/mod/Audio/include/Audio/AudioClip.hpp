@@ -10,6 +10,10 @@ public:
 
     void loadWav(const std::string& file);
 
+#if SOLID_ENABLE_INTERNAL
+    uint32_t getBufferID() const;
+#endif
+
 private:
     AudioClip();
     void init();

@@ -62,6 +62,11 @@ void AudioClip::loadWav(const std::string& file)
     alBufferData(m_id, format, m_data, size, samplerate);
 }
 
+uint32_t AudioClip::getBufferID() const
+{
+    return m_id;
+}
+
 // private
 AudioClip::AudioClip()
     : m_id()

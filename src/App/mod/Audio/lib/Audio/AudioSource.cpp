@@ -1,4 +1,5 @@
 #include <AL/al.h>
+#include <Audio/AudioClip.hpp>
 #include <Audio/AudioSource.hpp>
 
 namespace Lib::Audio {
@@ -12,6 +13,16 @@ AudioSource::~AudioSource()
 {
     alDeleteSources(1, &m_id);
 }
+
+void AudioSource::play()
+{
+    if (m_clip) {
+        alSourcePlay(m_clip->getBufferID());
+    }
+}
+
+void AudioSource::setClip(const std::shared_ptr<AudioClip>& clip) { m_clip = clip; }
+std::shared_ptr<AudioClip> AudioSource::getClip() const { return m_clip; }
 // private
 AudioSource::AudioSource()
     : m_id()
