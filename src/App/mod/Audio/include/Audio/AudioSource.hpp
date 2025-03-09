@@ -11,6 +11,7 @@ public:
     void play();
     void pause();
     void resume();
+    void stop();
 
     void setClip(const std::shared_ptr<AudioClip>& clip);
     std::shared_ptr<AudioClip> getClip() const;

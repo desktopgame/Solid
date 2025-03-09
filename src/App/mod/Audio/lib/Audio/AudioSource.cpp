@@ -31,6 +31,11 @@ void AudioSource::resume()
     }
 }
 
+void AudioSource::stop()
+{
+    alSourceStop(m_id);
+}
+
 void AudioSource::setClip(const std::shared_ptr<AudioClip>& clip)
 {
     m_clip = clip;
