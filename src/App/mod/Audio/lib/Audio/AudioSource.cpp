@@ -24,6 +24,17 @@ void AudioSource::play()
 void AudioSource::setClip(const std::shared_ptr<AudioClip>& clip) { m_clip = clip; }
 std::shared_ptr<AudioClip> AudioSource::getClip() const { return m_clip; }
 
+void AudioSource::setVolume(float volume)
+{
+    alSourcef(m_id, AL_GAIN, volume);
+}
+float AudioSource::getVolume() const
+{
+    ALfloat volume;
+    alGetSourcef(m_id, AL_GAIN, &volume);
+    return volume;
+}
+
 void AudioSource::setLoop(bool isLoop)
 {
     alSourcei(m_id, AL_LOOPING, isLoop ? 1 : 0);
