@@ -5,6 +5,7 @@
 #endif
 
 // App
+#include <App/Common/Audio/AudioManager.hpp>
 #include <App/Common/Graphics/NodeRegistry.hpp>
 #include <App/Common/Graphics/ParticleSystem.hpp>
 #include <App/Common/Graphics/TelopSystem.hpp>
@@ -40,6 +41,7 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Debug");
 
+    Audio::AudioManager::getInstance();
     Graphics::NodeRegistry::initialize();
     Graphics::ParticleSystem::initialize();
     Graphics::TelopSystem::initialize();
@@ -77,6 +79,7 @@ static int appMain(int argc, char* argv[])
     Graphics::TelopSystem::destroy();
     Graphics::ParticleSystem::destroy();
     Graphics::NodeRegistry::destroy();
+    Audio::AudioManager::destroyInstance();
 
     sceneManager = nullptr;
     sceneMap.clear();
