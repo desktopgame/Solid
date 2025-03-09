@@ -13,6 +13,9 @@ public:
     void setClip(const std::shared_ptr<AudioClip>& clip);
     std::shared_ptr<AudioClip> getClip() const;
 
+    void setLoop(bool isLoop);
+    bool isLoop() const;
+
 private:
     AudioSource();
     void init();
