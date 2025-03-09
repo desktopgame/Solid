@@ -16,12 +16,26 @@ AudioSource::~AudioSource()
 
 void AudioSource::play()
 {
-    if (m_clip) {
-        alSourcePlay(m_clip->getBufferID());
+    alSourcePlay(m_id);
+}
+
+void AudioSource::pause()
+{
+    alSourcePause(m_id);
+}
+
+void AudioSource::resume()
+{
+    if (isPausing()) {
+        alSourcePlay(m_id);
     }
 }
 
-void AudioSource::setClip(const std::shared_ptr<AudioClip>& clip) { m_clip = clip; }
+void AudioSource::setClip(const std::shared_ptr<AudioClip>& clip)
+{
+    m_clip = clip;
+    alSourcei(m_id, AL_BUFFER, clip->getBufferID());
+}
 std::shared_ptr<AudioClip> AudioSource::getClip() const { return m_clip; }
 
 void AudioSource::setVolume(float volume)

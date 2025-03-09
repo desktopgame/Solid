@@ -9,6 +9,8 @@ public:
     ~AudioSource();
 
     void play();
+    void pause();
+    void resume();
 
     void setClip(const std::shared_ptr<AudioClip>& clip);
     std::shared_ptr<AudioClip> getClip() const;
