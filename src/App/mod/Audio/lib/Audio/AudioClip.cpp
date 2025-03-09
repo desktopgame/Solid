@@ -87,14 +87,14 @@ void AudioClip::releaseData()
     }
 }
 
-bool isBigEndian()
+bool AudioClip::isBigEndian()
 {
     // see: https://stackoverflow.com/questions/36949957/loading-a-wav-file-for-openal
     int32_t a = 1;
     return !((char*)&a)[0];
 }
 
-int32_t convertToInt(char* buffer, int32_t len)
+int32_t AudioClip::convertToInt(char* buffer, int32_t len)
 {
     // see: https://stackoverflow.com/questions/36949957/loading-a-wav-file-for-openal
     int32_t a = 0;
