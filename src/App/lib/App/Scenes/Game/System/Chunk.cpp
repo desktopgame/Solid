@@ -1,3 +1,4 @@
+#include <App/Common/Audio/AudioManager.hpp>
 #include <App/Common/Graphics/ParticleSystem.hpp>
 #include <App/Common/Graphics/PlaneParticle.hpp>
 #include <App/Scenes/Game/System/Chunk.hpp>
@@ -176,6 +177,7 @@ void Chunk::update()
 
             if (m_scanLineTime >= k_scanLineTimeMax) {
                 Time::s_timeScale = 1.0f;
+                Common::Audio::AudioManager::getInstance()->playSE("./assets/Audios/se_clear_enemy.wav");
             }
         } else {
             m_emissiveLerpTime = Mathf::min(k_emissiveLerpTimeMax, m_emissiveLerpTime + Time::deltaTime());
