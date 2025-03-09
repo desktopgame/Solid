@@ -1,7 +1,6 @@
 #include <AL/al.h>
 #include <Audio/AudioClip.hpp>
 #include <fstream>
-#include <iostream>
 #include <stdexcept>
 
 // RIFFヘッダー（最初の12バイト）: "RIFF", ファイルサイズ, フォーマット識別子
@@ -55,43 +54,34 @@ void AudioClip::loadWav(const std::string& file)
     RIFFHeader riff;
     in.read(reinterpret_cast<char*>(&riff), sizeof(riff));
     if (!in) {
-        std::cerr << "Error reading RIFF header." << std::endl;
-        // return 1;
+        throw std::invalid_argument("illegal format");
     }
 
     // "RIFF"かどうかチェック
     if (!compareId(riff.chunkId, "RIFF")) {
-        std::cerr << "Not a valid RIFF in." << std::endl;
-        // return 1;
+        throw std::invalid_argument("illegal format");
     }
 
     // フォーマット識別子のチェック
     if (!compareId(riff.formType, "WAVE")) {
-        std::cout << "Unexpected form type: " << std::string(riff.formType, 4) << std::endl;
         // LogicProの場合、"WAVE"の代わりに"JUNK"が入る可能性がある
         if (compareId(riff.formType, "JUNK")) {
-            std::cout << "Detected JUNK in place of WAVE. Attempting to skip JUNK chunk..." << std::endl;
             // 次のチャンクヘッダーを読み込む
             ChunkHeader nextHeader;
             in.read(reinterpret_cast<char*>(&nextHeader), sizeof(nextHeader));
             if (!in) {
-                std::cerr << "Error reading chunk header after JUNK form type." << std::endl;
-                // return 1;
+                throw std::invalid_argument("illegal format");
             }
             // もし次のチャンクが実際のJUNKチャンクなら、そのサイズ分をスキップ
             if (compareId(nextHeader.id, "JUNK")) {
                 in.seekg(nextHeader.size, std::ios::cur);
-                std::cout << "Skipped JUNK chunk of size: " << nextHeader.size << std::endl;
             } else {
                 // JUNKチャンクでなければ、シーク位置を戻して再解釈
                 in.seekg(-static_cast<int>(sizeof(ChunkHeader)), std::ios::cur);
             }
         } else {
-            std::cerr << "Unknown form type: " << std::string(riff.formType, 4) << std::endl;
-            // return 1;
+            throw std::invalid_argument("illegal format");
         }
-    } else {
-        std::cout << "Proper WAVE file detected." << std::endl;
     }
 
     // 取得したい情報
@@ -109,16 +99,13 @@ void AudioClip::loadWav(const std::string& file)
             break; // 最後に到達
 
         std::string chunkId(header.id, 4);
-        std::cout << "Found chunk: " << chunkId << ", size: " << header.size << std::endl;
 
         if (compareId(header.id, "JUNK")) {
             // JUNKチャンクの場合は、サイズ分をスキップする
             in.seekg(header.size, std::ios::cur);
-            std::cout << "Skipped JUNK chunk." << std::endl;
         } else if (compareId(header.id, "fmt ")) {
             // fmtチャンクの処理
             if (header.size < sizeof(FmtChunk)) {
-                std::cerr << "fmt chunk too small!" << std::endl;
                 in.seekg(header.size, std::ios::cur);
             } else {
                 FmtChunk fmt;
@@ -130,9 +117,6 @@ void AudioClip::loadWav(const std::string& file)
                 numChannels = fmt.numChannels;
                 sampleRate = fmt.sampleRate;
                 bitsPerSample = fmt.bitsPerSample;
-                std::cout << "Parsed fmt chunk: channels=" << numChannels
-                          << ", samplerate=" << sampleRate
-                          << ", bps=" << bitsPerSample << std::endl;
             }
         } else if (compareId(header.id, "data")) {
             // dataチャンクの処理（オーディオデータの読み込み）
@@ -140,11 +124,9 @@ void AudioClip::loadWav(const std::string& file)
             // dataチャンクのサイズ分のメモリを動的に確保（void*として取得）
             audioData = new char[dataSize];
             in.read(reinterpret_cast<char*>(audioData), dataSize);
-            std::cout << "Read data chunk of size: " << dataSize << " bytes" << std::endl;
         } else {
             // その他のチャンクは不明な場合、サイズ分をスキップ
             in.seekg(header.size, std::ios::cur);
-            std::cout << "Skipped unknown chunk: " << chunkId << std::endl;
         }
     }
     in.close();
