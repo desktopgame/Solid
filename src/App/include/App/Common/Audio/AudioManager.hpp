@@ -14,6 +14,7 @@ public:
     std::shared_ptr<AudioClip> loadClip(const std::string& file);
 
     void playBgm(const std::string& file);
+    void stopBgm();
     void playSE(const std::string& file);
 
 private:

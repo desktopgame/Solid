@@ -1,3 +1,4 @@
+#include <App/Common/Audio/AudioManager.hpp>
 #include <App/Common/Graphics/NodeRegistry.hpp>
 #include <App/Common/Graphics/ParticleSystem.hpp>
 #include <App/Common/Graphics/TelopSystem.hpp>
@@ -211,10 +212,12 @@ void GameScene::onEnter()
         Cursor::lock(Engine::getInstance()->getWindow());
     }
     m_nextScene = "";
+    Common::Audio::AudioManager::getInstance()->playBgm("assets/Audios/bgm_sample01.wav");
 }
 
 void GameScene::onExit()
 {
+    Common::Audio::AudioManager::getInstance()->stopBgm();
 }
 
 void GameScene::onUpdate()

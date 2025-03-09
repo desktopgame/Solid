@@ -38,6 +38,10 @@ void AudioManager::playBgm(const std::string& file)
     m_bgmSource->setClip(loadClip(file));
     m_bgmSource->play();
 }
+void AudioManager::stopBgm()
+{
+    m_bgmSource->stop();
+}
 void AudioManager::playSE(const std::string& file)
 {
     for (int32_t i = 0; i < static_cast<int32_t>(m_seSources.size()); i++) {
