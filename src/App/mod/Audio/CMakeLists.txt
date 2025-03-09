@@ -11,7 +11,9 @@ find_package(OpenAL CONFIG REQUIRED)
 set(SOURCES
     ./include/Audio.hpp
     ./include/Audio/AudioSource.hpp
+    ./include/Audio/AudioClip.hpp
     ./lib/Audio/AudioSource.cpp
+    ./lib/Audio/AudioClip.cpp
 )
 source_group(
     TREE
