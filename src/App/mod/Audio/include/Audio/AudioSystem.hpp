@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 namespace Lib::Audio {
 class AudioSystem {
@@ -9,5 +10,8 @@ public:
 private:
     AudioSystem() = delete;
     ~AudioSystem() = delete;
+
+    static void* s_device;
+    static void* s_context;
 };
 }
