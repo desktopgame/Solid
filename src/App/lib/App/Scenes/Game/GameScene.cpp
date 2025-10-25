@@ -23,8 +23,6 @@ GameScene::GameScene()
     , m_debugEntity()
     , m_aimTexture()
     , m_minimap()
-    , m_map()
-    , m_pieceList()
     , m_pauseUI()
     , m_weaponUI()
     , m_mainWeaponIcon()
@@ -95,55 +93,59 @@ void GameScene::onEnter()
         auto tabbedPane = std::make_shared<TabbedPane>();
         tabbedPane->setFont(m_fontMap);
 
-        auto tabStatus = std::make_shared<Panel>();
-        tabStatus->setLayout(std::make_shared<BorderLayout>());
-        tabStatus->setFlexible(true);
-        auto statusForm = std::make_shared<Form>(m_fontMap, 16, Vector2({ 150, 30 }));
-        statusForm->addLabel(u"Maximum-HP", u"100");
-        statusForm->addLabel(u"ATK", u"100");
-        statusForm->addLabel(u"DEF", u"100");
-        statusForm->addLabel(u"SPD", u"100");
-        tabStatus->addLayoutElement(std::make_shared<LayoutElement>(statusForm, std::make_shared<BorderLayout::Hint>("CENTER")));
-        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabStatus, nullptr));
-        tabbedPane->setTitleAt(0, u"STATUS");
-
-        auto tabMap = std::make_shared<Panel>();
-        tabMap->setLayout(std::make_shared<BorderLayout>());
-        tabMap->setFlexible(true);
-        m_map = std::make_shared<UI::Map>(m_field);
-        m_map->setPieceInstanceCollection(m_pieceInstanceCollection);
-        m_map->setOnSetPieceInstance(std::bind(&GameScene::onSetPieceInstance, this, std::placeholders::_1));
-        auto mapScroll = std::make_shared<ScrollPane>();
-        mapScroll->setView(m_map);
-        m_pieceList = std::make_shared<List<std::shared_ptr<System::PieceInfo>>>();
-        m_pieceList->setOnSelected(std::bind(&GameScene::onSelectPieceInfo, this, std::placeholders::_1));
-        auto pieceListCellRenderer = UI::PieceInfoListCellRenderer::create(m_fontMap, 16, Vector2({ 150, 50 }));
-        pieceListCellRenderer->setPreferredSize(Vector2({ 300, 50 }));
-        m_pieceList->setCellRenderer(pieceListCellRenderer);
-        for (const auto& pieceInfo : System::PieceRegistry::s_pieces) {
-            m_pieceList->addItem(pieceInfo);
-        }
-        m_pieceList->setFlexible(true);
-        auto pieceListScroll = std::make_shared<ScrollPane>();
-        pieceListScroll->setView(m_pieceList);
-        auto sideBar = std::make_shared<Panel>();
-        sideBar->setFlexible(true);
-        sideBar->setLayout(std::make_shared<BorderLayout>());
-        sideBar->setBackgroundColor(Color({ 1.0f, 1.0f, 0, 1.0f }));
-        sideBar->addLayoutElement(std::make_shared<LayoutElement>(pieceListScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
-        tabMap->addLayoutElement(std::make_shared<LayoutElement>(mapScroll, std::make_shared<BorderLayout::Hint>("CENTER")));
-        tabMap->addLayoutElement(std::make_shared<LayoutElement>(sideBar, std::make_shared<BorderLayout::Hint>("RIGHT")));
-        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabMap, nullptr));
-        tabbedPane->setTitleAt(1, u"MAP");
-
         auto tabSystem = std::make_shared<Panel>();
         tabSystem->setLayout(std::make_shared<BorderLayout>());
         tabSystem->setFlexible(true);
 
         auto contentPanel = std::make_shared<Panel>();
-        contentPanel->setBackgroundColor(Color({ 0.5f, 0.5f, 0.5f, 1.0f }));
+        // contentPanel->setBackgroundColor(Color({ 0.5f, 0.5f, 0.5f, 1.0f }));
         contentPanel->setLayout(std::make_shared<BorderLayout>());
         contentPanel->setFlexible(true);
+
+        auto contentLayout = std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical);
+        contentPanel->setLayout(contentLayout);
+        // 【操作方法】
+        {
+            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+            auto label = std::make_shared<Label>();
+            label->setFont(font);
+            label->setText(u"【操作方法】");
+            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+            auto alignLeft = Box::createHorizontalBox();
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+        }
+        // WASDキー：移動
+        {
+            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+            auto label = std::make_shared<Label>();
+            label->setFont(font);
+            label->setText(u"WASDキー：移動");
+            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+            auto alignLeft = Box::createHorizontalBox();
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+        }
+        // Eキー：ポーズ
+        {
+            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+            auto label = std::make_shared<Label>();
+            label->setFont(font);
+            label->setText(u"Eキー：ポーズ");
+            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+            auto alignLeft = Box::createHorizontalBox();
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+        }
 
         auto returnButtonBox = Box::createVerticalBox();
         auto returnButton = std::make_shared<Button>();
@@ -157,7 +159,7 @@ void GameScene::onEnter()
         tabSystem->addLayoutElement(std::make_shared<LayoutElement>(contentPanel, std::make_shared<BorderLayout::Hint>("CENTER")));
         tabSystem->addLayoutElement(std::make_shared<LayoutElement>(returnButtonBox, std::make_shared<BorderLayout::Hint>("BOTTOM")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabSystem, nullptr));
-        tabbedPane->setTitleAt(2, u"SYSTEM");
+        tabbedPane->setTitleAt(0, u"SYSTEM");
 
         auto closeButton = std::make_shared<Button>();
         closeButton->setFont(m_fontMap);
@@ -234,7 +236,6 @@ void GameScene::onUpdate()
             Cursor::unlock();
             Time::s_timeScale = 0.0f;
 
-            m_map->setup();
             m_pauseUI->doLayout();
         }
         m_requestPauseClose = false;
@@ -318,19 +319,6 @@ void GameScene::onClickExitButton()
     m_nextScene = "Title";
 #endif
 }
-void GameScene::onSelectPieceInfo(int32_t index)
-{
-    if (index >= 0) {
-        m_map->setPieceInfo(m_pieceList->getItemAt(index));
-    } else {
-        m_map->setPieceInfo(nullptr);
-    }
-}
-void GameScene::onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance)
-{
-    m_pieceList->setSelectedIndex(-1);
-}
-
 void GameScene::loadWeaponIcon()
 {
     if (m_debugPlayer->getMainWeapon()) {

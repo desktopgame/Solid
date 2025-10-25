@@ -32,8 +32,6 @@ public:
 private:
     void onClickPauseClose();
     void onClickExitButton();
-    void onSelectPieceInfo(int32_t index);
-    void onSetPieceInstance(const std::shared_ptr<System::PieceInstance>& pieceInstance);
 
     void loadWeaponIcon();
     void updateWeaponGauge();
@@ -49,8 +47,6 @@ private:
     std::shared_ptr<Texture> m_aimTexture;
 
     std::shared_ptr<RootPane> m_minimap;
-    std::shared_ptr<UI::Map> m_map;
-    std::shared_ptr<List<std::shared_ptr<System::PieceInfo>>> m_pieceList;
     std::shared_ptr<RootPane> m_pauseUI;
     std::shared_ptr<RootPane> m_weaponUI;
     std::shared_ptr<ImageIcon> m_mainWeaponIcon;
