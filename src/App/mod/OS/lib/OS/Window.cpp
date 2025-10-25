@@ -113,7 +113,7 @@ void Window::init(int32_t width, int32_t height, const std::function<LRESULT(HWN
     HWND hwnd = CreateWindow(
         w.lpszClassName,
         _T("DX12"),
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPEDWINDOW & ~(WS_THICKFRAME | WS_MAXIMIZEBOX),
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         wrc.right - wrc.left,
