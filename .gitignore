@@ -82,3 +82,6 @@ cmake-build-release
 
 # ImGui
 imgui.ini
+
+# Auto generated
+hash.txt
