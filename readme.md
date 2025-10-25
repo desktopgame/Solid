@@ -5,6 +5,13 @@
 リポジトリをクローンしてから一度だけ行う必要のある作業です。  
 いくつかのライブラリを `vcpkg` から取得しており、それらはサブモジュールとしてぶら下がる構造になっています。
 まずは `vcpkg` を初期化し、必要なライブラリをインストールしてください。
+
+サブモジュールの初期化
+````bat
+git submodule update src\App\mod\vcpkg
+````
+
+ライブラリのインストール
 ````bat
 cd src\App\mod\vcpkg
 bootstrap-vcpkg.bat
