@@ -282,7 +282,7 @@ void GameScene::onDraw2D()
     }
 
 #if GAMESCENE_PROFILE
-    float dt = Time::deltaTime();
+    float dt = Time::s_deltaTime;
     m_avgTime *= 1.0f - k_fpsK;
     m_avgTime += dt * k_fpsK;
     float fps = 1.0 / m_avgTime;
@@ -290,7 +290,7 @@ void GameScene::onDraw2D()
     std::u16string uFpsT = std::u16string(fpsT.begin(), fpsT.end());
     m_renderer->textFont(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"));
     m_renderer->textFontSize(20);
-    m_renderer->drawText(Vector2({ 0, 100 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, uFpsT, Color({ 1, 0, 0, 1 }));
+    m_renderer->drawText(Vector2({ -Screen::getWidth() / 2.0f, Screen::getHeight() / 2.0f }), Renderer::TextAlignX::Left, Renderer::TextAlignY::Top, uFpsT, Color({ 1, 0, 0, 1 }));
 #endif
 }
 
