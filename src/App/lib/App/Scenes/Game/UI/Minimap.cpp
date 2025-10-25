@@ -117,6 +117,9 @@ std::shared_ptr<System::PieceInstanceCollection> Minimap::getPieceInstanceCollec
 // private
 bool Minimap::wasGotCell(int32_t x, int32_t y) const
 {
+    if (!m_pieceInstanceCollection) {
+        return false;
+    }
     bool ret = false;
     for (int32_t i = 0; i < m_pieceInstanceCollection->getInstanceCount(); i++) {
         auto pieceInstance = m_pieceInstanceCollection->getInstanceAt(i);

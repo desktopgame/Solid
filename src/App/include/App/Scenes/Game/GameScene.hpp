@@ -41,7 +41,6 @@ private:
     std::shared_ptr<Renderer> m_renderer;
     std::shared_ptr<FontMap> m_fontMap;
     std::shared_ptr<System::Field> m_field;
-    std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
     std::shared_ptr<System::Entities::PlayerEntity> m_debugPlayer;
     std::shared_ptr<System::Entities::BasicEntity> m_debugEntity;
     std::shared_ptr<Texture> m_aimTexture;

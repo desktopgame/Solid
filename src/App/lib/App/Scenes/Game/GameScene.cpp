@@ -18,7 +18,6 @@ GameScene::GameScene()
     , m_renderer()
     , m_fontMap()
     , m_field()
-    , m_pieceInstanceCollection()
     , m_debugPlayer()
     , m_debugEntity()
     , m_aimTexture()
@@ -59,9 +58,6 @@ void GameScene::onEnter()
         m_debugPlayer->setPosition(Vector3({ chunk->getPhysicalCenterX(), 10, chunk->getPhysicalCenterZ() }));
         m_field->setPlayer(m_debugPlayer);
     }
-    if (!m_pieceInstanceCollection) {
-        m_pieceInstanceCollection = std::make_shared<System::PieceInstanceCollection>();
-    }
     if (!m_aimTexture) {
         m_aimTexture = Texture::create("./assets/Textures/aim.png");
     }
@@ -71,7 +67,7 @@ void GameScene::onEnter()
         m_minimap = RootPane::create();
 
         auto minimapChild = std::make_shared<UI::Minimap>(m_field);
-        minimapChild->setPieceInstanceCollection(m_pieceInstanceCollection);
+        minimapChild->setPieceInstanceCollection(nullptr);
 
         auto title = std::make_shared<Label>();
         title->setFont(font);
