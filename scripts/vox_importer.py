@@ -5,7 +5,7 @@ import struct
 import io
 
 # see: https://pypi.org/project/colour-science/
-import colour
+# import colour
 
 # see: https://pypi.org/project/bitarray/
 from bitarray import bitarray
@@ -169,8 +169,10 @@ def proc(ifp: io.BufferedReader, ofp: io.TextIOWrapper):
         else:
             ifp.seek(chunk_size, 1)
 
-    sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
-    real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
+    # sample = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), SOLID_COLOR_TABLE))
+    # real = list(map(lambda color: colour.XYZ_to_Lab(colour.sRGB_to_XYZ(color[0:3])), pallet))
+    sample = list(map(lambda color: color[0:3], SOLID_COLOR_TABLE))
+    real = list(map(lambda color: color[0:3], pallet))
     cache = [-1 for i in range(0, len(pallet))]
 
     for v in voxels:
@@ -181,7 +183,11 @@ def proc(ifp: io.BufferedReader, ofp: io.TextIOWrapper):
         if cache[v[3] - 1] == -1:
             for i in range(0, len(SOLID_COLOR_TABLE)):
                 sample_color = sample[i]
-                score = colour.difference.delta_E_CIE2000(sample_color, real_color)
+                # score = colour.difference.delta_E_CIE2000(sample_color, real_color)
+                score_r = sample_color[0] - real_color[0]
+                score_g = sample_color[1] - real_color[1]
+                score_b = sample_color[2] - real_color[2]
+                score = score_r + score_g + score_b
 
                 if score < high_score:
                     high_score = score
