@@ -41,6 +41,14 @@ cd Solid
 cmake -S src -B build -G "Visual Studio 17 2022"
 ````
 
+#### Powershellの実行権限
+ビルド時に一部のソースコードを生成するため、Powershellを使用しています。  
+このためにビルドが失敗する場合、手動実行フラグをONにすることで自動生成をスキップできます。  
+cmakeでビルド構成を再生成する場合、事前に build フォルダ以下のファイルを削除する必要があります。
+````bat
+cmake -S src -B build -G "Visual Studio 17 2022" -DMANUAL_GENERATE=ON
+````
+
 ### CLion
 CLionは公式にCMakeをサポートしているので、基本的には公式の使い方に従えば開くことができます。
 
@@ -60,6 +68,20 @@ cd Solid
 cmake -S src -B build -G "Ninja"
 ninja -C build
 ````
+
+#### Powershellの実行権限
+ビルド時に一部のソースコードを生成するため、Powershellを使用しています。  
+このためにビルドが失敗する場合、手動実行フラグをONにすることで自動生成をスキップできます。  
+cmakeでビルド構成を再生成する場合、事前に build フォルダ以下のファイルを削除する必要があります。
+````bat
+cd Solid
+cmake -S src -B build -G "Ninja" -DMANUAL_GENERATE=ON
+ninja -C build
+````
+
+#### OpenMPが見つからない場合
+CMakeの問題と思われますが、OpenMPを発見できずにビルドに失敗することがあります。  
+その場合は VisualStudio でビルドを試してみてください。
 
 ### VisualStudio
 VisualStudioの場合、 `App` という名前になっているプロジェクトで実行ファイルをビルドできます。

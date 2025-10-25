@@ -7,11 +7,14 @@ project(
 #
 # Embed Metadata
 #
-add_custom_command(
-    OUTPUT ./include/Graphics/Metadata.hpp
-    COMMAND powershell -File Rehash.ps1
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+option(MANUAL_GENERATE "disble auto generate" OFF)
+if (NOT MANUAL_GENERATE)
+    add_custom_command(
+        OUTPUT ./include/Graphics/Metadata.hpp
+        COMMAND powershell -File Rehash.ps1
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif()
 add_custom_target(Embed ALL
     DEPENDS ./include/Graphics/Metadata.hpp
 )
