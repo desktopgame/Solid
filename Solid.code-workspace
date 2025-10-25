@@ -146,7 +146,11 @@
 			"resumable": "cpp",
 			"future": "cpp",
 			"complex": "cpp",
-			"csignal": "cpp"
+			"csignal": "cpp",
+			"cfenv": "cpp",
+			"expected": "cpp",
+			"source_location": "cpp",
+			"typeindex": "cpp"
 		},
 		"files.exclude": {
 			"**/.git": true,
@@ -156,6 +160,9 @@
 			"**/.DS_Store": true,
 			"**/Thumbs.db": true,
 			"mod": true
+		},
+		"[cpp]": {
+			"editor.formatOnSave": true
 		}
 	},
 	"extensions": {
