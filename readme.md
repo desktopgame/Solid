@@ -112,6 +112,13 @@ ctest --test-dir build/App -R "^Test$" -V
 ## 注意点
 デバッグ実行時には、assets以下にアセットが格納されている必要があります。  
 一度は`./scripts`以下のインポートスクリプトを実行しておいてください。
+````py
+python scripts\audio_importer.py
+python scripts\font_importer.py
+python scripts\model_importer.py
+python scripts\texture_importer.py
+python scripts\vox_importer.py
+````
 
 ## ライセンス
 このリポジトリのソースコードはMITライセンスで公開されています。  
