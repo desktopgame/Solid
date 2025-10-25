@@ -120,6 +120,9 @@ python scripts\texture_importer.py
 python scripts\vox_importer.py
 ````
 
+build フォルダ以下に生成されるバイナリを実行するときは、  
+Solid/assets を Solid/build/assets へコピーしてください。
+
 ## ライセンス
 このリポジトリのソースコードはMITライセンスで公開されています。  
 詳細は `license.txt` を確認してください。
