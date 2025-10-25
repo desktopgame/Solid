@@ -263,11 +263,7 @@ void GameScene::onDraw3D()
     GlobalLight::enable();
     GlobalLight::set(Vector3::normalized(m_globalLightDir));
 
-    PointLight::enable();
-    PointLight::setCount(3);
-    PointLight::set(0, Vector3({ 120, 10, 120 }), 10, 20);
-    PointLight::set(1, Vector3({ 90, 20, 90 }), 20, 30);
-    PointLight::set(2, Vector3({ 60, 10, 60 }), 10, 20);
+    PointLight::disable();
 
     m_field->draw3D(m_renderer);
     Common::Graphics::ParticleSystem::draw();
