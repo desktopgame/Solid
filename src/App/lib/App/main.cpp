@@ -24,7 +24,7 @@ using namespace App::Scenes;
 
 static int appMain(int argc, char* argv[])
 {
-    Screen::setSize(800, 600);
+    Screen::setSize(1280, 720);
 
     auto engine = Engine::getInstance()->startup(argc, argv);
     auto window = engine->getWindow();
