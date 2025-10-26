@@ -305,7 +305,7 @@ void GameScene::onClickPauseClose()
 void GameScene::onClickExitButton()
 {
 #if _DEBUG
-    m_nextScene = "Debug";
+    m_nextScene = "Launcher";
 #else
     m_nextScene = "Title";
 #endif

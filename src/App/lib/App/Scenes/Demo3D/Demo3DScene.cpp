@@ -41,6 +41,8 @@ void Demo3DScene::onDraw3D()
     Camera::position(m_fpsController.getPosition());
     Camera::lookAt(m_fpsController.getLookAt());
 
+    GlobalLight::disable();
+
     PointLight::enable();
     PointLight::setCount(4 * 4);
 
