@@ -22,6 +22,7 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    Common::Util::FpsController m_fpsController;
     std::string m_nextScene;
     std::shared_ptr<Renderer> m_renderer;
 };
