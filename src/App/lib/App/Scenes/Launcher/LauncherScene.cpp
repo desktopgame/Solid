@@ -106,6 +106,7 @@ void LauncherScene::onEnter()
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
+    m_nextScene = "";
 }
 
 void LauncherScene::onExit()

@@ -22,6 +22,18 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    Vector2 m_spritePos;
+    Vector2 m_spriteSize;
+    Vector4 m_spriteColor;
+
+    Vector2 m_rectPos;
+    Vector2 m_rectSize;
+    Vector4 m_rectColor;
+
+    Vector2 m_circlePos;
+    Vector2 m_circleSize;
+    Vector4 m_circleColor;
+
     std::shared_ptr<Texture> m_sampleTexture;
     std::string m_nextScene;
     std::shared_ptr<Renderer> m_renderer;
