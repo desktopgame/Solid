@@ -8,14 +8,18 @@ Math::IntVector2 Cursor::s_lockPosition = Math::IntVector2({ 0, 0 });
 
 void Cursor::show()
 {
-    ShowCursor(true);
-    s_isVisible = true;
+    if (!s_isVisible) {
+        ShowCursor(true);
+        s_isVisible = true;
+    }
 }
 
 void Cursor::hide()
 {
-    ShowCursor(false);
-    s_isVisible = false;
+    if (s_isVisible) {
+        ShowCursor(false);
+        s_isVisible = false;
+    }
 }
 
 bool Cursor::isVisible() { return s_isVisible; }
