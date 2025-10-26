@@ -153,6 +153,7 @@ void DemoUIScene::onEnter()
 
         m_root->doLayout();
     }
+    m_nextScene = "";
 }
 
 void DemoUIScene::onExit()
@@ -166,6 +167,12 @@ void DemoUIScene::onUpdate()
 
 void DemoUIScene::onGui()
 {
+    ImGui::Begin("DemoUI");
+    ImGui::SeparatorText("Scene Transition");
+    if (ImGui::Button("Exit")) {
+        m_nextScene = "Launcher";
+    }
+    ImGui::End();
 }
 
 void DemoUIScene::onDraw3D()
