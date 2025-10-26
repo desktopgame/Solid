@@ -9,8 +9,6 @@
 #include <App/Common/Graphics/NodeRegistry.hpp>
 #include <App/Common/Graphics/ParticleSystem.hpp>
 #include <App/Common/Graphics/TelopSystem.hpp>
-#include <App/Scenes/Debug/DebugScene.hpp>
-#include <App/Scenes/Demo/DemoScene.hpp>
 #include <App/Scenes/Demo2D/Demo2DScene.hpp>
 #include <App/Scenes/Demo3D/Demo3DScene.hpp>
 #include <App/Scenes/DemoUI/DemoUIScene.hpp>
@@ -41,8 +39,6 @@ static int appMain(int argc, char* argv[])
     std::unordered_map<std::string, std::shared_ptr<IScene>> sceneMap;
     sceneMap.insert_or_assign("Title", std::make_shared<Title::TitleScene>());
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
-    sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
-    sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
     sceneMap.insert_or_assign("Launcher", std::make_shared<Launcher::LauncherScene>());
     sceneMap.insert_or_assign("Demo2D", std::make_shared<Demo2D::Demo2DScene>());
     sceneMap.insert_or_assign("Demo3D", std::make_shared<Demo3D::Demo3DScene>());
