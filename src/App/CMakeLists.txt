@@ -64,6 +64,7 @@ set(SOURCES
     ./include/App/Scenes/Game/System/Weapons/SingleOneShotWeapon.hpp
     ./include/App/Scenes/Game/System/Weapons/SingleHoldWeapon.hpp
     ./include/App/Scenes/Game/UI/Minimap.hpp
+    ./include/App/Scenes/Launcher/LauncherScene.hpp
     ./lib/App/main.cpp
     ./lib/App/test.cpp
     ./lib/App/Common/Audio/AudioManager.cpp
@@ -92,6 +93,7 @@ set(SOURCES
     ./lib/App/Scenes/Game/System/Weapons/SingleOneShotWeapon.cpp
     ./lib/App/Scenes/Game/System/Weapons/SingleHoldWeapon.cpp
     ./lib/App/Scenes/Game/UI/Minimap.cpp
+    ./lib/App/Scenes/Launcher/LauncherScene.cpp
 )
 source_group(
     TREE

@@ -13,8 +13,10 @@
 #include <App/Scenes/Demo/DemoScene.hpp>
 #include <App/Scenes/Game/GameScene.hpp>
 #include <App/Scenes/Game/System/WeaponRegistry.hpp>
+#include <App/Scenes/Launcher/LauncherScene.hpp>
 #include <App/Scenes/Title/TitleScene.hpp>
 #include <App/test.hpp>
+
 using namespace App::Common;
 using namespace App::Scenes;
 
@@ -38,7 +40,8 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Game", std::make_shared<Game::GameScene>());
     sceneMap.insert_or_assign("Demo", std::make_shared<Demo::DemoScene>());
     sceneMap.insert_or_assign("Debug", std::make_shared<Debug::DebugScene>());
-    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Debug");
+    sceneMap.insert_or_assign("Launcher", std::make_shared<Launcher::LauncherScene>());
+    std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Launcher");
 
     Audio::AudioManager::getInstance();
     Graphics::NodeRegistry::initialize();
