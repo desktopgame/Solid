@@ -23,6 +23,8 @@ public:
 
 private:
     Common::Util::FpsController m_fpsController;
+    bool m_globalLightEnabled;
+    bool m_pointLightEnabled;
     std::string m_nextScene;
     std::shared_ptr<Renderer> m_renderer;
 };

@@ -6,6 +6,8 @@ namespace App::Scenes::Demo3D {
 // public
 Demo3DScene::Demo3DScene()
     : m_fpsController()
+    , m_globalLightEnabled(true)
+    , m_pointLightEnabled(true)
     , m_nextScene()
     , m_renderer()
 {
@@ -21,6 +23,7 @@ void Demo3DScene::onEnter()
     m_fpsController.setPosition(Vector3({ 9, 5, -5 }));
     m_fpsController.setAngleX(0);
     m_fpsController.setAngleY(0);
+    m_nextScene = "";
 }
 
 void Demo3DScene::onExit()
@@ -35,16 +38,30 @@ void Demo3DScene::onUpdate()
 
 void Demo3DScene::onGui()
 {
+    ImGui::Begin("Demo3D");
+    ImGui::SeparatorText("GlobalLight");
+    ImGui::PushID(0);
+    ImGui::Checkbox("Enabled", &m_globalLightEnabled);
+    ImGui::PopID();
+    ImGui::SeparatorText("PointLight");
+    ImGui::PushID(1);
+    ImGui::Checkbox("Enabled", &m_pointLightEnabled);
+    ImGui::PopID();
+    ImGui::SeparatorText("Scene Transition");
+    if (ImGui::Button("Exit")) {
+        m_nextScene = "Launcher";
+    }
+    ImGui::End();
 }
 void Demo3DScene::onDraw3D()
 {
     Camera::position(m_fpsController.getPosition());
     Camera::lookAt(m_fpsController.getLookAt());
 
-    GlobalLight::enable();
+    GlobalLight::toggle(m_globalLightEnabled);
     GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
 
-    PointLight::enable();
+    PointLight::toggle(m_pointLightEnabled);
     PointLight::setCount(20 * 20);
 
     int32_t lightIndex = 0;

@@ -23,6 +23,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> GlobalLight::s_constantBuffer;
 // public
 void GlobalLight::enable() { s_enabled = true; }
 void GlobalLight::disable() { s_enabled = false; }
+void GlobalLight::toggle(bool enabled) { s_enabled = enabled; }
 void GlobalLight::set(const Math::Vector3& dir) { s_dir = dir; }
 // internal
 void GlobalLight::draw(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList)

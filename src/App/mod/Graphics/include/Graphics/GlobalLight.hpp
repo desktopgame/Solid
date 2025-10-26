@@ -16,6 +16,7 @@ public:
 
     static void enable();
     static void disable();
+    static void toggle(bool enabled);
     static void set(const Math::Vector3& dir);
 
 #if SOLID_ENABLE_INTERNAL

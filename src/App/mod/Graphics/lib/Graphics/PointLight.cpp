@@ -37,6 +37,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_scrConstantBuffer;
 // public
 void PointLight::enable() { s_enabled = true; }
 void PointLight::disable() { s_enabled = false; }
+void PointLight::toggle(bool enabled) { s_enabled = enabled; }
 void PointLight::set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius, const Math::Vector3& color)
 {
     auto& constant = s_constantVec.at(index);

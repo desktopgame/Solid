@@ -17,6 +17,7 @@ public:
 
     static void enable();
     static void disable();
+    static void toggle(bool enabled);
     static void set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius, const Math::Vector3& color);
     static void setCount(int32_t count);
 
