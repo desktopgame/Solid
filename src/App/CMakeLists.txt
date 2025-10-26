@@ -67,6 +67,7 @@ set(SOURCES
     ./include/App/Scenes/Launcher/LauncherScene.hpp
     ./include/App/Scenes/Demo2D/Demo2DScene.hpp
     ./include/App/Scenes/Demo3D/Demo3DScene.hpp
+    ./include/App/Scenes/DemoUI/DemoUIScene.hpp
     ./lib/App/main.cpp
     ./lib/App/test.cpp
     ./lib/App/Common/Audio/AudioManager.cpp
@@ -98,6 +99,7 @@ set(SOURCES
     ./lib/App/Scenes/Launcher/LauncherScene.cpp
     ./lib/App/Scenes/Demo2D/Demo2DScene.cpp
     ./lib/App/Scenes/Demo3D/Demo3DScene.cpp
+    ./lib/App/Scenes/DemoUI/DemoUIScene.cpp
 )
 source_group(
     TREE

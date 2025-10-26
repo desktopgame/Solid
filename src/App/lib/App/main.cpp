@@ -13,6 +13,7 @@
 #include <App/Scenes/Demo/DemoScene.hpp>
 #include <App/Scenes/Demo2D/Demo2DScene.hpp>
 #include <App/Scenes/Demo3D/Demo3DScene.hpp>
+#include <App/Scenes/DemoUI/DemoUIScene.hpp>
 #include <App/Scenes/Game/GameScene.hpp>
 #include <App/Scenes/Game/System/WeaponRegistry.hpp>
 #include <App/Scenes/Launcher/LauncherScene.hpp>
@@ -45,6 +46,7 @@ static int appMain(int argc, char* argv[])
     sceneMap.insert_or_assign("Launcher", std::make_shared<Launcher::LauncherScene>());
     sceneMap.insert_or_assign("Demo2D", std::make_shared<Demo2D::Demo2DScene>());
     sceneMap.insert_or_assign("Demo3D", std::make_shared<Demo3D::Demo3DScene>());
+    sceneMap.insert_or_assign("DemoUI", std::make_shared<DemoUI::DemoUIScene>());
     std::unique_ptr<SceneManager> sceneManager = std::make_unique<SceneManager>(sceneMap, "Launcher");
 
     Audio::AudioManager::getInstance();
