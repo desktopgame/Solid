@@ -2,7 +2,6 @@
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/PlayerEntity.hpp>
 #include <App/Scenes/Game/System/Field.hpp>
-#include <App/Scenes/Game/System/PieceInstanceCollection.hpp>
 #include <App/Scenes/Game/UI/Minimap.hpp>
 #include <App/library.hpp>
 #include <memory>

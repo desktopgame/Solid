@@ -12,7 +12,6 @@
 #include <App/Scenes/Debug/DebugScene.hpp>
 #include <App/Scenes/Demo/DemoScene.hpp>
 #include <App/Scenes/Game/GameScene.hpp>
-#include <App/Scenes/Game/System/PieceRegistry.hpp>
 #include <App/Scenes/Game/System/WeaponRegistry.hpp>
 #include <App/Scenes/Title/TitleScene.hpp>
 #include <App/test.hpp>
@@ -45,7 +44,6 @@ static int appMain(int argc, char* argv[])
     Graphics::NodeRegistry::initialize();
     Graphics::ParticleSystem::initialize();
     Graphics::TelopSystem::initialize();
-    Game::System::PieceRegistry::initialize();
     Game::System::WeaponRegistry::initialize();
 
     window->show();
@@ -75,7 +73,6 @@ static int appMain(int argc, char* argv[])
     }
 
     Game::System::WeaponRegistry::destroy();
-    Game::System::PieceRegistry::destroy();
     Graphics::TelopSystem::destroy();
     Graphics::ParticleSystem::destroy();
     Graphics::NodeRegistry::destroy();

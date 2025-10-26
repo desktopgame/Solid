@@ -51,11 +51,6 @@ set(SOURCES
     ./include/App/Scenes/Game/GameScene.hpp
     ./include/App/Scenes/Game/System/Weapon.hpp
     ./include/App/Scenes/Game/System/WeaponRegistry.hpp
-    ./include/App/Scenes/Game/System/Cell.hpp
-    ./include/App/Scenes/Game/System/PieceInfo.hpp
-    ./include/App/Scenes/Game/System/PieceInstance.hpp
-    ./include/App/Scenes/Game/System/PieceInstanceCollection.hpp
-    ./include/App/Scenes/Game/System/PieceRegistry.hpp
     ./include/App/Scenes/Game/System/Field.hpp
     ./include/App/Scenes/Game/System/Chunk.hpp
     ./include/App/Scenes/Game/System/ChunkGenerator.hpp
@@ -84,11 +79,6 @@ set(SOURCES
     ./lib/App/Scenes/Game/GameScene.cpp
     ./lib/App/Scenes/Game/System/Weapon.cpp
     ./lib/App/Scenes/Game/System/WeaponRegistry.cpp
-    ./lib/App/Scenes/Game/System/Cell.cpp
-    ./lib/App/Scenes/Game/System/PieceInfo.cpp
-    ./lib/App/Scenes/Game/System/PieceInstance.cpp
-    ./lib/App/Scenes/Game/System/PieceInstanceCollection.cpp
-    ./lib/App/Scenes/Game/System/PieceRegistry.cpp
     ./lib/App/Scenes/Game/System/Field.cpp
     ./lib/App/Scenes/Game/System/Chunk.cpp
     ./lib/App/Scenes/Game/System/ChunkGenerator.cpp

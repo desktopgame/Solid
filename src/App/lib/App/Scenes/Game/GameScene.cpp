@@ -5,7 +5,6 @@
 #include <App/Scenes/Game/GameScene.hpp>
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/SlimeEntity.hpp>
-#include <App/Scenes/Game/System/PieceRegistry.hpp>
 #include <cmath>
 #include <imgui.h>
 
