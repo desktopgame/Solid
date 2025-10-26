@@ -6,8 +6,6 @@
 #include <App/Scenes/Game/System/Entities/BasicEntity.hpp>
 #include <App/Scenes/Game/System/Entities/SlimeEntity.hpp>
 #include <App/Scenes/Game/System/PieceRegistry.hpp>
-#include <App/Scenes/Game/UI/Piece.hpp>
-#include <App/Scenes/Game/UI/PieceInfoListCellRenderer.hpp>
 #include <cmath>
 #include <imgui.h>
 
