@@ -3,12 +3,10 @@
 #include <imgui.h>
 
 namespace App::Scenes::Launcher {
-std::shared_ptr<Common::Graphics::Node> LauncherScene::s_selected = nullptr;
 // public
 LauncherScene::LauncherScene()
-    : m_fpsController()
-    , m_rootNode()
-    , m_nextScene()
+    : m_nextScene()
+    , m_rootPane()
     , m_renderer()
 {
 }
@@ -16,25 +14,94 @@ LauncherScene::~LauncherScene() { }
 
 void LauncherScene::onEnter()
 {
-    auto tex = Texture::create("./assets/tileNormal2.png");
+    if (!m_rootPane) {
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+
+        m_rootPane = RootPane::create();
+        m_rootPane->setPosition(Vector2({ 0, 0 }));
+        m_rootPane->setSize(Vector2({ 800, 600 }));
+
+        auto tabbedPane = std::make_shared<TabbedPane>();
+        tabbedPane->setFont(font);
+
+        auto tabHome = std::make_shared<Panel>();
+        tabHome->setLayout(std::make_shared<BorderLayout>());
+        tabHome->setFlexible(true);
+        {
+            auto vbox = Box::createVerticalBox();
+
+            auto description1 = std::make_shared<Label>();
+            description1->setFont(font);
+            description1->setText(u"このアプリケーションは自作の描画エンジンであるSolidの開発者向けデモです。");
+            description1->setPreferredSize(font->measure(description1->getFontSize(), description1->getText()));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(description1, nullptr));
+
+            auto description2 = std::make_shared<Label>();
+            description2->setFont(font);
+            description2->setText(u"操作にはマウスとキーボードを用います。");
+            description2->setPreferredSize(font->measure(description2->getFontSize(), description2->getText()));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(description2, nullptr));
+
+            auto description3 = std::make_shared<Label>();
+            description3->setFont(font);
+            description3->setText(u"画面上部ボタンをクリックすると表示内容が切り替わります。");
+            description3->setPreferredSize(font->measure(description3->getFontSize(), description3->getText()));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(description3, nullptr));
+
+            tabHome->addLayoutElement(std::make_shared<LayoutElement>(vbox, std::make_shared<BorderLayout::Hint>("CENTER")));
+        }
+
+        auto tabScene = std::make_shared<Panel>();
+        tabScene->setLayout(std::make_shared<BorderLayout>());
+        tabScene->setFlexible(true);
+        {
+            auto vbox = Box::createVerticalBox();
+
+            auto description1 = std::make_shared<Label>();
+            description1->setFont(font);
+            description1->setText(u"ボタンを押下するとそれぞれのシーンへ遷移します。");
+            description1->setPreferredSize(font->measure(description1->getFontSize(), description1->getText()));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(description1, nullptr));
+
+            auto buttonDemo2D = std::make_shared<Button>();
+            buttonDemo2D->setFont(font);
+            buttonDemo2D->setText(u"Demo(2D)");
+            buttonDemo2D->setPreferredSize(Vector2({ 600, 80 }));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonDemo2D, nullptr));
+
+            auto buttonDemo3D = std::make_shared<Button>();
+            buttonDemo3D->setFont(font);
+            buttonDemo3D->setText(u"Demo(3D)");
+            buttonDemo3D->setPreferredSize(Vector2({ 600, 80 }));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonDemo3D, nullptr));
+
+            auto buttonDemoUI = std::make_shared<Button>();
+            buttonDemoUI->setFont(font);
+            buttonDemoUI->setText(u"Demo(UI)");
+            buttonDemoUI->setPreferredSize(Vector2({ 600, 80 }));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonDemoUI, nullptr));
+
+            auto buttonGame = std::make_shared<Button>();
+            buttonGame->setFont(font);
+            buttonGame->setText(u"GAME");
+            buttonGame->setPreferredSize(Vector2({ 600, 80 }));
+            vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonGame, nullptr));
+
+            tabScene->addLayoutElement(std::make_shared<LayoutElement>(vbox, std::make_shared<BorderLayout::Hint>("CENTER")));
+        }
+
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabHome, nullptr));
+        tabbedPane->setTitleAt(0, u"HOME");
+
+        tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabScene, nullptr));
+        tabbedPane->setTitleAt(1, u"SCENE");
+
+        m_rootPane->addLayoutElement(std::make_shared<LayoutElement>(tabbedPane, std::make_shared<BorderLayout::Hint>("CENTER")));
+        m_rootPane->doLayout();
+    }
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
-
-    m_rootNode = Common::Graphics::Node::create();
-    m_rootNode->setName("Root");
-    m_rootNode->setLocalPosition(Vector3({ 0, 0, 0 }));
-    m_rootNode->setSize(Vector3({ 10, 10, 10 }));
-    m_rootNode->setColor(Vector3({ 1, 1, 1 }));
-
-    std::string ioFileName = "./rawdata/Models/Sample.json";
-    std::fill(m_ioFileName.begin(), m_ioFileName.end(), '\0');
-    std::copy(ioFileName.begin(), ioFileName.end(), m_ioFileName.begin());
-
-    m_nextScene = "";
-    m_fpsController.setPosition(Vector3({ 0, 0, -10 }));
-    m_fpsController.setAngleX(0);
-    m_fpsController.setAngleY(0);
 }
 
 void LauncherScene::onExit()
@@ -43,56 +110,20 @@ void LauncherScene::onExit()
 
 void LauncherScene::onUpdate()
 {
-    m_fpsController.update();
+    m_rootPane->update();
 }
 
 void LauncherScene::onGui()
 {
-    ImGui::Begin("Camera");
-    ImGui::DragFloat("MoveSpeed", &m_fpsController.getMoveSpeed(), 0.01f);
-    ImGui::DragFloat("RotateSpeed", &m_fpsController.getRotateSpeed(), 0.01f);
-    ImGui::End();
-
-    ImGui::Begin("Tree");
-    guiEditNode(nullptr, m_rootNode);
-    m_rootNode->update();
-    ImGui::End();
-
-    ImGui::Begin("IO");
-    ImGui::InputText("File", m_ioFileName.data(), 64);
-    if (ImGui::Button("Serialize")) {
-        Common::Graphics::Node::serialize(std::string(m_ioFileName.data()), m_rootNode);
-    }
-    if (ImGui::Button("Deserialize")) {
-        m_rootNode = Common::Graphics::Node::deserialize(std::string(m_ioFileName.data()));
-    }
-    ImGui::End();
-
-    ImGui::Begin("Menu");
-    ImGui::SeparatorText("Scene Transition");
-    if (ImGui::Button("Demo")) {
-        m_nextScene = "Demo";
-    } else if (ImGui::Button("Game")) {
-        m_nextScene = "Title";
-    }
-    ImGui::End();
 }
+
 void LauncherScene::onDraw3D()
 {
-    Camera::position(m_fpsController.getPosition());
-    Camera::lookAt(m_fpsController.getLookAt());
-
-    GlobalLight::enable();
-    GlobalLight::set(Vector3({ 1, 1, 0 }));
-    PointLight::enable();
-    PointLight::setCount(0);
-    m_renderer->drawBox(Vector3({ 0, 0, 0 }), Vector3({ 1, 1, 1 }), Quaternion(), Vector4({ 1, 1, 1, 1 }), false);
-
-    m_rootNode->draw(m_renderer, Vector3({ 0, 0, 0 }), 0.0f);
 }
 
 void LauncherScene::onDraw2D()
 {
+    m_rootPane->draw2D(m_renderer);
 }
 
 bool LauncherScene::tryTransition(std::string& outNextScene)
@@ -104,98 +135,4 @@ bool LauncherScene::tryTransition(std::string& outNextScene)
     return false;
 }
 // private
-void LauncherScene::guiEditNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node)
-{
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-    if (node == s_selected) {
-        flags = ImGuiTreeNodeFlags_Selected;
-    }
-    if (ImGui::TreeNodeEx(node->getName().data(), flags)) {
-        if (ImGui::IsItemClicked()) {
-            s_selected = node;
-        }
-        ImGui::InputText("Name", node->getName().data(), 16);
-
-        Vector3 localPos = node->getLocalPosition();
-        if (ImGui::DragFloat3("Pos", localPos.data(), 0.01f)) {
-            node->setLocalPosition(localPos);
-        }
-
-        Vector3 localRot = node->getLocalRotation();
-        if (ImGui::DragFloat3("Rot", localRot.data(), 1.0f, 0.0f, 360.0f)) {
-            node->setLocalRotation(localRot);
-        }
-
-        Vector3 size = node->getSize();
-        if (ImGui::DragFloat3("Size", size.data(), 0.01f)) {
-            node->setSize(size);
-        }
-
-        Vector3 color = node->getColor();
-        if (ImGui::ColorEdit3("Color", color.data())) {
-            node->setColor(color);
-        }
-        if (ImGui::Button("New Node")) {
-            auto child = Common::Graphics::Node::create();
-            child->setLocalPosition(Vector3({ 0, 0, 0 }));
-            child->setSize(Vector3({ 10, 10, 10 }));
-            child->setColor(Vector3({ 1, 1, 1 }));
-
-            char buf[16];
-            ::sprintf(buf, "Child[%d]", node->getChildrenCount());
-            std::string childName = buf;
-            child->setName(childName);
-            node->addChild(child);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Remove This")) {
-            node->removeFromParent();
-        }
-
-        if (ImGui::Button("-X")) {
-            Vector3 pos = -(parent->getSize() * Vector3({ 0.5f, 0, 0 }));
-            pos.x() -= node->getSize().x() * 0.5f;
-            node->setLocalPosition(pos);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("+X")) {
-            Vector3 pos = (parent->getSize() * Vector3({ 0.5f, 0, 0 }));
-            pos.x() += node->getSize().x() * 0.5f;
-            node->setLocalPosition(pos);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("-Y")) {
-            Vector3 pos = -(parent->getSize() * Vector3({ 0, 0.5f, 0 }));
-            pos.y() -= node->getSize().y() * 0.5f;
-            node->setLocalPosition(pos);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("+Y")) {
-            Vector3 pos = (parent->getSize() * Vector3({ 0, 0.5f, 0 }));
-            pos.y() += node->getSize().y() * 0.5f;
-            node->setLocalPosition(pos);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("-Z")) {
-            Vector3 pos = -(parent->getSize() * Vector3({ 0, 0, 0.5f }));
-            pos.z() -= node->getSize().z() * 0.5f;
-            node->setLocalPosition(pos);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("+Z")) {
-            Vector3 pos = (parent->getSize() * Vector3({ 0, 0, 0.5f }));
-            pos.z() += node->getSize().z() * 0.5f;
-            node->setLocalPosition(pos);
-        }
-
-        for (int32_t i = 0; i < node->getChildrenCount(); i++) {
-            guiEditNode(node, node->getChildAt(i));
-        }
-        ImGui::TreePop();
-    }
-}
-void LauncherScene::drawNode(const std::shared_ptr<Common::Graphics::Node>& parent, const std::shared_ptr<Common::Graphics::Node>& node, const std::shared_ptr<Renderer>& renderer)
-{
-    node->draw(renderer, Vector3({ 0, 0, 0 }), 0.0f);
-}
 }
