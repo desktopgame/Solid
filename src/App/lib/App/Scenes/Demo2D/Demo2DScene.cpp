@@ -36,6 +36,7 @@ void Demo2DScene::onDraw3D()
 
 void Demo2DScene::onDraw2D()
 {
+    m_renderer->drawRect(Vector2({ 0, 0 }), Vector2({ 100, 100 }), 0.0f, Color({ 1.0f, 1.0f, 1.0f, 1.0f }));
 }
 
 bool Demo2DScene::tryTransition(std::string& outNextScene)

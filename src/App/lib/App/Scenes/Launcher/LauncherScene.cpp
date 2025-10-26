@@ -67,24 +67,28 @@ void LauncherScene::onEnter()
             buttonDemo2D->setFont(font);
             buttonDemo2D->setText(u"Demo(2D)");
             buttonDemo2D->setPreferredSize(Vector2({ 600, 80 }));
+            buttonDemo2D->setOnClick([&]() -> void { this->m_nextScene = "Demo2D"; });
             vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonDemo2D, nullptr));
 
             auto buttonDemo3D = std::make_shared<Button>();
             buttonDemo3D->setFont(font);
             buttonDemo3D->setText(u"Demo(3D)");
             buttonDemo3D->setPreferredSize(Vector2({ 600, 80 }));
+            buttonDemo3D->setOnClick([&]() -> void { this->m_nextScene = "Demo3D"; });
             vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonDemo3D, nullptr));
 
             auto buttonDemoUI = std::make_shared<Button>();
             buttonDemoUI->setFont(font);
             buttonDemoUI->setText(u"Demo(UI)");
             buttonDemoUI->setPreferredSize(Vector2({ 600, 80 }));
+            buttonDemoUI->setOnClick([&]() -> void { this->m_nextScene = "DemoUI"; });
             vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonDemoUI, nullptr));
 
             auto buttonGame = std::make_shared<Button>();
             buttonGame->setFont(font);
             buttonGame->setText(u"GAME");
             buttonGame->setPreferredSize(Vector2({ 600, 80 }));
+            buttonGame->setOnClick([&]() -> void { this->m_nextScene = "Title"; });
             vbox->addLayoutElement(std::make_shared<LayoutElement>(buttonGame, nullptr));
 
             tabScene->addLayoutElement(std::make_shared<LayoutElement>(vbox, std::make_shared<BorderLayout::Hint>("CENTER")));
