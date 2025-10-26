@@ -8,7 +8,6 @@
 #include <Utils/String.hpp>
 #include <stdexcept>
 
-
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 
@@ -38,12 +37,13 @@ Microsoft::WRL::ComPtr<ID3D12Resource> PointLight::s_scrConstantBuffer;
 // public
 void PointLight::enable() { s_enabled = true; }
 void PointLight::disable() { s_enabled = false; }
-void PointLight::set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius)
+void PointLight::set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius, const Math::Vector3& color)
 {
     auto& constant = s_constantVec.at(index);
     constant.position = position;
     constant.innerRadius = innerRadius;
     constant.outerRadius = outerRadius;
+    constant.color = color;
 }
 void PointLight::setCount(int32_t count)
 {
@@ -450,8 +450,8 @@ void PointLight::initLight(
             float3 position;
             float innerRadius;
             float outerRadius;
-            float3 padding1;
-            float4 padding2[14];
+            float3 color;
+            float padding2[56];
         }
 
         Texture2D<float4> positionTex : register(t0);
@@ -480,7 +480,7 @@ void PointLight::initLight(
             float3 Phong = float3(0, 0, 0);
 
             // ライトの欠けを抑えるための仮実装
-            float NdotL = (max(dot(N, L), 0) * 0.1) + 0.9;
+            float NdotL = max(dot(N, L), 0);
 
             if (NdotL > 0)
             {
@@ -491,7 +491,7 @@ void PointLight::initLight(
                 float intensity = smoothstep(innerRadius/* uPointLight.mInnerRadius */,
                                             outerRadius/* uPointLight.mOuterRadius */, dist);
                 // The diffuse color of the light depends on intensity
-                float3 DiffuseColor = lerp(float3(1, 1, 1),
+                float3 DiffuseColor = lerp(color,
                                         float3(0.0, 0.0, 0.0), intensity);
                 Phong = DiffuseColor * NdotL;
             }
@@ -837,6 +837,7 @@ void PointLight::drawLight(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandLis
     Math::Vector3 position = constant.position;
     float innerRadius = constant.innerRadius;
     float outerRadius = constant.outerRadius;
+    Math::Vector3 color = constant.color;
 
     {
         D3D12_RANGE range = {};
@@ -851,6 +852,7 @@ void PointLight::drawLight(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandLis
         c2.position = position;
         c2.innerRadius = innerRadius;
         c2.outerRadius = outerRadius;
+        c2.color = color;
         ::memcpy(((unsigned char*)outData) + (sizeof(PointLight::Constant2) * lightIndex), &c2, sizeof(PointLight::Constant2));
         s_scrConstantBuffer->Unmap(0, &range);
     }

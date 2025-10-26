@@ -13,11 +13,11 @@ class Shader;
 class CpuBuffer;
 class PointLight {
 public:
-    static inline constexpr int32_t k_maxCount = 50;
+    static inline constexpr int32_t k_maxCount = 1000;
 
     static void enable();
     static void disable();
-    static void set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius);
+    static void set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius, const Math::Vector3& color);
     static void setCount(int32_t count);
 
 #if SOLID_ENABLE_INTERNAL
@@ -44,7 +44,8 @@ private:
         Math::Vector3 position;
         float innerRadius;
         float outerRadius;
-        std::array<float, 59> padding;
+        Math::Vector3 color;
+        std::array<float, 56> padding;
     };
     static_assert(sizeof(Constant2) == 256);
 

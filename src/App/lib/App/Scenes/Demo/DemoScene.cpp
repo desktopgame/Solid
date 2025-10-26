@@ -225,7 +225,7 @@ void DemoScene::onDraw3D()
 
     PointLight::enable();
     for (int32_t i = 0; i < m_pointLightPositions.size(); i++) {
-        PointLight::set(i, m_pointLightPositions.at(i), 1, 5);
+        PointLight::set(i, m_pointLightPositions.at(i), 1, 5, Vector3({ 1, 1, 1 }));
     }
     PointLight::setCount(m_pointLightPositions.size());
 

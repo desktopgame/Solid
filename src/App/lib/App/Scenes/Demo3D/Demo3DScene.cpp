@@ -18,7 +18,7 @@ void Demo3DScene::onEnter()
         m_renderer = std::make_shared<Renderer>();
     }
     m_fpsController.lockCursor();
-    m_fpsController.setPosition(Vector3({ 5, 3, -3 }));
+    m_fpsController.setPosition(Vector3({ 9, 5, -5 }));
     m_fpsController.setAngleX(0);
     m_fpsController.setAngleY(0);
 }
@@ -41,28 +41,25 @@ void Demo3DScene::onDraw3D()
     Camera::position(m_fpsController.getPosition());
     Camera::lookAt(m_fpsController.getLookAt());
 
-    GlobalLight::disable();
+    GlobalLight::enable();
+    GlobalLight::set(Vector3::normalized(Vector3({ 1, -1, 0 })));
 
     PointLight::enable();
-    PointLight::setCount(4 * 4);
+    PointLight::setCount(20 * 20);
 
-    for (int32_t i = 0; i < 4; i++) {
-        for (int32_t j = 0; j < 4; j++) {
-            float fx = i * 3;
-            float fz = j * 3;
-            PointLight::set(i * 4 + j, Vector3({ fx, 0, fz }), 1.0f, 3.0f);
-        }
-    }
-
+    int32_t lightIndex = 0;
     for (int32_t i = 0; i < 20; i++) {
         for (int32_t j = 0; j < 20; j++) {
-            float colorR = static_cast<float>(i) / 10.0f;
-            float colorG = static_cast<float>(j) / 10.0f;
-            float colorB = static_cast<float>(i) / 10.0f;
-            Vector4 color = Vector4({ colorR, colorG, colorB, 1 });
-            m_renderer->drawPlane(Vector3({ static_cast<float>(i), 0, static_cast<float>(j) }), Vector2({ 1, 1 }), Quaternion::angleAxis(90.0f, Vector3({ -1, 0, 0 })), color, false);
+            float fx = i * 3;
+            float fz = j * 3;
+            float colorR = (lightIndex % 2) == 0 ? 1.0f : 0.0f;
+            float colorG = (lightIndex % 2) == 0 ? 0.0f : 1.0f;
+            float colorB = ::fmodf(static_cast<float>(lightIndex), 3.0f) / 3.0f;
+            PointLight::set(lightIndex++, Vector3({ fx, 1.5f, fz }), 0.5f, 2.0f, Vector3({ colorR, colorG, colorB }));
         }
     }
+
+    m_renderer->drawBox(Vector3({ 10, 0, 10 }), Vector3({ 20, 1, 20 }), Quaternion(), Color({ 1, 1, 1, 1 }), false);
 }
 
 void Demo3DScene::onDraw2D()

@@ -245,7 +245,7 @@ void BloomEffect::initFilter(
         float4 psMain(Output input) : SV_TARGET {
             float4 src = srcTex.Sample(srcSmp, input.texCoord);
             float luminance = dot(src.rgb, float3(0.2126, 0.7152, 0.0722));
-            if (luminance > 0.4)
+            if (luminance > 0.7)
             {
                 return src;
             }
@@ -966,12 +966,21 @@ void BloomEffect::initMix(
 
         Texture2D<float4> blurTex : register(t1);
         SamplerState blurSmp : register(s1);
+        float3 ToneMapReinhard_LumaPreserve(float3 c) {
+            // Rec.709 輝度
+            float Y  = dot(c, float3(0.2126, 0.7152, 0.0722));
+            if (Y <= 1e-6) return c;
 
+            float Yt = Y / (1.0 + Y);       // Reinhard を輝度にだけ
+            float3 chroma = c / Y;          // 色度（=rgb / 輝度）
+            return chroma * Yt;             // 輝度だけ圧縮して色は保持
+        }
         float4 psMain(Output input) : SV_TARGET {      
             float4 sceneColor = srcTex.Sample(srcSmp, input.texCoord);
             float4 bloomColor = blurTex.Sample(blurSmp, input.texCoord) * 1.0;
             float4 col =  sceneColor + bloomColor;
-            col = float4(col.rgb / (1.0 + col.rgb), 1.0);
+            // col = float4(col.rgb / (1.0 + col.rgb), 1.0);
+            col = float4(ToneMapReinhard_LumaPreserve(col.xyz), 1);
             return col;
         })",
         "BloomMix_PS");
