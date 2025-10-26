@@ -210,6 +210,8 @@ void GameScene::onEnter()
         Cursor::lock(Engine::getInstance()->getWindow());
     }
     m_nextScene = "";
+    m_requestPauseClose = false;
+    Time::s_timeScale = 1.0f;
     Common::Audio::AudioManager::getInstance()->playBgm("assets/Audios/bgm_sample01.wav");
 }
 
