@@ -42,7 +42,7 @@ void Demo3DScene::onDraw3D()
     Camera::lookAt(m_fpsController.getLookAt());
 
     GlobalLight::enable();
-    GlobalLight::set(Vector3::normalized(Vector3({ 1, -1, 0 })));
+    GlobalLight::set(Vector3::normalized(Vector3({ 1, 1, 0 })));
 
     PointLight::enable();
     PointLight::setCount(20 * 20);
