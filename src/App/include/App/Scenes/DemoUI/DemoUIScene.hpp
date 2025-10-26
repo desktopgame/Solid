@@ -22,6 +22,7 @@ public:
     bool tryTransition(std::string& outNextScene) override;
 
 private:
+    std::shared_ptr<RootPane> m_root;
     std::string m_nextScene;
     std::shared_ptr<Renderer> m_renderer;
 };
