@@ -10,43 +10,44 @@ class Window;
 namespace Lib::Graphics {
 class Device;
 /**
- * @brief Engine class.
+ * Solidエンジンのエントリポイントとなるクラスです。
  */
 class Engine {
 public:
     ~Engine();
     /**
-     * @brief Get the Engine object
-     * @return Instance
+     * エンジンのインスタンスを返します。
+     * @return
      */
     static std::shared_ptr<Engine> getInstance();
 
     /**
-     * @brief throw exception if instance not exist.
+     * エンジンが存在しなければ例外を投げます。
      */
     static void require();
 
     /**
-     * @brief startup Engine.
+     * エンジンを開始します。
      * @param argc
      * @param argv
+     * @return
      */
     std::shared_ptr<Engine> startup(int argc, char* argv[]);
 
     /**
-     * @brief shutdown Engine.
+     * エンジンを終了します。
      */
     void shutdown();
 
     /**
-     * @brief Get the Window object
-     * @return std::shared_ptr<Window>
+     * ウィンドウを返します。
+     * @return
      */
     std::shared_ptr<OS::Window> getWindow() const;
 
     /**
-     * @brief Get the Device object
-     * @return std::shared_ptr<Window>
+     * デバイスを返します。
+     * @return
      */
     std::shared_ptr<Device> getDevice() const;
 
