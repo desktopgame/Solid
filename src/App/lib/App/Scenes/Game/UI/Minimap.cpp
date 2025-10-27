@@ -110,8 +110,6 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
     renderer->stencilNone();
 }
 
-void Minimap::setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection) { m_pieceInstanceCollection = pieceInstanceCollection; }
-std::shared_ptr<System::PieceInstanceCollection> Minimap::getPieceInstanceCollection() const { return m_pieceInstanceCollection; }
 // private
 bool Minimap::wasGotCell(int32_t x, int32_t y) const
 {

@@ -64,7 +64,6 @@ void GameScene::onEnter()
         m_minimap = RootPane::create();
 
         auto minimapChild = std::make_shared<UI::Minimap>(m_field);
-        minimapChild->setPieceInstanceCollection(nullptr);
 
         auto title = std::make_shared<Label>();
         title->setFont(font);

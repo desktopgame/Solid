@@ -5,10 +5,6 @@
 #include <App/library.hpp>
 #include <memory>
 
-namespace App::Scenes::Game::System {
-class PieceInfo;
-class PieceInstanceCollection;
-}
 namespace App::Scenes::Game::UI {
 class Minimap : public Component {
 public:
@@ -19,13 +15,9 @@ public:
     void update() override;
     void draw2D(const std::shared_ptr<Renderer>& renderer) override;
 
-    void setPieceInstanceCollection(const std::shared_ptr<System::PieceInstanceCollection>& pieceInstanceCollection);
-    std::shared_ptr<System::PieceInstanceCollection> getPieceInstanceCollection() const;
-
 private:
     bool wasGotCell(int32_t x, int32_t y) const;
 
     std::shared_ptr<System::Field> m_field;
-    std::shared_ptr<System::PieceInstanceCollection> m_pieceInstanceCollection;
 };
 }
