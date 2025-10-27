@@ -4,6 +4,9 @@
 #include <vector>
 
 namespace App::Scenes::Game::System {
+/**
+ * ウェポンのレジストリです。
+ */
 class WeaponRegistry {
 public:
     static void initialize();

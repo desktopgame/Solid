@@ -6,37 +6,110 @@
 #include <optional>
 
 namespace App::Scenes::Game::System {
+/**
+ * ゲームの世界全体を表すフィールドです。
+ */
 class Field : public std::enable_shared_from_this<Field> {
 public:
     explicit Field(
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 
+    /**
+     * 最初のチャンクを生成します。
+     */
     void generate();
 
+    /**
+     * フィールドを更新します。
+     */
     void update();
+
+    /**
+     * フィールドのデバッグUIを描画します。
+     */
     void onGui();
+
+    /**
+     * フィールドの3D要素を描画します。
+     * @param renderer
+     */
     void draw3D(const std::shared_ptr<Renderer>& renderer);
+
+    /**
+     * フィールドの2D要素を描画します。
+     * @param renderer
+     */
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 
+    /**
+     * 指定の座標を含むチャンクを検索します。
+     * @param outChunk
+     * @param pos
+     * @return
+     */
     bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const Vector3& pos) const;
 
+    /**
+     * 指定のグリッド座標のチャンクを検索します。
+     * @param outChunk
+     * @param gridPosition
+     * @return
+     */
     bool tryFindChunk(std::optional<std::shared_ptr<Chunk>>& outChunk, const IntVector2& gridPosition) const;
 
+    /**
+     * 指定の座標をグリッド座標に変換し、その位置のチャンクをロードします。
+     * @param pos
+     * @return
+     */
     std::shared_ptr<Chunk> loadChunk(const Vector3& pos);
 
+    /**
+     * 指定のグリッド座標のチャンクをロードします。
+     * @param gridPosition
+     * @return
+     */
     std::shared_ptr<Chunk> loadChunk(const IntVector2& gridPosition);
 
+    /**
+     * 現在のチャンクの周囲のチャンクをロードします。
+     */
     void reloadChunks();
 
+    /**
+     * 現在のチャンクを返します。
+     * 現在のチャンクとは、プレイヤー座標を含むチャンクです。
+     * @return
+     */
     std::shared_ptr<Chunk> getCurrentChunk() const;
 
+    /**
+     * ロード済みチャンクを返します。
+     * @return
+     */
     std::vector<std::shared_ptr<Chunk>> getLoadedChunks() const;
 
+    /**
+     * 指定位置のチャンクを返します。
+     * @param index
+     * @return
+     */
     std::shared_ptr<Chunk> getChunkAt(int32_t index) const;
 
+    /**
+     * チャンクの数を返します。
+     * @return
+     */
     int32_t getChunkCount() const;
 
+    /**
+     * グローバルなブロック座標をローカルなブロック座標に変換します。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     static inline IntVector3 toLocalBlockPosition(int32_t x, int32_t y, int32_t z)
     {
         int32_t gridPosX = x / Chunk::k_chunkSizeX;
@@ -54,6 +127,14 @@ public:
         return IntVector3({ localX, y, localZ });
     }
 
+    /**
+     * ローカルなブロック座標をグローバルなブロック座標に変換します。
+     * @param gridPosition
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     static inline IntVector3 toGlobalBlockPosition(const IntVector2& gridPosition, int32_t x, int32_t y, int32_t z)
     {
         int32_t globalX = x;
@@ -73,6 +154,13 @@ public:
         return IntVector3({ globalX, y, globalZ });
     }
 
+    /**
+     * 指定位置にブロックが存在するなら true を返します。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
         std::optional<std::shared_ptr<Chunk>> c;
@@ -88,6 +176,13 @@ public:
         return false;
     }
 
+    /**
+     * 指定位置のブロック情報を返します。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     inline int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const
     {
         std::optional<std::shared_ptr<Chunk>> c;
@@ -103,7 +198,16 @@ public:
         return 0;
     }
 
+    /**
+     * プレイヤーを設定します。
+     * @param player
+     */
     void setPlayer(const std::shared_ptr<Entities::PlayerEntity>& player);
+
+    /**
+     * プレイヤーを返します。
+     * @return
+     */
     std::shared_ptr<Entities::PlayerEntity> getPlayer() const;
 
 private:

@@ -6,6 +6,9 @@
 #include <memory>
 
 namespace App::Scenes::Game::UI {
+/**
+ * 周囲のフィールドと存在するエンティティを描画するミニマップです。
+ */
 class Minimap : public Component {
 public:
     static inline const float k_routeLength = 5;

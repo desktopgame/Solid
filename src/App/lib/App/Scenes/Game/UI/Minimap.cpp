@@ -22,6 +22,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
     auto k_backgroundCenter = getGlobalPosition();
     auto k_backgroundSize = getSize();
 
+    // ミニマップの範囲に 1 を書き込む
     renderer->stencilRef(1);
     renderer->stencilWrite();
     renderer->drawRect(k_backgroundCenter, k_backgroundSize, 0.0f, Vector4({ 1, 1, 1, 0.5f }));
@@ -31,6 +32,7 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         (k_backgroundSize.y() - (k_routeLength * 4)) / 3,
     });
 
+    // 描画対象となるチャンクのグリッド座標を集める
     std::vector<IntVector2> localGridPositions;
     auto playerPos = player->getPosition();
     auto currentChunk = m_field->getCurrentChunk();
@@ -43,10 +45,13 @@ void Minimap::draw2D(const std::shared_ptr<Renderer>& renderer)
         }
     }
 
+    // スクロール量を求める
     auto mapScrollAmount = -(Vector3({ playerPos.x(), 0, playerPos.z() }) - Vector3({ currentChunk->getPhysicalCenterX(), 0, currentChunk->getPhysicalCenterZ() })) / System::Chunk::k_tileSize;
     mapScrollAmount.x() *= (k_chunkSize.x()) / static_cast<float>(System::Chunk::k_chunkSizeX - System::Chunk::k_routeLength);
     mapScrollAmount.z() *= (k_chunkSize.y()) / static_cast<float>(System::Chunk::k_chunkSizeZ - System::Chunk::k_routeLength);
 
+    // 各チャンクを描画する
+    // ステンシルテスト合格した範囲のみ描画
     renderer->stencilRead();
     for (const auto localGridPos : localGridPositions) {
 

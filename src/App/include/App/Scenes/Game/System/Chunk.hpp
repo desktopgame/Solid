@@ -8,6 +8,14 @@
 
 namespace App::Scenes::Game::System {
 class Field;
+/**
+ * フィールドを構成する一つの単位である”チャンク”です。
+ * チャンクは立方体として構成されており、チャンクとチャンクは通路でつながれています。
+ * 一つのチャンクの前と右方向には次のチャンクへの通路も含まれています。
+ *
+ * チャンク全体はインスタンシングによって描画されます。
+ * プレーンを移動、回転させることで各面を表現します。
+ */
 class Chunk : public std::enable_shared_from_this<Chunk> {
 public:
     static inline constexpr int32_t k_chunkSizeX = 42;
@@ -29,6 +37,9 @@ public:
     static_assert(k_chunkSizeZ % 2 == 0);
     static_assert(k_routeLength % 2 == 0);
 
+    /**
+     * プレーンを平行移動するための行列です。
+     */
     static inline const std::array<Matrix, 6> k_translateMatrixTable = {
         // posY
         Matrix::translate(Vector3({ 0.0f, 0.5f, 0.0f })),
@@ -43,6 +54,10 @@ public:
         // negZ
         Matrix::translate(Vector3({ 0.0f, 0.0f, -0.5f })),
     };
+
+    /**
+     * プレーンを回転させるための行列です。
+     */
     static inline const std::array<Matrix, 6> k_rotationMatrixTable = {
         // posY
         Matrix::rotateX(-90.0f),
@@ -57,6 +72,10 @@ public:
         // negZ
         Matrix(),
     };
+
+    /**
+     * プレーンの法線方向を表すテーブルです。
+     */
     static inline const std::array<Vector3, 6> k_normalVectorTable = {
         // posY
         Vector3({ 0, 1, 0 }),
@@ -71,6 +90,10 @@ public:
         // negZ
         Vector3({ 0, 0, -1 }),
     };
+
+    /**
+     * プレーンの色を決めるパレットテーブルです。
+     */
     static inline const std::array<Vector4, 64> k_palletTable = {
         // https://lospec.com/palette-list/tag/64
         // Jehkoba64
@@ -146,80 +169,181 @@ public:
         const std::shared_ptr<Texture>& normalTexture,
         const std::shared_ptr<Texture>& borderTexture);
 
+    /**
+     * チャンクに必要なリソースなどを生成します。
+     */
     void generate();
 
+    /**
+     * チャンクに存在する全てのエンティティの状態を更新します。
+     */
     void update();
+
+    /**
+     * デバッグGUIを描画します。
+     */
     void onGui();
+
+    /**
+     * チャンクの3D要素を描画します。
+     * @param renderer
+     */
     void draw3D(const std::shared_ptr<Renderer>& renderer);
+
+    /**
+     * チャンクの2D要素を描画します。
+     */
     void draw2D(const std::shared_ptr<Renderer>& renderer);
 
+    /**
+     * このチャンクを含んでいるフィールドを返します。
+     */
     std::shared_ptr<Field> getField() const;
 
+    /**
+     * このチャンクのグリッド座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline IntVector2 getGridPosition() const
     {
         return m_gridPosition;
     }
 
+    /**
+     * 指定のグリッド座標のチャンクの中央のX座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param gridPosX
+     * @return
+     */
     static inline float getPhysicalCenterX(int32_t gridPosX)
     {
         return ((gridPosX * Chunk::k_chunkSizeX) + (Chunk::k_chunkSizeX / 2)) * Chunk::k_tileSize;
     }
 
+    /**
+     * このチャンクの中央のX座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline float getPhysicalCenterX() const
     {
         return getPhysicalCenterX(m_gridPosition.x());
     }
 
+    /**
+     * 指定のグリッド座標のチャンクの中央のZ座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param gridPosX
+     * @return
+     */
     static inline float getPhysicalCenterZ(int32_t gridPosY)
     {
         return ((gridPosY * Chunk::k_chunkSizeZ) + (Chunk::k_chunkSizeZ / 2)) * Chunk::k_tileSize;
     }
 
+    /**
+     * このチャンクの中央のZ座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline float getPhysicalCenterZ() const
     {
         return getPhysicalCenterZ(m_gridPosition.y());
     }
 
+    /**
+     * 指定のグリッド座標のチャンクの最小のX座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param gridPosX
+     * @return
+     */
     static inline float getPhysicalMinX(int32_t gridPosX)
     {
         return getPhysicalCenterX(gridPosX) - ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
     }
 
+    /**
+     * このチャンクの最小のX座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline float getPhysicalMinX() const
     {
         return getPhysicalMinX(m_gridPosition.x());
     }
 
+    /**
+     * 指定のグリッド座標のチャンクの最大のX座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param gridPosX
+     * @return
+     */
     static inline float getPhysicalMaxX(int32_t gridPosX)
     {
         return getPhysicalCenterX(gridPosX) + ((Chunk::k_chunkSizeX * Chunk::k_tileSize) / 2.0f);
     }
 
+    /**
+     * このチャンクの最大のX座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline float getPhysicalMaxX() const
     {
         return getPhysicalMaxX(m_gridPosition.x());
     }
 
+    /**
+     * 指定のグリッド座標のチャンクの最小のZ座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param gridPosX
+     * @return
+     */
     static inline float getPhysicalMinZ(int32_t gridPosY)
     {
         return getPhysicalCenterZ(gridPosY) - ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
     }
 
+    /**
+     * このチャンクの最小のZ座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline float getPhysicalMinZ() const
     {
         return getPhysicalMinZ(m_gridPosition.y());
     }
 
+    /**
+     * 指定のグリッド座標のチャンクの最大のZ座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param gridPosX
+     * @return
+     */
     static inline float getPhysicalMaxZ(int32_t gridPosY)
     {
         return getPhysicalCenterZ(gridPosY) + ((Chunk::k_chunkSizeZ * Chunk::k_tileSize) / 2.0f);
     }
 
+    /**
+     * このチャンクの最大のZ座標を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @return
+     */
     inline float getPhysicalMaxZ() const
     {
         return getPhysicalMaxZ(m_gridPosition.y());
     }
 
+    /**
+     * 指定のブロック座標にブロックが存在するなら true を返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     inline bool hasBlockAt(int32_t x, int32_t y, int32_t z) const
     {
         if (x >= k_chunkSizeX || x < 0) {
@@ -234,6 +358,14 @@ public:
         return true;
     }
 
+    /**
+     * 指定のブロック座標のブロックIDを返します。
+     * パフォーマンスのためにインライン化されています。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     inline int32_t getBlockAt(int32_t x, int32_t y, int32_t z) const
     {
         if (!hasBlockAt(x, y, z)) {
@@ -242,16 +374,51 @@ public:
         return m_blocks[toIndex(x, y, z)];
     }
 
+    /**
+     * このチャンクにエンティティを追加します。
+     * @param entity
+     */
     void spwan(const std::shared_ptr<Entity>& entity);
+
+    /**
+     * 指定位置のエンティティを返します。
+     * @param index
+     * @return
+     */
     std::shared_ptr<Entity> getEntityAt(int32_t index) const;
+
+    /**
+     * エンティティの数を返します。
+     * @return
+     */
     int32_t getEntityCount() const;
 
+    /**
+     * 指定のカテゴリのエンティティの数を返します。
+     * @param category
+     * @return
+     */
     int32_t countEntity(Entity::Category category) const;
 
+    /**
+     * 3次元の座標を1次元の座標に変換します。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     static inline int32_t toIndex(int32_t x, int32_t y, int32_t z)
     {
         return (z * k_chunkSizeX * k_chunkSizeY) + (y * k_chunkSizeX) + x;
     }
+
+    /**
+     * 1次元の座標を3次元の座標に変換します。
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     static inline IntVector3 toCoord(int32_t index)
     {
         const int z = index / (k_chunkSizeX * k_chunkSizeY);
