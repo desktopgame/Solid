@@ -56,6 +56,7 @@ private:
     };
 
     void rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node, Geom::AABB& dst);
+    void hitTilesBlocks(const std::shared_ptr<Chunk>& chunk, const Vector3& center, const Vector3& size, std::vector<IntVector3>& hits);
     void hitTilesFuzzy(const std::shared_ptr<Chunk>& chunk, const Vector3& offset, std::vector<IntVector3>& hits);
     void hitTilesStrict(const std::shared_ptr<Chunk>& chunk, const std::shared_ptr<Common::Graphics::Node>& node, const Vector3& offset, std::vector<IntVector3>& checkTiles, std::vector<NodeHit>& hits);
 

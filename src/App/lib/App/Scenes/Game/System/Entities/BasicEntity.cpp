@@ -523,48 +523,9 @@ void BasicEntity::rehashAABB(const std::shared_ptr<Common::Graphics::Node>& node
     }
 }
 
-void BasicEntity::hitTilesFuzzy(const std::shared_ptr<Chunk>& chunk, const Vector3& offset, std::vector<IntVector3>& hits)
+void BasicEntity::hitTilesBlocks(const std::shared_ptr<Chunk>& chunk, const Vector3& center, const Vector3& size, std::vector<IntVector3>& hits)
 {
     auto field = chunk->getField();
-    Vector3 center = m_aabb.min + ((m_aabb.max - m_aabb.min) / 2.0f);
-    Vector3 size = (m_aabb.max - m_aabb.min);
-    Vector3 end = center + offset;
-    Vector3 dir = Vector3::normalized(end - center);
-
-    float distance = 0.0f;
-    float limit = Vector3::distance(center, end);
-    while (distance < limit) {
-        float minX = alignTile(center.x() - (size.x() / 2.0f), Chunk::k_tileSize);
-        float maxX = alignTile(center.x() + (size.x() / 2.0f), Chunk::k_tileSize);
-        float minY = alignTile(center.y() - (size.y() / 2.0f), Chunk::k_tileSize);
-        float maxY = alignTile(center.y() + (size.y() / 2.0f), Chunk::k_tileSize);
-        float minZ = alignTile(center.z() - (size.z() / 2.0f), Chunk::k_tileSize);
-        float maxZ = alignTile(center.z() + (size.z() / 2.0f), Chunk::k_tileSize);
-
-        for (float fx = minX; fx <= maxX; fx += Chunk::k_tileSize) {
-            for (float fy = minY; fy <= maxY; fy += Chunk::k_tileSize) {
-                for (float fz = minZ; fz <= maxZ; fz += Chunk::k_tileSize) {
-                    int32_t ix = static_cast<int32_t>(fx / Chunk::k_tileSize);
-                    int32_t iy = static_cast<int32_t>(fy / Chunk::k_tileSize);
-                    int32_t iz = static_cast<int32_t>(fz / Chunk::k_tileSize);
-                    if (!field->hasBlockAt(ix, iy, iz)) {
-                        continue;
-                    }
-
-                    int32_t block = field->getBlockAt(ix, iy, iz);
-                    if (block != 0) {
-                        hits.emplace_back(IntVector3({ ix, iy, iz }));
-                    }
-                }
-            }
-        }
-
-        center += (dir * Chunk::k_tileSize);
-        distance += Chunk::k_tileSize;
-    }
-
-    center = end;
-
     float minX = alignTile(center.x() - (size.x() / 2.0f), Chunk::k_tileSize);
     float maxX = alignTile(center.x() + (size.x() / 2.0f), Chunk::k_tileSize);
     float minY = alignTile(center.y() - (size.y() / 2.0f), Chunk::k_tileSize);
@@ -589,6 +550,28 @@ void BasicEntity::hitTilesFuzzy(const std::shared_ptr<Chunk>& chunk, const Vecto
             }
         }
     }
+}
+
+void BasicEntity::hitTilesFuzzy(const std::shared_ptr<Chunk>& chunk, const Vector3& offset, std::vector<IntVector3>& hits)
+{
+    auto field = chunk->getField();
+    Vector3 center = m_aabb.min + ((m_aabb.max - m_aabb.min) / 2.0f);
+    Vector3 size = (m_aabb.max - m_aabb.min);
+    Vector3 end = center + offset;
+    Vector3 dir = Vector3::normalized(end - center);
+
+    float distance = 0.0f;
+    float limit = Vector3::distance(center, end);
+    while (distance < limit) {
+        hitTilesBlocks(chunk, center, size, hits);
+
+        center += (dir * Chunk::k_tileSize);
+        distance += Chunk::k_tileSize;
+    }
+
+    center = end;
+
+    hitTilesBlocks(chunk, center, size, hits);
 
     center += (dir * Chunk::k_tileSize);
     distance += Chunk::k_tileSize;
