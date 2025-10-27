@@ -2,6 +2,9 @@
 #include <Math/Vector.hpp>
 
 namespace Lib::Graphics {
+/**
+ * フォントのサイズ、整列方法を保持するクラスです。
+ */
 class FontMetrics {
 public:
     explicit FontMetrics(Math::IntVector2 size, Math::IntVector2 bearing,

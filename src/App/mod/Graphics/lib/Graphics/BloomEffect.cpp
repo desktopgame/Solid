@@ -949,7 +949,7 @@ void BloomEffect::initMix(
     const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& bloomTextures)
 {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    // input layout
+    // 頂点入力レイアウトの設定
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
     inputLayout.push_back(
         { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
@@ -961,7 +961,7 @@ void BloomEffect::initMix(
             D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
-    // shader
+    // シェーダーのコンパイル
     std::unordered_map<std::string, std::string> shaderKeywords;
     s_mixVShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
@@ -1007,7 +1007,8 @@ void BloomEffect::initMix(
         "BloomMix_PS");
     s_mixVShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
     s_mixPShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
-    // vertex buffer and index buffer
+    // 頂点バッファー、インデックスバッファーの生成
+    // 画面全体を描画範囲とする
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
     const float half = 1.0f;
@@ -1015,6 +1016,8 @@ void BloomEffect::initMix(
     const float right = half;
     const float top = half;
     const float bottom = -half;
+
+    // 頂点バッファーのアップロード
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
@@ -1051,6 +1054,8 @@ void BloomEffect::initMix(
         ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
         s_mixVertexBuffer->Unmap(0, nullptr);
     }
+
+    // インデックスバッファーのアップロード
     indices.emplace_back(0);
     indices.emplace_back(1);
     indices.emplace_back(2);
@@ -1089,18 +1094,19 @@ void BloomEffect::initMix(
         ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
         s_mixIndexBuffer->Unmap(0, nullptr);
     }
-    // rasterize
+    // パイプラインステートの設定
+    // ラスタライザーステート
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;
     psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
     psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     psoDesc.RasterizerState.DepthClipEnable = true;
-    // depth
+    // デプスステンシルステート
     psoDesc.DepthStencilState.DepthEnable = false;
     psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    // blend
+    // ブレンドステート
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
     D3D12_RENDER_TARGET_BLEND_DESC rtBlendDesc = {};
@@ -1121,7 +1127,8 @@ void BloomEffect::initMix(
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
-    // root signature
+    // ルートシグネチャ
+    // ソースとブラーで二枚のテクスチャを受け取る
     std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
     descTableRange.push_back({});
     descTableRange.at(0).NumDescriptors = 1;
@@ -1146,8 +1153,9 @@ void BloomEffect::initMix(
     rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
     rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
 
-    D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
-    for (int32_t i = 0; i < 3; i++) {
+    // サンプラー
+    D3D12_STATIC_SAMPLER_DESC samplerDescs[2] = {};
+    for (int32_t i = 0; i < 2; i++) {
         D3D12_STATIC_SAMPLER_DESC& samplerDesc = samplerDescs[i];
         samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
         samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
@@ -1165,7 +1173,7 @@ void BloomEffect::initMix(
     rootSignatureDesc.NumParameters = rootParam.size();
     rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
     rootSignatureDesc.pStaticSamplers = samplerDescs;
-    rootSignatureDesc.NumStaticSamplers = 3;
+    rootSignatureDesc.NumStaticSamplers = 2;
     ComPtr<ID3DBlob> rootSigBlob = nullptr;
     ComPtr<ID3DBlob> errorBlob = nullptr;
     if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
@@ -1178,9 +1186,7 @@ void BloomEffect::initMix(
     if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_mixPipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
-    //
-    // Descriptor Heap
-    //
+    // ディスクリプタヒープの設定
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;

@@ -7,15 +7,37 @@
 
 namespace Lib::Graphics {
 class GpuBuffer;
+/**
+ * CPUから更新可能なバッファーです。
+ */
 class CpuBuffer : public IBuffer {
 public:
     static std::shared_ptr<CpuBuffer> create();
     ~CpuBuffer();
 
+    /**
+     * 指定サイズのバッファーとして初期化します。
+     * @param size
+     */
     void allocate(size_t size);
+
+    /**
+     * バッファーの中身を初期化します。
+     * @param data
+     */
     void update(const void* data);
 
+    /**
+     * バッファーのサイズを返します。
+     * @return
+     */
     size_t getSize() const override;
+
+    /**
+     * バッファーのバージョンを返します。
+     * 変更されるたびにインクリメントされます。
+     * @return
+     */
     int32_t getVersion() const;
 
 #if SOLID_ENABLE_INTERNAL

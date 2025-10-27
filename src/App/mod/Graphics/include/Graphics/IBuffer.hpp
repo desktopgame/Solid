@@ -4,11 +4,18 @@
 #include <wrl/client.h>
 
 namespace Lib::Graphics {
+/**
+ * バッファーの共通インターフェイスです。
+ */
 class IBuffer {
 public:
     explicit IBuffer() = default;
     virtual ~IBuffer() = default;
 
+    /**
+     * バッファーのサイズを返します。
+     * @return
+     */
     virtual size_t getSize() const = 0;
 
 #if SOLID_ENABLE_INTERNAL

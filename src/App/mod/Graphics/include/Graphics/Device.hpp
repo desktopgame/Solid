@@ -12,12 +12,22 @@ class Window;
 namespace Lib::Graphics {
 class Surface;
 class Swapchain;
+/**
+ * DirectX12のデバイス、スワップチェインを管理するクラスです。
+ */
 class Device {
 public:
     ~Device();
 
+    /**
+     * DirectX12のデバッグレイヤーが出力した情報を標準出力へダンプします。
+     */
     void flushLogEntries();
 
+    /**
+     * サーフェイスを返します。
+     * @return
+     */
     std::shared_ptr<Surface> getSurface() const;
 
 #if SOLID_ENABLE_INTERNAL

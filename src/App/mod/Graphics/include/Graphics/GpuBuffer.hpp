@@ -6,12 +6,24 @@
 #include <wrl/client.h>
 
 namespace Lib::Graphics {
+/**
+ * GPUから更新可能なバッファーです。
+ */
 class GpuBuffer : public IBuffer {
 public:
     static std::shared_ptr<GpuBuffer> create();
     ~GpuBuffer();
 
+    /**
+     * 指定サイズのバッファーとして初期化します。
+     * @param size
+     */
     void allocate(size_t size);
+
+    /**
+     * バッファーのサイズを返します。
+     * @return
+     */
     size_t getSize() const override;
 
 #if SOLID_ENABLE_INTERNAL

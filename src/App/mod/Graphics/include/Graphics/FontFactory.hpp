@@ -7,11 +7,28 @@
 
 namespace Lib::Graphics {
 class FontMap;
+/**
+ * 全てのフォントを管理するクラスです。
+ */
 class FontFactory {
 public:
     ~FontFactory();
+    /**
+     * 指定のフォントからフォントマップをキャッシュして返します。
+     * @param path
+     */
     std::shared_ptr<FontMap> load(const std::string& path);
+
+    /**
+     * フォントに関するエラーが発生していれば true を返します。
+     * @return
+     */
     bool isOccurredError() const;
+
+    /**
+     * 唯一のインスタンスを返します。
+     * @return
+     */
     static std::shared_ptr<FontFactory> getInstance();
 
 #if SOLID_ENABLE_INTERNAL

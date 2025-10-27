@@ -17,7 +17,7 @@ Device::~Device()
 void Device::flushLogEntries()
 {
 #if _DEBUG
-    // Show messages
+    // デバッグレイヤーからのメッセージを出力
     ComPtr<ID3D12InfoQueue> infoQueue = m_infoQueue;
     uint64_t messageCount = infoQueue->GetNumStoredMessages();
     for (uint64_t i = 0; i < messageCount; i++) {
@@ -73,19 +73,19 @@ Device::Device()
 void Device::init(const std::shared_ptr<OS::Window>& window)
 {
     m_hwnd = window->getHWND();
-    // Debug Layer
+    // デバッグレイヤーの有効化
 #if _DEBUG
     ComPtr<ID3D12Debug> debugController = nullptr;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
         debugController->EnableDebugLayer();
     }
 #endif
-    // Factory
+    // DXGIファクトリーの初期化
     UINT flags = DXGI_CREATE_FACTORY_DEBUG;
     if (FAILED(CreateDXGIFactory2(flags, IID_PPV_ARGS(&m_dxgiFactory)))) {
         throw std::runtime_error("failed CreateDXGIFactory2()");
     }
-    // Adapter
+    // アダプターを列挙
     std::vector<ComPtr<IDXGIAdapter>> adapters;
     ComPtr<IDXGIAdapter> mainAdapter = nullptr;
     for (uint32_t i = 0; m_dxgiFactory->EnumAdapters(i, &mainAdapter) != DXGI_ERROR_NOT_FOUND; i++) {
@@ -94,11 +94,11 @@ void Device::init(const std::shared_ptr<OS::Window>& window)
     if (adapters.empty()) {
         throw std::runtime_error("failed EnumAdapters()");
     }
-    // first adapter is primary adapter.
+    // 最初のアダプターはプライマリなので、これを選択する
     // see: https://learn.microsoft.com/ja-jp/windows/win32/api/dxgi/nf-dxgi-idxgifactory-enumadapters
     mainAdapter = adapters.at(0);
     adapters.clear();
-    // Feature level
+    // フィーチャーレベルを選択。12以上でできるだけ新しいものを選択
     std::optional<D3D_FEATURE_LEVEL> useLevel;
     D3D_FEATURE_LEVEL levels[] = {
         D3D_FEATURE_LEVEL_12_1,
@@ -114,15 +114,15 @@ void Device::init(const std::shared_ptr<OS::Window>& window)
     if (!useLevel) {
         throw std::runtime_error("failed D3D12CreateDevice()");
     }
-    // InfoQueue
+    // インフォキューの初期化
 #if _DEBUG
     if (FAILED(m_device->QueryInterface(__uuidof(ID3D12InfoQueue), &m_infoQueue))) {
         throw std::runtime_error("failed ID3D12InfoQueue()");
     }
 #endif
-    // Swapchain
+    // スワップチェインの初期化
     m_swapchain = Swapchain::create(window, m_dxgiFactory, m_device);
-    // Surface
+    // サーフェイスの初期化
     m_surface = Surface::create(m_device, m_swapchain);
 }
 }
