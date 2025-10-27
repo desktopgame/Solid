@@ -5,10 +5,20 @@
 #include <vector>
 
 namespace App::Common::Graphics {
+/**
+ * 全てのパーティクルを一元管理するクラスです。
+ */
 class ParticleSystem {
 public:
+    /**
+     * パーティクルシステムを初期化します。
+     */
     static void initialize();
 
+    /**
+     * パーティクルを追加します。
+     * @param params
+     */
     template <typename T>
     static std::shared_ptr<IParticle> emit(const ParticleParameter<typename T::Option>& params)
     {
@@ -33,10 +43,20 @@ public:
         return nullptr;
     }
 
+    /**
+     * 全てのパーティクルを描画します。
+     * 寿命を迎えたパーティクルは自動でプールに返されます。
+     */
     static void draw();
 
+    /**
+     * 全てのパーティクルを停止してプールへ返します。
+     */
     static void stop();
 
+    /**
+     * パーティクルシステムを破棄します。
+     */
     static void destroy();
 
 private:

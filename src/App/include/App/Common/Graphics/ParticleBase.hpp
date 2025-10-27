@@ -5,6 +5,9 @@
 #include <memory>
 
 namespace App::Common::Graphics {
+/**
+ * パーティクルの共通パラメータを定義するクラスです。
+ */
 template <typename T>
 class ParticleParameter {
 public:
@@ -29,6 +32,9 @@ public:
     }
 };
 
+/**
+ * パーティクルの基底クラスです。
+ */
 template <typename T, int32_t NumParticles>
 class ParticleBase : public IParticle {
 public:
@@ -44,6 +50,9 @@ public:
     }
     virtual ~ParticleBase() = default;
 
+    /**
+     * パーティクルを初期化します。
+     */
     void initialize(const ParticleParameter<T>& params)
     {
         baseInit();
@@ -101,6 +110,11 @@ public:
     bool isExpired() const override { return m_elapsed >= m_lifetime; }
 
 protected:
+    /**
+     * パーティクルの初期値を設定します。
+     * @param particles
+     * @param params
+     */
     virtual void batch(std::array<VertexParticle3D, NumParticles>& particles, const ParticleParameter<T>& params) = 0;
 
 private:

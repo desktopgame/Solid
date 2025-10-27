@@ -5,6 +5,9 @@
 
 namespace App::Common::Graphics {
 
+/**
+ * 平面パーティクルのパラメーターです。
+ */
 struct PlaneParticleOption {
     Vector3 floorPoint;
     Vector3 size;
@@ -16,6 +19,9 @@ struct PlaneParticleOption {
     }
 };
 
+/**
+ * 平面パーティクルです。
+ */
 class PlaneParticle : public ParticleBase<PlaneParticleOption, 128> {
 public:
     using Option = PlaneParticleOption;

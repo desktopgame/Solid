@@ -4,7 +4,9 @@
 #include <random>
 
 namespace App::Common::Graphics {
-
+/**
+ * 球状パーティクルのパラメーターです。
+ */
 struct SphericalParticleOption {
     Vector3 collisionPoint;
     float minSpeed;
@@ -18,6 +20,9 @@ struct SphericalParticleOption {
     }
 };
 
+/**
+ * 球状パーティクルです。
+ */
 class SphericalParticle : public ParticleBase<SphericalParticleOption, 4096> {
 public:
     using Option = SphericalParticleOption;

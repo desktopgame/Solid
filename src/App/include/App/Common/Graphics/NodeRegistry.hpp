@@ -5,6 +5,9 @@
 
 namespace App::Common::Graphics {
 class Node;
+/**
+ * ノードのレジストリです。
+ */
 class NodeRegistry {
 public:
     static void initialize();
