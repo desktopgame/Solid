@@ -9,6 +9,9 @@
 
 namespace Lib::Graphics {
 class Shader;
+/**
+ * 高輝度成分を抜き出し、ブラーを掛けてから元テクスチャと混ぜることで光があふれだすような表現（ブルーム）を行うクラスです。
+ */
 class BloomEffect {
 public:
 #if SOLID_ENABLE_INTERNAL
