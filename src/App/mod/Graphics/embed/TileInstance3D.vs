@@ -1,6 +1,6 @@
 struct Output {
-    float4 svpos : SV_POSITION;
-    float4 mmpos : POSITION;
+    float4 svPos : SV_POSITION;
+    float4 worldPos : POSITION;
     float2 texCoord : TEXCOORD;
     float4 axis : NORMAL;
     float4 color : COLOR;
@@ -70,12 +70,12 @@ Output vsMain(float3 pos : POSITION, float2 texCoord : TEXCOORD, float4 tileData
     tmp = round(tmp * 100.0f) / 100.0f;
 
     tmp = mul(modelMatrix, tmp);
-    output.mmpos = tmp;
+    output.worldPos = tmp;
 
     tmp = mul(viewMatrix, tmp);
     tmp = mul(projectionMatrix, tmp);
 
-    output.svpos = tmp;
+    output.svPos = tmp;
     output.color = colorTable[tileColorID];
     output.texCoord = texCoord;
     output.cameraPosition = cameraPosition;

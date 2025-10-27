@@ -1,6 +1,6 @@
 struct Output {
-    float4 svpos : SV_POSITION;
-    float3 wpos : POSITION;
+    float4 svPos : SV_POSITION;
+    float3 worldPos : POSITION;
     float3 normal : NORMAL;
     float4 color : COLOR;
     float lifetime : LIFETIME;
@@ -17,7 +17,7 @@ PSOutput psMain(Output input) : SV_TARGET {
         discard;
     }
     PSOutput output;
-    output.outPosition = float4(input.wpos, 1);
+    output.outPosition = float4(input.worldPos, 1);
     output.outNormal = float4(input.normal, 1);
     output.outColor = input.color;
     return output;

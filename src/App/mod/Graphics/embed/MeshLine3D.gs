@@ -1,12 +1,12 @@
 struct GSInput {
-    float4 svpos : SV_POSITION;
-    float4 pos : POSITION;
+    float4 svPos : SV_POSITION;
+    float4 worldPos : POSITION;
     float4 color : COLOR;
 };
 
 struct GSOutput {
-    float4 position : SV_POSITION;
-    float4 wpos : POSITION;
+    float4 svPos : SV_POSITION;
+    float4 worldPos : POSITION;
     float4 color : COLOR;
 };
 
@@ -30,8 +30,8 @@ void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream)
     for (int i = 0; i < 3; ++i) {
         int nextIndex = (i + 1) % 3;
 
-        float3 worldP0 = input[i].pos;
-        float3 worldP1 = input[nextIndex].pos;
+        float3 worldP0 = input[i].worldPos;
+        float3 worldP1 = input[nextIndex].worldPos;
 
         float3 camToEdge = normalize(worldP0 - cameraPosition.xyz);
         float3 edgeDir = normalize(worldP1 - worldP0);
@@ -41,20 +41,20 @@ void gsMain(triangle GSInput input[3], inout TriangleStream<GSOutput> triStream)
 
         GSOutput v0, v1, v2, v3;
 
-        v0.position = mul(vpMat, float4(worldP0 + offset, 1.0));
-        v0.wpos = float4(worldP0 + offset, 1.0);
+        v0.svPos = mul(vpMat, float4(worldP0 + offset, 1.0));
+        v0.worldPos = float4(worldP0 + offset, 1.0);
         v0.color = input[i].color;
 
-        v1.position = mul(vpMat, float4(worldP1 + offset, 1.0));
-        v1.wpos = float4(worldP1 + offset, 1.0);
+        v1.svPos = mul(vpMat, float4(worldP1 + offset, 1.0));
+        v1.worldPos = float4(worldP1 + offset, 1.0);
         v1.color = input[nextIndex].color;
 
-        v2.position = mul(vpMat, float4(worldP0 - offset, 1.0));
-        v2.wpos = float4(worldP0 - offset, 1.0);
+        v2.svPos = mul(vpMat, float4(worldP0 - offset, 1.0));
+        v2.worldPos = float4(worldP0 - offset, 1.0);
         v2.color = input[i].color;
 
-        v3.position = mul(vpMat, float4(worldP1 - offset, 1.0));
-        v3.wpos = float4(worldP1 - offset, 1.0);
+        v3.svPos = mul(vpMat, float4(worldP1 - offset, 1.0));
+        v3.worldPos = float4(worldP1 - offset, 1.0);
         v3.color = input[nextIndex].color;
 
         triStream.Append(v0);

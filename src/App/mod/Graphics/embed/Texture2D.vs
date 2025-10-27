@@ -1,5 +1,5 @@
 struct Output {
-    float4 svpos : SV_POSITION;
+    float4 svPos : SV_POSITION;
     float2 texCoord : TEXCOORD;
     float4 color : COLOR;
 };
@@ -12,9 +12,9 @@ cbuffer cbuff1 : register(b1) { float4 color; }
 
 Output vsMain(float2 pos : POSITION, float2 texCoord : TEXCOORD) {
     Output output;
-    output.svpos = mul(modelMatrix, float4(pos, 0, 1));
-    output.svpos = mul(viewMatrix, output.svpos);
-    output.svpos = mul(projectionMatrix, output.svpos);
+    output.svPos = mul(modelMatrix, float4(pos, 0, 1));
+    output.svPos = mul(viewMatrix, output.svPos);
+    output.svPos = mul(projectionMatrix, output.svPos);
     output.texCoord = texCoord;
     output.color = color;
     return output;
