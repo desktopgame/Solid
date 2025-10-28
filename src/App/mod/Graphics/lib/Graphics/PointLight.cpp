@@ -270,71 +270,28 @@ void PointLight::initStencil(
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
-    // root signature
+    // ルートシグネチャ
     std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
     descTableRange.push_back({});
     descTableRange.at(0).NumDescriptors = 1;
-    descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    descTableRange.at(0).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
     descTableRange.at(0).BaseShaderRegister = 0;
     descTableRange.at(0).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    descTableRange.push_back({});
-    descTableRange.at(1).NumDescriptors = 1;
-    descTableRange.at(1).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-    descTableRange.at(1).BaseShaderRegister = 1;
-    descTableRange.at(1).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    descTableRange.push_back({});
-    descTableRange.at(2).NumDescriptors = 1;
-    descTableRange.at(2).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-    descTableRange.at(2).BaseShaderRegister = 2;
-    descTableRange.at(2).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    descTableRange.push_back({});
-    descTableRange.at(3).NumDescriptors = 1;
-    descTableRange.at(3).RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-    descTableRange.at(3).BaseShaderRegister = 0;
-    descTableRange.at(3).OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
     std::vector<D3D12_ROOT_PARAMETER> rootParam;
     rootParam.push_back({});
     rootParam.at(0).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParam.at(0).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+    rootParam.at(0).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
     rootParam.at(0).DescriptorTable.pDescriptorRanges = &descTableRange.at(0);
     rootParam.at(0).DescriptorTable.NumDescriptorRanges = 1;
-    rootParam.push_back({});
-    rootParam.at(1).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParam.at(1).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-    rootParam.at(1).DescriptorTable.pDescriptorRanges = &descTableRange.at(1);
-    rootParam.at(1).DescriptorTable.NumDescriptorRanges = 1;
-    rootParam.push_back({});
-    rootParam.at(2).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParam.at(2).ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-    rootParam.at(2).DescriptorTable.pDescriptorRanges = &descTableRange.at(2);
-    rootParam.at(2).DescriptorTable.NumDescriptorRanges = 1;
-    rootParam.push_back({});
-    rootParam.at(3).ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParam.at(3).ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-    rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
-    rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
-    D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
-    for (int32_t i = 0; i < 3; i++) {
-        D3D12_STATIC_SAMPLER_DESC& samplerDesc = samplerDescs[i];
-        samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
-        samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-        samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-        samplerDesc.MinLOD = 0.0f;
-        samplerDesc.ShaderRegister = i;
-        samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-        samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-    }
+    D3D12_STATIC_SAMPLER_DESC samplerDescs[0] = {};
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
     rootSignatureDesc.pParameters = rootParam.data();
     rootSignatureDesc.NumParameters = rootParam.size();
     rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
     rootSignatureDesc.pStaticSamplers = samplerDescs;
-    rootSignatureDesc.NumStaticSamplers = 3;
+    rootSignatureDesc.NumStaticSamplers = 0;
     ComPtr<ID3DBlob> rootSigBlob = nullptr;
     ComPtr<ID3DBlob> errorBlob = nullptr;
     if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob))) {
@@ -347,14 +304,11 @@ void PointLight::initStencil(
     if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
-    //
-    // Descriptor Heap
-    //
-
+    // ディスクリプタヒープの設定
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
-    descHeapDesc.NumDescriptors = 3 + k_maxCount;
+    descHeapDesc.NumDescriptors = k_maxCount;
     descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
     if (FAILED(device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&s_descriptorHeap)))) {
@@ -362,20 +316,6 @@ void PointLight::initStencil(
     }
 
     D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = 1;
-
-    for (int32_t i = 0; i < static_cast<int32_t>(gTextures.size()); i++) {
-        device->CreateShaderResourceView(gTextures.at(i).Get(), &srvDesc, heapHandle);
-        heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    }
-    //
-    // Constant1
-    //
-
     D3D12_HEAP_PROPERTIES cbHeapProps = {};
     cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -810,12 +750,8 @@ void PointLight::drawStencil(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandL
     D3D12_GPU_DESCRIPTOR_HANDLE heapHandle = s_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
     commandList->SetDescriptorHeaps(1, s_descriptorHeap.GetAddressOf());
 
-    for (int32_t i = 0; i < 3; i++) {
-        commandList->SetGraphicsRootDescriptorTable(i, heapHandle);
-        heapHandle.ptr += incrementSize;
-    }
     heapHandle.ptr += (lightIndex * incrementSize);
-    commandList->SetGraphicsRootDescriptorTable(3, heapHandle);
+    commandList->SetGraphicsRootDescriptorTable(0, heapHandle);
 
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
