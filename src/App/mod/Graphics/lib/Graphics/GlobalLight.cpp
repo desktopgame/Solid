@@ -77,7 +77,7 @@ void GlobalLight::initialize(
     const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures)
 {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    // input layout
+    // 頂点入力レイアウトの設定
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
     inputLayout.push_back(
         { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
@@ -89,7 +89,7 @@ void GlobalLight::initialize(
             D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
-    // shader
+    // シェーダーのコンパイル
     std::unordered_map<std::string, std::string> shaderKeywords;
     s_vShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
@@ -135,7 +135,8 @@ void GlobalLight::initialize(
         "GlobalLight_PS");
     s_vShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
     s_pShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
-    // vertex buffer and index buffer
+    // 頂点バッファー、インデックスバッファーの生成
+    // 画面全体を描画範囲とする
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
     const float half = 1.0f;
@@ -143,6 +144,8 @@ void GlobalLight::initialize(
     const float right = half;
     const float top = half;
     const float bottom = -half;
+
+    // 頂点バッファーのアップロード
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
@@ -179,6 +182,8 @@ void GlobalLight::initialize(
         ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
         s_vertexBuffer->Unmap(0, nullptr);
     }
+
+    // インデックスバッファーのアップロード
     indices.emplace_back(0);
     indices.emplace_back(1);
     indices.emplace_back(2);
@@ -217,18 +222,19 @@ void GlobalLight::initialize(
         ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
         s_indexBuffer->Unmap(0, nullptr);
     }
-    // rasterize
+    // パイプラインステートの設定
+    // ラスタライザーステート
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;
     psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
     psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     psoDesc.RasterizerState.DepthClipEnable = true;
-    // depth
+    // デプスステンシルステート
     psoDesc.DepthStencilState.DepthEnable = false;
     psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    // blend
+    // ブレンドステート
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
     D3D12_RENDER_TARGET_BLEND_DESC rtBlendDesc = {};
@@ -249,7 +255,8 @@ void GlobalLight::initialize(
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
-    // root signature
+    // ルートシグネチャ
+    // GBufferを使うのでテクスチャ三枚宣言
     std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
     descTableRange.push_back({});
     descTableRange.at(0).NumDescriptors = 1;
@@ -294,6 +301,7 @@ void GlobalLight::initialize(
     rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
     rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
+    // GBufferのぶんだけサンプラー用意
     D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
     for (int32_t i = 0; i < 3; i++) {
         D3D12_STATIC_SAMPLER_DESC& samplerDesc = samplerDescs[i];
@@ -326,10 +334,7 @@ void GlobalLight::initialize(
     if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_pipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
-    //
-    // Descriptor Heap
-    //
-
+    // ディスクリプタヒープの設定
     D3D12_HEAP_PROPERTIES cbHeapProps = {};
     cbHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     cbHeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -384,10 +389,10 @@ void GlobalLight::initialize(
         heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     }
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvColorDesc = {};
-    cbvColorDesc.BufferLocation = s_constantBuffer->GetGPUVirtualAddress();
-    cbvColorDesc.SizeInBytes = sizeof(GlobalLight::Constant);
-    device->CreateConstantBufferView(&cbvColorDesc, heapHandle);
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDirDesc = {};
+    cbvDirDesc.BufferLocation = s_constantBuffer->GetGPUVirtualAddress();
+    cbvDirDesc.SizeInBytes = sizeof(GlobalLight::Constant);
+    device->CreateConstantBufferView(&cbvDirDesc, heapHandle);
     heapHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 

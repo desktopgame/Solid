@@ -10,13 +10,32 @@ namespace Lib::Graphics {
 class Device;
 class Shader;
 class CpuBuffer;
+/**
+ * グローバルライトを描画するクラスです。
+ */
 class GlobalLight {
 public:
     static inline constexpr int32_t k_maxCount = 1;
 
+    /**
+     * グローバルライトを有効化します。
+     */
     static void enable();
+
+    /**
+     * グローバルライトを無効化します。
+     */
     static void disable();
+
+    /**
+     * グローバルライトの有効状態を切り替えます。
+     */
     static void toggle(bool enabled);
+
+    /**
+     * グローバルライトの角度を設定します。
+     * @param dir
+     */
     static void set(const Math::Vector3& dir);
 
 #if SOLID_ENABLE_INTERNAL
