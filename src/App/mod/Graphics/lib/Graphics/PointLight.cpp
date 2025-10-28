@@ -356,7 +356,7 @@ void PointLight::initLight(
     const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures)
 {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    // input layout
+    // 頂点入力レイアウトの設定
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
     inputLayout.push_back(
         { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
@@ -368,7 +368,7 @@ void PointLight::initLight(
             D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
-    // shader
+    // シェーダーのコンパイル
     std::unordered_map<std::string, std::string> shaderKeywords;
     s_scrVShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
@@ -446,7 +446,8 @@ void PointLight::initLight(
         "PointLightDraw_PS");
     s_scrVShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
     s_scrPShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
-    // vertex buffer and index buffer
+    // 頂点バッファー、インデックスバッファーの生成
+    // 画面全体を描画範囲とする
     std::vector<VertexTexCoord2D> vertices;
     std::vector<uint32_t> indices;
     const float half = 1.0f;
@@ -454,6 +455,8 @@ void PointLight::initLight(
     const float right = half;
     const float top = half;
     const float bottom = -half;
+
+    // 頂点バッファーのアップロード
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
     vertices.push_back(VertexTexCoord2D(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
@@ -490,6 +493,8 @@ void PointLight::initLight(
         ::memcpy(outData, vertices.data(), sizeof(VertexTexCoord2D) * 4);
         s_scrVertexBuffer->Unmap(0, nullptr);
     }
+
+    // インデックスバッファーのアップロード
     indices.emplace_back(0);
     indices.emplace_back(1);
     indices.emplace_back(2);
@@ -528,32 +533,36 @@ void PointLight::initLight(
         ::memcpy(outData, indices.data(), sizeof(uint32_t) * 6);
         s_scrIndexBuffer->Unmap(0, nullptr);
     }
-    // rasterize
+    // パイプラインステートの設定
+    // ラスタライザーステート
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;
     psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
     psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     psoDesc.RasterizerState.DepthClipEnable = true;
-    // depth
+    // デプスステンシルステート
     psoDesc.DepthStencilState.DepthEnable = false;
     psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    // stencil
+    // デプスステンシルステート（ステンシル書き込み設定）
     psoDesc.DepthStencilState.StencilEnable = true;
     psoDesc.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
     psoDesc.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-    // stencil front
+    // デプスステンシルステート（前面の設定）
+    // ライトジオメトリがマークした箇所に書き込む
+    // 加算して次回以降の対象にならないように
     psoDesc.DepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_INCR_SAT;
     psoDesc.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
-    // stencil back
+    // デプスステンシルステート（背面の設定）
+    // 特になし
     psoDesc.DepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
-    // blend
+    // ブレンドステート
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
     D3D12_RENDER_TARGET_BLEND_DESC rtBlendDesc = {};
@@ -575,7 +584,8 @@ void PointLight::initLight(
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
-    // root signature
+    // ルートシグネチャ
+    // GBufferを使うのでテクスチャ三枚宣言
     std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
     descTableRange.push_back({});
     descTableRange.at(0).NumDescriptors = 1;
@@ -620,6 +630,7 @@ void PointLight::initLight(
     rootParam.at(3).DescriptorTable.pDescriptorRanges = &descTableRange.at(3);
     rootParam.at(3).DescriptorTable.NumDescriptorRanges = 1;
 
+    // GBufferのぶんだけサンプラー用意
     D3D12_STATIC_SAMPLER_DESC samplerDescs[3] = {};
     for (int32_t i = 0; i < 3; i++) {
         D3D12_STATIC_SAMPLER_DESC& samplerDesc = samplerDescs[i];
@@ -652,10 +663,7 @@ void PointLight::initLight(
     if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&s_scrPipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
-    //
-    // Descriptor Heap
-    //
-
+    // GBufferのぶんだけサンプラー用意
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
