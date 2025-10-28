@@ -98,7 +98,7 @@ void PointLight::initStencil(
     const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>& gTextures)
 {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    // input layout
+    // 頂点入力レイアウトの設定
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
     inputLayout.push_back(
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
@@ -110,7 +110,7 @@ void PointLight::initStencil(
             D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
-    // shader
+    // シェーダーのコンパイル
     std::unordered_map<std::string, std::string> shaderKeywords;
     s_vShader = Shader::compile("vs_5_0", "vsMain", R"(
         struct Output {
@@ -137,26 +137,19 @@ void PointLight::initStencil(
         };
 
         float4 psMain(Output input) : SV_TARGET {
+            // ステンシルだけを書きたいので、カラーは捨てる
             return float4(0, 0, 0, 0);
         })",
         "PointLightStencil_PS");
     s_vShader->getD3D12_SHADER_BYTECODE(psoDesc.VS);
     s_pShader->getD3D12_SHADER_BYTECODE(psoDesc.PS);
-    // vertex buffer and index buffer
+    // 頂点バッファー、インデックスバッファーの生成
+    // 球体のメッシュの範囲にステンシルを書き込む
     std::vector<Math::Vector3> vertices;
     std::vector<uint32_t> indices;
     generateSphere(1, 10, 10, vertices, indices);
     s_vertexLength = static_cast<int32_t>(vertices.size());
     s_indexLength = static_cast<int32_t>(indices.size());
-    // const float half = 1.0f;
-    // const float left = -half;
-    // const float right = half;
-    // const float top = half;
-    // const float bottom = -half;
-    // vertices.push_back(Math::Vector3(Math::Vector2({ left, bottom }), Math::Vector2({ 0.0f, 1.0f })));
-    // vertices.push_back(Math::Vector3(Math::Vector2({ left, top }), Math::Vector2({ 0.0f, 0.0f })));
-    // vertices.push_back(Math::Vector3(Math::Vector2({ right, bottom }), Math::Vector2({ 1.0f, 1.0f })));
-    // vertices.push_back(Math::Vector3(Math::Vector2({ right, top }), Math::Vector2({ 1.0f, 0.0f })));
 
     D3D12_HEAP_PROPERTIES vHeapProps = {};
     vHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -221,32 +214,41 @@ void PointLight::initStencil(
         ::memcpy(outData, indices.data(), sizeof(uint32_t) * s_indexLength);
         s_indexBuffer->Unmap(0, nullptr);
     }
-    // rasterize
+    // パイプラインステートの設定
+    // ラスタライザーステート
+    // 注意点：ここでは意図して面カリングしない。
+    // 球体の中にいるときもステンシルを書きたいため。
+    // こうしないとライトジオメトリの中にカメラが入ったときに光の反射が消える。
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;
     psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
     psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     psoDesc.RasterizerState.DepthClipEnable = true;
-    // depth
+    // デプスステンシルステート
     psoDesc.DepthStencilState.DepthEnable = true;
     psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    // stencil
+    // デプスステンシルステート（ステンシル書き込み設定）
     psoDesc.DepthStencilState.StencilEnable = true;
     psoDesc.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
     psoDesc.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-    // stencil front
+    // デプスステンシルステート（前面の設定）
+    // 前面では特に何もせずにステンシルそのまま
     psoDesc.DepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-    // stencil back
+    // デプスステンシルステート（背面の設定）
+    // 背面で深度テスト失敗時にのみステンシル書き込み
+    // これを文章で伝えるのは難しい…
+    // 仮にカメラがライトジオメトリの中にいようと、外にいようと、
+    // ライトジオメトリの背面が深度テストに失敗するピクセルは反射の影響を受けるべきピクセルになる。
     psoDesc.DepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_REPLACE;
     psoDesc.DepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
     psoDesc.DepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-    // blend
+    // ブレンドステート
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
     D3D12_RENDER_TARGET_BLEND_DESC rtBlendDesc = {};

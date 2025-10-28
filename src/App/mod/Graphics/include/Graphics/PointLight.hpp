@@ -11,14 +11,42 @@ namespace Lib::Graphics {
 class Device;
 class Shader;
 class CpuBuffer;
+/**
+ * ポイントライトを描画するクラスです。
+ */
 class PointLight {
 public:
     static inline constexpr int32_t k_maxCount = 1000;
 
+    /**
+     * ポイントライトを有効化します。
+     */
     static void enable();
+
+    /**
+     * ポイントライトを無効化します。
+     */
     static void disable();
+
+    /**
+     * ポイントライトの有効状態を切り替えます。
+     */
     static void toggle(bool enabled);
+
+    /**
+     * ポイントライトの設定を行います。
+     * @param index
+     * @param position
+     * @param innerRadius
+     * @param outerRadius
+     * @param color
+     */
     static void set(int32_t index, const Math::Vector3& position, float innerRadius, float outerRadius, const Math::Vector3& color);
+
+    /**
+     * ポイントライトの数を設定します。
+     * @param count
+     */
     static void setCount(int32_t count);
 
 #if SOLID_ENABLE_INTERNAL
