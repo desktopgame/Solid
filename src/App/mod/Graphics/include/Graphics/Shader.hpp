@@ -7,8 +7,18 @@
 #include <wrl/client.h>
 
 namespace Lib::Graphics {
+/**
+ * シェーダーを扱うクラスです。
+ */
 class Shader {
 public:
+    /**
+     * 指定のシェーダーをコンパイルします。
+     * @param stage
+     * @param entryPoint
+     * @param shaderCode
+     * @param shaderName
+     */
     static std::shared_ptr<Shader> compile(
         const std::string& stage,
         const std::string& entryPoint,

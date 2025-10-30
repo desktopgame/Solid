@@ -211,7 +211,7 @@ void RenderContext::init(Metadata::ProgramTable entry)
     const Metadata::Program& program = Metadata::k_programs.at(i);
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    // input layout
+    // 頂点入力レイアウトの設定
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
     bool depthTest = false;
     bool depthWrite = false;
@@ -353,7 +353,7 @@ void RenderContext::init(Metadata::ProgramTable entry)
     }
     psoDesc.InputLayout.pInputElementDescs = inputLayout.data();
     psoDesc.InputLayout.NumElements = inputLayout.size();
-    // shader
+    // シェーダーのコンパイル
     char vsName[16];
     ::memset(vsName, '\0', 16);
     ::sprintf(vsName, "RC[%d]_VS", i);
@@ -380,18 +380,19 @@ void RenderContext::init(Metadata::ProgramTable entry)
         ::sprintf(csName, "RC[%d]_CS", i);
         m_cShader = Shader::compile("cs_5_0", "csMain", program.csCode, csName);
     }
-    // rasterize
+    // パイプラインステートの設定
+    // ラスタライザーステート
     psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     psoDesc.RasterizerState.MultisampleEnable = false;
     psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
     psoDesc.RasterizerState.FillMode = program.isWireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
     psoDesc.RasterizerState.DepthClipEnable = true;
-    // depth
+    // デプス
     psoDesc.DepthStencilState.DepthEnable = depthTest;
     psoDesc.DepthStencilState.DepthWriteMask = depthWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
     psoDesc.DepthStencilState.DepthFunc = depthTest ? D3D12_COMPARISON_FUNC_LESS : D3D12_COMPARISON_FUNC_ALWAYS;
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    // stencil
+    // デプスステンシルステート
     psoDesc.DepthStencilState.StencilEnable = program.stencil.isRead || program.stencil.isWrite;
     psoDesc.DepthStencilState.StencilReadMask = program.stencil.isRead ? D3D12_DEFAULT_STENCIL_READ_MASK : 0;
     psoDesc.DepthStencilState.StencilWriteMask = program.stencil.isWrite ? D3D12_DEFAULT_STENCIL_WRITE_MASK : 0;
@@ -403,7 +404,7 @@ void RenderContext::init(Metadata::ProgramTable entry)
     psoDesc.DepthStencilState.BackFace.StencilDepthFailOp = convStencilOp(program.stencil.backFaceDepthFailOp);
     psoDesc.DepthStencilState.BackFace.StencilPassOp = convStencilOp(program.stencil.backFacePassOp);
     psoDesc.DepthStencilState.BackFace.StencilFunc = convStencilFunc(program.stencil.backFaceFunc);
-    // blend
+    // ブレンドステート
     psoDesc.BlendState.AlphaToCoverageEnable = false;
     psoDesc.BlendState.IndependentBlendEnable = false;
     D3D12_RENDER_TARGET_BLEND_DESC rtBlendDesc = {};
@@ -437,7 +438,7 @@ void RenderContext::init(Metadata::ProgramTable entry)
     }
     psoDesc.SampleDesc.Count = 1;
     psoDesc.SampleDesc.Quality = 0;
-    // root signature
+    // ルートシグネチャ
     std::vector<D3D12_DESCRIPTOR_RANGE> descTableRange;
     int32_t offset = 0;
     for (int32_t vsUniform = 0; vsUniform < program.vsUniforms.size(); vsUniform++) {
@@ -528,9 +529,8 @@ void RenderContext::init(Metadata::ProgramTable entry)
     if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)))) {
         throw std::runtime_error("failed CreateGraphicsPipelineState()");
     }
-    // compute pipeline state
+    // コンピュートシェーダではさらにコンピュートパイプラインステートを作成…
     if (m_cShader) {
-        // root signature
         std::vector<D3D12_DESCRIPTOR_RANGE> computeDescTableRange;
         int32_t csSRV = 0;
         int32_t csCBV = 0;

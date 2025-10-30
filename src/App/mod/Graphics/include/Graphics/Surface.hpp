@@ -20,38 +20,147 @@ class UniformBuffer;
 class DualBuffer;
 class GpuBuffer;
 class Texture;
+/**
+ * 描画パイプラインを管理するクラスです。
+ */
 class Surface {
 public:
     ~Surface();
 
+    /**
+     * ImGUIの描画を開始します。
+     */
     void beginGui();
+
+    /**
+     * ImGUIの描画を終了します。
+     */
     void endGui();
 
+    /**
+     * 3Dの描画を開始します。
+     */
     void begin3D();
+
+    /**
+     * 3Dの描画を終了します。
+     */
     void end3D();
 
+    /**
+     * 2Dの描画を開始します。
+     */
     void begin2D();
+
+    /**
+     * 2Dの描画を終了します。
+     */
     void end2D();
 
+    /**
+     * この呼び出しに続く描画が頂点情報を共有できることをマークします。
+     * この場合には、少しだけ命令を省略します。
+     * @param rc
+     */
     void beginBatch(const std::shared_ptr<RenderContext>& rc);
+
+    /**
+     * 頂点情報の共有を終了します。
+     * @param rc
+     */
     void endBatch(const std::shared_ptr<RenderContext>& rc);
 
+    /**
+     * プレゼンテーションを開始します。
+     */
     void beginPresent();
+
+    /**
+     * コマンドの終了を待機します。
+     */
     void endPresent();
 
+    /**
+     * バッファの中身を同期します。
+     * @param dualBuffer
+     */
     void sync(const std::shared_ptr<DualBuffer>& dualBuffer);
 
+    /**
+     * ステンシル参照値を設定します。
+     * @param value
+     */
     void stencilRef(uint32_t value);
+
+    /**
+     * ステンシルをクリアします。
+     */
     void stencilClear();
 
+    /**
+     * 頂点シェーダのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param data
+     */
     void uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+
+    /**
+     * ジオメトリシェーダのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param data
+     */
     void uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+
+    /**
+     * ピクセルシェーダーのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param data
+     */
     void uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+
+    /**
+     * ピクセルシェーダーのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param texture
+     */
     void uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
+
+    /**
+     * コンピュートシェーダーのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param data
+     */
     void uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data);
+
+    /**
+     * コンピュートシェーダーのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param texture
+     */
     void uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture);
+
+    /**
+     * コンピュートシェーダーのユニフォームを設定します。
+     * @param ub
+     * @param index
+     * @param buffer
+     */
     void uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer);
 
+    /**
+     * 指定のレンダーコンテキストで描画します。
+     * @param rc
+     * @param ub
+     * @param vertex
+     * @param index
+     * @param indexLength
+     */
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
@@ -59,6 +168,14 @@ public:
         const std::shared_ptr<IBuffer>& index,
         int32_t indexLength);
 
+    /**
+     * 指定のレンダーコンテキストでインスタンスを描画します。
+     * @param rc
+     * @param ub
+     * @param vertex
+     * @param index
+     * @param indexLength
+     */
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,
@@ -68,6 +185,14 @@ public:
         const std::vector<std::shared_ptr<IBuffer>>& instanceBuffers,
         int32_t instanceCount);
 
+    /**
+     * 指定のレンダーコンテキストでインスタンスを描画します。
+     * @param rc
+     * @param ub
+     * @param vertex
+     * @param index
+     * @param indexLength
+     */
     void render(
         const std::shared_ptr<RenderContext>& rc,
         const std::shared_ptr<UniformBuffer>& ub,

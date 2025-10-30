@@ -9,11 +9,29 @@
 namespace Lib::Graphics {
 class Shader;
 class UniformBuffer;
+/**
+ * 描画に関する頂点情報以外のコンテキストを保持するクラスです。
+ * 具体的には、シェーダーとパイプラインステートを持ちます。
+ * 外部からこれに頂点情報とユニフォームさえ渡せばすぐに描画を実行できます。
+ */
 class RenderContext {
 public:
+    /**
+     * 指定のプログラムのレンダーコンテキストを返します。
+     * @param entry
+     * @return
+     */
     static std::shared_ptr<RenderContext> get(Metadata::ProgramTable entry);
 
+    /**
+     * この呼び出しに続く描画が頂点情報を共有できることをマークします。
+     * この場合には、少しだけ命令を省略します。
+     */
     void beginBatch();
+
+    /**
+     * 頂点情報の共有を終了します。
+     */
     void endBatch();
 
 #if SOLID_ENABLE_INTERNAL

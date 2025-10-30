@@ -12,6 +12,10 @@ class Window;
 
 namespace Lib::Graphics {
 class Device;
+/**
+ * サーフェイスよりさらに低レベルな描画処理を扱います。
+ * ユーザーはこのクラスを使う必要がありません。
+ */
 class Swapchain {
 public:
     ~Swapchain();
