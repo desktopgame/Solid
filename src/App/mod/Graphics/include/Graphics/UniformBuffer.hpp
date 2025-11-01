@@ -8,11 +8,28 @@
 namespace Lib::Graphics {
 class Texture;
 class GpuBuffer;
+/**
+ * ユニフォーム（定数バッファ）を扱うクラスです。
+ */
 class UniformBuffer : public std::enable_shared_from_this<UniformBuffer> {
 public:
+    /**
+     * このインスタンスを所有済みとしてマークし、フレームの最後に自動でプールに返されるのを防ぎます。
+     * @return
+     */
     std::shared_ptr<UniformBuffer> owned();
+
+    /**
+     * 所有済みなら true を返します。
+     * @return
+     */
     bool isOwned() const;
 
+    /**
+     * このユニフォームの定数のレイアウトを表すプログラムを返します。
+     * このレイアウトの範囲外のインデックスにユニフォームを書き込むことはできません。
+     * @return
+     */
     Metadata::ProgramTable getEntry() const;
 
 #if SOLID_ENABLE_INTERNAL

@@ -5,10 +5,30 @@
 
 namespace Lib::Graphics {
 class UniformBuffer;
+/**
+ * ユニフォームのプールです。
+ * DirectX12ではユニフォームを複数の描画に使いまわすことができない。
+ * 例えばあるオブジェクトを異なる色や位置で複数描くときに一つのユニフォームを書き換えて再利用はできない。
+ * ので、このプールを用いてそれぞれに個別のユニフォームを割り当てる。
+ */
 class UniformPool {
 public:
+    /**
+     * プログラムに対応したユニフォームをプールから取得します。
+     * @param entry
+     * @return
+     */
     static std::shared_ptr<UniformBuffer> rent(Metadata::ProgramTable entry);
+
+    /**
+     * ユニフォームをプールへ返します。
+     * @param ub
+     */
     static void release(const std::shared_ptr<UniformBuffer>& ub);
+
+    /**
+     * ユニフォームを全てプールへ返します。
+     */
     static void releaseAll();
 
 #if SOLID_ENABLE_INTERNAL

@@ -229,7 +229,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
 
     auto device = Engine::getInstance()->getDevice()->getID3D12Device();
     const Metadata::Program& program = Metadata::k_programs.at(entry);
-    // descriptor heap
+    // プログラムで指定された全てのユニフォーム分のディスクリプターを確保する
     D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
     descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     descHeapDesc.NodeMask = 0;
@@ -240,7 +240,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
     }
     uint32_t unitSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3D12_CPU_DESCRIPTOR_HANDLE heapHandle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    // define constants
+    // 頂点シェーダーの定数バッファを確保
     for (int32_t i = 0; i < program.vsUniforms.size(); i++) {
         Metadata::Uniform u = program.vsUniforms.at(i);
 
@@ -276,6 +276,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
         device->CreateConstantBufferView(&cbvDesc, heapHandle);
         heapHandle.ptr += unitSize;
     }
+    // ジオメトリシェーダの定数バッファを確保
     for (int32_t i = 0; i < program.gsUniforms.size(); i++) {
         Metadata::Uniform u = program.gsUniforms.at(i);
 
@@ -311,6 +312,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
         device->CreateConstantBufferView(&cbvDesc, heapHandle);
         heapHandle.ptr += unitSize;
     }
+    // ピクセルシェーダーの定数バッファを確保
     for (int32_t i = 0; i < program.psUniforms.size(); i++) {
         Metadata::Uniform u = program.psUniforms.at(i);
         bool isShaderResource = u.type == Metadata::Uniform::Type::SRV;
@@ -351,6 +353,7 @@ void UniformBuffer::init(Metadata::ProgramTable entry)
         }
         heapHandle.ptr += unitSize;
     }
+    // コンピュートシェーダの定数バッファを確保
     for (int32_t i = 0; i < program.csUniforms.size(); i++) {
         Metadata::Uniform u = program.csUniforms.at(i);
 
