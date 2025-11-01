@@ -285,7 +285,7 @@ void PointLight::initStencil(
     rootParam.at(0).DescriptorTable.pDescriptorRanges = &descTableRange.at(0);
     rootParam.at(0).DescriptorTable.NumDescriptorRanges = 1;
 
-    D3D12_STATIC_SAMPLER_DESC samplerDescs[0] = {};
+    D3D12_STATIC_SAMPLER_DESC* samplerDescs = nullptr;
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
     rootSignatureDesc.pParameters = rootParam.data();
     rootSignatureDesc.NumParameters = rootParam.size();
