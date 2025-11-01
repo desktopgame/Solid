@@ -38,14 +38,14 @@ void Engine::require()
 
 std::shared_ptr<Engine> Engine::startup(int argc, char* argv[])
 {
-    // startup runs a only at first call.
+    // 一度だけ実行可能
     if (m_started) {
         return nullptr;
     }
     m_started = true;
     CoInitializeEx(0, COINIT_MULTITHREADED);
 
-    // ImGui
+    // 各種初期化処理
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
