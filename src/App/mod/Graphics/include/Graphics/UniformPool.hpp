@@ -1,7 +1,9 @@
 #pragma once
 #include <Graphics/Metadata.hpp>
+#include <d3d12.h>
 #include <memory>
 #include <vector>
+#include <wrl/client.h>
 
 namespace Lib::Graphics {
 class UniformBuffer;
@@ -37,6 +39,13 @@ public:
 #endif
 private:
     UniformPool() = delete;
+    static uint32_t progressBufferOffset(Metadata::ProgramTable entry);
+
+    static const int32_t k_bufferUnitSize;
+    static Microsoft::WRL::ComPtr<ID3D12Resource> s_globalBuffer;
+    static void* s_globalBufferMemory;
+    static uint64_t s_globalBufferOffset;
+    static bool s_globalBufferFlip;
 
     static std::vector<std::vector<std::shared_ptr<UniformBuffer>>> s_freeTable;
     static std::vector<std::vector<std::shared_ptr<UniformBuffer>>> s_usedTable;

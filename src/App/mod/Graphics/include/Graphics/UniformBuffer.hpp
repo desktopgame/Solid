@@ -36,6 +36,8 @@ public:
     static std::shared_ptr<UniformBuffer> create(Metadata::ProgramTable entry);
     void destroy();
 
+    void bufferLocation(D3D12_GPU_VIRTUAL_ADDRESS gpuBufferLocation, unsigned char* cpuBufferLocation);
+
     void setVS(int32_t index, const void* data);
     void setGS(int32_t index, const void* data);
     void setPS(int32_t index, const void* data);
@@ -56,12 +58,10 @@ private:
     void init(Metadata::ProgramTable entry);
 
     Metadata::ProgramTable m_entry;
+    D3D12_GPU_VIRTUAL_ADDRESS m_gpuBufferLocation;
+    unsigned char* m_cpuBufferLocation;
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_vsResources;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_gsResources;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_psResources;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> m_csResources;
     std::vector<std::shared_ptr<GpuBuffer>> m_uavBuffers;
     bool m_owned;
 };

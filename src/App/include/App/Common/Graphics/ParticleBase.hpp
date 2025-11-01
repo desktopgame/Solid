@@ -63,7 +63,6 @@ public:
         m_lifetime = params.maxLifetime;
         m_elapsed = 0.0f;
         m_instanceBuffer->update(m_particles.data());
-        m_uniformBuffer = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D)->owned();
     }
 
     void update() override
@@ -75,6 +74,7 @@ public:
 
     void draw(const std::shared_ptr<CpuBuffer>& vertexBuffer, const std::shared_ptr<CpuBuffer>& indexBuffer, int32_t indexLength) override
     {
+        m_uniformBuffer = UniformPool::rent(Metadata::ProgramTable::ParticleInstance3D);
         auto surface = Engine::getInstance()->getDevice()->getSurface();
         Reflect::UCamera uCamera;
         uCamera.modelMatrix = Matrix::scale(m_scale);
@@ -102,7 +102,7 @@ public:
     void destroy() override
     {
         if (m_uniformBuffer) {
-            UniformPool::release(m_uniformBuffer);
+            // UniformPool::release(m_uniformBuffer);
             m_uniformBuffer = nullptr;
         }
     }

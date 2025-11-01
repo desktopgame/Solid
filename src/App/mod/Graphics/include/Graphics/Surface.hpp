@@ -268,8 +268,5 @@ private:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_depthStencilViewHeap;
     Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
     bool m_sendDrawCall;
-
-    void* m_vram;
-    uint64_t m_vramOffset;
 };
 }

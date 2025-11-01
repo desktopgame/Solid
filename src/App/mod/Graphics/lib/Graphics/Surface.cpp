@@ -689,8 +689,6 @@ void Surface::endPresent()
     m_impl->uniformGSPool.releaseAll();
     m_impl->uniformPSPool.releaseAll();
     m_impl->uniformCSPool.releaseAll();
-
-    m_vramOffset = 0;
 }
 
 void Surface::sync(const std::shared_ptr<DualBuffer>& dualBuffer)
@@ -716,6 +714,7 @@ void Surface::stencilClear()
 
 void Surface::uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
+    /*
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.vsUniforms.at(index).size;
     void* memory = (unsigned char*)m_vram + m_vramOffset;
@@ -727,9 +726,12 @@ void Surface::uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     cmd->index = index;
     cmd->vram = memory;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setVS(index, data);
 }
 void Surface::uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
+    /*
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.gsUniforms.at(index).size;
     void* memory = (unsigned char*)m_vram + m_vramOffset;
@@ -741,9 +743,12 @@ void Surface::uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     cmd->index = index;
     cmd->vram = memory;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setGS(index, data);
 }
 void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
+    /*
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.psUniforms.at(index).size;
     void* memory = (unsigned char*)m_vram + m_vramOffset;
@@ -756,18 +761,24 @@ void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     cmd->vram = memory;
     cmd->texture = nullptr;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setPS(index, data);
 }
 void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
+    /*
     auto cmd = m_impl->uniformPSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
     cmd->vram = nullptr;
     cmd->texture = texture;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setPS(index, texture);
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
+    /*
     const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
     size_t size = program.csUniforms.at(index).size;
     void* memory = (unsigned char*)m_vram + m_vramOffset;
@@ -781,9 +792,12 @@ void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     cmd->gpuBuffer = nullptr;
     cmd->texture = nullptr;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setCS(index, data);
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
+    /*
     auto cmd = m_impl->uniformCSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
@@ -791,9 +805,12 @@ void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     cmd->gpuBuffer = nullptr;
     cmd->texture = texture;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setCS(index, texture);
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
 {
+    /*
     auto cmd = m_impl->uniformCSPool.rent();
     cmd->uniformBuffer = ub;
     cmd->index = index;
@@ -801,6 +818,8 @@ void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index,
     cmd->gpuBuffer = buffer;
     cmd->texture = nullptr;
     m_impl->queue.enqueue(cmd);
+    */
+    ub->setCS(index, buffer);
 }
 
 void Surface::render(
@@ -903,8 +922,6 @@ void Surface::destroy()
     BloomEffect::destroy();
     m_swapchain->destroy();
     m_swapchain = nullptr;
-    ::free(m_vram);
-    m_vram = nullptr;
 }
 // private
 Surface::Surface()
@@ -927,8 +944,6 @@ Surface::Surface()
     , m_depthStencilViewHeap()
     , m_fence()
     , m_sendDrawCall(false)
-    , m_vram(::malloc(::pow(2, 20) * 512))
-    , m_vramOffset(0)
 {
 }
 
