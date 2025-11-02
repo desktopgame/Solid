@@ -95,11 +95,6 @@ void UniformBuffer::setVS(int32_t index, const void* data)
     if (index >= Metadata::k_programs.at(m_entry).vsUniforms.size()) {
         throw std::logic_error("uniform is out of range.");
     }
-    // void* outData;
-    // ComPtr<ID3D12Resource> resource = m_vsResources.at(index);
-    // resource->Map(0, nullptr, (void**)&outData);
-    // ::memcpy(outData, data, Metadata::k_programs.at(m_entry).vsUniforms.at(index).size);
-    // resource->Unmap(0, nullptr);
     unsigned char* memory = static_cast<unsigned char*>(m_cpuBufferLocation);
     for (int32_t i = 0; i < index; i++) {
         const auto& vu = Metadata::k_programs.at(m_entry).vsUniforms.at(i);
@@ -115,11 +110,6 @@ void UniformBuffer::setGS(int32_t index, const void* data)
     if (index >= Metadata::k_programs.at(m_entry).gsUniforms.size()) {
         throw std::logic_error("uniform is out of range.");
     }
-    // void* outData;
-    // ComPtr<ID3D12Resource> resource = m_gsResources.at(index);
-    // resource->Map(0, nullptr, (void**)&outData);
-    // ::memcpy(outData, data, Metadata::k_programs.at(m_entry).gsUniforms.at(index).size);
-    // resource->Unmap(0, nullptr);
     unsigned char* memory = static_cast<unsigned char*>(m_cpuBufferLocation);
     for (const auto& vu : Metadata::k_programs.at(m_entry).vsUniforms) {
         if (vu.type == Metadata::Uniform::Type::CBV) {
@@ -145,11 +135,6 @@ void UniformBuffer::setPS(int32_t index, const void* data)
     if (isShaderResource) {
         throw std::logic_error("uniform is require texture.");
     } else {
-        // void* outData;
-        // ComPtr<ID3D12Resource> resource = m_psResources.at(index);
-        // resource->Map(0, nullptr, (void**)&outData);
-        // ::memcpy(outData, data, u.size);
-        // resource->Unmap(0, nullptr);
         unsigned char* memory = static_cast<unsigned char*>(m_cpuBufferLocation);
         for (const auto& vu : Metadata::k_programs.at(m_entry).vsUniforms) {
             if (vu.type == Metadata::Uniform::Type::CBV) {
@@ -204,11 +189,6 @@ void UniformBuffer::setCS(int32_t index, const void* data)
     if (index >= Metadata::k_programs.at(m_entry).csUniforms.size()) {
         throw std::logic_error("uniform is out of range.");
     }
-    // void* outData;
-    // ComPtr<ID3D12Resource> resource = m_csResources.at(index);
-    // resource->Map(0, nullptr, (void**)&outData);
-    // ::memcpy(outData, data, Metadata::k_programs.at(m_entry).csUniforms.at(index).size);
-    // resource->Unmap(0, nullptr);
     unsigned char* memory = static_cast<unsigned char*>(m_cpuBufferLocation);
     for (const auto& vu : Metadata::k_programs.at(m_entry).vsUniforms) {
         if (vu.type == Metadata::Uniform::Type::CBV) {
