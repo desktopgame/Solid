@@ -45,14 +45,6 @@ void TitleScene::onEnter()
         startButton->setOnClick(std::bind(&TitleScene::onClickStartButton, this));
         menu->addLayoutElement(std::make_shared<LayoutElement>(startButton, nullptr));
 
-        auto settingButton = std::make_shared<Button>();
-        settingButton->setFont(m_fontMap);
-        settingButton->setFontSize(32);
-        settingButton->setText(u"SETTING");
-        settingButton->setPreferredSize(Vector2({ 200, 50 }));
-        settingButton->setOnClick(std::bind(&TitleScene::onClickSettingButton, this));
-        menu->addLayoutElement(std::make_shared<LayoutElement>(settingButton, nullptr));
-
         menu->addLayoutElement(std::make_shared<LayoutElement>(Box::createVerticalGlue(), nullptr));
 
         auto contentPanel = std::make_shared<Panel>();
