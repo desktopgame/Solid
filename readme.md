@@ -7,6 +7,9 @@
 * [マルチスレッドレンダリング](doc/multi_threaded_rendering.md)
 * [統一された描画API](doc/unified_rendering_api.md)
 
+実行ファイルは[リリースページ](https://github.com/desktopgame/Solid/releases)からダウンロードできます。  
+自分でビルドしたい場合はこのまま読み進めてください。
+
 ## セットアップ
 リポジトリをクローンしてから一度だけ行う必要のある作業です。  
 いくつかのライブラリを `vcpkg` から取得しており、それらはサブモジュールとしてぶら下がる構造になっています。
