@@ -14,18 +14,6 @@ class GpuBuffer;
 class UniformBuffer : public std::enable_shared_from_this<UniformBuffer> {
 public:
     /**
-     * このインスタンスを所有済みとしてマークし、フレームの最後に自動でプールに返されるのを防ぎます。
-     * @return
-     */
-    std::shared_ptr<UniformBuffer> owned();
-
-    /**
-     * 所有済みなら true を返します。
-     * @return
-     */
-    bool isOwned() const;
-
-    /**
      * このユニフォームの定数のレイアウトを表すプログラムを返します。
      * このレイアウトの範囲外のインデックスにユニフォームを書き込むことはできません。
      * @return
@@ -63,6 +51,5 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_descriptorHeap;
     std::vector<std::shared_ptr<GpuBuffer>> m_uavBuffers;
-    bool m_owned;
 };
 }

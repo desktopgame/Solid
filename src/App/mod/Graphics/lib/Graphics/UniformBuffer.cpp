@@ -7,16 +7,6 @@
 namespace Lib::Graphics {
 using Microsoft::WRL::ComPtr;
 // public
-std::shared_ptr<UniformBuffer> UniformBuffer::owned()
-{
-    if (m_owned) {
-        throw std::logic_error("already owned.");
-    }
-    m_owned = true;
-    return shared_from_this();
-}
-bool UniformBuffer::isOwned() const { return m_owned; }
-
 Metadata::ProgramTable UniformBuffer::getEntry() const { return m_entry; }
 // internal
 std::shared_ptr<UniformBuffer> UniformBuffer::create(Metadata::ProgramTable entry)
@@ -311,7 +301,7 @@ void UniformBuffer::setCS(int32_t index, const std::shared_ptr<GpuBuffer>& buffe
     }
 }
 
-void UniformBuffer::reset() { m_owned = false; }
+void UniformBuffer::reset() { }
 
 void UniformBuffer::beginCompute(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
@@ -347,7 +337,6 @@ UniformBuffer::UniformBuffer()
     : m_entry()
     , m_descriptorHeap()
     , m_uavBuffers()
-    , m_owned(false)
 {
 }
 

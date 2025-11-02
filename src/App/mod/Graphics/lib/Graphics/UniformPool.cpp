@@ -43,9 +43,6 @@ std::shared_ptr<UniformBuffer> UniformPool::rent(Metadata::ProgramTable entry)
 
 void UniformPool::release(const std::shared_ptr<UniformBuffer>& ub)
 {
-    if (!ub->isOwned()) {
-        throw std::logic_error("uniform buffer will auto released.");
-    }
     Metadata::ProgramTable entry = ub->getEntry();
     std::vector<std::shared_ptr<UniformBuffer>>& src = s_usedTable.at(entry);
     std::vector<std::shared_ptr<UniformBuffer>>& dst = s_freeTable.at(entry);
@@ -63,15 +60,10 @@ void UniformPool::releaseAll()
         std::vector<std::shared_ptr<UniformBuffer>>& dst = s_freeTable.at(i);
 
         for (const auto& s : src) {
-            if (!s->isOwned()) {
-                dst.emplace_back(s);
-            }
+            dst.emplace_back(s);
         }
 
-        auto iter = std::remove_if(src.begin(), src.end(), [](const auto& e) -> bool {
-            return !e->isOwned();
-        });
-        src.erase(iter, src.end());
+        src.clear();
     }
 
     s_globalBufferOffset = 0;
