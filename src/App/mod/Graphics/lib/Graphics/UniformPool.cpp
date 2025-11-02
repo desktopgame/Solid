@@ -5,11 +5,10 @@
 #include <Graphics/UniformPool.hpp>
 
 namespace Lib::Graphics {
-const int32_t UniformPool::k_bufferUnitSize = 256000000; // 256MB
+const int32_t UniformPool::k_bufferUnitSize = 32000000; // 32MB
 Microsoft::WRL::ComPtr<ID3D12Resource> UniformPool::s_globalBuffer;
 void* UniformPool::s_globalBufferMemory;
 uint64_t UniformPool::s_globalBufferOffset;
-bool UniformPool::s_globalBufferFlip;
 
 std::vector<std::vector<std::shared_ptr<UniformBuffer>>> UniformPool::s_freeTable(Metadata::ProgramTable::Count);
 std::vector<std::vector<std::shared_ptr<UniformBuffer>>> UniformPool::s_usedTable(Metadata::ProgramTable::Count);
@@ -59,7 +58,6 @@ void UniformPool::release(const std::shared_ptr<UniformBuffer>& ub)
 
 void UniformPool::releaseAll()
 {
-    uint32_t skip = 0;
     for (int32_t i = 0; i < Metadata::ProgramTable::Count; i++) {
         std::vector<std::shared_ptr<UniformBuffer>>& src = s_usedTable.at(i);
         std::vector<std::shared_ptr<UniformBuffer>>& dst = s_freeTable.at(i);
@@ -67,8 +65,6 @@ void UniformPool::releaseAll()
         for (const auto& s : src) {
             if (!s->isOwned()) {
                 dst.emplace_back(s);
-            } else {
-                skip += progressBufferOffset(static_cast<Metadata::ProgramTable>(i));
             }
         }
 
@@ -78,8 +74,7 @@ void UniformPool::releaseAll()
         src.erase(iter, src.end());
     }
 
-    s_globalBufferFlip = !s_globalBufferFlip;
-    s_globalBufferOffset = (s_globalBufferFlip ? k_bufferUnitSize : 0) + skip;
+    s_globalBufferOffset = 0;
 }
 // internal
 void UniformPool::initialize()

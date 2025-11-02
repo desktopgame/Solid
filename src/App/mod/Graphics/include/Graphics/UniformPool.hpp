@@ -45,7 +45,6 @@ private:
     static Microsoft::WRL::ComPtr<ID3D12Resource> s_globalBuffer;
     static void* s_globalBufferMemory;
     static uint64_t s_globalBufferOffset;
-    static bool s_globalBufferFlip;
 
     static std::vector<std::vector<std::shared_ptr<UniformBuffer>>> s_freeTable;
     static std::vector<std::vector<std::shared_ptr<UniformBuffer>>> s_usedTable;
