@@ -1,5 +1,6 @@
 #pragma once
 #include <App/Common/Graphics/Node.hpp>
+#include <App/Common/Util/BackButton.hpp>
 #include <App/Common/Util/FpsController.hpp>
 #include <App/library.hpp>
 #include <memory>
@@ -27,5 +28,7 @@ private:
     bool m_pointLightEnabled;
     std::string m_nextScene;
     std::shared_ptr<Renderer> m_renderer;
+
+    std::unique_ptr<App::Common::Util::BackButton> m_backButton;
 };
 }

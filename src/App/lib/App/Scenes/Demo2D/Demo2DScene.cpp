@@ -29,6 +29,12 @@ void Demo2DScene::onEnter()
     if (!m_sampleTexture) {
         m_sampleTexture = Texture::create("./assets/Textures/aim.png");
     }
+    if (!m_backButton) {
+        m_backButton = std::make_unique<App::Common::Util::BackButton>();
+        m_backButton->init(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"), [&]() -> void {
+            m_nextScene = "Launcher";
+        });
+    }
     m_nextScene = "";
 }
 
@@ -38,6 +44,7 @@ void Demo2DScene::onExit()
 
 void Demo2DScene::onUpdate()
 {
+    m_backButton->update();
 }
 
 void Demo2DScene::onGui()
@@ -74,6 +81,8 @@ void Demo2DScene::onDraw3D()
 
 void Demo2DScene::onDraw2D()
 {
+    m_backButton->draw(m_renderer);
+
     m_renderer->drawSprite(m_spritePos, m_spriteSize, 0.0f, m_sampleTexture, m_spriteColor);
     m_renderer->drawRect(m_rectPos, m_rectSize, 0.0f, m_rectColor);
     m_renderer->drawCircle(m_circlePos, m_circleSize, m_circleColor);

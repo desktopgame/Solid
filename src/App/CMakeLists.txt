@@ -45,6 +45,7 @@ set(SOURCES
     ./include/App/Common/Graphics/Telop.hpp
     ./include/App/Common/Graphics/TelopSystem.hpp
     ./include/App/Common/Util/FpsController.hpp
+    ./include/App/Common/Util/BackButton.hpp
     ./include/App/Scenes/Title/TitleScene.hpp
     ./include/App/Scenes/Game/GameScene.hpp
     ./include/App/Scenes/Game/System/Weapon.hpp
@@ -75,6 +76,7 @@ set(SOURCES
     ./lib/App/Common/Graphics/Telop.cpp
     ./lib/App/Common/Graphics/TelopSystem.cpp
     ./lib/App/Common/Util/FpsController.cpp
+    ./lib/App/Common/Util/BackButton.cpp
     ./lib/App/Scenes/Title/TitleScene.cpp
     ./lib/App/Scenes/Game/GameScene.cpp
     ./lib/App/Scenes/Game/System/Weapon.cpp

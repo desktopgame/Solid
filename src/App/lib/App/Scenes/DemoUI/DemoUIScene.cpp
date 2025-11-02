@@ -16,6 +16,12 @@ void DemoUIScene::onEnter()
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
+    if (!m_backButton) {
+        m_backButton = std::make_unique<App::Common::Util::BackButton>();
+        m_backButton->init(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"), [&]() -> void {
+            m_nextScene = "Launcher";
+        });
+    }
     if (!m_root) {
         auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
         m_root = RootPane::create();
@@ -163,6 +169,7 @@ void DemoUIScene::onExit()
 void DemoUIScene::onUpdate()
 {
     m_root->update();
+    m_backButton->update();
 }
 
 void DemoUIScene::onGui()
@@ -181,6 +188,7 @@ void DemoUIScene::onDraw3D()
 
 void DemoUIScene::onDraw2D()
 {
+    m_backButton->draw(m_renderer);
     m_root->draw2D(m_renderer);
 }
 

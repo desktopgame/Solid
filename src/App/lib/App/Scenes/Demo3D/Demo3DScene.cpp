@@ -19,6 +19,12 @@ void Demo3DScene::onEnter()
     if (!m_renderer) {
         m_renderer = std::make_shared<Renderer>();
     }
+    if (!m_backButton) {
+        m_backButton = std::make_unique<App::Common::Util::BackButton>();
+        m_backButton->init(FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf"), [&]() -> void {
+            m_nextScene = "Launcher";
+        });
+    }
     m_fpsController.lockCursor();
     m_fpsController.setPosition(Vector3({ 9, 5, -5 }));
     m_fpsController.setAngleX(0);
@@ -34,6 +40,7 @@ void Demo3DScene::onExit()
 void Demo3DScene::onUpdate()
 {
     m_fpsController.update();
+    m_backButton->update();
 }
 
 void Demo3DScene::onGui()
@@ -81,6 +88,8 @@ void Demo3DScene::onDraw3D()
 
 void Demo3DScene::onDraw2D()
 {
+    m_backButton->draw(m_renderer);
+
     auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
     m_renderer->textFont(font);
     m_renderer->textFontSize(20);
