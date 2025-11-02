@@ -89,70 +89,6 @@ void GameScene::onEnter()
         tabSystem->setLayout(std::make_shared<BorderLayout>());
         tabSystem->setFlexible(true);
 
-        auto contentPanel = std::make_shared<Panel>();
-        // contentPanel->setBackgroundColor(Color({ 0.5f, 0.5f, 0.5f, 1.0f }));
-        contentPanel->setLayout(std::make_shared<BorderLayout>());
-        contentPanel->setFlexible(true);
-
-        auto contentLayout = std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical);
-        contentPanel->setLayout(contentLayout);
-        // 【操作方法】
-        {
-            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
-            auto label = std::make_shared<Label>();
-            label->setFont(font);
-            label->setText(u"【操作方法】");
-            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
-
-            auto alignLeft = Box::createHorizontalBox();
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
-
-            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
-        }
-        // WASDキー：移動
-        {
-            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
-            auto label = std::make_shared<Label>();
-            label->setFont(font);
-            label->setText(u"WASDキー：移動");
-            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
-
-            auto alignLeft = Box::createHorizontalBox();
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
-
-            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
-        }
-        // Eキー：ポーズ
-        {
-            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
-            auto label = std::make_shared<Label>();
-            label->setFont(font);
-            label->setText(u"Eキー：ポーズ");
-            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
-
-            auto alignLeft = Box::createHorizontalBox();
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
-
-            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
-        }
-        // マウスクリック：攻撃
-        {
-            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
-            auto label = std::make_shared<Label>();
-            label->setFont(font);
-            label->setText(u"マウスクリック：攻撃");
-            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
-
-            auto alignLeft = Box::createHorizontalBox();
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
-            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
-
-            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
-        }
-
         auto returnButtonBox = Box::createVerticalBox();
         auto returnButton = std::make_shared<Button>();
         returnButton->setFont(m_fontMap);
@@ -162,7 +98,7 @@ void GameScene::onEnter()
         returnButtonBox->addLayoutElement(std::make_shared<LayoutElement>(Box::createVerticalGlue(), std::make_shared<BorderLayout::Hint>("BOTTOM")));
         returnButtonBox->addLayoutElement(std::make_shared<LayoutElement>(returnButton, std::make_shared<BorderLayout::Hint>("BOTTOM")));
         returnButtonBox->addLayoutElement(std::make_shared<LayoutElement>(Box::createVerticalGlue(), std::make_shared<BorderLayout::Hint>("BOTTOM")));
-        tabSystem->addLayoutElement(std::make_shared<LayoutElement>(contentPanel, std::make_shared<BorderLayout::Hint>("CENTER")));
+        tabSystem->addLayoutElement(std::make_shared<LayoutElement>(createHelpPanel(), std::make_shared<BorderLayout::Hint>("CENTER")));
         tabSystem->addLayoutElement(std::make_shared<LayoutElement>(returnButtonBox, std::make_shared<BorderLayout::Hint>("BOTTOM")));
         tabbedPane->addLayoutElement(std::make_shared<LayoutElement>(tabSystem, nullptr));
         tabbedPane->setTitleAt(0, u"SYSTEM");
@@ -351,5 +287,73 @@ void GameScene::updateWeaponGauge()
         m_subWeaponEnergyGauge->setMaximumValue(m_debugPlayer->getSubWeapon()->getEnergyMax());
         m_subWeaponEnergyGauge->setValue(m_debugPlayer->getSubWeaponEnergy());
     }
+}
+
+std::shared_ptr<Panel> GameScene::createHelpPanel()
+{
+    auto contentPanel = std::make_shared<Panel>();
+    // contentPanel->setBackgroundColor(Color({ 0.5f, 0.5f, 0.5f, 1.0f }));
+    contentPanel->setLayout(std::make_shared<BorderLayout>());
+    contentPanel->setFlexible(true);
+
+    auto contentLayout = std::make_shared<BoxLayout>(BoxLayout::Orientation::Vertical);
+    contentPanel->setLayout(contentLayout);
+    // 【操作方法】
+    {
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+        auto label = std::make_shared<Label>();
+        label->setFont(font);
+        label->setText(u"【操作方法】");
+        label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+        auto alignLeft = Box::createHorizontalBox();
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+        contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+    }
+    // WASDキー：移動
+    {
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+        auto label = std::make_shared<Label>();
+        label->setFont(font);
+        label->setText(u"WASDキー：移動");
+        label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+        auto alignLeft = Box::createHorizontalBox();
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+        contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+    }
+    // Eキー：ポーズ
+    {
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+        auto label = std::make_shared<Label>();
+        label->setFont(font);
+        label->setText(u"Eキー：ポーズ");
+        label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+        auto alignLeft = Box::createHorizontalBox();
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+        contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+    }
+    // マウスクリック：攻撃
+    {
+        auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+        auto label = std::make_shared<Label>();
+        label->setFont(font);
+        label->setText(u"マウスクリック：攻撃");
+        label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+        auto alignLeft = Box::createHorizontalBox();
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+        alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+        contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+    }
+    return contentPanel;
 }
 }

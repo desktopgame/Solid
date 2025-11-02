@@ -7,9 +7,9 @@
 #include <memory>
 #include <optional>
 
-//#ifdef _DEBUG
+// #ifdef _DEBUG
 #define GAMESCENE_PROFILE 1
-//#endif
+// #endif
 
 namespace App::Scenes::Game {
 class GameScene : public IScene {
@@ -33,6 +33,8 @@ private:
 
     void loadWeaponIcon();
     void updateWeaponGauge();
+
+    static std::shared_ptr<Panel> createHelpPanel();
 
     Vector3 m_globalLightDir;
 
