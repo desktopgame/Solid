@@ -2,6 +2,11 @@
 `Solid` は DirectX12 で実装された描画エンジンと、それを使った技術デモ集です。
 ![デモ画像](doc/images/demo.png)
 
+アピールポイント：
+* [静的リフレクション](doc/static_reflection.md)
+* [マルチスレッドレンダリング](doc/multi_threaded_rendering.md)
+* [統一された描画API](doc/unified_rendering_api.md)
+
 ## セットアップ
 リポジトリをクローンしてから一度だけ行う必要のある作業です。  
 いくつかのライブラリを `vcpkg` から取得しており、それらはサブモジュールとしてぶら下がる構造になっています。
