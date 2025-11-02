@@ -204,25 +204,33 @@ void GameScene::onGui()
 
 void GameScene::onDraw3D()
 {
-    GlobalLight::enable();
-    GlobalLight::set(Vector3::normalized(m_globalLightDir));
+    if (Cursor::isVisible()) {
+        // ポーズ中はなにも描かない
+        GlobalLight::disable();
+        PointLight::disable();
 
-    PointLight::disable();
+    } else {
+        GlobalLight::enable();
+        GlobalLight::set(Vector3::normalized(m_globalLightDir));
 
-    m_field->draw3D(m_renderer);
-    Common::Graphics::ParticleSystem::draw();
+        PointLight::disable();
+
+        m_field->draw3D(m_renderer);
+        Common::Graphics::ParticleSystem::draw();
+    }
 }
 
 void GameScene::onDraw2D()
 {
-    m_field->draw2D(m_renderer);
-    m_minimap->draw2D(m_renderer);
-    m_weaponUI->draw2D(m_renderer);
-    Common::Graphics::TelopSystem::draw();
-    m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
-
     if (Cursor::isVisible()) {
+        // ポーズ中はポーズUIだけ描く
         m_pauseUI->draw2D(m_renderer);
+    } else {
+        m_field->draw2D(m_renderer);
+        m_minimap->draw2D(m_renderer);
+        m_weaponUI->draw2D(m_renderer);
+        Common::Graphics::TelopSystem::draw();
+        m_renderer->drawSprite(Vector2({ 0, 0 }), Vector2({ 32, 32 }), 0.0f, m_aimTexture, Vector4({ 1, 1, 1, 1 }));
     }
 
 #if GAMESCENE_PROFILE
