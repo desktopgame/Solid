@@ -94,8 +94,9 @@ void Demo3DScene::onDraw2D()
     m_renderer->textFont(font);
     m_renderer->textFontSize(20);
     m_renderer->drawText(Vector2({ 0, 330 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"ポイントライトのテストです。", Color({ 1, 1, 1, 1 }));
-    m_renderer->drawText(Vector2({ 0, 300 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"WASDキーで移動できます。", Color({ 1, 1, 1, 1 }));
-    m_renderer->drawText(Vector2({ 0, 270 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"Eキーでカーソルを表示できます。", Color({ 1, 1, 1, 1 }));
+    m_renderer->drawText(Vector2({ 0, 300 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"WASDキーで各方向に移動できます。", Color({ 1, 1, 1, 1 }));
+    m_renderer->drawText(Vector2({ 0, 270 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"Shift/Spaceで上下移動できます。", Color({ 1, 1, 1, 1 }));
+    m_renderer->drawText(Vector2({ 0, 240 }), Renderer::TextAlignX::Center, Renderer::TextAlignY::Center, u"Eキーでカーソルを表示できます。", Color({ 1, 1, 1, 1 }));
 }
 
 bool Demo3DScene::tryTransition(std::string& outNextScene)
