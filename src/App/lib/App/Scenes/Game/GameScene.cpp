@@ -138,6 +138,20 @@ void GameScene::onEnter()
 
             contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
         }
+        // マウスクリック：攻撃
+        {
+            auto font = FontFactory::getInstance()->load("./assets/Fonts/NotoSansJP-Regular.ttf");
+            auto label = std::make_shared<Label>();
+            label->setFont(font);
+            label->setText(u"マウスクリック：攻撃");
+            label->setPreferredSize(font->measure(label->getFontSize(), label->getText()));
+
+            auto alignLeft = Box::createHorizontalBox();
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(label, nullptr));
+            alignLeft->addLayoutElement(std::make_shared<LayoutElement>(Box::createHorizontalGlue(), nullptr));
+
+            contentPanel->addLayoutElement(std::make_shared<LayoutElement>(alignLeft, nullptr));
+        }
 
         auto returnButtonBox = Box::createVerticalBox();
         auto returnButton = std::make_shared<Button>();
