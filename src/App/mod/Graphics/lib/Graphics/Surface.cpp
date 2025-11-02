@@ -714,111 +714,30 @@ void Surface::stencilClear()
 
 void Surface::uniformVS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
-    /*
-    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
-    size_t size = program.vsUniforms.at(index).size;
-    void* memory = (unsigned char*)m_vram + m_vramOffset;
-    ::memcpy(memory, data, size);
-    m_vramOffset += size;
-
-    auto cmd = m_impl->uniformVSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = memory;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setVS(index, data);
 }
 void Surface::uniformGS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
-    /*
-    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
-    size_t size = program.gsUniforms.at(index).size;
-    void* memory = (unsigned char*)m_vram + m_vramOffset;
-    ::memcpy(memory, data, size);
-    m_vramOffset += size;
-
-    auto cmd = m_impl->uniformGSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = memory;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setGS(index, data);
 }
 void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
-    /*
-    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
-    size_t size = program.psUniforms.at(index).size;
-    void* memory = (unsigned char*)m_vram + m_vramOffset;
-    ::memcpy(memory, data, size);
-    m_vramOffset += size;
-
-    auto cmd = m_impl->uniformPSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = memory;
-    cmd->texture = nullptr;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setPS(index, data);
 }
 void Surface::uniformPS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
-    /*
-    auto cmd = m_impl->uniformPSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = nullptr;
-    cmd->texture = texture;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setPS(index, texture);
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const void* data)
 {
-    /*
-    const Metadata::Program& program = Metadata::k_programs.at(ub->getEntry());
-    size_t size = program.csUniforms.at(index).size;
-    void* memory = (unsigned char*)m_vram + m_vramOffset;
-    ::memcpy(memory, data, size);
-    m_vramOffset += size;
-
-    auto cmd = m_impl->uniformCSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = memory;
-    cmd->gpuBuffer = nullptr;
-    cmd->texture = nullptr;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setCS(index, data);
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<Texture>& texture)
 {
-    /*
-    auto cmd = m_impl->uniformCSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = nullptr;
-    cmd->gpuBuffer = nullptr;
-    cmd->texture = texture;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setCS(index, texture);
 }
 void Surface::uniformCS(const std::shared_ptr<UniformBuffer>& ub, int32_t index, const std::shared_ptr<GpuBuffer>& buffer)
 {
-    /*
-    auto cmd = m_impl->uniformCSPool.rent();
-    cmd->uniformBuffer = ub;
-    cmd->index = index;
-    cmd->vram = nullptr;
-    cmd->gpuBuffer = buffer;
-    cmd->texture = nullptr;
-    m_impl->queue.enqueue(cmd);
-    */
     ub->setCS(index, buffer);
 }
 
